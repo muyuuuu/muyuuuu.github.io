@@ -1,0 +1,44 @@
+\documentclass{ctexart}
+
+\usepackage{amsmath}
+\setmainfont{TeX Gyre Pagella}
+\begin{document}
+	样本：White and Bob are playing badminton.
+	
+	输入$x$: $X^{<1>}$$X^{<2>}$$X^{<3>}$$X^{<4>}$$X^{<5>}$$X^{<6>}$
+	
+	输出$y$：1\qquad0\qquad1\qquad0\qquad0\qquad0
+	$$\tilde{c}^{<t>}=\mathrm{tanh}(W_c[c^{<t-1>},X^{t}]+b_c)$$
+	$$\Gamma_u=\mathrm{sigmoid}(W_c[c^{<t-1>},X^{t}]+b_c)\in\{0,1\}$$
+	
+	$${c}^{<t>}=\Gamma_u\times \tilde{c}^{<t>}+(1-\Gamma_u)\times {c}^{<t-1>}$$
+	$$\hat{y}^{<t>}=g(W_{cb}{c}^{<t>}+b_{c})$$
+	
+	
+	$\tilde{c}^{<t>}=\mathrm{tanh}(W_a[a^{<t-1>},X^{t}]+b_c)$
+	
+	记忆门：$\Gamma_u=\mathrm{sigmoid}(W_u[a^{<t-1>},X^{t}]+b_u)$	
+	
+	遗忘门：$\Gamma_f=\mathrm{sigmoid}(W_f[a^{<t-1>},X^{t}]+b_f)$
+	
+	输出门：$\Gamma_o=\mathrm{sigmoid}(W_o[a^{<t-1>},X^{t}]+b_o)$
+	
+	预测：$c^{<t>}=\Gamma_u\tilde{c}^{<t>}+\Gamma_f {c}^{<t-1>}$，是否遗忘来更新$c^{<t>}$
+	
+	输出：$a^{<t>}=\Gamma_o\mathrm{Relu}(c^{<t>})$
+	
+	
+	$$(\mathrm{Study}+)\mathrm{d time}=$$
+	
+	
+	\begin{align}
+	\mathrm{This\quad\! year} ={} & \int_{\mathrm{Valley}}^{\mathrm{Peak}}\int_{\mathrm{Start}}^{\mathrm{End}}(\mathrm{Reflect} \\
+	+{} & \mathrm{Patience}+\mathrm{Weakness}\\
+	+{} & \mathrm{Discipline}+\mathrm{Coverage}\\
+	+{} &\mathrm{Logic}+\mathrm{Study})\\
+	\mathrm{d}&\mathrm{(time)}\mathrm{d}\mathrm{(path)}
+	\end{align}
+	
+
+	
+\end{document}

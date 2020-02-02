@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+  <link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=ZCOOL XiaoWei:300,300italic,400,400italic,700,700italic|Noto Sans SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="递归实现的快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序。 本文收录内容：递归实现了快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序，当然都是基于Python。 事实证明，这学期也只好好学习算法分析这门课了。 相关收获：写代码要有好的逻辑，提前写好伪代码，别想一出是一出。">
+<meta name="keywords" content="Algorithm,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="排序算法的实现">
+<meta property="og:url" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="递归实现的快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序。 本文收录内容：递归实现了快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序，当然都是基于Python。 事实证明，这学期也只好好学习算法分析这门课了。 相关收获：写代码要有好的逻辑，提前写好伪代码，别想一出是一出。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/aaa.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/qq.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/insert.png">
+<meta property="og:updated_time" content="2019-02-13T05:53:16.279Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="排序算法的实现">
+<meta name="twitter:description" content="递归实现的快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序。 本文收录内容：递归实现了快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序，当然都是基于Python。 事实证明，这学期也只好好学习算法分析这门课了。 相关收获：写代码要有好的逻辑，提前写好伪代码，别想一出是一出。">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/aaa.png">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>排序算法的实现 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Just for Life.</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">明月更几时</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-image"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-books">
+
+    <a href="/books/" rel="section"><i class="fa fa-fw fa-book"></i>书籍推荐</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-fw fa-sticky-note"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-link"></i>我的朋友</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          排序算法的实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-30 22:01:54" itemprop="dateCreated datePublished" datetime="2018-10-30T22:01:54+08:00">2018-10-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-02-13 13:53:16" itemprop="dateModified" datetime="2019-02-13T13:53:16+08:00">2019-02-13</time>
+              </span>
+
+          
+              <span>&emsp;</span><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>递归实现的快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序。</p>
+<p>本文收录内容：递归实现了快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序，当然都是基于Python。</p>
+<p>事实证明，这学期也只好好学习算法分析这门课了。</p>
+<p>相关收获：写代码要有好的逻辑，提前写好伪代码，别想一出是一出。</p>
+<a id="more"></a>
+
+<p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
+<p>还有个重大发现，算法的逻辑实现很重要，第一种是我写的各种逻辑的堆排序，又臭又长，还有舍友写的简洁版的堆排序，同样是堆排序，但是速度差了100倍(都是python)，赶紧抄了过来。</p>
+<h3 id="堆排与快排的对比"><a href="#堆排与快排的对比" class="headerlink" title="堆排与快排的对比"></a>堆排与快排的对比</h3><p>(此处的堆排序不够好，下面有更好的)</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 快速排序递归需要更深度的递归深度</span></span><br><span class="line">sys.setrecursionlimit(<span class="number">2000</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort</span><span class="params">(random_list, parent, child)</span>:</span></span><br><span class="line">    <span class="comment"># 判断low是否小于high,如果为false,直接返回</span></span><br><span class="line">    <span class="keyword">if</span> parent &lt; child:</span><br><span class="line">        low, high = parent, child</span><br><span class="line">        <span class="comment"># 设置基准数</span></span><br><span class="line">        pivotkey = random_list[low]</span><br><span class="line">        <span class="keyword">while</span> low &lt; high:</span><br><span class="line">            <span class="comment"># 如果列表后边的数,比基准数大或相等,则前移一位直到有比基准数小的数出现</span></span><br><span class="line">            <span class="keyword">while</span> (low &lt; high) <span class="keyword">and</span> (random_list[high] &gt;= pivotkey):</span><br><span class="line">                high = high - <span class="number">1</span></span><br><span class="line">            <span class="comment"># 如找到,则把第j个元素赋值给第个元素i,此时表中i,j个元素相等</span></span><br><span class="line">            random_list[low] = random_list[high]</span><br><span class="line">            <span class="comment"># 同样的方式比较前半区</span></span><br><span class="line">            <span class="keyword">while</span> (low &lt; high) <span class="keyword">and</span> (random_list[low] &lt;= pivotkey):</span><br><span class="line">                low = low + <span class="number">1</span></span><br><span class="line">            random_list[high] = random_list[low]</span><br><span class="line">        <span class="comment"># 做完第一轮比较之后,列表被分成了两个半区,并且i=j,需要将这个数设置回pivotkey</span></span><br><span class="line">        random_list[low] = pivotkey</span><br><span class="line">        <span class="comment"># 递归前后半区</span></span><br><span class="line">        quick_sort(random_list, parent, low - <span class="number">1</span>)</span><br><span class="line">        quick_sort(random_list, high + <span class="number">1</span>, child)</span><br><span class="line">    <span class="keyword">return</span> random_list</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sort</span><span class="params">(random_list, parent, child)</span>:</span></span><br><span class="line">    <span class="comment"># 左节点调堆，第一次调堆入口</span></span><br><span class="line">    <span class="keyword">if</span> child == parent * <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">if</span> random_list[parent * <span class="number">2</span>] &gt; random_list[parent]:</span><br><span class="line">            random_list[parent * <span class="number">2</span>], random_list[parent] = random_list[parent], random_list[parent * <span class="number">2</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 子节点是父节点，退出，递归调堆入口</span></span><br><span class="line">        <span class="keyword">if</span> child &lt; parent * <span class="number">2</span> + <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 对交换顺序后的调堆</span></span><br><span class="line">            left = random_list[parent * <span class="number">2</span>]</span><br><span class="line">            right = random_list[parent * <span class="number">2</span> + <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> left &gt; right <span class="keyword">and</span> left &gt; random_list[parent]:</span><br><span class="line">                random_list[parent * <span class="number">2</span>], random_list[parent] = random_list[parent], random_list[parent * <span class="number">2</span>]</span><br><span class="line">                <span class="comment"># child标记到因交换顺序而需要调堆的最后一个，递归调堆</span></span><br><span class="line">                sort(random_list, parent * <span class="number">2</span>, child)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> left &lt; right <span class="keyword">and</span> right &gt; random_list[parent]:</span><br><span class="line">                random_list[parent * <span class="number">2</span> + <span class="number">1</span>], random_list[parent] = random_list[parent], random_list[parent * <span class="number">2</span> + <span class="number">1</span>]</span><br><span class="line">                sort(random_list, parent * <span class="number">2</span> + <span class="number">1</span>, child)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里是堆排序，我把所有排序放一个程序里了，容易对比速度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">heap</span><span class="params">(random_list)</span>:</span></span><br><span class="line">    <span class="comment"># 计算树的层数, x是最后的元素索引, n是堆的父节点</span></span><br><span class="line">    end = len(random_list) - <span class="number">1</span></span><br><span class="line">    parent = end // <span class="number">2</span></span><br><span class="line">    <span class="comment"># 调堆</span></span><br><span class="line">    <span class="keyword">while</span> parent &gt; <span class="number">0</span>:</span><br><span class="line">        sort(random_list, parent, end)</span><br><span class="line">        parent = parent - <span class="number">1</span></span><br><span class="line">    end = len(random_list) - <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 排序与调堆</span></span><br><span class="line">    <span class="keyword">while</span> end != <span class="number">1</span>:</span><br><span class="line">        random_list[<span class="number">1</span>], random_list[end] = random_list[end], random_list[<span class="number">1</span>]</span><br><span class="line">        end = end - <span class="number">1</span></span><br><span class="line">        parent = end // <span class="number">2</span></span><br><span class="line">        <span class="keyword">while</span> parent &gt; <span class="number">0</span>:</span><br><span class="line">            sort(random_list, parent, end)</span><br><span class="line">            parent = parent - <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    Quick_sort_time_use = []</span><br><span class="line">    Heap_sort_time_use = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">10000</span>, <span class="number">1000</span>):</span><br><span class="line">        random_list = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        random_list = random_list.tolist()</span><br><span class="line">        random_list_heap = random_list.copy()</span><br><span class="line">        random_list_qucik = random_list.copy()</span><br><span class="line"></span><br><span class="line">        since = time.time()</span><br><span class="line">        quick_sort(random_list_qucik, <span class="number">0</span>, len(random_list)<span class="number">-1</span>)</span><br><span class="line">        time_end = time.time() - since</span><br><span class="line">        print(str(right_interval) + <span class="string">': Quick sort time use '</span> + str(time_end) + <span class="string">'s'</span>, end=<span class="string">','</span>)</span><br><span class="line">        Quick_sort_time_use.append(time_end)</span><br><span class="line"></span><br><span class="line">        since = time.time()</span><br><span class="line">        heap(random_list_heap)</span><br><span class="line">        time_end = time.time() - since</span><br><span class="line">        print(str(<span class="string">' Heap sort time use '</span> + str(time_end) + <span class="string">'s'</span>))</span><br><span class="line">        Heap_sort_time_use.append(time_end)</span><br><span class="line"></span><br><span class="line">    Quick_sort_time_use = [round(i, <span class="number">3</span>) <span class="keyword">for</span> i <span class="keyword">in</span> Quick_sort_time_use]</span><br><span class="line">    Heap_sort_time_use = [round(i, <span class="number">3</span>) <span class="keyword">for</span> i <span class="keyword">in</span> Heap_sort_time_use]</span><br><span class="line"></span><br><span class="line">    fig, ax1 = plt.subplots()  <span class="comment"># 使用subplots()创建窗口</span></span><br><span class="line"><span class="comment">#    plt.style.use("ggplot")</span></span><br><span class="line">    ax2 = ax1.twinx()  <span class="comment"># 创建第二个坐标轴</span></span><br><span class="line"></span><br><span class="line">    x = np.linspace(<span class="number">1000</span>, <span class="number">10000</span>, len(Quick_sort_time_use))</span><br><span class="line">    ax1.plot(x, Quick_sort_time_use, color=<span class="string">'dodgerblue'</span>, lw=<span class="number">2</span>, ls=<span class="string">'--'</span>, marker=<span class="string">'o'</span>, markersize=<span class="number">4</span>, markerfacecolor=<span class="string">"dodgerblue"</span>,</span><br><span class="line">             label=(<span class="string">'Qucik_sort_time '</span> + str(round(sum(Quick_sort_time_use), <span class="number">3</span>)) + <span class="string">'s'</span>))</span><br><span class="line">    ax1.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"><span class="comment">#    for a, b in zip(x, Quick_sort_time_use):</span></span><br><span class="line"><span class="comment">#        ax1.text(a, b, (b), ha='center', va='bottom', fontsize=10)</span></span><br><span class="line">    ax1.set_ylabel(<span class="string">'Qucik Sort'</span>, size=<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line">    x = np.linspace(<span class="number">1000</span>, <span class="number">10000</span>, len(Heap_sort_time_use))</span><br><span class="line">    ax2.plot(x, Heap_sort_time_use, color=<span class="string">'tomato'</span>, lw=<span class="number">2</span>, ls=<span class="string">'--'</span>, marker=<span class="string">'o'</span>, markersize=<span class="number">4</span>, markerfacecolor=<span class="string">"tomato"</span>,</span><br><span class="line">             label=(<span class="string">'Heap_sort_time '</span> + str(round(sum(Heap_sort_time_use), <span class="number">3</span>)) + <span class="string">'s'</span>))</span><br><span class="line"><span class="comment">#    for a, b in zip(x, Heap_sort_time_use):</span></span><br><span class="line"><span class="comment">#        ax2.text(a, b, (b), ha='center', va='bottom', fontsize=10)</span></span><br><span class="line">    ax2.set_ylabel(<span class="string">'Heap Sort'</span>, size=<span class="number">12</span>)</span><br><span class="line">    ax2.legend(loc=<span class="string">'lower right'</span>)</span><br><span class="line"></span><br><span class="line">    ax1.set_xlabel(<span class="string">'Data-scale'</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">    plt.title(<span class="string">'TimeUse'</span>, fontsize=<span class="number">14</span>)</span><br><span class="line"></span><br><span class="line">    plt.savefig(<span class="string">'sort.png'</span>, dpi=<span class="number">500</span>)</span><br></pre></td></tr></table></figure>
+
+<p>结果：可能是堆排序的数据结构操纵的不好，速度被快速排序吊打。堆排序一万数据耗时11秒，快速排序十万数据耗时7秒（再增加数据量会超过最大递归深度），被舍友C语言写的堆排序吊打：一千万数据4秒。</p>
+<hr>
+<h3 id="更新堆排序如下："><a href="#更新堆排序如下：" class="headerlink" title="更新堆排序如下："></a>更新堆排序如下：</h3><p>实锤堆排序的逻辑没操作好，更新下堆排序：（是不是简短了很多！！！而且还通俗易懂了。。。）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">max_heapify</span><span class="params">(arr, start, end)</span>:</span></span><br><span class="line"></span><br><span class="line">    parent = start</span><br><span class="line">    child = parent * <span class="number">2</span> + <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> child &lt;= end:</span><br><span class="line">        <span class="keyword">if</span> child + <span class="number">1</span> &lt;= end <span class="keyword">and</span> arr[child] &lt; arr[child + <span class="number">1</span>]:</span><br><span class="line">            child = child + <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> arr[parent] &gt; arr[child]:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            arr[parent], arr[child] = arr[child], arr[parent]</span><br><span class="line">            parent = child</span><br><span class="line">            child = parent * <span class="number">2</span> + <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">heap_sort</span><span class="params">(arr, length)</span>:</span></span><br><span class="line">    i = length // <span class="number">2</span> - <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> i &gt;= <span class="number">0</span>:</span><br><span class="line">        max_heapify(arr, i, length - <span class="number">1</span>)</span><br><span class="line">        i = i - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    i = length - <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> i &gt; <span class="number">0</span>:</span><br><span class="line">        arr[<span class="number">0</span>], arr[i] = arr[i], arr[<span class="number">0</span>]</span><br><span class="line">        max_heapify(arr, <span class="number">0</span>, i - <span class="number">1</span>)</span><br><span class="line">        i = i - <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>再来看下结果，用的pyecharts画的，贼炫酷的可视化库。显然，堆排比快排要快（明明期望值的时间复杂度是一样的）。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> Bar</span><br><span class="line">columns = [<span class="string">"1000"</span>, <span class="string">"11000"</span>, <span class="string">"21000"</span>,<span class="string">"31000"</span>,<span class="string">"41000"</span>,<span class="string">"51000"</span>,<span class="string">"61000"</span>,<span class="string">"71000"</span>,<span class="string">"81000"</span>,<span class="string">"91000"</span>]</span><br><span class="line">data1 = Heap_sort_time_use</span><br><span class="line">data2 = Quick_sort_time_use</span><br><span class="line">bar = Bar(<span class="string">"柱状图"</span>, <span class="string">"快速排序与堆排序对比"</span>)</span><br><span class="line">bar.add(<span class="string">"快速排序"</span>, columns, data2, mark_line = [<span class="string">"average"</span>], mark_point = [<span class="string">"max"</span>, <span class="string">"min"</span>])</span><br><span class="line">bar.add(<span class="string">"堆排序"</span>, columns, data1, mark_line = [<span class="string">"average"</span>], mark_point = [<span class="string">"max"</span>, <span class="string">"min"</span>])</span><br><span class="line">bar.render()</span><br><span class="line">bar</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2018/10/30/Algorithm-Sort/aaa.png" alt></p>
+<hr>
+<p><strong>此处为乱入</strong></p>
+<p>为什么是乱入呢？因为想写AVL树来，想偷懒（不想定义左右孩子乱七八糟的）用列表实现，后来发现越写越不对。思路是：小数往左走，大数往右走，越写越感觉不对，一不小心发现写成了插入排序。</p>
+<h3 id="二分插入排序"><a href="#二分插入排序" class="headerlink" title="二分插入排序"></a>二分插入排序</h3><p> 不过，因为本人智障把插入排序写的复杂了，但是，相比于正经插入排序，速度快了一倍！！！后来发现我写的是二分插入(其实也不是二分)。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正经插入排序</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insertion_sort</span><span class="params">(array)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, len(array)):</span><br><span class="line">        key = array[j]</span><br><span class="line">        <span class="comment"># 从已经排好序array[0,...,j-1]里找到合适的位置插入array[j]</span></span><br><span class="line">        i = j - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &gt;= <span class="number">0</span> <span class="keyword">and</span> array[i] &gt; key:</span><br><span class="line">            <span class="comment"># 移动</span></span><br><span class="line">            i -= <span class="number">1</span></span><br><span class="line">        <span class="comment"># 插入</span></span><br><span class="line">        <span class="keyword">del</span> array[j]</span><br><span class="line">        array.insert(i+<span class="number">1</span>, key)</span><br><span class="line">    <span class="keyword">return</span> array</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我歪打正着的插入排序</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">order_optimize</span><span class="params">(random_seq)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(random_seq)):</span><br><span class="line"></span><br><span class="line">        flag = (random_seq[i])</span><br><span class="line">        middle, middle1 = (i - <span class="number">1</span>) // <span class="number">2</span>, (i - <span class="number">1</span>) // <span class="number">2</span></span><br><span class="line">        <span class="comment"># 向左查找</span></span><br><span class="line">        <span class="keyword">if</span> random_seq[middle] == flag:</span><br><span class="line">            <span class="keyword">del</span> random_seq[i]</span><br><span class="line">            random_seq.insert(middle, flag)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> flag &lt; random_seq[middle] <span class="keyword">and</span> middle &gt;= <span class="number">0</span>:</span><br><span class="line">            middle = middle - <span class="number">1</span></span><br><span class="line">        <span class="comment"># 向右查找</span></span><br><span class="line">        <span class="keyword">if</span> middle &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">del</span> random_seq[i]</span><br><span class="line">            random_seq.insert(<span class="number">0</span>, flag)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> flag &gt; random_seq[middle] <span class="keyword">and</span> middle != middle1:</span><br><span class="line">            <span class="keyword">del</span> random_seq[i]</span><br><span class="line">            random_seq.insert(middle+<span class="number">1</span>, flag)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> flag &gt; random_seq[middle] <span class="keyword">and</span> middle &lt; i:</span><br><span class="line">            middle = middle + <span class="number">1</span></span><br><span class="line">        <span class="comment"># 找到位置后插入</span></span><br><span class="line">        <span class="keyword">del</span> random_seq[i]</span><br><span class="line">        random_seq.insert(middle, flag)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> random_seq</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    optimize = []</span><br><span class="line">    non_optimize = []</span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">20000</span>, <span class="number">2000</span>):</span><br><span class="line">        random_seq = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        random_seq = random_seq.tolist()</span><br><span class="line"></span><br><span class="line">        random_seq_1 = random_seq.copy()</span><br><span class="line">        random_seq_2 = random_seq.copy()</span><br><span class="line"></span><br><span class="line">        since = time.time()</span><br><span class="line">        result = order_optimize(random_seq_1)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        print(<span class="string">'Optimize: '</span> + str(right_interval) + <span class="string">' data: '</span> + str(end) + <span class="string">'s'</span>, end=<span class="string">', '</span>)</span><br><span class="line">        optimize.append(end)</span><br><span class="line"></span><br><span class="line">        since = time.time()</span><br><span class="line">        result = insertion_sort(random_seq_2)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        print(<span class="string">'Non_optimize: '</span> + str(end) + <span class="string">'s'</span>)</span><br><span class="line">        non_optimize.append(end)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">from</span> pyecharts <span class="keyword">import</span> Bar, Line, Grid</span><br><span class="line"></span><br><span class="line">    attr = np.linspace(<span class="number">1000</span>, <span class="number">20000</span>, len(optimize))</span><br><span class="line"></span><br><span class="line">    bar = Bar(<span class="string">"优化插入排序"</span>, height=<span class="number">1080</span>)</span><br><span class="line">    bar.add(<span class="string">"优化"</span>, attr, optimize, is_stack=<span class="literal">True</span>)</span><br><span class="line">    bar.add(<span class="string">"非优化"</span>, attr, non_optimize, is_stack=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    grid = Grid()</span><br><span class="line">    grid.add(bar, grid_bottom=<span class="string">"5%"</span>)</span><br><span class="line">    grid.render()</span><br><span class="line">    grid</span><br></pre></td></tr></table></figure>
+
+<p>Have a look about the result which compared by <strong>optimize and Non</strong>.</p>
+<p><img src="/2018/10/30/Algorithm-Sort/qq.png" alt></p>
+<p><img src="/2018/10/30/Algorithm-Sort/insert.png" alt></p>
+<h3 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h3><p>时间复杂度$O(m+n)$，速度最快，但是浪费存储空间，而且必须是整数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np </span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">	use_time = []</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> inter_val <span class="keyword">in</span> range(<span class="number">10000</span>, <span class="number">110000</span>, <span class="number">10000</span>):</span><br><span class="line">		random_list = np.random.randint(<span class="number">0</span>, <span class="number">100</span>, inter_val)</span><br><span class="line">		random_list = np.sort(random_list)</span><br><span class="line">		random_list = random_list[::<span class="number">-1</span>]</span><br><span class="line">		since = time.time()</span><br><span class="line">		bocket = [<span class="number">0</span>]</span><br><span class="line">		bocket = bocket * len(random_list)</span><br><span class="line">        <span class="comment"># 统计每个值有几个</span></span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> random_list:</span><br><span class="line">			bocket[i] = bocket[i] + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">		result = []</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(bocket)):</span><br><span class="line">            <span class="comment"># 比如第i个桶的数值为5，表明有5个i，添加至结果即可。</span></span><br><span class="line">			new_list = [i] * bocket[i]</span><br><span class="line">			result.extend(new_list)</span><br><span class="line">		end = time.time() - since</span><br><span class="line">		use_time.append(end)</span><br><span class="line">		print(str(inter_val) + <span class="string">' DATA use time is : '</span> + str(end) + <span class="string">'s'</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #fd674c;font-size:25px;">----------------------- 本文结束 <i class="fa fa-paw"></i> 感谢您的阅读 -----------------------</div>
+    
+</div>
+      
+    </div>
+        <div class="reward-container">
+  <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱！！！</div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2018/10/25/Algorithm-Matrix/" rel="next" title="矩阵链乘">
+                  <i class="fa fa-chevron-left"></i> 矩阵链乘
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2018/11/02/playball-2018-11-2/" rel="prev" title="打球～～～">
+                  打球～～～ <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#堆排与快排的对比"><span class="nav-number">1.</span> <span class="nav-text">堆排与快排的对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更新堆排序如下："><span class="nav-number">2.</span> <span class="nav-text">更新堆排序如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二分插入排序"><span class="nav-number">3.</span> <span class="nav-text">二分插入排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#桶排序"><span class="nav-number">4.</span> <span class="nav-text">桶排序</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">88</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=167882&auto=0&height=66"></iframe>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1331696175&auto=0&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>书写
+    <span class="post-meta-divider"> </span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">346k</span>
+    <span class="post-meta-divider"> </span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">5:14</span>
+</div>
+
+
+<div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+  <span class="site-uv" title="总访客量">
+    我的第<span id="busuanzi_value_site_uv"></span>位朋友, 
+  </span>
+
+  <span class="site-pv" title="总访问量">
+    经过<span id="busuanzi_value_site_pv"></span>次回眸与你相遇
+  </span>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID: '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo: 'blabla',
+      owner: 'muyuuuu',
+      admin: ['muyuuuu'],
+      id: '8417b4771cdf09bf6834031e5e69cffc',
+        language: 'zh-CN',
+      distractionFreeMode: 'true'
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
