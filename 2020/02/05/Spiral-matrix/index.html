@@ -60,7 +60,7 @@
 <meta property="og:image" content="https://muyuuuu.github.io/2020/02/05/Spiral-matrix/3.png">
 <meta property="og:image" content="https://muyuuuu.github.io/2020/02/05/Spiral-matrix/4.png">
 <meta property="og:image" content="https://muyuuuu.github.io/2020/02/05/Spiral-matrix/5.png">
-<meta property="og:updated_time" content="2020-02-05T15:05:09.915Z">
+<meta property="og:updated_time" content="2020-02-06T03:32:52.711Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="易于理解的旋转矩阵求解算法">
 <meta name="twitter:description" content="最近开了一个新坑，每天一道OJ，防止老年痴呆。好像在我刚开始刷题的时候，看到了一个题目，大概意思是：一个序列，排序，螺旋状放入一个矩阵并输出。当时我一看，这难度不适合我这种菜鸡，今天又看到了这道题目，冷静分析了下，草稿纸上写了写，实现了这个算法。">
@@ -257,10 +257,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-05 21:27:04 / 修改时间：23:05:09" itemprop="dateCreated datePublished" datetime="2020-02-05T21:27:04+08:00">2020-02-05</time>
+              <time title="创建时间：2020-02-05 21:27:04" itemprop="dateCreated datePublished" datetime="2020-02-05T21:27:04+08:00">2020-02-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-06 11:32:52" itemprop="dateModified" datetime="2020-02-06T11:32:52+08:00">2020-02-06</time>
+              </span>
 
           
               <span>&emsp;</span><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span>
@@ -302,15 +308,15 @@
 <p>把矩阵赋值当成『画圈』的过程，取决于『画的路线』，『画几次』，『画中的注意事项』。基于以上想法，实现起来便不再困难。</p>
 <ul>
 <li>第一步，读取有几个数字，求解矩阵该有几行几列，定义一个存放结果的数组<code>arr</code>；</li>
-<li>第二步，将读取的序列逆序；</li>
-<li>第三步，开始排列，按顺序放入定义好的数组；</li>
+<li>第二步，读取序列，逆序排列；</li>
+<li>第三步，将逆序的序列，按照最终结果下标的顺序，放入定义好存放结果的数组；</li>
 <li>第四步，按下标顺序输出数组，即两次循环输出数组，数组赋值多下工夫，没必要在输出上浪费精力。示意输出代码如下：<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; row; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; col; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; arr[i][j];</span><br><span class="line">        <span class="comment">// 防止结尾有空格</span></span><br><span class="line">        <span class="keyword">if</span> (j != b - <span class="number">1</span>)</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 防止最后一行输出空格</span></span><br><span class="line">    <span class="keyword">if</span> (i != a - <span class="number">1</span>)</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <h1 id="求解"><a href="#求解" class="headerlink" title="求解"></a>求解</h1><h2 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h2><p>首先读取数字，然后求解打印的矩阵有几行几列。因题目要求行数大于列数，且行数减列数的值最小。不妨设行数为$row$，列数为$col$，元素个数为$N$。众所周知，行乘以列等于矩阵元素数量，且，满足：$col\leq\sqrt{N}$ 或者 $row\leq\sqrt{N}$。那么就以根号为界限，一个值$i$向$\sqrt{N}$的左侧搜索，一个值$j$向$\sqrt{N}$右搜索，并满足$j-i$最小，搜出满足要求的解。</p>
 <p>代码如下:<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> m = <span class="built_in">sqrt</span>(n);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = m; i &gt; <span class="number">0</span>; i--)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = m; j &lt;= n; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (i * j == n)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (j - i &lt;= min)</span><br><span class="line">            &#123;</span><br><span class="line">                min = j - i;</span><br><span class="line">                row = j;</span><br><span class="line">                col = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h2 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h2><p>将读取的序列逆序，这个时候借助不定长数组<code>vector</code>输入数据，并借助<code>Algorithm</code>库提供的排序函数完成逆序。代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 逆序的比较器</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">cmp</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (a &gt; b)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; temp;</span><br><span class="line">    v.push_back(temp);</span><br><span class="line">&#125;</span><br><span class="line">sort(v.begin(), v.end(), cmp);</span><br></pre></td></tr></table></figure></p>
-<h2 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h2><p>既然已经确定了螺旋的过程可以分为多个步骤，先外圈，在内圈，在内内圈，在最内圈，脑补『先转蓝色一圈，在转橙色一圈，在转绿色一圈』。那么，实现每一个圈的代码，在重复这个代码，道无法转圈为止，代码是不是就写好了呢。</p>
+<h2 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h2><p>既然已经确定了螺旋的过程可以分为多个步骤，先外圈，在内圈，在内内圈，在最内圈，脑补『先转蓝色一圈，在转橙色一圈，在转绿色一圈』。那么，实现每一个圈的代码，在重复这个代码，到无法转圈为止，代码是不是就写好了呢。</p>
 <p><img src="/2020/02/05/Spiral-matrix/2.png" alt></p>
 <p>以蓝色圈为例，同样可以分为四个子问题，示意图如下：</p>
 <ul>
