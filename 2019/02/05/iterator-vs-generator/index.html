@@ -292,7 +292,6 @@
         <p>大年初一闲的实在没事干，开始研究了会Python的迭代器和生成器。</p>
 <p>大概是为了更Pythonic的代码而努力。</p>
 <a id="more"></a>
-
 <p>If you have any questions or want to have a boyfriend, you can contact me with this <a href="https://muyuuuu.github.io/about/">link</a>.</p>
 <p>This is the first time for me to have a try to edit blog by English, although after junior high school, I forget more more more English grammer and tense, in my opinion, that’s nothing essential, as a language, which is for people speaking and communication, but some pigs make it as examination for students.</p>
 <p>Now, Going to the topic.</p>
@@ -306,22 +305,17 @@
 <hr>
 <p> Having a example to understand that.</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt;ls=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>it = iter(ls)    <span class="comment"># new iterator object</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> (next(it))   <span class="comment"># print next iterator element</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">print</span> (next(it))</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
-
 <p>By for loop:</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> it:</span><br><span class="line">    <span class="keyword">print</span> (x, end=<span class="string">" "</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
-
 <p>By next() method:</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys        </span><br><span class="line"> </span><br><span class="line">list=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line">it = iter(list)    </span><br><span class="line"> </span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">print</span> (next(it))</span><br><span class="line">    <span class="keyword">except</span> StopIteration:</span><br><span class="line">        sys.exit()</span><br></pre></td></tr></table></figure>
-
 <p>In python, file object also compliance with the iterator protocol, so, we can use for loop to traverse the file.</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> open (<span class="string">'text.txt'</span>) <span class="keyword">as</span> f:</span><br><span class="line">	<span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br></pre></td></tr></table></figure>
-
 <h3 id="Create-an-iterator"><a href="#Create-an-iterator" class="headerlink" title="Create an iterator"></a>Create an iterator</h3><ul>
 <li>iter() method returns a special iterator object, whcis with next() method and have StopIteration exception identifier to finish iteration process. </li>
 <li>next() method returns next iterator object.</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyNumbers</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.a = <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> self</span><br><span class="line"> </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__next__</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> self.a &lt;= <span class="number">20</span>:</span><br><span class="line">      x = self.a</span><br><span class="line">      self.a += <span class="number">1</span></span><br><span class="line">      <span class="keyword">return</span> x</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      <span class="keyword">raise</span> StopIteration</span><br><span class="line"> </span><br><span class="line">myclass = MyNumbers()</span><br><span class="line">myiter = iter(myclass)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> myiter:</span><br><span class="line">  print(x)</span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2 id="Generator"><a href="#Generator" class="headerlink" title="Generator"></a>Generator</h2><h3 id="Brief-Introduction-1"><a href="#Brief-Introduction-1" class="headerlink" title="Brief Introduction"></a>Brief Introduction</h3><p>Main advantage: return results when needs not everytime.</p>
 <p>Generator can created by generation function and generation expression.</p>
@@ -331,15 +325,12 @@
 </li>
 <li><p>By expression: </p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># list </span></span><br><span class="line">s = [x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">5</span>)]</span><br><span class="line"><span class="comment"># make generator expression</span></span><br><span class="line">s = (x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">5</span>))</span><br><span class="line">next(s)</span><br></pre></td></tr></table></figure>
-
 </li>
 </ul>
 <p>Because generator compliance iterator protocol, so, we can find summation with not creating a real list.</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sum(x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">5000000</span>)) <span class="comment"># dosen't influence memory space</span></span><br><span class="line">sum([x**<span class="number">2</span> <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">5000000</span>)]) <span class="comment"># stupid and waste memory space</span></span><br></pre></td></tr></table></figure>
-
 <hr>
 <h3 id="Notice-to-use-generator"><a href="#Notice-to-use-generator" class="headerlink" title="Notice to use generator"></a>Notice to use generator</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">all_value = sum(value) <span class="comment">#value is iterator object which generator funtion returns.</span></span><br><span class="line"><span class="keyword">for</span> v <span class="keyword">in</span> value:</span><br><span class="line">    print(v)</span><br></pre></td></tr></table></figure>
-
 <p>This code will print nothing, because generator can only traverse once, not twice or more.When running sum() method, value is already traversed, so for loop will print nothing.</p>
 <hr>
 
@@ -454,7 +445,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -508,13 +499,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">359k</span>
+    <span title="站点总字数">352k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:26</span>
+    <span title="站点阅读时长">5:20</span>
 </div>
 
 
