@@ -46,33 +46,22 @@
   };
 </script>
 
-  <meta name="description" content="耗时4个月主要是我懒老拖着，终于大概算写完了这款软件吧，也是我第一次写这么大的软件。从入门学习GUI，到自己写，到数据库，到部署，到处都是知识盲区，主要是自己太垃圾了。  部署服务器，反向代理，防火墙开放端口，数据库操作，自动化测试，系统日志等等等等，一切对我来说都是茫然的，自己还很菜，要走的路还很长。事实证明，参加比赛之后，还是要回归工程，学以致用，大学专业课的知识还是有用的啊。如计算机网络，如">
-<meta name="keywords" content="GUI">
+  <meta name="description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
+<meta name="keywords" content="Algorithm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="华北理工大学数学建模协会竞赛信息管理软件">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/index.html">
+<meta property="og:title" content="通用的子串匹配问题求解算法">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/02/23/substring-match/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="耗时4个月主要是我懒老拖着，终于大概算写完了这款软件吧，也是我第一次写这么大的软件。从入门学习GUI，到自己写，到数据库，到部署，到处都是知识盲区，主要是自己太垃圾了。  部署服务器，反向代理，防火墙开放端口，数据库操作，自动化测试，系统日志等等等等，一切对我来说都是茫然的，自己还很菜，要走的路还很长。事实证明，参加比赛之后，还是要回归工程，学以致用，大学专业课的知识还是有用的啊。如计算机网络，如">
+<meta property="og:description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/1.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/2.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/3.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/4.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/5.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/6.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/7.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/8.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/9.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/10.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/11.jpg">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/12.jpg">
-<meta property="og:updated_time" content="2020-02-06T04:34:51.876Z">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/23/substring-match/1.png">
+<meta property="og:updated_time" content="2020-02-23T13:18:33.139Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="华北理工大学数学建模协会竞赛信息管理软件">
-<meta name="twitter:description" content="耗时4个月主要是我懒老拖着，终于大概算写完了这款软件吧，也是我第一次写这么大的软件。从入门学习GUI，到自己写，到数据库，到部署，到处都是知识盲区，主要是自己太垃圾了。  部署服务器，反向代理，防火墙开放端口，数据库操作，自动化测试，系统日志等等等等，一切对我来说都是茫然的，自己还很菜，要走的路还很长。事实证明，参加比赛之后，还是要回归工程，学以致用，大学专业课的知识还是有用的啊。如计算机网络，如">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2020/02/01/NCSTModel/1.jpg">
+<meta name="twitter:title" content="通用的子串匹配问题求解算法">
+<meta name="twitter:description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/02/23/substring-match/1.png">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/02/01/NCSTModel/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/02/23/substring-match/">
 
 
 <script id="page-configurations">
@@ -86,7 +75,7 @@
   };
 </script>
 
-  <title>华北理工大学数学建模协会竞赛信息管理软件 | Just for Life.</title>
+  <title>通用的子串匹配问题求解算法 | Just for Life.</title>
   
 
 
@@ -241,7 +230,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/02/01/NCSTModel/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/02/23/substring-match/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -254,7 +243,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          华北理工大学数学建模协会竞赛信息管理软件
+          通用的子串匹配问题求解算法
         </h1>
 
         <div class="post-meta">
@@ -263,16 +252,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-02-01 00:00:58" itemprop="dateCreated datePublished" datetime="2020-02-01T00:00:58+08:00">2020-02-01</time>
+              <time title="创建时间：2020-02-23 20:30:13 / 修改时间：21:18:33" itemprop="dateCreated datePublished" datetime="2020-02-23T20:30:13+08:00">2020-02-23</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-06 12:34:51" itemprop="dateModified" datetime="2020-02-06T12:34:51+08:00">2020-02-06</time>
-              </span>
 
           
               <span>&emsp;</span><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span>
@@ -283,14 +266,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -302,59 +285,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>耗时4个月<del>主要是我懒老拖着</del>，终于大概算写完了这款软件吧，也是我第一次写这么大的软件。从入门学习GUI，到自己写，到数据库，到部署，到处都是知识盲区，<del>主要是自己太垃圾了</del>。</p>
-<p><img src="/2020/02/01/NCSTModel/1.jpg" alt></p>
-<p>部署服务器，反向代理，防火墙开放端口，数据库操作，自动化测试，系统日志等等等等，一切对我来说都是茫然的，自己还很菜，要走的路还很长。事实证明，参加比赛之后，还是要回归工程，学以致用，大学专业课的知识还是有用的啊。如计算机网络，如数据库等，很遗憾我学的并不好，都是后期现学现查。</p>
-<p>此项目的代码都在github上，是我的私人仓库，如果你想继续本软件的开发(<code>pyqt5+sqlalchemy+alembic</code>)，可以联系我，到时候在邀请你。</p>
+        <p>19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。</p>
 <a id="more"></a>
-<p>当然，如果你只是本博客的游客，只是单纯的想问下我这个软件的某些功能如何实现，留言或邮箱均可，我也可以告诉你。实在不便开源代码，望理解。</p>
-<h1 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h1><p>同样，本软件也存在缺点，如下：</p>
-<p><img src="/2020/02/01/NCSTModel/2.jpg" alt></p>
-<p>可以集成<code>Matplotlib, pyqtgraph, pyecharts</code>等可视化工具在软件中进行简单的分析，奈何我太菜，写不出来。</p>
-<h1 id="软件介绍"><a href="#软件介绍" class="headerlink" title="软件介绍"></a>软件介绍</h1><p>这里是华北理工大学数学建模协会制作的竞赛信息管理软件version 1.0。</p>
-<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><h2 id="确认身份界面"><a href="#确认身份界面" class="headerlink" title="确认身份界面"></a>确认身份界面</h2><p>选择自己是管理员还是游客，只能二选一，且选择管理员后，需要账号和密码登录。</p>
-<p><img src="/2020/02/01/NCSTModel/3.jpg" alt></p>
-<h2 id="登录界面"><a href="#登录界面" class="headerlink" title="登录界面"></a>登录界面</h2><p>输入账号和密码进行登录，超级管理员解锁信息管理和录入信息两个界面，普通管理员解锁录入信息界面，外来游客不可进行信息管理和信息录入。当然，胡乱的输入肯定不行：</p>
-<p><img src="/2020/02/01/NCSTModel/4.jpg" alt></p>
-<h2 id="信息管理界面"><a href="#信息管理界面" class="headerlink" title="信息管理界面"></a>信息管理界面</h2><p>由超级管理员负责管理，负责维护竞赛信息等。超级管理员的账号以<code>@admin</code>结尾，解锁所有权限，可删除除<code>wuyuhang@admin</code>外的所有账号。</p>
-<p><img src="/2020/02/01/NCSTModel/5.jpg" alt></p>
-<p>普通管理员只解锁录入信息界面，不解锁信息管理界面。</p>
-<p><img src="/2020/02/01/NCSTModel/6.jpg" alt></p>
-<p>所以在注册普通管理员时，不要以此结尾，进行普通注册即可，如账号：<code>201614420112</code>，密码：<code>123456</code>。</p>
-<ul>
-<li>账号管理：超级管理员的账号最长为20位，管理员帐号最长20位，密码最长20位，账号不能重复。</li>
-<li>教师管理：工号唯一，不能重复。</li>
-<li>学院专业管理：输入专业时，左侧一定要有学院名，否则会报错，因为不知道该专业是哪个学院的。</li>
-<li>竞赛管理：竞赛名称唯一，不能重复。</li>
-</ul>
-<p><img src="/2020/02/01/NCSTModel/7.jpg" alt></p>
-<h2 id="录入信息界面"><a href="#录入信息界面" class="headerlink" title="录入信息界面"></a>录入信息界面</h2><p>负责录入学生比赛记录、删除记录等。</p>
-<ul>
-<li>建模博客：录入后会展示在建模博客界面。</li>
-<li>录入比赛：录入单条学生信息。</li>
-<li>删除信息：输入学生的学号，得到要删除的记录号，输入要删除的记录号即可删除。（因一个学生会参加多个比赛，学号会重复，所以不能按学号进行删除）。</li>
-<li>快速录入：待完成。</li>
-</ul>
-<p>删除比赛场景：</p>
-<p><img src="/2020/02/01/NCSTModel/8.jpg" alt></p>
-<p>录入单条比赛，你是谁，学号，专业，性别，教师，获奖名，获奖级别，何时参赛，何时获奖都会录入。</p>
-<p><img src="/2020/02/01/NCSTModel/9.jpg" alt></p>
-<h2 id="查询信息界面"><a href="#查询信息界面" class="headerlink" title="查询信息界面"></a>查询信息界面</h2><ul>
-<li>导出数据：超级管理员可以按时间、比赛为索引，选择全部比赛或部分比赛，导出<code>csv</code>格式的文件。</li>
-<li>其他所有人员可按教师查询和按学生查询。</li>
-</ul>
-<p>导出CSV文件：</p>
-<p><img src="/2020/02/01/NCSTModel/10.jpg" alt></p>
-<p>按教师查询：</p>
-<p><img src="/2020/02/01/NCSTModel/11.jpg" alt></p>
-<h2 id="建模博客界面"><a href="#建模博客界面" class="headerlink" title="建模博客界面"></a>建模博客界面</h2><p>收录建模学子自己手动搭建的博客，不收录CSDN、知乎、博客园、简书等依赖第三方平台搭建的博客，无技术门槛，不值得收录。</p>
-<p>点击后调用系统浏览器打开，建议使用<code>chrome</code>或<code>firefox</code>。</p>
-<p><img src="/2020/02/01/NCSTModel/12.jpg" alt></p>
-<h2 id="个人空间界面"><a href="#个人空间界面" class="headerlink" title="个人空间界面"></a>个人空间界面</h2><p>预留的组队信息、个人展示接口，暂时未开放。</p>
-<h2 id="退出界面"><a href="#退出界面" class="headerlink" title="退出界面"></a>退出界面</h2><p>退出软件。</p>
-<h1 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h1><p>由<code>pyinstaller</code>打包，暂时只支持windows系统64位。</p>
-<p><a href="https://github.com/muyuuuu/NCST-MMA-Contest-Management-System-Public/releases" target="_blank" rel="noopener">NCSTModel软件下载</a></p>
-<p>先准备测试，第一次开发软件，没有人带也没有公司开发的经验。不知道怎么配置合适，也不知道如何妥善的收尾，不知道需要生成哪些配置文件，不知道需要记录哪些日志文件，也不知道怎么优化体验等等等等，有问题请及时提供有效的反馈，毕业之前有时间的话，我会修改的。</p>
+<h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>字符串 <code>APPAPT</code> 中包含了两个单词 <code>PAT</code>，其中第一个 PAT 是第 2 位(P)，第 4 位(A)，第 6 位(T)；第二个 PAT 是第 3 位(P)，第 4 位(A)，第 6 位(T)。那么可以类比到：<code>PPPAAATTT</code>有27个<code>PAT</code>。现给定字符串，问一共可以形成多少个 <code>PAT</code>？由于结果可能比较大，只输出对 1000000007 取余数的结果。</p>
+<h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><script type="math/tex; mode=display">(a+b)\%c = a \% c + b \% c</script><p>如 $101 \% 100 + 50 \% 100 = (100 + 51) \% 100 = 51$</p>
+<h2 id="错解思路"><a href="#错解思路" class="headerlink" title="错解思路"></a>错解思路</h2><p>当时的思路记不太清，我现在的想法是使用遍历的方法，先寻找<code>P</code>，在寻找<code>A</code>，在寻找<code>T</code>，当前字符不满足就跳到下一个字符，一条路走不通就走下一条路。以<code>APPAPT</code>第二位的<code>P</code>为例。从<code>P</code>开始，依次向后遍历字符，遇到错误的字符跳过，遇到正确的字符+1，如下图所示。</p>
+<p><img src="/2020/02/23/substring-match/1.png" alt></p>
+<p>第二位的<code>P</code>处理完毕后开始第三位<code>P</code>的处理，也很容易看出来，查找3个字符，复杂度为$O(n^3)$，查找4个字符，复杂度为$O(n^4)$，且代码维护不易容易超时。粗糙的代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (s[i] != <span class="string">'P'</span>)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; s.length(); j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">'A'</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">1</span>; j &lt; s.length(); k++)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (s[k] == <span class="string">'T'</span>)&#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="正解"><a href="#正解" class="headerlink" title="正解"></a>正解</h1><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>既然容易超时，得想办法把时间复杂度给降下来，争取一次遍历在时间复杂度为$O(n)$内把问题解决掉。既然假设只能遍历一次，那么也可以理解为最终的个数是：有序字符<code>P,A,T</code>的排列组合数。</p>
+<p>有序是指<code>P</code>要在<code>A</code>的前面，<code>A</code>要在<code>T</code>的前面，顺序错了的不能计算。最后，统计有几个有序的<code>P, A, T</code>，相乘一下即可解决。如<code>PPPAAATTT</code>中，有序的<code>P</code>是3个，<code>A</code>是3个，<code>T</code>是3个，那么最后的结果就是：$3\times3\times3=27$。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p><code>T</code>的个数为<code>countt</code>，<code>P</code>的个数为<code>countp</code>，最终结果的个数为<code>result</code>。</p>
+<ol>
+<li>读取字符串，先统计<code>T</code>的个数。</li>
+<li>开始遍历字符串：</li>
+<li>遇到一个<code>P</code>，那么<code>P</code>的个数加一。</li>
+<li>遇到一个<code>A</code>，开始计数，数量为<code>result += countt * countp</code>。</li>
+<li>遇到一个<code>T</code>，<code>T</code>的个数减一。这样可以做到：<code>A</code>前面的<code>T</code>无效，遇到<code>A</code>后计算一次<code>P, T</code>的组合数，指针向后移动继续遍历，<code>T</code>的数量减少一个。如字符串<code>PPPAAAATTTTAT</code>，计算到倒数第二个<code>A</code>时，此时只有一个<code>T</code>。</li>
+</ol>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">    <span class="keyword">int</span> len = s.length(), result = <span class="number">0</span>, countp = <span class="number">0</span>, countt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>)</span><br><span class="line">            countt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'P'</span>) countp++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) countt--;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'A'</span>) result = (result + countp * countt) % <span class="number">1000000007</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><p>如果题目要求是寻找有几个<code>PSAT</code>呢，如果是寻找有几个<code>PNSAT</code>呢。错误的思路只会无限制的增加循环次数，而正解仍然能够在$O(n)$内解决问题。只需要把<code>PS</code>看作一个整体，在增加一个<code>S</code>的计数变量即可。如寻找<code>PSSSATTAAT</code>中<code>PSAT</code>的个数：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">    <span class="keyword">int</span> len = s.length(), result = <span class="number">0</span>, countp = <span class="number">0</span>, countt = <span class="number">0</span>, counts = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>)</span><br><span class="line">            countt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'P'</span>) countp++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'S'</span>) counts++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) countt--;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'A'</span>) result = (result + countp * counts * countt) % <span class="number">1000000007</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出为15。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/liuchuo/PAT/tree/master/BasicLevel_C%2B%2B" target="_blank" rel="noopener">柳神的代码, 1040</a></p>
 
     </div>
 
@@ -394,24 +347,21 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/GUI/" rel="tag"># GUI</a>
+              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2020/01/26/alembic/" rel="next" title="数据库系列（三）——Alembic数据库迁移">
-                  <i class="fa fa-chevron-left"></i> 数据库系列（三）——Alembic数据库迁移
+                <a href="/2020/02/17/cg/" rel="next" title="计算机图形学笔记">
+                  <i class="fa fa-chevron-left"></i> 计算机图形学笔记
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2020/02/05/Spiral-matrix/" rel="prev" title="易于理解的旋转矩阵求解算法">
-                  易于理解的旋转矩阵求解算法 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -451,7 +401,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#缺点"><span class="nav-number">1.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#软件介绍"><span class="nav-number">2.</span> <span class="nav-text">软件介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用方法"><span class="nav-number">3.</span> <span class="nav-text">使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#确认身份界面"><span class="nav-number">3.1.</span> <span class="nav-text">确认身份界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录界面"><span class="nav-number">3.2.</span> <span class="nav-text">登录界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信息管理界面"><span class="nav-number">3.3.</span> <span class="nav-text">信息管理界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#录入信息界面"><span class="nav-number">3.4.</span> <span class="nav-text">录入信息界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询信息界面"><span class="nav-number">3.5.</span> <span class="nav-text">查询信息界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建模博客界面"><span class="nav-number">3.6.</span> <span class="nav-text">建模博客界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#个人空间界面"><span class="nav-number">3.7.</span> <span class="nav-text">个人空间界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#退出界面"><span class="nav-number">3.8.</span> <span class="nav-text">退出界面</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下载"><span class="nav-number">4.</span> <span class="nav-text">下载</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题目分析"><span class="nav-number">2.</span> <span class="nav-text">题目分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一个常识"><span class="nav-number">2.1.</span> <span class="nav-text">一个常识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错解思路"><span class="nav-number">2.2.</span> <span class="nav-text">错解思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正解"><span class="nav-number">3.</span> <span class="nav-text">正解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析"><span class="nav-number">3.1.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路"><span class="nav-number">3.2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">3.3.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展"><span class="nav-number">4.</span> <span class="nav-text">扩展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -678,6 +628,54 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 
@@ -691,7 +689,7 @@ window.addEventListener('pjax:success', () => {
       repo: 'blabla',
       owner: 'muyuuuu',
       admin: ['muyuuuu'],
-      id: '2eedb8a8349907939ef06b284d1a6278',
+      id: '7254900247d3e72a6ca019de5aa8b9ed',
         language: 'zh-CN',
       distractionFreeMode: 'true'
     });
