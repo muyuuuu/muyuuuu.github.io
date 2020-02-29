@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,21 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="这里是我自己维护的美赛模板5.0，应用在了2018和2019的竞赛中（2020年摘要也做出变动，但已经修改）。2018年二等奖，2019年一等奖。虽然很遗憾到头来也没能拿个Outstanding Winner。如果作者不是很忙，会持续跟进每年的美赛模板的变化，并修改发布。 纯手工打造，没用texlive中自带的包，因为去年用自带的模板出了点问题：  比如摘要页太少 比如参考文献出了BUG(安神他们">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/7.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/1.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/2.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/4.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/3.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/5.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/6.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/8.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/13.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/8.jpg">
 <meta property="og:updated_time" content="2020-02-19T04:56:42.724Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="美赛论文LaTeX模板">
 <meta name="twitter:description" content="这里是我自己维护的美赛模板5.0，应用在了2018和2019的竞赛中（2020年摘要也做出变动，但已经修改）。2018年二等奖，2019年一等奖。虽然很遗憾到头来也没能拿个Outstanding Winner。如果作者不是很忙，会持续跟进每年的美赛模板的变化，并修改发布。 纯手工打造，没用texlive中自带的包，因为去年用自带的模板出了点问题：  比如摘要页太少 比如参考文献出了BUG(安神他们">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2019/01/15/MCM-template/7.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/01/15/MCM-template/">
 
@@ -118,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -132,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -251,9 +241,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           美赛论文LaTeX模板
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -318,7 +308,7 @@
 <li>模板内有各种参数，如果模板不符合自己口味随意修改。(中文字体的间距可能有点挤，换成英文就OK啦)。我也尽力写了人性化的注释。</li>
 </ul>
 <p>我幸运的联系到了美国大学生数学建模竞赛模板的维护者，本来是想让他给我改改的，结果，恩，等待有充足时间后，我会继续维护。</p>
-<p><img src="/2019/01/15/MCM-template/7.png" alt></p>
+<p><img alt data-src="/2019/01/15/MCM-template/7.png"></p>
 <h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>另外，在我写代码报错的时候，十分感谢各位大佬对我耐心的帮助和支持，在此表示十分的感谢。特别鸣谢，排名不分先后：</p>
 <ul>
 <li><a href="https://github.com/OsbertWang" target="_blank" rel="noopener">啸行</a>：帮助我调页眉，文章字体等。</li>
@@ -338,21 +328,21 @@
 </ul>
 <p>经过不断的维护(5次)，暂时没有BUG。我把所有的模板样式都写进tex文件中，能满足竞赛需求，如有需求请自取。(我比较菜，暂时不会写<code>cls</code>文件)。当然，此处给出Texlive2019预装的美国大学生数学建模竞赛的模板文件的使用教程，由模板维护者Liam Huang大佬亲手写的~ (<a href="https://liam.page/2016/01/27/how-to-use-mcmthesis/" target="_blank" rel="noopener">https://liam.page/2016/01/27/how-to-use-mcmthesis/</a>)</p>
 <h2 id="摘要页："><a href="#摘要页：" class="headerlink" title="摘要页："></a>摘要页：</h2><p>是不是比之前的能写上好多内容。</p>
-<p><img src="/2019/01/15/MCM-template/1.png" alt></p>
-<h2 id="一封信："><a href="#一封信：" class="headerlink" title="一封信："></a>一封信：</h2><p><img src="/2019/01/15/MCM-template/2.png" alt></p>
-<h2 id="正文："><a href="#正文：" class="headerlink" title="正文："></a>正文：</h2><p><img src="/2019/01/15/MCM-template/4.png" alt></p>
-<h2 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h2><p><img src="/2019/01/15/MCM-template/3.png" alt></p>
-<h2 id="参考文献："><a href="#参考文献：" class="headerlink" title="参考文献："></a>参考文献：</h2><p><img src="/2019/01/15/MCM-template/5.png" alt></p>
-<h2 id="附录代码："><a href="#附录代码：" class="headerlink" title="附录代码："></a>附录代码：</h2><p><img src="/2019/01/15/MCM-template/6.png" alt></p>
-<h2 id="插图"><a href="#插图" class="headerlink" title="插图"></a>插图</h2><p><img src="/2019/01/15/MCM-template/8.png" alt></p>
-<h2 id="页眉页脚"><a href="#页眉页脚" class="headerlink" title="页眉页脚"></a>页眉页脚</h2><p><img src="/2019/01/15/MCM-template/13.png" alt></p>
+<p><img alt data-src="/2019/01/15/MCM-template/1.png"></p>
+<h2 id="一封信："><a href="#一封信：" class="headerlink" title="一封信："></a>一封信：</h2><p><img alt data-src="/2019/01/15/MCM-template/2.png"></p>
+<h2 id="正文："><a href="#正文：" class="headerlink" title="正文："></a>正文：</h2><p><img alt data-src="/2019/01/15/MCM-template/4.png"></p>
+<h2 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h2><p><img alt data-src="/2019/01/15/MCM-template/3.png"></p>
+<h2 id="参考文献："><a href="#参考文献：" class="headerlink" title="参考文献："></a>参考文献：</h2><p><img alt data-src="/2019/01/15/MCM-template/5.png"></p>
+<h2 id="附录代码："><a href="#附录代码：" class="headerlink" title="附录代码："></a>附录代码：</h2><p><img alt data-src="/2019/01/15/MCM-template/6.png"></p>
+<h2 id="插图"><a href="#插图" class="headerlink" title="插图"></a>插图</h2><p><img alt data-src="/2019/01/15/MCM-template/8.png"></p>
+<h2 id="页眉页脚"><a href="#页眉页脚" class="headerlink" title="页眉页脚"></a>页眉页脚</h2><p><img alt data-src="/2019/01/15/MCM-template/13.png"></p>
 <h1 id="代码链接"><a href="#代码链接" class="headerlink" title="代码链接"></a>代码链接</h1><p>代码就不在这里展示了，太长。真心的请你一定读过一本入门文档。</p>
 <p>Github传送门（我在不会ZZ的去用百度云~）：<a href="https://github.com/muyuuuu/A-customized-template-based-on-standard-documentclass" target="_blank" rel="noopener">点我过去</a></p>
 <p>对照代码、论文、注释仔细看看，如果有写的不好的地方也可以告诉我呀，毕竟我第一次写这么长的$\LaTeX$ 代码，知之甚少。</p>
 <p>如果想学习 $\LaTeX$请不要使用百度，多用用Stack Overflow或者tex.stackchange，也不要轻信各种教育机构的视频课程(我之前看过，讲的是垃圾教的也是垃圾，如果还收费那真的可能是为了骗你的money)，所以，要有选择性的购买。</p>
 <p>也不推荐某些建模机构推出的 $\LaTeX$ 模板，你拿着<code>2005</code>年的模板忽悠谁呢(不知道收不收费)，知道现在2020年了吗，15年的时间，模板会变动多少，代码的底层技术又会变动多少。</p>
 <p>这里插播一段广告，overleaf(网站)的 $\LaTeX$ 做的相当不错，还有好多前辈，比如马来西亚的中文支持人员，我跟他们交流过，很可爱的公司很可爱的人。如下图，忽然感觉我就是个小孩子。</p>
-<p><img src="/2019/01/15/MCM-template/8.jpg" alt></p>
+<p><img alt data-src="/2019/01/15/MCM-template/8.jpg"></p>
 <p>注册账号后能在线编译执行latex文件和到处pdf文件，支持代码高亮和自动提示，完全免费，还有大量的 $\LaTeX$文档与模板。相比无良的教育机构，这个网站的良心还不错，做出这么好的东西完全不收费(也可能是我暂时没看到)。</p>
 <p>中文这边推荐latexstduio，有各种模板，简历、论文、PPT等，里面也有各种常见问题的解决过程。里面的模板素材比如毕业论文等，均是各大高校的研究生自主维护论文的模板，氛围不错，开源免费。</p>
 <h1 id="修改日志"><a href="#修改日志" class="headerlink" title="修改日志"></a>修改日志</h1><h2 id="2020年修改"><a href="#2020年修改" class="headerlink" title="2020年修改"></a>2020年修改</h2><ul>
@@ -597,9 +587,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -663,6 +652,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 

@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,12 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="关于如何实现爬虫，可以简单看这里：入门级别的难度，两个例子。 更主要的目的是，把当时上课讲过的Selenium整理一下，毕竟当时我还做PPT上去讲课来，Selenium虽然是自动化测试工具，但也可以很好的用在爬虫领域。 在很多网页中使用了Ajax技术，即：你往下翻阅或者点击加载更多按钮才会加载剩下的内容，否则不会加载你暂时不看的内容。或者网页使用了反爬虫技术，爬取速度过快会严重影响对方服务器的流量">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/11/resptile/1.png">
 <meta property="og:updated_time" content="2020-01-31T16:48:37.128Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="爬虫系列（二）——操控浏览器模拟访问、点击与设置等待">
 <meta name="twitter:description" content="关于如何实现爬虫，可以简单看这里：入门级别的难度，两个例子。 更主要的目的是，把当时上课讲过的Selenium整理一下，毕竟当时我还做PPT上去讲课来，Selenium虽然是自动化测试工具，但也可以很好的用在爬虫领域。 在很多网页中使用了Ajax技术，即：你往下翻阅或者点击加载更多按钮才会加载剩下的内容，否则不会加载你暂时不看的内容。或者网页使用了反爬虫技术，爬取速度过快会严重影响对方服务器的流量">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2020/01/11/resptile/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/01/11/resptile/">
 
@@ -109,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -123,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -242,9 +241,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           爬虫系列（二）——操控浏览器模拟访问、点击与设置等待
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -313,7 +312,7 @@
 <li>使服务器辨别不出来是人在看他的网页还是机器在看他的网页。</li>
 <li>触发<code>Ajax</code>，使浏览器自动加载剩下的内容，而不用使人去手动翻阅加载。如下图所示：</li>
 </ul>
-<p><img src="/2020/01/11/resptile/1.png" alt></p>
+<p><img alt data-src="/2020/01/11/resptile/1.png"></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">scroll_down</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (num):</span><br><span class="line">        <span class="comment"># 向下翻阅1000个像素单位</span></span><br><span class="line">        driver.execute_script(<span class="string">"window.scrollBy(0,1000)"</span>)</span><br><span class="line">        <span class="comment">#　停两秒在向下翻阅 等他加载</span></span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 翻阅10次</span></span><br><span class="line">scroll_down(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 
 <p><code>(0, 1000)</code>中的<code>0</code>表示水平翻阅0个像素点，<code>1000</code>表示向下翻阅1000个像素点。还记得屏幕的分辨率是<code>1920X1080</code>吗，1080就是指竖直方向排列的像素点的数量。记住这段代码，一会儿配合其他任务一起用。</p>
@@ -599,9 +598,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -665,6 +663,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
@@ -687,6 +694,54 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

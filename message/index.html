@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -53,13 +53,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="如果想加好友的话，偷偷把联系方式(QQ微信都行)发我邮箱，然后我加你。邮箱：LanLingrock#gmail.com（#替换为@）  2020年2020-02-21 不想换位思考    我不敢说可以去理解任何人，因为我们无法感同身受，每个人的观念不同经历不同，导致了不可能去换位思考。如果可以换位思考，这世间怎么还会有抑郁症？ 也不要去站在自己的角度或某个高度去帮助、批评他人，他知道自己错了会改，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/message/index/avatar.gif">
-<meta property="og:image" content="https://muyuuuu.github.io/message/index/2016.jpeg">
 <meta property="og:updated_time" content="2020-02-21T15:28:43.622Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="留下生活的足迹">
 <meta name="twitter:description" content="如果想加好友的话，偷偷把联系方式(QQ微信都行)发我邮箱，然后我加你。邮箱：LanLingrock#gmail.com（#替换为@）  2020年2020-02-21 不想换位思考    我不敢说可以去理解任何人，因为我们无法感同身受，每个人的观念不同经历不同，导致了不可能去换位思考。如果可以换位思考，这世间怎么还会有抑郁症？ 也不要去站在自己的角度或某个高度去帮助、批评他人，他知道自己错了会改，">
-<meta name="twitter:image" content="https://muyuuuu.github.io/message/index/avatar.gif">
 
 <link rel="canonical" href="https://muyuuuu.github.io/message/">
 
@@ -110,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -124,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -235,8 +233,8 @@
     <div class="post-block" lang="zh-CN">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">留下生活的足迹
-</h1>
+<h2 class="post-title" itemprop="name headline">留下生活的足迹
+</h2>
 
 <div class="post-meta">
   
@@ -250,7 +248,7 @@
       
       <div class="post-body">
           <p>如果想加好友的话，偷偷把联系方式(QQ微信都行)发我邮箱，然后我加你。邮箱：LanLingrock#gmail.com（#替换为@）</p>
-<p><img src="/message/index/avatar.gif" alt></p>
+<p><img alt data-src="/message/index/avatar.gif"></p>
 <h2 id="2020年"><a href="#2020年" class="headerlink" title="2020年"></a>2020年</h2><p><strong>2020-02-21</strong></p>
 <blockquote class="blockquote-center"><p>不想换位思考 </p>
 </blockquote>
@@ -352,7 +350,7 @@
 </blockquote>
 <p>荒唐毕业后某人给我的话：毕业以后你要有本事，别让我看不起你。</p>
 <p>约了等你四年，似乎也只是青春苍白无力的承诺。</p>
-<p><img src="/message/index/2016.jpeg" alt></p>
+<p><img alt data-src="/message/index/2016.jpeg"></p>
 <h2 id="2015年"><a href="#2015年" class="headerlink" title="2015年"></a>2015年</h2><p><strong>2015-3-4</strong></p>
 <blockquote class="blockquote-center"><p>不悔梦归处，只是太匆匆 </p>
 </blockquote>
@@ -551,9 +549,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -617,6 +614,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 

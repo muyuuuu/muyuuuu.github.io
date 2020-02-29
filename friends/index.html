@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,12 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="友情链接(单方面)如下： 原谅我换主题了，这个主题(之前的了，现在的next是有的，但这个页面还是保留了下来)没有加友情链接的地方，关键是我还不会写前端。于是新建了一个页面。 为什么还要费劲了hexo new page links呢？因为，自从我搭博客以来，认识的这么多人，都是好人哈哈哈哈哈哈。   zeroto521  和我一届，两年建模队友。大一入学开始写代码，野生程序员，全栈工程师，网页设计">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/friends/index/54.jpg">
 <meta property="og:updated_time" content="2020-02-21T15:53:56.642Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Just for Life.">
 <meta name="twitter:description" content="友情链接(单方面)如下： 原谅我换主题了，这个主题(之前的了，现在的next是有的，但这个页面还是保留了下来)没有加友情链接的地方，关键是我还不会写前端。于是新建了一个页面。 为什么还要费劲了hexo new page links呢？因为，自从我搭博客以来，认识的这么多人，都是好人哈哈哈哈哈哈。   zeroto521  和我一届，两年建模队友。大一入学开始写代码，野生程序员，全栈工程师，网页设计">
-<meta name="twitter:image" content="https://muyuuuu.github.io/friends/index/54.jpg">
 
 <link rel="canonical" href="https://muyuuuu.github.io/friends/">
 
@@ -110,7 +108,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -124,7 +122,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -235,8 +234,8 @@
     <div class="post-block" lang="zh-CN">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">
-</h1>
+<h2 class="post-title" itemprop="name headline">
+</h2>
 
 <div class="post-meta">
   
@@ -280,7 +279,7 @@
 <blockquote>
 <p><a href="https://yihui.org/cn/about/" target="_blank" rel="noopener">谢益辉</a> 偶然看到他的文章，一个有趣的人。</p>
 </blockquote>
-<p><img src="/friends/index/54.jpg" alt></p>
+<p><img alt data-src="/friends/index/54.jpg"></p>
 
       </div>
       
@@ -461,9 +460,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -527,6 +525,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
@@ -549,6 +556,54 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

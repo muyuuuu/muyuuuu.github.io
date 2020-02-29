@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,16 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="很遗憾的是这里不给出算法的实现过程，但是我可以给个讲的不错的链接。这里的最大流讲的不错 主要给出最大流的实现代码和应用背景，以及问题变化时的解决方案。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/12/13/max-flow/1.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/12/13/max-flow/2.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/12/13/max-flow/3.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/12/13/max-flow/4.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/12/13/max-flow/5.png">
 <meta property="og:updated_time" content="2020-02-11T14:13:56.951Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络最大流问题">
 <meta name="twitter:description" content="很遗憾的是这里不给出算法的实现过程，但是我可以给个讲的不错的链接。这里的最大流讲的不错 主要给出最大流的实现代码和应用背景，以及问题变化时的解决方案。">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2018/12/13/max-flow/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2018/12/13/max-flow/">
 
@@ -113,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -127,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -246,9 +241,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           网络最大流问题
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -300,11 +295,11 @@
 <a id="more"></a>
 
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
-<p><img src="/2018/12/13/max-flow/1.png" alt></p>
-<p><img src="/2018/12/13/max-flow/2.png" alt></p>
-<p><img src="/2018/12/13/max-flow/3.png" alt></p>
-<p><img src="/2018/12/13/max-flow/4.png" alt></p>
-<p><img src="/2018/12/13/max-flow/5.png" alt></p>
+<p><img alt data-src="/2018/12/13/max-flow/1.png"></p>
+<p><img alt data-src="/2018/12/13/max-flow/2.png"></p>
+<p><img alt data-src="/2018/12/13/max-flow/3.png"></p>
+<p><img alt data-src="/2018/12/13/max-flow/4.png"></p>
+<p><img alt data-src="/2018/12/13/max-flow/5.png"></p>
 <hr>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>代码写的太烂，放到网上容易影响他人，所以删除了，有空在补上吧。</p>
 
@@ -543,9 +538,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -609,6 +603,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
@@ -631,6 +634,54 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

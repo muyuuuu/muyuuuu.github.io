@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,14 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="递归实现的快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序。 本文收录内容：递归实现了快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序，当然都是基于Python。 事实证明，这学期也只好好学习算法分析这门课了。 相关收获：写代码要有好的逻辑，提前写好伪代码，别想一出是一出。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/aaa.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/qq.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/insert.png">
 <meta property="og:updated_time" content="2019-02-13T05:53:16.279Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="排序算法的实现">
 <meta name="twitter:description" content="递归实现的快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序。 本文收录内容：递归实现了快速排序，还有传说中的堆排序，还有半路杀入的插入排序，桶排序，当然都是基于Python。 事实证明，这学期也只好好学习算法分析这门课了。 相关收获：写代码要有好的逻辑，提前写好伪代码，别想一出是一出。">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/aaa.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2018/10/30/Algorithm-Sort/">
 
@@ -111,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -125,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -244,9 +241,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           排序算法的实现
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -312,7 +309,7 @@
 <p>再来看下结果，用的pyecharts画的，贼炫酷的可视化库。显然，堆排比快排要快（明明期望值的时间复杂度是一样的）。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> Bar</span><br><span class="line">columns = [<span class="string">"1000"</span>, <span class="string">"11000"</span>, <span class="string">"21000"</span>,<span class="string">"31000"</span>,<span class="string">"41000"</span>,<span class="string">"51000"</span>,<span class="string">"61000"</span>,<span class="string">"71000"</span>,<span class="string">"81000"</span>,<span class="string">"91000"</span>]</span><br><span class="line">data1 = Heap_sort_time_use</span><br><span class="line">data2 = Quick_sort_time_use</span><br><span class="line">bar = Bar(<span class="string">"柱状图"</span>, <span class="string">"快速排序与堆排序对比"</span>)</span><br><span class="line">bar.add(<span class="string">"快速排序"</span>, columns, data2, mark_line = [<span class="string">"average"</span>], mark_point = [<span class="string">"max"</span>, <span class="string">"min"</span>])</span><br><span class="line">bar.add(<span class="string">"堆排序"</span>, columns, data1, mark_line = [<span class="string">"average"</span>], mark_point = [<span class="string">"max"</span>, <span class="string">"min"</span>])</span><br><span class="line">bar.render()</span><br><span class="line">bar</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2018/10/30/Algorithm-Sort/aaa.png" alt></p>
+<p><img alt data-src="/2018/10/30/Algorithm-Sort/aaa.png"></p>
 <hr>
 <p><strong>此处为乱入</strong></p>
 <p>为什么是乱入呢？因为想写AVL树来，想偷懒（不想定义左右孩子乱七八糟的）用列表实现，后来发现越写越不对。思路是：小数往左走，大数往右走，越写越感觉不对，一不小心发现写成了插入排序。</p>
@@ -320,8 +317,8 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正经插入排序</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insertion_sort</span><span class="params">(array)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>, len(array)):</span><br><span class="line">        key = array[j]</span><br><span class="line">        <span class="comment"># 从已经排好序array[0,...,j-1]里找到合适的位置插入array[j]</span></span><br><span class="line">        i = j - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> i &gt;= <span class="number">0</span> <span class="keyword">and</span> array[i] &gt; key:</span><br><span class="line">            <span class="comment"># 移动</span></span><br><span class="line">            i -= <span class="number">1</span></span><br><span class="line">        <span class="comment"># 插入</span></span><br><span class="line">        <span class="keyword">del</span> array[j]</span><br><span class="line">        array.insert(i+<span class="number">1</span>, key)</span><br><span class="line">    <span class="keyword">return</span> array</span><br><span class="line"></span><br><span class="line"><span class="comment"># 我歪打正着的插入排序</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">order_optimize</span><span class="params">(random_seq)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(random_seq)):</span><br><span class="line"></span><br><span class="line">        flag = (random_seq[i])</span><br><span class="line">        middle, middle1 = (i - <span class="number">1</span>) // <span class="number">2</span>, (i - <span class="number">1</span>) // <span class="number">2</span></span><br><span class="line">        <span class="comment"># 向左查找</span></span><br><span class="line">        <span class="keyword">if</span> random_seq[middle] == flag:</span><br><span class="line">            <span class="keyword">del</span> random_seq[i]</span><br><span class="line">            random_seq.insert(middle, flag)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> flag &lt; random_seq[middle] <span class="keyword">and</span> middle &gt;= <span class="number">0</span>:</span><br><span class="line">            middle = middle - <span class="number">1</span></span><br><span class="line">        <span class="comment"># 向右查找</span></span><br><span class="line">        <span class="keyword">if</span> middle &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">del</span> random_seq[i]</span><br><span class="line">            random_seq.insert(<span class="number">0</span>, flag)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> flag &gt; random_seq[middle] <span class="keyword">and</span> middle != middle1:</span><br><span class="line">            <span class="keyword">del</span> random_seq[i]</span><br><span class="line">            random_seq.insert(middle+<span class="number">1</span>, flag)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> flag &gt; random_seq[middle] <span class="keyword">and</span> middle &lt; i:</span><br><span class="line">            middle = middle + <span class="number">1</span></span><br><span class="line">        <span class="comment"># 找到位置后插入</span></span><br><span class="line">        <span class="keyword">del</span> random_seq[i]</span><br><span class="line">        random_seq.insert(middle, flag)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> random_seq</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    optimize = []</span><br><span class="line">    non_optimize = []</span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">20000</span>, <span class="number">2000</span>):</span><br><span class="line">        random_seq = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        random_seq = random_seq.tolist()</span><br><span class="line"></span><br><span class="line">        random_seq_1 = random_seq.copy()</span><br><span class="line">        random_seq_2 = random_seq.copy()</span><br><span class="line"></span><br><span class="line">        since = time.time()</span><br><span class="line">        result = order_optimize(random_seq_1)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        print(<span class="string">'Optimize: '</span> + str(right_interval) + <span class="string">' data: '</span> + str(end) + <span class="string">'s'</span>, end=<span class="string">', '</span>)</span><br><span class="line">        optimize.append(end)</span><br><span class="line"></span><br><span class="line">        since = time.time()</span><br><span class="line">        result = insertion_sort(random_seq_2)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        print(<span class="string">'Non_optimize: '</span> + str(end) + <span class="string">'s'</span>)</span><br><span class="line">        non_optimize.append(end)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">from</span> pyecharts <span class="keyword">import</span> Bar, Line, Grid</span><br><span class="line"></span><br><span class="line">    attr = np.linspace(<span class="number">1000</span>, <span class="number">20000</span>, len(optimize))</span><br><span class="line"></span><br><span class="line">    bar = Bar(<span class="string">"优化插入排序"</span>, height=<span class="number">1080</span>)</span><br><span class="line">    bar.add(<span class="string">"优化"</span>, attr, optimize, is_stack=<span class="literal">True</span>)</span><br><span class="line">    bar.add(<span class="string">"非优化"</span>, attr, non_optimize, is_stack=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    grid = Grid()</span><br><span class="line">    grid.add(bar, grid_bottom=<span class="string">"5%"</span>)</span><br><span class="line">    grid.render()</span><br><span class="line">    grid</span><br></pre></td></tr></table></figure>
 
 <p>Have a look about the result which compared by <strong>optimize and Non</strong>.</p>
-<p><img src="/2018/10/30/Algorithm-Sort/qq.png" alt></p>
-<p><img src="/2018/10/30/Algorithm-Sort/insert.png" alt></p>
+<p><img alt data-src="/2018/10/30/Algorithm-Sort/qq.png"></p>
+<p><img alt data-src="/2018/10/30/Algorithm-Sort/insert.png"></p>
 <h3 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a>桶排序</h3><p>时间复杂度$O(m+n)$，速度最快，但是浪费存储空间，而且必须是整数。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np </span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">	use_time = []</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> inter_val <span class="keyword">in</span> range(<span class="number">10000</span>, <span class="number">110000</span>, <span class="number">10000</span>):</span><br><span class="line">		random_list = np.random.randint(<span class="number">0</span>, <span class="number">100</span>, inter_val)</span><br><span class="line">		random_list = np.sort(random_list)</span><br><span class="line">		random_list = random_list[::<span class="number">-1</span>]</span><br><span class="line">		since = time.time()</span><br><span class="line">		bocket = [<span class="number">0</span>]</span><br><span class="line">		bocket = bocket * len(random_list)</span><br><span class="line">        <span class="comment"># 统计每个值有几个</span></span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> random_list:</span><br><span class="line">			bocket[i] = bocket[i] + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">		result = []</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(bocket)):</span><br><span class="line">            <span class="comment"># 比如第i个桶的数值为5，表明有5个i，添加至结果即可。</span></span><br><span class="line">			new_list = [i] * bocket[i]</span><br><span class="line">			result.extend(new_list)</span><br><span class="line">		end = time.time() - since</span><br><span class="line">		use_time.append(end)</span><br><span class="line">		print(str(inter_val) + <span class="string">' DATA use time is : '</span> + str(end) + <span class="string">'s'</span>)</span><br></pre></td></tr></table></figure>
 
@@ -562,9 +559,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -628,6 +624,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 

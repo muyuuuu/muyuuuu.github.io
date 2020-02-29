@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,12 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="好久不更新博客，主要是最近破事太多了，老师没完没了的留作业，没完没了的写实验报告。关键是你讲课讲的特别好也就忍了，如果你讲课讲的好的话，我认为留的课下作业是对我们的督促，是个好事。关键是吧，上课就念PPT，普通话都说不好，PPT念完后下课，一点都不讲，意义在哪。 回归正题，清明节后到现在10天的时间里，在PAT的乙级刷了34道题，不过不准备在继续刷乙级了。因为当初刷乙级的目的就是熟练C++的各种算">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/04/17/PAT-B/4.jpg">
 <meta property="og:updated_time" content="2020-02-11T14:20:07.791Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="刷题后对数据结构的新感想">
 <meta name="twitter:description" content="好久不更新博客，主要是最近破事太多了，老师没完没了的留作业，没完没了的写实验报告。关键是你讲课讲的特别好也就忍了，如果你讲课讲的好的话，我认为留的课下作业是对我们的督促，是个好事。关键是吧，上课就念PPT，普通话都说不好，PPT念完后下课，一点都不讲，意义在哪。 回归正题，清明节后到现在10天的时间里，在PAT的乙级刷了34道题，不过不准备在继续刷乙级了。因为当初刷乙级的目的就是熟练C++的各种算">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2019/04/17/PAT-B/4.jpg">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/04/17/PAT-B/">
 
@@ -109,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -123,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -242,9 +241,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           刷题后对数据结构的新感想
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -298,7 +297,7 @@
 <a id="more"></a>
 
 <h1 id="刷题为何用C"><a href="#刷题为何用C" class="headerlink" title="刷题为何用C++"></a>刷题为何用C++</h1><p>原因很简单，比如对数组排序，或者数组增添新的元素，C语言用起来很不顺手，python太慢，java不会，只需要在C语言的基础上学一点点C++的特性就好了，比如刷题专用的算法工具<code>STL</code>。</p>
-<p><img src="/2019/04/17/PAT-B/4.jpg" alt></p>
+<p><img alt data-src="/2019/04/17/PAT-B/4.jpg"></p>
 <h1 id="计算机专业为什么要精通数据结构"><a href="#计算机专业为什么要精通数据结构" class="headerlink" title="计算机专业为什么要精通数据结构"></a>计算机专业为什么要精通数据结构</h1><p>很多⼈，包括我，可能会觉得算法在开发过程中的用处不大，然⽽而并不是这样～</p>
 <p>⾸先，刷算法可以培养清晰的逻辑思维能力，改变人的思维方式。就像一个标准的理工男一样，使用清晰客观的证明来分析这个世界，理性分析正确还是错误。</p>
 <p>其次，看过很多IT公司招聘信息的人就会发现，他们都会优先选择有一定算法基础的人，当然这个基础不是计算机二级那种没用的东西，至少不会有任何一家上规模的IT公司要求计算机二级。</p>
@@ -550,9 +549,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -616,6 +614,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
@@ -638,6 +645,54 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 

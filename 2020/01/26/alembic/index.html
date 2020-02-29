@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/css/main.css">
 
 <link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
 
 
 <script id="hexo-configurations">
@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -41,7 +41,7 @@
     },
     localsearch: {"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},
     path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     sidebarPadding: 40
   };
 </script>
@@ -54,15 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="数据表并不是一成不变的，添加新的模型类或者给已有的模型类添加删除属性都是很正常的事情，此时都需要更新表。而只修改原有代码的表，重新部署是不能生效的，原因是那个表已经存在了。 举一个苛刻的例子：你的老板说，我们不要时间戳这个属性，你说好，写好代码并用了一年。一年后，你的老板说，把时间戳给我加上。这就涉及到了数据库的迁移。但是又不想：拷贝原有数据、重新建表、复制数据这样的更新，这种工作量很大很累赘，且">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/1.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/2.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/5.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/6.png">
 <meta property="og:updated_time" content="2020-01-31T09:06:14.603Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据库系列（三）——Alembic数据库迁移">
 <meta name="twitter:description" content="数据表并不是一成不变的，添加新的模型类或者给已有的模型类添加删除属性都是很正常的事情，此时都需要更新表。而只修改原有代码的表，重新部署是不能生效的，原因是那个表已经存在了。 举一个苛刻的例子：你的老板说，我们不要时间戳这个属性，你说好，写好代码并用了一年。一年后，你的老板说，把时间戳给我加上。这就涉及到了数据库的迁移。但是又不想：拷贝原有数据、重新建表、复制数据这样的更新，这种工作量很大很累赘，且">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2020/01/26/alembic/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/01/26/alembic/">
 
@@ -112,7 +107,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -126,7 +121,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">明月更几时</p>
+        <h1 class="site-subtitle" itemprop="description">明月更几时</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -245,9 +241,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
+        <h2 class="post-title" itemprop="name headline">
           数据库系列（三）——Alembic数据库迁移
-        </h1>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -303,7 +299,7 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String, Text, Date, Time, create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker </span><br><span class="line"></span><br><span class="line">Model = declarative_base()</span><br><span class="line"></span><br><span class="line">engine = create_engine(<span class="string">"mysql+pymysql://root:MyNewPass@localhost:3306/alembic"</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">"users"</span></span><br><span class="line"> </span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">45</span>))</span><br><span class="line"></span><br><span class="line">Model.metadata.create_all(bind=engine)</span><br><span class="line"></span><br><span class="line">test = User(name = <span class="string">'lanling'</span>)</span><br><span class="line"></span><br><span class="line">session = sessionmaker(bind=engine)()</span><br><span class="line">session.add(test)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
 
 <p>可以看到数据库中的记录：</p>
-<p><img src="/2020/01/26/alembic/1.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/1.png"></p>
 <h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><p>在<code>models.py</code>目录下<code>执行初始化命令</code>：<code>alembic init migrate</code>，其中的<code>migrate</code>是要初始化的文件夹名称。会得到以下的目录结构：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Alembic</span><br><span class="line">│   models.py</span><br><span class="line">│   falembic.ini    </span><br><span class="line">└───migrate</span><br><span class="line">   │   env.py</span><br><span class="line">   │   README</span><br><span class="line">   │   script.py.mako</span><br><span class="line">   └───versions (现在里面还没有，更新一次才会有)</span><br><span class="line">       │   version1.py</span><br><span class="line">       │   version2.py</span><br></pre></td></tr></table></figure>
 
@@ -321,9 +317,9 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.create_table(</span><br><span class="line">        <span class="string">'password'</span>,</span><br><span class="line">        sa.Column(<span class="string">'id'</span>, sa.Integer, primary_key=<span class="literal">True</span>),</span><br><span class="line">        sa.Column(<span class="string">'password'</span>, sa.Unicode(<span class="number">200</span>)),</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">downgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.drop_table(<span class="string">'password'</span>)</span><br></pre></td></tr></table></figure>
 
 <h1 id="开始升级"><a href="#开始升级" class="headerlink" title="开始升级"></a>开始升级</h1><p>命令行执行：<code>alembic upgrade head</code>，但更新会重新执行<code>models.py</code>里面的内容，所以会有</p>
-<p><img src="/2020/01/26/alembic/2.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/2.png"></p>
 <p>所以建议 <code>models.py</code> 里面只定义和提交，不写入数据。发现已经新建了password这个数据库：</p>
-<p><img src="/2020/01/26/alembic/5.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/5.png"></p>
 <p>推荐的<code>models.py</code>写法（不用提交和创建实例）：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String, Text, Date, Time, create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker </span><br><span class="line"></span><br><span class="line">Model = declarative_base()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">"users"</span></span><br><span class="line"></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">45</span>))</span><br></pre></td></tr></table></figure>
 
@@ -335,7 +331,7 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.add_column(<span class="string">'users'</span>, sa.Column(<span class="string">'location'</span>, sa.DateTime()))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">downgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.drop_column(<span class="string">'users'</span>, <span class="string">'location'</span>)</span><br></pre></td></tr></table></figure>
 
 <p>命令行执行：<code>alembic upgrade head</code>开始升级，发现升级成功，而数据库内也做了改动：</p>
-<p><img src="/2020/01/26/alembic/6.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/6.png"></p>
 <h1 id="本文参考"><a href="#本文参考" class="headerlink" title="本文参考"></a>本文参考</h1><p><a href="https://www.cnblogs.com/turingbrain/p/6372086.html" target="_blank" rel="noopener">https://www.cnblogs.com/turingbrain/p/6372086.html</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/90106173" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/90106173</a></p>
 <p><a href="https://www.cnblogs.com/derek1184405959/p/9100502.html" target="_blank" rel="noopener">https://www.cnblogs.com/derek1184405959/p/9100502.html</a></p>
@@ -580,9 +576,8 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
   <script>
@@ -646,6 +641,15 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
@@ -668,6 +672,54 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
 
   
 
