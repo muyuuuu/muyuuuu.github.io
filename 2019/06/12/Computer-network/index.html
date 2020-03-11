@@ -54,7 +54,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="距离计算机网络考试结束一周了。大概从计算机系挑几门讲的比较好的课的话，也只有《计算机组成及结构》、《计算机网络》和《数据库原理》了。 其他老师在念ppt。或者，感觉其他任课老师当老师只是个养老的副业，主业是外面的公司或者项目。 先挖个坑，计算机的几大浪漫：《计算机组成及结构》，《操作系统》，《数据结构》，《编译原理》，《计算机接口》，《数据库原理》在之后会逐渐填完的。 顺便还能解答几个疑问：为什么">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-02T10:10:51.311Z">
+<meta property="og:updated_time" content="2020-03-11T13:37:34.336Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="计算机网络原理">
 <meta name="twitter:description" content="距离计算机网络考试结束一周了。大概从计算机系挑几门讲的比较好的课的话，也只有《计算机组成及结构》、《计算机网络》和《数据库原理》了。 其他老师在念ppt。或者，感觉其他任课老师当老师只是个养老的副业，主业是外面的公司或者项目。 先挖个坑，计算机的几大浪漫：《计算机组成及结构》，《操作系统》，《数据结构》，《编译原理》，《计算机接口》，《数据库原理》在之后会逐渐填完的。 顺便还能解答几个疑问：为什么">
@@ -264,7 +264,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-02 18:10:51" itemprop="dateModified" datetime="2020-02-02T18:10:51+08:00">2020-02-02</time>
+                <time title="修改时间：2020-03-11 21:37:34" itemprop="dateModified" datetime="2020-03-11T21:37:34+08:00">2020-03-11</time>
               </span>
 
           
@@ -276,14 +276,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8k</span>
+              <span>4.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -300,92 +300,48 @@
 <p>先挖个坑，计算机的几大浪漫：《计算机组成及结构》，《操作系统》，《数据结构》，《编译原理》，《计算机接口》，《数据库原理》在之后会逐渐填完的。</p>
 <p>顺便还能解答几个疑问：为什么有的时候网速慢，有时候网速快？为什么上网要有modem（俗称猫，专业术语是调制解调器）？校园网为什么要去联通or移动办理业务才能上网？本地网和外网如何接通？如何屏蔽某网？QQ发送的消息为啥不会出错？如何从网页上下载文档？什么是网卡？为何连不上校园网但是能连手机热点？</p>
 <p>以下内容纯属为作者背写的，理解的，并非考试重点。可能词汇不够严谨，但思维和观念是易于理解的。</p>
+<p>中间出了点插曲，写的内容过于详细发现写不完了，于是，写了个粗暴的汇总版本。关于其中具体的知识，还建议查阅相关书籍，不要企图靠网络资源能学会什么东西。</p>
 <a id="more"></a>
 
-<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>计算机网络是个庞大的系统，形如我写的博客大家使用浏览器都能看到，在QQ上发个消息大家也能顺利的收到。甚至还有了专用的视频聊天、搜索引擎、在线客服和远程监控等等等。这些都是计算机网络的功劳，而作为一个CS出身的学生，有必要学懂计算机网络的原理，即为什么会这样，而不是简单的会用QQ发消息。</p>
-<p>但纸上得来终觉浅，本文只是个小文，简单阐述计算机网络原理，而在实际搭建网络过程中还需要考虑很多细节的实现，而有些即使很重要的细节则不再考虑范围之内。之后会详细解答。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/3.jpg"></p>
-<h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>起因在这里不再详细说明，只需要知道是上世纪美国和苏联冷战。美国想创造一种技术，在知道苏联将要发射导弹的时候，这种技术可以在短时间内将导弹要去的位置传回美国，美国发射导弹拦截。这就是计算机网络创建的目的，传送信息。（不由的想起了二战还促使了计算机的产生，技术本无害）。</p>
-<p>那么当时一个传奇——爱迪生发明的电话已经遍布全球，为什么不用电话线传输而是要建造专门的计算机网络呢？</p>
-<p>很简单，看过抗日神剧那种电视剧的话，应该知道在打电话的时候后台有接线员。而当业务繁忙的时候，线路都被占用就无法接通。那么计算机网络使用电话线的话，数据也就可能因为占不到线而无法传输。（接线员当然不知道哪个线是网络的，哪个线是打电话的）。话说“烽火连三月，家书抵万金”，战争时期电话线占用频繁破坏严重，苏联的导弹已经扔过来了，关于战争的数据还在和“家书”抢电话线的路上，就没有意义。于是准备采用专门的线路来传输计算机的数据。——计算机网络的雏形就这么诞生了。</p>
-<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p>有了问题就需要寻找解决方案。那么就来统一问题，世界各地都需要网络，计算机需要联网可能也不需要联网（比如企业私有数据库自己能访问就行了，不希望外人访问），也需要抵制外国的网上的不良言论流入我国。退一步讲，计算机系统千姿百态，几大阵营：Unix，windows，Mac，安卓。操作系统不统一会导致数据格式不统一，物理连线不统一（光纤、wifi、蓝牙、卫星通信）等等等等，用专业术语讲：选择接入方式不同，管理方式不同，传输数据格式不同，如何统一这些截然不同的东西呢？</p>
-<p>再退一步讲，数据在电缆中传输，受到外界磁场、电场干扰数据出错，又该如何解决？时至今日，接近完美的计算机网络划分为五层结构：<code>物理层、数据链路成、网络层、传输层、应用层</code>，每层解决不同的问题，低层向上提供服务，五层共同完成无差错传输数据的目的。</p>
-<p>（可能也会有差错，比如在视频会议上是可以接收掉帧卡顿等现象的。因为最重要的要求是实时和速度，出现一两个小失误问题不大，不影响会议正常举行即可，使用的是可能会产生差错的传输协议）</p>
-<h2 id="什么影响了网速"><a href="#什么影响了网速" class="headerlink" title="什么影响了网速"></a>什么影响了网速</h2><p>接着由视频会议开始扯，计算机发送数据的时候，有<code>发送时延</code>（发送数据的速度）、<code>处理时延</code>（路由器处理数据的时延）、<code>排队时延</code>（路由器处理不过来但接受了很多数据）、<code>传播时延</code>（在两个相邻路由器之间传输的速度）。因此，并不是你家接了光纤网速就一定快，光纤之决定了传播时延，而且家庭用网还有时分复用的现象，通俗的讲是为了节省资源和金钱，你和你的诸多邻居共用一个网，之后会详细介绍。因此，网速是受很多因素影响的，并不是一个光纤能解决的。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/2.jpg"></p>
-<h1 id="互联网"><a href="#互联网" class="headerlink" title="互联网"></a>互联网</h1><h2 id="路由器"><a href="#路由器" class="headerlink" title="路由器"></a>路由器</h2><p>先介绍个大佬<code>路由器</code>：一个特殊功能的计算机。功能是连接不同的网络，将收到的数据由本路由器发送到下一个路由器，直到数据传送到目的抵制。</p>
-<p>给出计算机网路的定义：<code>是一些相互连接的，自治的计算机的集合</code>。英文是Internet，全球最大最重要的计算机网络。用于存储和交换信息。局部连接的网络叫互连网，比如，手机和耳机使用蓝牙连接，就组成了用于传送音频数据的互连网。</p>
-<p>以最大的互联网而言，<code>网络</code>由若干节点和连接节点的链路组成，节点可以是计算机、主机、服务器、路由器、交换机等，链路可以是电缆、光纤、双绞线、卫星通信，WIFI等。和网络相连的计算机称为主机，不仅物理相连，还有支持信息传输的软件和协议，封装在硬件网卡和操作系统中，因此在上网的时候用户并不会察觉网络协议的工作。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/1.png"></p>
-<h2 id="互联网组成"><a href="#互联网组成" class="headerlink" title="互联网组成"></a>互联网组成</h2><p>网络由两部分组成，第一部分是前文提到的连接在网络边缘上的主机。第二部分是网络中央的核心部分，由网络和路由器组成（一个递归定义），这也是网络的核心，为边缘计算机的通信提供连通信和传输数据的服务。</p>
-<h2 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h2><p>而在计算机通信的时候，通俗的将是一个人给另一个人的QQ发消息。在计算机底层是这样处理的：给这两个聊天窗口创建<code>进程</code>，进程在操作系统中用<code>进程控制块</code>标示，但是在计算机网络中用<code>本地端口号</code>标示，因为不同操作系统的进程控制块表示方法不一样。每一个本地端口号由16个bit组成，唯一标识一个本地的进程。而聊天结束时，进程释放，这个端口号可能会赋给其它进程，只给本计算机使用所以并不冲突。</p>
-<h2 id="通信模式"><a href="#通信模式" class="headerlink" title="通信模式"></a>通信模式</h2><p>用了很大力气介绍进程是因为：计算机的通信，无论是QQ聊天、浏览器上网、视频聊天都是进程之间的通信。进程通信的几种方式：CS（Client-server）和P2P（peer-to-peer）模式。本质一样，CS模式中，客户机知道服务器地址，服务器对多个客户端提供服务，因此服务器端的操作系统比较强大，使用了较为特殊的任务调度算法，之后在《操作系统》中介绍吧。CS模式双向通信，即双方都可以发送和接收数据。（脑补你上百度的时候，别人也能上百度）。P2P模式双方既是服务器又是客户端，支持大量用户同时对等工作，比如双方下载对方写好的文档。</p>
-<h2 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h2><p>又介绍模式是因为：无论何种模式，都要传输数据流，而传送的方式是：<code>分组交换</code>。而分组交换的机制为<code>存储转发</code>。即一台计算机写好了要发送的消息，消息数据会切分为多个分组，每个分组自己寻找自己的路到达终点，互不相干。即第一个分组行走的路径和第二个分组行走的路径没有半毛钱关系。在终点收到分组后将所有分组重新组装为原始数据提交给用户。也会出现第二个分组先到达，第一个分组还在路上的现象（选择的路径不同）。</p>
-<p>扯了这么多，可以说<code>分组交换存储转发</code>是整个网络的核心，低成本高效率的将数据传到了目的地。接下来详细的说完如何实现的分组交换。不同于电路交换（电话网），电话网是用户占领电话线后，直到打完电话才释放资源。明显造成资源的浪费。而分组交换分批次占用资源，在一个路由器传送到另一个路由器传送完毕后立即释放本次资源，而不是一次性占用这条路上<code>所有</code>要用的路由器。</p>
-<p>正因为路由器和分组交换的协同工作，即使网络部分瘫痪也不至于全网瘫痪。（某地区网络维修不影响附近居民上网，一条路走不通就换条路）。也是由此，计算机的发展中，由以主机为核心转移到以网络为核心。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/4.jpg"></p>
-<p>插一句，知道为什么插这么多图文无关的图吗？因为这么多文字我看着都头疼23333，放个美图歇歇大脑。</p>
-<h1 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h1><h2 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h2><p>物理层的任务：透明的传输比特流，基本数据单元是<code>比特流</code>。</p>
-<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>在各种传输媒体上透明的传输比特流，不关心传输媒体是什么，因此物理媒体不属于物理层的范围。只需要确定接口特性即刻，机械、电气、功能、过程。机械特性，举个例子，常用的U盘，接口长成这样而不是那样，要求多宽多高，这就是机械特性。电气特性，高电平表示1，低电平表示0。最重要的是完成传输方式的转换，因为计算机内部是并行传输数据，网络中是串行传输，传输方式的转换是在<code>网卡</code>这个硬件中完成的。</p>
-<h2 id="数据通信模型"><a href="#数据通信模型" class="headerlink" title="数据通信模型"></a>数据通信模型</h2><p><img alt data-src="/2019/06/12/Computer-network/5.png"></p>
-<p>从图中可以看出，调制解调器在通信系统中发挥着不可替代的作用。PC（personal computer）发出数字信号，在链路中传输时使用的为调制后的模拟信号，modem，俗称猫，负责完成信号的转换。</p>
-<p>调制器的主要作用就是个波形变换器，它把基带数字信号的波形变换成适合于模拟信道传输的波形<br>解调器的作用就是个波形识别器，它将经过调制器变换过的模拟信号恢复成原来的数字信号。<br>若识别不正确，则产生误码。</p>
-<p>目前我国长途通信线路已实现了数字化，因而现在的模拟通信电路就只剩下从用户电话机到隔壁电话机机之间的这一段几百米长的用户线上。</p>
-<p>为什么要将数字信号调制为模拟信号，因为早期网络是占用的电话线，电话线是传输模拟信号的。现在不用了，直接传输数字信号。就像使用机顶盒观看电视，高清的电视如果使用模拟信号传输，这需要何等的解调技术和复杂的数学函数和大量的运算。不如0和1来的实在。</p>
-<h2 id="信道"><a href="#信道" class="headerlink" title="信道"></a>信道</h2><p>传输数据的物理媒体介质。俗称：连接两个计算机，两个计算机通过信道发送数据。比如通过USB线能连接，通过WIFI连接的时候，介质就是空气了。<br>微波在空气中传输，成了移动通信（打电话，随时随地上网）必不可少的工具。</p>
-<h2 id="脉码调制"><a href="#脉码调制" class="headerlink" title="脉码调制"></a>脉码调制</h2><p>常用的编码方法有：<code>曼彻斯特编码</code>和<code>差分曼彻斯特编码</code>。为什么不用原来的编码方式呢？因为，连续的一串0并不容易区分每个数据的界限，就像收到了一串很低的电平，但是不知道有几个零。对于曼彻斯特编码而言，只要发生了一次跳变，就知道收到了一个数据，对于计算机而言不是很难实现。也成为自同步技术。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/6.png"></p>
-<p>常用的<code>调制</code>方法：调频、调幅、调相。调制是调制编码好的<code>基带信号</code>。基带信号就是像计算机输出的代表各种文字或图像文件的数据信号都属于基带信号。<br>基带信号往往包含有较多的低频成分，甚至有直流成分，而许多信道并不能传输这种低频分量或直流分量。因此必须对基带信号进行调制(modulation)。<br>基带信号就是将数字信号 1 或 0 直接用两种不同的电压来表示，然后送到线路上去传输。   </p>
-<p><img alt data-src="/2019/06/12/Computer-network/7.png"></p>
-<h2 id="通信的极限速率"><a href="#通信的极限速率" class="headerlink" title="通信的极限速率"></a>通信的极限速率</h2><p>对于一个信道，以最简单的USB连接为例，我们为什么不把数据的传输速率提高到100Gbit/s呢？也许回答是不能，但是可以确切的说：能提速，但是不能这么做。因为超过某一速率值，数据的传输就会变得不准确。可以理解为：数据跑的太快，跑的太快以至于数字波形发生了变化而无法识别。</p>
-<p>而传输的数据用专业术语来说叫<code>码元</code>，以不同的离散值代表不同的波形。即4为2进制，有$2^4=16$种码元和波形。</p>
-<p>但是，任何实际的信道都不是理想的，在传输信号时会产生各种失真以及带来多种干扰。码元传输的速率越高，或信号传输的距离越远，在信道的输出端的波形的失真就越严重。失真了，就无法判别原来的数据</p>
-<p><img alt data-src="/2019/06/12/Computer-network/8.png"></p>
-<h3 id="奈氏准则"><a href="#奈氏准则" class="headerlink" title="奈氏准则"></a>奈氏准则</h3><p>1924 年，奈奎斯特(Nyquist)就推导出了著名的奈氏准则。他给出了在假定的理想条件下，为了避免<code>码间串扰</code>，码元的传输速率的上限值。<br>在任何信道中，码元传输的速率是有上限的，否则就会出现码间串扰的问题，使接收端对码元的判决（即识别）成为不可能。如果信道的频带越宽（也就是能够通过的信号高频分量越多），那么就可以用更高的速率传送码元而不出现码间串扰。  </p>
-<h3 id="香农定理"><a href="#香农定理" class="headerlink" title="香农定理"></a>香农定理</h3><p>香农前辈可以说是信息论界的大佬了。香农(Shannon)用信息论的理论推导出了带宽受限且有高斯白噪声干扰的信道的极限、无差错的信息传输速率。</p>
-<p>$$C=W\log_2(1+S/N)$$</p>
-<p>$W$ 为信道的带宽（以 Hz 为单位）；<br>$S$ 为信道内所传信号的平均功率；<br>$N$ 为信道内部的高斯噪声功率。  </p>
-<p>这个公式的意义在于：只要信息传输速率低于信道的极限信息传输速率，就一定可以找到某种办法来实现无差错的传输。但是实际信道上能够达到的信息传输速率要比香农的极限传输速率低不少。</p>
-<p>对于频带宽度已确定的信道，如果信噪比不能再提高了，并且码元传输速率也达到了上限值，那么还有办法提高信息的传输速率。这就是用编码的方法让每一个码元携带更多比特的信息量。 </p>
-<p><img alt data-src="/2019/06/12/Computer-network/9.png"></p>
-<h2 id="常见传输媒体"><a href="#常见传输媒体" class="headerlink" title="常见传输媒体"></a>常见传输媒体</h2><p>连接电视的为：<code>同轴电缆</code>。（退出历史舞台，但不妨碍某些小区还在用）<br>电视到局域网之间：<code>双绞线</code>。（性价比高）<br>主干网和各大网络之间：<code>光纤</code>。（成本高，速度最快。单膜光纤是一条光纤只传播一束光，多膜光纤是一条光线传输多条光，但多个光的入射角不同，互不干扰。抗干扰强。）</p>
-<p><img alt data-src="/2019/06/12/Computer-network/10.png"></p>
-<p>高级一点的：</p>
-<p><code>短波通信</code>主要是靠电离层的反射，但短波信道的通信质量较差。<br><code>微波</code>在空间主要是直线传播。所以需要在大山阻隔的情况下使用地面微波接力通信或者卫星通信。  </p>
-<h2 id="影响网速的一大元凶"><a href="#影响网速的一大元凶" class="headerlink" title="影响网速的一大元凶"></a>影响网速的一大元凶</h2><h3 id="频分复用"><a href="#频分复用" class="headerlink" title="频分复用"></a>频分复用</h3><p>脑补小时候看电视的过程，中央一中央二中央十，是如何实现的呢？这就是频分复用的典型应用。一个带宽上，每个频道占用固定的带宽。复用的用户越多，所需的信道宽度越来越大。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/11.png"></p>
-<h3 id="时分复用"><a href="#时分复用" class="headerlink" title="时分复用"></a>时分复用</h3><p>时分复用则是将时间划分为一段段等长的时分复用帧（TDM 帧）。每一个时分复用的用户在每一个 TDM 帧中占用固定序号的时隙。每一个用户所占用的时隙是周期性地出现（其周期就是 TDM  帧的长度）。TDM 信号也称为等时(isochronous)信号。时分复用的所有用户是在不同的时间占用同样的频带宽度。也就是，很快的网速上，只有一部分是自己的，其他部分是别人的，虽然不能享用全部网速，但是的确能节约成本而且性价比高。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/12.png"></p>
-<h3 id="统计时分复用"><a href="#统计时分复用" class="headerlink" title="统计时分复用"></a>统计时分复用</h3><p>然而在时分复用中，由于计算机数据的突发性质，比如用户知识突然的聊个QQ，并不是一直在使用，因此用户对分配到的子信道的利用率一般是不高的。在每个复用帧的间隔添加用户的地址信息即可(如果加入地址信息，可能没有在使用TCP/IP协议，因为使用TCP/IP协议是在数据中就指明了目标地址的)。某用户的数据帧并不是周期性的出现，因此统计时分复用也叫异步时分复用。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/13.png"></p>
-<h3 id="波分复用"><a href="#波分复用" class="headerlink" title="波分复用"></a>波分复用</h3><p>抱歉物理实在学的不好。据说是光的波长不一样，在一条链路传输中然后在终端能使用分用器对光进行分离。光在分路器后，转换为电信号，根据自己的标识符发送给目标地址。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/14.png"></p>
-<h3 id="码分复用"><a href="#码分复用" class="headerlink" title="码分复用"></a>码分复用</h3><p>每一个比特时间划分为 $m$ 个短的间隔，称为码片(chip)。<br>每个站被指派一个唯一的 $m$ bit 码片序列。<br>如发送比特 1，则发送自己的 $m$ bit 码片序列。<br>如发送比特 0，则发送该码片序列的二进制反码。<br>例如，$S$ 站的 8 bit 码片序列是 00011011。<br>发送比特 1 时，就发送序列 00011011，<br>发送比特 0 时，就发送序列 11100100。<br>S 站的码片序列：(–1 –1 –1 +1 +1 –1 +1 +1)<br>每个站分配的码片序列不仅必须各不相同，并且还必须互相正交。<br>令向量 S 表示站 S 的码片向量，令 T 表示其他任何站的码片向量。<br>两个不同站的码片序列正交，就是向量 S 和T 的规格化内积(inner product)都是 0： </p>
-<p><img alt data-src="/2019/06/12/Computer-network/15.png"></p>
-<p>令$S=（-1 +1 -3 +1  -1  -3 +1 +1）$<br>令$A=（-1 -1  -1 +1 +1  -1 +1 +1）$<br>分别计算规格化内积$S·A$、 $S·B$、 $S·C$、 $S·D$, S 是接收到所有信号的综合。下面的BCD没有给出，我只是举个例子。</p>
-<p>$$S\cdot B=1/𝑚 \sum_{𝑖=1}^𝑚(𝑆_i\cdot𝐴_i)$$<br>  =1/8((-1)(-1)＋(-1)(+1) ＋(-1)(-3) ＋(+1)(+1) ＋(-1)(+1) ＋(-3)(-1) ＋(+1)(+1) ＋(+1)(+1)) =1<br>所以A站发送了数据  1<br>同理 $S·B=-1$ ；所以B站发送数据  0<br>$S·C=0$  ；所以C站没有发送数据<br>$S·D=1$  ；所以D站发送数据  1</p>
-<h1 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h1><p>数据链路的信道分为两类：<code>点对点信道</code>和<code>广播信道</code>，广播信道上有很多主机，因此要使用特殊的协议来协调主机的数据发送。局域网虽然是个网络，但是在局域网内并不和其他网络互联。然而，这里要讨论的链路中的分组传输并不涉及跨网络的问题，因此局域网属于数据链路层的范围。只涉及在相邻的主机中，分组是如何发送过去的。</p>
-<p><code>链路</code>的意思是：相邻节点的物理线路。<code>数据链路</code>的概念是：链路在传输数据的同时，还需要加入协议的控制数据的传输，而协议可加在软件或者硬件上，最常用的就是<code>适配器adapter</code>，俗称网卡的那个。一般而言，适配器融合了物理层和数据链路层的概念。更通俗的讲，<code>物理链路</code>是单纯传输数据的链路，<code>逻辑链路</code>是增加协议控制的链路。</p>
-<p>链路层的协议数据单元是<code>帧</code>，将上层网络层发下来的<code>IP数据报</code>增加首部和尾部，在向网络层提交时也是去除首部和尾部后提交。将数据报封装好后发送，接收到的帧没有差错则提交给网络层，有差错则丢弃，链路层的工作仅此而已。但是需要一些协议和帧格式来实现这些功能。</p>
-<h2 id="封装成帧"><a href="#封装成帧" class="headerlink" title="封装成帧"></a>封装成帧</h2><p>首先，在得到网络层的数据报后，添加帧首和帧尾的过程就是封装的过程。</p>
-<p><code>在帧首</code>，在最开始的地方添加几个字节的帧开始符，然后可以添加源地址，目的地址，类型码（标明上层使用的协议）。以上几个可加可不加，因此可以根据帧结构的不同区分不同网络。其中目的地址和源地址都是6个字节，因为目的地址在这里是物理地址，局域网的每台设备都有唯一的物理地址（固化在适配器的存储器中），物理地址是48位的，正好是6个字节。</p>
-<p><code>在帧尾</code>，添加检验序列FCS（Frame check sequence），和帧结束符，来表示一个帧传送完毕。利用物理层的差分曼彻斯特编码技术，根据电压的跳变情况不难检验帧结束符的位置。</p>
-<p>帧开始符和帧结束符一样，可以统称为<code>帧定界符</code>。</p>
-<h2 id="透明传输"><a href="#透明传输" class="headerlink" title="透明传输"></a>透明传输</h2><p>透明传输的几个要点：</p>
-<ul>
-<li>键盘上输入的数字可以原封不动的传输过去</li>
-<li>无论何种组合的比特，都可以顺利通过信道，信道不能阻碍数据的传输，就像信道不存在透明一样。</li>
-<li>如果帧序列中出现帧定界符，可以使用转义符号避免此类现象。</li>
-</ul>
-<h2 id="差错检测"><a href="#差错检测" class="headerlink" title="差错检测"></a>差错检测</h2><p>数据帧就是0和1数据的组合，通信双方协议好<code>除数</code>的大小。别担心，就是用数据帧里面的数据对除数进行模2运算，将余数作为帧检验序列FCS添加至帧的尾部。接收方接收到帧后，因为已经协商好了除数，再用接收到的数据进行模2运算，如果和接收的FCS相等，则帧没有出错，否则帧出错丢弃。</p>
-<p>这种检验技术叫CRC 循环冗余检验，在数据通信中都应用很广泛，即使在计算机内部传输数据也会使用CRC来检验数据，之后会在《计算机组成与结构》中介绍。</p>
-<p>但是呢，即使这样，还是有一些帧错误是无法检测的，比如帧丢失，帧重复，帧失序。CRC只是对单个帧的数据内容进行检验，所以对丢失等错误无法检测，而这些错误会在更高层的运输层中得到解决。</p>
-<p><img alt data-src="/2019/06/12/Computer-network/5.jpg"></p>
-<h2 id="接入互联网"><a href="#接入互联网" class="headerlink" title="接入互联网"></a>接入互联网</h2><p>我小时候会在农村各地看到一条广告：就是接入宽带高速上网。而这个过程翻译成人话就是：先接入到某个互联网运营商，比如移动或者联通，然后获得上网的IP地址后就可以愉快的上网了。为什么不直接获得？直接获得人家还怎么挣钱，况且IP地址本来就是出售的~谁想要就要岂不乱套</p>
-<p>而上述的过程也是数据链路层中点对点通信的典型应用。</p>
-<p><code>ISP</code> Internet Service provider<br><code>LCP</code> Link control protocol<br><code>NCP</code> Network control protocol</p>
-<p>当用户拨号接入 ISP 时，路由器的调制解调器对拨号做出确认，并建立一条物理连接。<br>PC 机向路由器发送一系列的 LCP 分组（封装成多个 PPP 帧，包含配置请求）。<br>这些分组及其响应选择一些 PPP 参数，和进行网络层配置，NCP 给新接入的 PC机分配一个临时的 IP 地址，使 PC 机成为因特网上的一个主机。<br>通信完毕时，NCP 释放网络层连接，收回原来分配出去的临时 IP 地址。接着，LCP 释放数据链路层连接。最后释放的是物理层的连接。    </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"># 网络层</span><br><span class="line"></span><br><span class="line">在实际的数据传输中，会跨过很多种网络，如电话网or局域网。</span><br><span class="line"></span><br><span class="line"># 运输层</span><br><span class="line"></span><br><span class="line"># 应用层</span><br><span class="line"></span><br><span class="line"># 本文参考</span><br><span class="line"></span><br><span class="line">《计算机网络（第六版）》，谢希仁，电子工业出版社。</span><br><span class="line"></span><br><span class="line"># 结语</span><br><span class="line"></span><br><span class="line">更像是知识的融会贯通和总结，不是考试划重点。考试多少分没有意义，纸上得来终觉浅。怎么感觉也像是一份不太简短的科普，给那些每天再用计算机、却又不懂计算机、却又好奇计算机的人的一份简介。</span><br><span class="line"></span><br><span class="line">- - -</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.jianshu.com/p/ad820267da1c" target="_blank" rel="noopener">https://www.jianshu.com/p/ad820267da1c</a></p>
+<p>互联网相隔n公里路的两台计算机，是如何进行数据的传送的呢？在成千上万台的计算机中，一台计算机是如何正确着找到另外一个计算机，并把数据传给它的呢？</p>
+<p>学过计算机网络的同学可能知道，在这互联网中，计算机与计算机之间的数据传送，主要是基于各种“协议”串联起来的。不过今天要讲的，并不会详细去讲各种协议，而是通过各种简化之后，让你大概知道数据之间传送的原理。</p>
+<h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>互联网中数据的传送，其实分为好几层来处理数据的，每一层有它自己明确的功能。例如就像流水线生产一样，一部分人负责这部分的工作，处理完之后就把剩余的工作扔给另外一部分人来处理……</p>
+<p>对于互联网数据传送的分层模型，有分成七层的，有分成5层的，还有分成4层的。例如分成七层模型的如下(从上到下)：应用层，传输层，网络层，数据链路层，物理层。五层中，越往下越靠近计算机底层，越往上越靠近用户。通信模型如下图所示</p>
+<p><img alt data-src="/2019/06/12/Computer-network/network.png"></p>
+<h1 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h1><p>一台计算机与另一台计算机要进行通信，第一件要做的事是什么？当然是要把这台计算机与另外的其他计算机连起来啊，例如可以通过光纤啊，电缆啊，双绞线啊等物体把他们联起来。然后才能进行通信，也就是说，物理层负责把两台计算机连起来，然后在计算机之间传送 0，1 这样的电信号。</p>
+<h1 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h1><p>前面说了，物理层它只是单纯着负责在计算机之间传输 0，1 这样的电信号。假如这些 0，1 组合的传送毫无规则，计算机是解读不了的。因此，我们需要制定一套规则来进行 0，1 的传送。例如多少个电信号为一组啊，每一组信号应该如何标识才能让计算机读懂啊等。</p>
+<p>数据链路层工作在物理层之上，负责给这些 0，1 制定传送的规则，然后另一方再按照相应的规则来进行解读。</p>
+<h2 id="以太网协议"><a href="#以太网协议" class="headerlink" title="以太网协议"></a>以太网协议</h2><p>以太网协议规定，一组电信号构成一个数据包，把这个数据包称之为“桢”。每一个桢由标头(Head)和数据(Data)两部分组成。这个桢的最大长度是1518个字节，最小长度为64字节。假如需要传送的数据很大的话，就分成多个桢来进行传送。</p>
+<p>对于表头和数据这两个部分，他们存放的都是一些什么数据呢？我猜你眯着眼睛都能想到他们应该放什么数据。 毫无疑问，我们至少得知道这个桢是谁发送，发送给谁的等这些信息吧？所以标头部分主要是一些说明数据，例如发送者，接收者等信息。而数据部分则是这个数据包具体的，想给接受的内容。</p>
+<p>大家想一个问题，一个桢的长度是64~1518个字节，也就是说桢的长度不是固定的，那你觉得标头部分的字节长度是固定的吗？它当然是固定的啊，假如不是固定的，每个桢都是单独发的，那计算机怎么知道标头是几个字节，数据是几个字节。所以标头部分的字节是固定的，并且固定为18个字节。</p>
+<h2 id="MAC地址"><a href="#MAC地址" class="headerlink" title="MAC地址"></a>MAC地址</h2><p>把一台计算的的数据通过物理层和链路层发送给另一台计算机，究竟是谁发给谁的，计算机与计算机之间如何区分，你总得给他们一个唯一的标识吧？</p>
+<p>这就是MAC地址，连入网络的每一个计算机都会有网卡接口，每一个网卡都会一个地址，这个地址就叫做MAC地址。计算机之间的数据传送，就是通过MAC地址来唯一寻找、传送的。MAC地址在网卡生产是就被唯一标识了。</p>
+<h2 id="广播与ARP协议"><a href="#广播与ARP协议" class="headerlink" title="广播与ARP协议"></a>广播与ARP协议</h2><p>假如计算机A知道了计算机B的MAC地址，然后计算机A想要给计算机B传送数据，虽然计算机A知道了计算机B的MAC地址，可是它要怎么给它传送数据呢？计算机A不仅连着计算机B，而且计算机A顺着网线可能还连着其他的计算机C， D， E， F。 虽然计算机A知道计算机B的MAC地址，可是计算机A是无法知道计算机B是分布在哪边路线上的。实际上，计算机A是通过广播的方式把数据发送给计算机B。在同一个子网中，计算机A要向计算机B发送一个数据包，这个数据包包含接收者的MAC地址。这个时候同一个子网中的计算机 C，D 也会收到这个数据包的，然后收到这个数据包的计算机，会把数据包的MAC地址取出来，与自身的MAC地址对比，如果两者相同，则接受这个数据包，否则就丢弃这个数据包。这种发送方式我们称之为广播，就像我们平时在广场上通过广播的形式呼叫某个人一样。</p>
+<p>那么问题来了，计算机A是如何知道计算机B的MAC地址的呢？这个时候就得由ARP协议这个家伙来解决了，不过ARP协议会涉及到IP地址，不过我们下面才会扯到IP地址。因此我们先放着，就当作是有这么一个ARP协议，通过它我们可以知道子网中其他计算机的MAC地址。</p>
+<h1 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h1><p>上面我们有说到子网这个关键词，实际上我们所处的网络，是由无数个子网络构成的。广播的时候，也只有同一个子网里面的计算机能够收到。假如没有子网这种划分的话，计算机A发一个数据包给计算机B，其他所有计算机也都能收到这个数据包，然后进行对比再舍弃。世界上有那么多它计算机，每一台计算机都能收到其他所有计算机的数据包，那就不得了了。那还不得奔溃。 因此产生了子网这么一个东西。</p>
+<p>那么问题来了，我们如何区分哪些MAC地址是属于同一个子网的呢？假如是同一个子网，那我们就用广播的形式把数据传送给对方，如果不是同一个子网的，我们就会把数据发给网关，让网关进行转发。</p>
+<p>为了解决这个问题我们引入了一套新的地址协议，这个地址协议能够帮助我们区分MAC地址是否处于同一个子网中。这也是网络层负责解决的问题。</p>
+<h2 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h2><p>这个协议就是IP协议，它所定义的地址，我们称之为IP地址。IP协议有两种版本，一种是IPv4，另一种是IPv6。不过我们目前大多数用的还是IPv4，我们现在也只讨论IPv4这个版本的协议。</p>
+<p>这个IP地址由32为的二进制数组成，我们一般把它分成4段的十进制表示，地址范围为0.0.0.0~255.255.255.255</p>
+<p>每一台想要联网的计算机都会有一个IP地址。这个IP地址被分为两部分，前面一部分代表网络部分，后面一部分代表主机部分。并且网络部分和主机部分的二进制位数是不固定的。</p>
+<p>假如两台计算机的网络部分是一模一样的，我们就说这两台计算机是处于同一个子网中。例如192.168.43.1和192.168.43.2，假如这两个IP地址的网络部分为24为，主机部分为8位。那么他们的网络部分都为192.168.43，所以他们处于同一个子网中。</p>
+<p>可是问题来了，你怎么知道网络部分是占几位。也就是说，单单从两台计算机的IP地址，我们是无法判断他们的是否处于同一个子网中的。</p>
+<p>这就引申出了另一个关键词————子码掩码。子码掩码和IP地址一样也是32位二进制数，不过它的网络部分规定全部为1，主机部分规定全部为0.也就是说，假如上面那两个IP地址的网络部分为24为，主机部分为8为的话，那他们的子码掩码都为11111111.11111111.11111111.00000000，即255.255.255.0。</p>
+<p>那有了子字码掩码，如何来判端IP地址是否处于同一个子网中呢。显然，知道了子码掩码，相当于我们知道了网络部分是几位，主机部分是几位。我们只需要把IP地址与它的子码掩码做与(and)运算，然后把各自的结果进行比较就行了，如果比较的结果相同，则代表是同一个子网，否则不是同一个子网。</p>
+<p>例如，192.168.43.1和192.168.43.2的子码掩码都为255.255.255.0，把IP与子码掩码相与，可以得到他们都为192.168.43.0，进而他们处于同一个子网中。</p>
+<h2 id="ARP协议"><a href="#ARP协议" class="headerlink" title="ARP协议"></a>ARP协议</h2><p>有了上面IP协议的知识，我们回来讲一下ARP协议。<br>有了两台计算机的IP地址，我们就可以判断出它们是否处于同一个子网之中。 假如他们处于同一个子网之中，计算机A要给计算机B发送数据时。我们可以通过ARP协议来得到计算机B的MAC地址。ARP协议也是通过广播的形式给同一个子网中的每台电脑发送一个数据包(当然，这个数据包会包含接收方的IP地址)。对方收到这个数据包之后，会取出IP地址与自身的对比，如果相同，则把自己的MAC地址回复给对方，否则就丢弃这个数据包。这样，计算机A就能知道计算机B的MAC地址了。</p>
+<p>可能有人会问，知道了MAC地址之后，发送数据是通过广播的形式发送，询问对方的MAC地址也是通过广播的形式来发送，那其他计算机怎么知道你是要传送数据还是要询问MAC地址呢？其实在询问MAC地址的数据包中，在对方的MAC地址这一栏中，填的是一个特殊的MAC地址，其他计算机看到这个特殊的MAC地址之后，就能知道广播想干嘛了。</p>
+<p>假如两台计算机的IP不是处于同一个子网之中，这个时候，我们就会把数据包发送给网关，然后让网关让我们进行转发传送</p>
+<h2 id="DNS服务器"><a href="#DNS服务器" class="headerlink" title="DNS服务器"></a>DNS服务器</h2><p>这里再说一个问题，我们是如何知道对方计算机的IP地址的呢？这个问题可能有人会觉得很白痴，心想，当然是计算机的操作者来进行输入了。这没错，当我们想要访问某个网站的时候，我们可以输入IP来进行访问，但是我相信绝大多数人是输入一个网址域名的，例如访问百度是输入<a href="http://www.baidu.com这个域名。其实当我们输入这个域名时，会有一个叫做DNS服务器的家伙来帮我们解析这个域名，然后返回这个域名对应的IP给我们的。" target="_blank" rel="noopener">www.baidu.com这个域名。其实当我们输入这个域名时，会有一个叫做DNS服务器的家伙来帮我们解析这个域名，然后返回这个域名对应的IP给我们的。</a></p>
+<h1 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h1><p>虽然我们已经把数据成功从计算机A传送到计算机B了，可是，计算机B里面有各种各样的应用程序，计算机该如何知道这些数据是给谁的呢？</p>
+<p>这个时候，端口(Port)这个家伙就上场了，也就是说，我们在从计算机A传数据给计算表B的时候，还得指定一个端口，以供特定的应用程序来接受处理。<br>也就是说，传输层的功能就是建立端口到端口的通信。相比网络层的功能是建立主机到主机的通信。</p>
+<p>也就是说，有了IP和端口，我们就可以进行通信了。这个时候可能有人会说，我输入IP地址的时候并没有指定一个端口啊。其实呢，对于有些传输协议，已经有设定了一些默认端口了。例如http的传输默认端口是80，这些端口信息也会包含在数据包里的。</p>
+<h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h1><p>终于说到应用层了，应用层这一层最接近我们用户了。</p>
+<p>虽然我们收到了传输层传来的数据，可是这些传过来的数据五花八门，有html格式的，有mp4格式的，各种各样。你确定你能看的懂？</p>
+<p>因此我们需要指定这些数据的格式规则，收到后才好解读渲染。而应用层的功能，就是用来规定应用程序的数据格式的。</p>
+<p>五层模型至此讲到这里。对于有些层讲的比较简洁，就随便概况了一下。如果你想详细去了解，可以去买计算机网络相应的资料。希望我的讲解能让你对计算机之间数据的传输有个大概的了解。</p>
+
     </div>
 
     
@@ -481,7 +437,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#起因"><span class="nav-number">2.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构"><span class="nav-number">3.</span> <span class="nav-text">结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么影响了网速"><span class="nav-number">3.1.</span> <span class="nav-text">什么影响了网速</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#互联网"><span class="nav-number">4.</span> <span class="nav-text">互联网</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#路由器"><span class="nav-number">4.1.</span> <span class="nav-text">路由器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#互联网组成"><span class="nav-number">4.2.</span> <span class="nav-text">互联网组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程通信"><span class="nav-number">4.3.</span> <span class="nav-text">进程通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通信模式"><span class="nav-number">4.4.</span> <span class="nav-text">通信模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分组交换"><span class="nav-number">4.5.</span> <span class="nav-text">分组交换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#物理层"><span class="nav-number">5.</span> <span class="nav-text">物理层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#任务"><span class="nav-number">5.1.</span> <span class="nav-text">任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">5.2.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据通信模型"><span class="nav-number">5.3.</span> <span class="nav-text">数据通信模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信道"><span class="nav-number">5.4.</span> <span class="nav-text">信道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#脉码调制"><span class="nav-number">5.5.</span> <span class="nav-text">脉码调制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通信的极限速率"><span class="nav-number">5.6.</span> <span class="nav-text">通信的极限速率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#奈氏准则"><span class="nav-number">5.6.1.</span> <span class="nav-text">奈氏准则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#香农定理"><span class="nav-number">5.6.2.</span> <span class="nav-text">香农定理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见传输媒体"><span class="nav-number">5.7.</span> <span class="nav-text">常见传输媒体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#影响网速的一大元凶"><span class="nav-number">5.8.</span> <span class="nav-text">影响网速的一大元凶</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#频分复用"><span class="nav-number">5.8.1.</span> <span class="nav-text">频分复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时分复用"><span class="nav-number">5.8.2.</span> <span class="nav-text">时分复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#统计时分复用"><span class="nav-number">5.8.3.</span> <span class="nav-text">统计时分复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#波分复用"><span class="nav-number">5.8.4.</span> <span class="nav-text">波分复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#码分复用"><span class="nav-number">5.8.5.</span> <span class="nav-text">码分复用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据链路层"><span class="nav-number">6.</span> <span class="nav-text">数据链路层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#封装成帧"><span class="nav-number">6.1.</span> <span class="nav-text">封装成帧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#透明传输"><span class="nav-number">6.2.</span> <span class="nav-text">透明传输</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#差错检测"><span class="nav-number">6.3.</span> <span class="nav-text">差错检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接入互联网"><span class="nav-number">6.4.</span> <span class="nav-text">接入互联网</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型"><span class="nav-number">2.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#物理层"><span class="nav-number">3.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据链路层"><span class="nav-number">4.</span> <span class="nav-text">数据链路层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以太网协议"><span class="nav-number">4.1.</span> <span class="nav-text">以太网协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAC地址"><span class="nav-number">4.2.</span> <span class="nav-text">MAC地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播与ARP协议"><span class="nav-number">4.3.</span> <span class="nav-text">广播与ARP协议</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络层"><span class="nav-number">5.</span> <span class="nav-text">网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IP协议"><span class="nav-number">5.1.</span> <span class="nav-text">IP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ARP协议"><span class="nav-number">5.2.</span> <span class="nav-text">ARP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS服务器"><span class="nav-number">5.3.</span> <span class="nav-text">DNS服务器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#传输层"><span class="nav-number">6.</span> <span class="nav-text">传输层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应用层"><span class="nav-number">7.</span> <span class="nav-text">应用层</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -551,13 +507,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">363k</span>
+    <span title="站点总字数">360k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:30</span>
+    <span title="站点阅读时长">5:27</span>
 </div>
 
 
