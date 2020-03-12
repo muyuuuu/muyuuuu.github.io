@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2020-03-02T14:16:41.643Z</updated>
+  <updated>2020-03-12T07:50:17.479Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一些不常见的进阶博客优化</title>
+    <link href="https://muyuuuu.github.io/2020/03/12/blog-optimize/"/>
+    <id>https://muyuuuu.github.io/2020/03/12/blog-optimize/</id>
+    <published>2020-03-12T06:47:08.000Z</published>
+    <updated>2020-03-12T07:50:17.479Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>首先，如果你是想来搭建博客的小白，那么这篇文章不适合你，这篇文章写的优化博客是一些进阶操作。常见的：文章字体、打赏按钮、图片加载、数学公式、音乐链接、不蒜子统计等等等等，网上一搜一大把的我都认为是常规设置，本文在详细描述。而本文收录的进阶优化有：</p><ul><li>降低网页功耗</li><li>快速加载博客</li></ul><p>此外，本次优化仅针对<code>next</code>主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。</p><a id="more"></a><h1 id="降低网页功耗"><a href="#降低网页功耗" class="headerlink" title="降低网页功耗"></a>降低网页功耗</h1><p>起初，我还真没在意网页的功耗问题，首先举个例子明白功耗是干什么用的。假设，你打开电脑，不管是写<code>word</code>，听音乐还是看电影，只要电脑在工作就会产生功耗，单位是瓦(W)。一般打开网页和浏览网页的功耗是10W~15W左右(我亲手测过)，而你笔记本的电池是60Wh的，那么你笔记本在满电、不充电的情况下，浏览网页的时长大约为6小时（$60\text{Wh} \div 10\text{W} = 6\text{h}$）。而浏览网页的同时，如果再有一些写<code>word</code>，听音乐或者跑程序的操作，那么电脑的续航时长也就4小时左右。</p><p>这就是笔记本续航的粗暴计算方法。但是很遗憾，市面上常见轻薄本的电池均为60Wh左右，但都在宣传自己笔记本续航高达10小时以上，我实在不能理解这是怎么计算出来的。所以，买电脑的时候不要看它吹嘘的续航时间多长，应该看电池是多少Wh的。</p><p>扯远了，回归正题，如何降低博客的功耗呢？我第一次发现问题是在<code>Linux</code>系统中，打开我的博客后发现，电脑风扇在飞速旋转，键盘也开始发烫。嗯？这是为何，我也没载入杀病毒啊。找了一个查看功耗的命令显示下现在的功耗。右上角为查看<code>CPU</code>，内存等利用率，右下角为功耗，单位W。可以看到，我博客当初的功耗为55W。</p><p><img alt data-src="/2020/03/12/blog-optimize/1.png"></p><p>经过一段时间的排查变量实锤了一个现象：观看我的博客，功耗飞速上升到55W，CPU利用率<code>10%</code>，然后关闭我的博客，功耗降低到1W左右，极度真实。55W的功耗，意味着，我笔记本在看我博客的时候只能保证一个小时的续航，岂不给看我博客的用户带来极度不良体验？我寻思我就看个网页不至于啊，那么看一下别人同款<code>next</code>主题的博客，什么？5W？<code>CPU</code>利用率从<code>10%</code>降到了<code>0%</code>，见鬼了？不行，得优化。</p><p><img alt data-src="/2020/03/12/blog-optimize/2.png"></p><p>废话扯多了，优化的方案无非就是排除变量，（毕竟我不会前端无法确定哪个插件的功耗影响有多大）。索性打开了主题文件夹（非站点文件夹）下的<code>_config.yml</code>文件，大不了一个一个改。</p><p>我看到了其中的<code>minify, lazyload, quicklink, pjax, jquery, SEO, baidu_push</code>等等一些列配置，发现，问题丝毫没在这些上面，且与我魔改主题的字体，颜色都无关。不绕弯子了，问题出在<code>live2d</code>这个看板娘上，就是他导致的过高的功耗。注意，不仅要在博客里关闭看板娘，还要删除安装在站点文件夹下<code>node_modules</code>里面的<code>live2d</code>的配置文件。<del>（因为我最开始也只是关闭，结果发现看板娘还在，索性在<code>node_modules</code>文件夹里面搜索名称含有<code>live2d</code>的文件，全部删除，<code>live2d</code>才正式在我博客里消失）</del>。后续就正常很多了，功耗也降低了下来，希望看我博客的人能有一个好的体验感。</p><h1 id="优化博客访问速度"><a href="#优化博客访问速度" class="headerlink" title="优化博客访问速度"></a>优化博客访问速度</h1><p>如果你不幸的读到了这里，我先引入<code>next</code>官方的一句话吧：<strong><code>DO NOT EDIT THE FOLLOWING SETTINGS UNLESS YOU KNOW WHAT YOU ARE DOING</code></strong>，意思是：不要改以下的配置，除非你知道自己在干什么。</p><p>很高兴，我不知道我在干什么，但我想改改看。（当然，如果你迫切想优化博客，可以跟随我的步伐一起魔改，否则本文对你来说就到此结束了）。但是<code>next</code>官方对每个选项都给了注释，仔细读一读，也不是很难改。</p><p><code>pjax</code>是一个<code>jQuery</code>插件，它提供了极速的浏览体验，并且保持了真实的地址、网页标题，浏览器的后退（前进）按钮也可以正常使用。没学过前端的我只注意到了<code>pjax</code>能提速，其他一概不懂。好，那就直接开启设置。以下所有操作均在主题文件夹下的<code>_config.yml</code>文件里进行。</p><p>第一步，将<code>pjax: false</code>改为<code>pjax: true</code>，先开启，而后，在<code>vendors</code>选项中，将注释取消，即导入这么一句话，指定<code>CDN</code>的链接即可。</p><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">pjax:</span> <span class="string">//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js</span></span><br></pre></td></tr></table></figure><p>之后你博客的访问速度就能飞速提升啦～</p><h2 id="其余杂项优化"><a href="#其余杂项优化" class="headerlink" title="其余杂项优化"></a>其余杂项优化</h2><ul><li><code>minify</code>，意思是不<code>push</code>无关的东西，看着有用，改为<code>true</code>。</li><li><code>quciklink</code>，官方的解释是：<code>Faster subsequent page-loads by prefetching in-viewport links during idle time</code>。翻译过来的意思就是：在打开网页后，趁你不注意加载网页中的链接，以此加快后续网页的访问速度。看样子有用，先改为<code>true</code>，在将<code>vendors</code>选项里的<code>quicklink</code>注释给取消掉，方法同<code>pjax</code>。</li><li><code>lazyload</code>，同样先看官方解释：<code>LazyLoad is a fast, lightweight and flexible script that speeds up your web application by loading your content images, videos and iframes only as they enter the viewport</code>。翻译过来的意思就是：图片进入窗口我才加载，在网页最后面的图片、视频啥的文件我先不加载，看到那里在加载。因为用户可能看不到网页结尾，那么在打开网页的时候就加载网页结尾处的图片是没意义的，这不利于提高浏览速度。既然如此，增加这个配置，方法同<code>pjax</code>，先改为<code>true</code>，在去<code>vendors</code>里面加上链接。</li></ul><h1 id="代码参考"><a href="#代码参考" class="headerlink" title="代码参考"></a>代码参考</h1><p>我把上述全部的配置代码放到了网上，如果还是不懂如何设置可以对照参考。<a href="https://github.com/muyuuuu/My-Next-theme-blog-config-files/blob/master/_config.yml" target="_blank" rel="noopener">点我过去</a>。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;首先，如果你是想来搭建博客的小白，那么这篇文章不适合你，这篇文章写的优化博客是一些进阶操作。常见的：文章字体、打赏按钮、图片加载、数学公式、音乐链接、不蒜子统计等等等等，网上一搜一大把的我都认为是常规设置，本文在详细描述。而本文收录的进阶优化有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;降低网页功耗&lt;/li&gt;
+&lt;li&gt;快速加载博客&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此外，本次优化仅针对&lt;code&gt;next&lt;/code&gt;主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="Blog-Optimize" scheme="https://muyuuuu.github.io/tags/Blog-Optimize/"/>
+    
+  </entry>
   
   <entry>
     <title>简易理解算法时间复杂度的重要性</title>
@@ -481,33 +507,6 @@
     
     
       <category term="Resptile" scheme="https://muyuuuu.github.io/tags/Resptile/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>读书笔记——《挪威的森林》</title>
-    <link href="https://muyuuuu.github.io/2020/01/07/book-norway-forest/"/>
-    <id>https://muyuuuu.github.io/2020/01/07/book-norway-forest/</id>
-    <published>2020-01-07T14:24:46.000Z</published>
-    <updated>2020-01-11T06:44:03.093Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>想来还是继续我的读书笔记，说来惭愧，2019年只看了一本课外书——《挪威的森林》。配上一副红色的落日和《起风了》这首歌，似乎有了那么点意境。</p><ul><li>而长野的天，依旧那么暖，风吹起了从前。</li><li>不知抚摸的是故事还是段心情，也许期待的不过是与时间为敌。再次看到你，微凉晨光里，笑得很甜蜜。</li><li>措不及防闯入你的笑颜。</li></ul><p><img alt data-src="/2020/01/07/book-norway-forest/5.jpg"></p><a id="more"></a><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>我不尬吹，也不吹爆，也不说他的作品陪跑，我也只看过他的这一本书。不得不说村上春树的文字功底还是很好的，只言片语的描写很容易把人带入角色，和角色一起思考；或者说是一些景物描写，描写的足够真实，仿佛身临其境向读者自己亲身经历过一样。很平凡的词汇，很好的描写意境和传达角色心理、动作、神态。</p><p>而除此之外，作者在书里表述的三观我也很认同，索性做了这次的读书笔记。也许你可能有以下的两个疑问：</p><ul><li>Q1: 为什么动不动就死人，就自杀，如：木月、直子、初美、直子的姐姐？</li><li>Q2: 据说这本书写的很色情？</li><li>Q3: 这本书讲了啥故事？</li></ul><p>回答</p><ul><li>A1: 我不知道作者为什么这么写成很多人都自杀，放心不会被洗脑。但口味比国产电影的堕胎、癌症和狗血青春要好的多。</li><li>A2: 关于色情分为两点。男主很随意的性行为我不敢苟同，书中给出的回答是排除孤寂，不曾感同身受，没有经历所以我不能回答；而关于性行为细节的色情，我倒想问那些人过着怎样高尚的性生活，请你仔细描写一下，大家都想学习。</li><li>A3: <img alt data-src="/2020/01/07/book-norway-forest/11.jpg"></li></ul><h1 id="风景描写"><a href="#风景描写" class="headerlink" title="风景描写"></a>风景描写</h1><p>风景描写在书中随处可见，也许是日本的绿化率高，也许是故事大多发生在城镇和山野。</p><blockquote><p>即使在经历过十八度春秋的今天，我仍可真切的记起那片草地的风景。连日温馨的霏霏细雨，将夏日的尘埃冲洗无余。片片山坡叠青泻翠，抽穗的芒草在十月金风的吹佛下蜿蜒起伏，逶迤的薄云紧贴着仿佛冻僵的湛蓝的天壁。凝眸望去，长空寥廓，直觉双目隐隐作痛。</p></blockquote><p><code>直觉双目隐隐作痛</code>真的真实。</p><blockquote><p>而那恋情又把我带到一处纷纭而微妙的境地，根本不容我有欣赏周围风景的闲情逸致。</p></blockquote><p>也许，不是也许，热恋中的人肯定懂得这种——思想完全被抓住没有丝毫反应的余地。</p><blockquote><p>只有夜风从我们身旁掠过，榉树在黑暗中摩擦着无数的叶片，簌簌作响。</p></blockquote><p>看到这里感觉，仿佛回到了盛夏。</p><blockquote><p>杉树简直像原始树林一样拔地而起，遮云蔽日，将万物笼罩在幽暗的阴影中。从窗口进来的风突然骤然变冷，湿气砭人肌肤。极目四望，盆地中禾苗青青，平展展的向下延伸开去。</p></blockquote><p>我大概找到描写天气冷：『好冷啊』的替换词汇了。</p><blockquote><p>月光十分皎洁，我关掉房间的灯，倒在沙发上听钢琴曲。窗口泻进的月光银辉，把东西的影子拖的长长的，宛如一层淡墨隐隐约约印在墙壁上。我从帆布包中取出装有白兰地的薄金属筒，倒进嘴里一些，缓缓咽下。一种温煦的感觉从喉头往胃里慢慢下移，继而又从胃向身体的各个角落扩散开去。我又喝了一口，然后把筒盖好，放回帆布包。月光似乎随着音乐摇摆不定。</p></blockquote><p>脑补最后一句，『摇摆不定』，与作者的醉酒、音乐的光色、风吹过簌簌作响的树叶都有关，就宛如画龙点睛，写的很妙。</p><blockquote><p>翌日清晨，雨仍下个不停，但和昨晚不同，成了毛毛秋雨。四下一片迷蒙，若非一洼洼基于的水纹和顺檐滴落的雨点声，几乎察觉不出下雨。睁眼醒来时，窗外笼罩着乳白色的雾霭，随着太阳的升起，雾霭随风散去，于是杂木林和山脉的棱线一点点显露出来。</p></blockquote><h1 id="本书最美"><a href="#本书最美" class="headerlink" title="本书最美"></a>本书最美</h1><p>应当有配乐(起风了)：</p><div class="note danger"><p><audio src="http://music.163.com/song/media/outer/url?id=1330348068.mp3" style="max-height :100%; max-width: 800%; display: block; margin-left: auto; margin-right: auto;" controls="controls" loop="loop" preload="meta">Your browser does not support the audio tag.</audio></p></div>车到涩谷之前，我一直注视着初美，一直在思索她在我心中激起的这种感情震颤究竟是什么东西，但直到最后也未能明了。<blockquote><p>当我恍然领悟到其为何物的时候，已是十二三年以后的事了。那是，当我采访一位画家来到新墨西哥州的圣菲城。傍晚，我走进附近一家意大利批萨饼店，一边喝啤酒嚼批萨，一边眺望美丽的夕阳。天地间的一切全都红彤彤的一片。我的手、盆子、桌子，凡是目力所及的东西，无不被染成了红色，而且红的非常鲜艳，俨然被特殊的果汁从上方直接淋下来似的。就在这种气势夺人的暮色当中，我猛然想起了初美，并且这时才领悟她给我带来的心灵震颤究竟是什么东西——它类似一种少年时代的憧憬，一种从来不曾实现而且永远不可能实现的憧憬。这种直欲燃烧般的天真烂漫的憧憬，我在很早以前就已遗忘在什么地方了，甚至很长时间里我连它曾在我心中存在过都记不起了。而初美所摇撼的恰恰就是我身上长眠未醒的“我自身的一部分”。当我恍然大悟时，一时悲怆之极，几欲涕零。她的确、的的确确是位特殊的女性，无论如何都应该有人向她伸出援助之手。</p></blockquote><p>很遗憾我至今也没找到那张配图，也没有找到合适的配图。前两张图是我自己拍的，后面的图是网上下载的。</p><p><img alt data-src="/2020/01/07/book-norway-forest/13.jpg"></p><p><img alt data-src="/2020/01/07/book-norway-forest/14.jpg"></p><p><img alt data-src="/2020/01/07/book-norway-forest/3.jpg"></p><h1 id="一个有趣的医院"><a href="#一个有趣的医院" class="headerlink" title="一个有趣的医院"></a>一个有趣的医院</h1><blockquote><p>“啊，是这样，我么，在这里当教音乐的老师，所以也有人就叫我老师，其实我本人也是患者。在这里一待就是7年，平时教大家音乐，帮忙做点事务性活计，结果就闹不清是职员还是病人了。”</p><p>“首先第一点希望你理解的是，这里不是一般意义的’医院‘。简单来说，这里不是治病的地方。其他地方则不是这样，医生始终是医生，患者始终是患者，患者有求于医生，医生给予患者以帮助。但这里却是相互帮助，相互引以为鉴。而且医生是我们的同伴，在旁一发现我们需要什么，就赶紧过来帮忙。有时候我们也帮他们忙，因为在某种情况下我们是强于他们的。”</p><p>“例如我就教过一个医生探亲，有个患者教护士学法语，就是这样。得我们这种病的人，有不少人学有专长，所以在我们这里一概平等，无论是患者还是工作人员。”</p></blockquote><p>别误会，这里只是精神疗养恢复的医院，如：做手术、烧伤、肿瘤等，肯定不能来上文描述的这种医院，还是去常规医院接受治疗为好。</p><h1 id="猜测书名的由来"><a href="#猜测书名的由来" class="headerlink" title="猜测书名的由来"></a>猜测书名的由来</h1><blockquote><p>玲子揉了好几下手指，开始弹奏《挪威的森林》。曲子里注满了她的感情，而她又不为感情所驱使。</p><p>“一听这曲子，我就时长悲哀的不行。也不知道为什么，我总是觉得似乎自己在茂密的森林中迷了路。“直子说，”一个人孤单单的，里面又黑又冷，又没有一个人来救我。”</p></blockquote><p>我自己猜测：这本书是作者在欧洲写的，可能想不出来给书叫啥名就叫了这个玩意。</p><h1 id="人物心境"><a href="#人物心境" class="headerlink" title="人物心境"></a>人物心境</h1><blockquote><p>1969这一年，总是令我想起进退两难的泥沼——没迈一步都几乎把整只鞋陷掉那般的滞重而深沉的泥沼。而我就在这片泥沼中气喘吁吁的挪动脚步，前方一无所知，后方渺无来者，只有昏暗的泥沼无边无际的延展开去。</p></blockquote><blockquote><p>同情自己是卑劣懦夫干的勾当。</p></blockquote><p>有道理，对无力改变周围环境、又不努力提升自己的怜悯。</p><blockquote><p>我写道：“春回大地，新的学年开始了。不得相见，实在怅惘莫名。我很想见你，同你说话，无论通过什么形式都可以。但不管怎样，我都决心自强不息，此外别无他路可走。”</p></blockquote><p>仿佛魔幻的高一。</p><blockquote><p>哪里会有人喜欢孤独，只是不乱交朋友罢了。</p></blockquote><p>也有道理，家人经常让我联系之前的同学，万一有用，可能也不止一个家长是此类思想。可我也从来不联系。联系作甚呢？有话说话，同学也就那么几个聊得来的，想起来可能就聊两句。而其余人，和自己的三观、见识、视野、未来的方向都不一样，联系何用呢？徒增尴尬。就像我之前的很多同学都认为读书无用，这让我怎么联系，去哪里找共同话题，就好比：『我买菜不用高等数学，可为什么要学微积分』一个道理。</p><blockquote><p>人生中无需那种东西，需要的不是理想，而是行为规范。</p></blockquote><p>成年人的世界，搞不懂。</p><p>本书的结尾，倒映了男主的孤寂、失落和没有归宿的灵魂，埋下继续成长的伏笔。</p><blockquote><p>绿子在电话的另一头久久沉默不语，如同全世界所有的细雨落在全世界所有的草坪上一般的沉默在持续。这时间里，我一直合着双眼，把额头顶在电话亭玻璃上。良久，绿子用沉静的声音开口道：“你现在在哪里？”</p><p>我现在在哪里？</p><p>我拿着听筒扬起脸，飞快的环视电话亭四周。我现在在哪里？我不知道这是哪里，全然摸不着头脑。这里究竟是哪里？目力所及，无不是不知走去哪里的无数男男女女。我在哪里也不是的场所的正中央，不断的呼唤着绿子。</p></blockquote><h1 id="我比较认同的三观"><a href="#我比较认同的三观" class="headerlink" title="我比较认同的三观"></a>我比较认同的三观</h1><blockquote><p>宣布罢课决议之时他们那般慷慨激昂，将反动派学生骂得狗血淋头，或群起围攻不休。于是我走到他们面前，问他们何以前来教室而不继续罢课，他们没有回答，也无法回答。他们害怕因缺课过多而拿不到学分。此等人物居然也高喊什么肢解大学，想来令人喷饭。如此卑劣小人，唯有见风使舵投敌变节之能事。</p></blockquote><p>很显然，至少，在我上学的几年，从小学到大学，这些人并不少见。某个例子：一方面骂着学校没空调，没网，甚至还深夜断电，甚至还高呼找校长抗议：『说大学生难免在深夜学习，很多作业深夜不加班会做不完』。晚上做不完可以早起，深夜在玩游戏，打视频，还是在学习自己心里没数吗。况且大学的作业都会留好几天，没有拖延症也不必最后深夜赶deadline。尽管这样，还是很多人抗议。其实：深夜断电后他们的作业也能很快写完，不必担心，甚至作息也会规律很多。</p><p>更有甚者一面抱怨着老师讲课太难，要求太高，可自己从来不认真听课、从来不听老师要求、从来不认真学习，日常在打游戏中度过，在快要挂科或被老师返工要求重做的时候来上那么一句：老师不负责不早说，老师要求太严了难度太大了，老师事太多了不是好老师，诸如此类。</p><blockquote><p>我说木月，这世道真是江河日下！这帮家伙一个不少的拿得大学学分，跨出校门将不遗余力的构筑一个同样卑劣的社会。</p></blockquote><blockquote><p>”所以，有时我环顾世人就气不打一处来——这些家伙为什么不知道努力呢？不努力何必还满腹牢骚呢？“</p><p>我惊讶地看着永泽的脸：“在我的印象中，世上的人也都在辛辛苦苦拼死拼活地忙个没完，莫不是我看错了？”</p><p>“那不是努力，知识劳动。”永泽断然说道，“我所说的努力与这个截然不同。所谓努力，指的是主动而有目的的活动。”</p></blockquote><p>多年前曾深刻了解到：努力不同于劳动，是在全力做自己想做的事情；而抱怨也从来不能解决任何问题。</p><h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>此外，男主在绿子死后开始了一个月的穷游，而本书也用大量篇幅描写了这部分，用心境与景物相结合的描写方式，通过展示与渔夫的矛盾、幻想和内心的独白，将男主对死去女主的思念跃然纸上。同理，因篇幅过长，此处不予展示。</p><p>满分10分的话，推荐指数5分，3分给文字功底，2分给内心独白和心境描写，毕竟刻画到位，2分爱学习的男主，这个故事的剧情倒扣2分。就这样。因为，我也看过其他书，故事的精彩程度不输《挪威的森林》，如《简爱》，如《追风筝的人》。</p><p>可能我是个爱看故事的人，所以从推荐的角度会更侧重剧情本身，这个故事好不好。当然如果你更想看人性，这本书可能是不错的选择；而我对人性这个东西没有兴趣，无论是电影还是书。看与不看就看你自己喽～</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;想来还是继续我的读书笔记，说来惭愧，2019年只看了一本课外书——《挪威的森林》。配上一副红色的落日和《起风了》这首歌，似乎有了那么点意境。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;而长野的天，依旧那么暖，风吹起了从前。&lt;/li&gt;
-&lt;li&gt;不知抚摸的是故事还是段心情，也许期待的不过是与时间为敌。再次看到你，微凉晨光里，笑得很甜蜜。&lt;/li&gt;
-&lt;li&gt;措不及防闯入你的笑颜。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;img src=&quot;/2020/01/07/book-norway-forest/5.jpg&quot; alt&gt;&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="Book" scheme="https://muyuuuu.github.io/tags/Book/"/>
     
   </entry>
   
