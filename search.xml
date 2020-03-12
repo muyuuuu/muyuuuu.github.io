@@ -27,9 +27,14 @@
 
 <p>之后你博客的访问速度就能飞速提升啦～</p>
 <h2 id="其余杂项优化"><a href="#其余杂项优化" class="headerlink" title="其余杂项优化"></a>其余杂项优化</h2><ul>
-<li><code>minify</code>，意思是不<code>push</code>无关的东西，看着有用，改为<code>true</code>。</li>
-<li><code>quciklink</code>，官方的解释是：<code>Faster subsequent page-loads by prefetching in-viewport links during idle time</code>。翻译过来的意思就是：在打开网页后，趁你不注意加载网页中的链接，以此加快后续网页的访问速度。看样子有用，先改为<code>true</code>，在将<code>vendors</code>选项里的<code>quicklink</code>注释给取消掉，方法同<code>pjax</code>。</li>
-<li><code>lazyload</code>，同样先看官方解释：<code>LazyLoad is a fast, lightweight and flexible script that speeds up your web application by loading your content images, videos and iframes only as they enter the viewport</code>。翻译过来的意思就是：图片进入窗口我才加载，在网页最后面的图片、视频啥的文件我先不加载，看到那里在加载。因为用户可能看不到网页结尾，那么在打开网页的时候就加载网页结尾处的图片是没意义的，这不利于提高浏览速度。既然如此，增加这个配置，方法同<code>pjax</code>，先改为<code>true</code>，在去<code>vendors</code>里面加上链接。</li>
+<li><p><code>minify</code>，意思是不<code>push</code>无关的东西，看着有用，改为<code>true</code>。</p>
+</li>
+<li><p><code>quciklink</code>，官方的解释是：<code>Faster subsequent page-loads by prefetching in-viewport links during idle time</code>。翻译过来的意思就是：在打开网页后，趁你不注意加载网页中的链接，以此加快后续网页的访问速度。看样子有用，先改为<code>true</code>，在将<code>vendors</code>选项里的<code>quicklink</code>注释给取消掉，方法同<code>pjax</code>。</p>
+</li>
+<li><p><code>lazyload</code>，同样先看官方解释：<code>LazyLoad is a fast, lightweight and flexible script that speeds up your web application by loading your content images, videos and iframes only as they enter the viewport</code>。翻译过来的意思就是：图片进入窗口我才加载，在网页最后面的图片、视频啥的文件我先不加载，看到那里在加载。因为用户可能看不到网页结尾，那么在打开网页的时候就加载网页结尾处的图片是没意义的，这不利于提高浏览速度。既然如此，增加这个配置，方法同<code>pjax</code>，先改为<code>true</code>，在去<code>vendors</code>里面加上链接。</p>
+</li>
+<li><p>但是，关于<code>lazyload</code>要补充一点，如果在页面里设置了不蒜子来统计人数和每篇文章的访问量，那么，最好不要开启<code>lazyload</code>。因为设置<code>lazyload</code>后，每个页面中的不蒜子统计可能不会加载，意思是，别人看了你的文章但是你没统计。这只是我实践出来的结论，所以，我选择关闭<code>lazyload</code>。</p>
+</li>
 </ul>
 <h1 id="代码参考"><a href="#代码参考" class="headerlink" title="代码参考"></a>代码参考</h1><p>我把上述全部的配置代码放到了网上，如果还是不懂如何设置可以对照参考。<a href="https://github.com/muyuuuu/My-Next-theme-blog-config-files/blob/master/_config.yml" target="_blank" rel="noopener">点我过去</a>。</p>
 ]]></content>
