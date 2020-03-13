@@ -56,7 +56,8 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/1.png">
 <meta property="og:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/2.png">
-<meta property="og:updated_time" content="2020-03-12T13:25:52.287Z">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/3.png">
+<meta property="og:updated_time" content="2020-03-13T03:54:14.563Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一些不常见的进阶博客优化">
 <meta name="twitter:description" content="首先，如果你是想来搭建博客的小白，那么这篇文章不适合你，这篇文章写的优化博客是一些进阶操作。常见的：文章字体、打赏按钮、图片加载、数学公式、音乐链接、不蒜子统计等等等等，网上一搜一大把的我都认为是常规设置，本文在详细描述。而本文收录的进阶优化有：  降低网页功耗 快速加载博客  此外，本次优化仅针对next主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。">
@@ -259,10 +260,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-12 14:47:08 / 修改时间：21:25:52" itemprop="dateCreated datePublished" datetime="2020-03-12T14:47:08+08:00">2020-03-12</time>
+              <time title="创建时间：2020-03-12 14:47:08" itemprop="dateCreated datePublished" datetime="2020-03-12T14:47:08+08:00">2020-03-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-13 11:54:14" itemprop="dateModified" datetime="2020-03-13T11:54:14+08:00">2020-03-13</time>
+              </span>
 
           
               <span>&emsp;</span><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span>
@@ -322,9 +329,11 @@
 </li>
 <li><p><code>lazyload</code>，同样先看官方解释：<code>LazyLoad is a fast, lightweight and flexible script that speeds up your web application by loading your content images, videos and iframes only as they enter the viewport</code>。翻译过来的意思就是：图片进入窗口我才加载，在网页最后面的图片、视频啥的文件我先不加载，看到那里在加载。因为用户可能看不到网页结尾，那么在打开网页的时候就加载网页结尾处的图片是没意义的，这不利于提高浏览速度。既然如此，增加这个配置，方法同<code>pjax</code>，先改为<code>true</code>，在去<code>vendors</code>里面加上链接。</p>
 </li>
-<li><p>但是，关于<code>lazyload</code>要补充一点，如果在页面里设置了不蒜子来统计人数和每篇文章的访问量，那么，最好不要开启<code>lazyload</code>。因为设置<code>lazyload</code>后，每个页面中的不蒜子统计可能不会加载，意思是，别人看了你的文章但是你没统计。这只是我实践出来的结论，所以，我选择关闭<code>lazyload</code>。</p>
+<li><p>但是，关于<code>lazyload</code>要补充一点，如果在页面里设置了不蒜子来统计人数和每篇文章的访问量，那么，最好不要开启<code>lazyload</code>。因为设置<code>lazyload</code>后，每个页面中的不蒜子统计可能不会加载，意思是，别人看了你的文章但是你没统计。就像这样：</p>
 </li>
 </ul>
+<p><img src="/2020/03/12/blog-optimize/3.png" alt></p>
+<p>这只是我实践出来的结论，所以，我选择关闭<code>lazyload</code>。</p>
 <h1 id="代码参考"><a href="#代码参考" class="headerlink" title="代码参考"></a>代码参考</h1><p>我把上述全部的配置代码放到了网上，如果还是不懂如何设置可以对照参考。<a href="https://github.com/muyuuuu/My-Next-theme-blog-config-files/blob/master/_config.yml" target="_blank" rel="noopener">点我过去</a>。</p>
 
     </div>
