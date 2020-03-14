@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -54,12 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="起因话说Linux下的Typora真的是难用，能卡死，也可能是我电脑老了。本来下午是想把Linux下的GUI开发工具配置好，PyQt5安装一切正常，Qt5 Designer一直安装不上，就开始各种搜索。好在后来配置上了，但是也折腾了好久，配置PyQt5的过程放在另外的文章里，这里写一下创建虚拟环境的过程。毕竟这个很重要，而我居然刚学会。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/09/21/python-virenv/1.png">
 <meta property="og:updated_time" content="2019-10-12T05:55:55.240Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="manjaro下python创建虚拟环境">
 <meta name="twitter:description" content="起因话说Linux下的Typora真的是难用，能卡死，也可能是我电脑老了。本来下午是想把Linux下的GUI开发工具配置好，PyQt5安装一切正常，Qt5 Designer一直安装不上，就开始各种搜索。好在后来配置上了，但是也折腾了好久，配置PyQt5的过程放在另外的文章里，这里写一下创建虚拟环境的过程。毕竟这个很重要，而我居然刚学会。">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2019/09/21/python-virenv/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/09/21/python-virenv/">
 
@@ -299,6 +297,7 @@
       
         <h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>话说Linux下的Typora真的是难用，能卡死，也可能是我电脑老了。本来下午是想把Linux下的GUI开发工具配置好，PyQt5安装一切正常，Qt5 Designer一直安装不上，就开始各种搜索。好在后来配置上了，但是也折腾了好久，配置PyQt5的过程放在另外的文章里，这里写一下创建虚拟环境的过程。毕竟这个很重要，而我居然刚学会。</p>
 <a id="more"></a>
+
 <h1 id="选择一份好文档"><a href="#选择一份好文档" class="headerlink" title="选择一份好文档"></a>选择一份好文档</h1><p>折腾好久的一个原因是，我看了份CSDN的文档，原因说的是版本原因，python3.7不行，得python3.5。好，既然版本错误，我就在安装一个python3.5, 创建python3.5的虚拟环境在试一下（然后就开始了瞎折腾）。</p>
 <p>但折腾到最后创建了虚拟环境，也安装了python3.5, 可还不行，后来去了官网，呵，没有linux版本的。<a href="https://pypi.org/project/pyqt5-tools/#files" target="_blank" rel="noopener">https://pypi.org/project/pyqt5-tools/#files</a></p>
 <p>windows用户安装Qt Designer就很简单了：<code>pip install pyqt5-tools</code>, 然后去安装的库文件中寻找designer.exe即可（<code>python3.5\Lib\site-packages\pyqt5-tools</code>）。</p>
@@ -307,8 +306,9 @@
 <p>安装python3.5的过程借鉴：<a href="https://www.cnblogs.com/kimyeee/p/7250560.html" target="_blank" rel="noopener">https://www.cnblogs.com/kimyeee/p/7250560.html</a></p>
 <p>我的安装路径为：<code>./configure --prefix=/usr/local/python3.5</code></p>
 <p>我创立的软链接为：<code>ln -s /usr/local/python3/bin/python3.5 /usr/bin/python3.5</code>（后文创立虚拟环境要用，所以请好好写路径）</p>
-<h1 id="虚拟环境的创建"><a href="#虚拟环境的创建" class="headerlink" title="虚拟环境的创建"></a>虚拟环境的创建</h1><p>安装—&gt;激活—&gt;创建—&gt;退出，这几个流程请按顺序走完。剩下的随意。</p>
+<h1 id="虚拟环境的创建"><a href="#虚拟环境的创建" class="headerlink" title="虚拟环境的创建"></a>虚拟环境的创建</h1><p>安装–&gt;激活–&gt;创建–&gt;退出，这几个流程请按顺序走完。剩下的随意。</p>
 <h2 id="安装工具库"><a href="#安装工具库" class="headerlink" title="安装工具库"></a>安装工具库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pip install virtualenv</span><br><span class="line">sudo pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
+
 <h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><p><code>source virtualenvwrapper.sh</code></p>
 <h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p><code>mkvirtualenv -p [地址] [名称]</code></p>
 <p>地址是python3.5所在的地址，只需要输入<code>whereis python3.5</code>查询即可（所以，一定记得python安装在哪里，对我来说就是<code>/usr/bin/python3.5</code>）。如<code>mkvirtualenv -p /usr/bin/python3.5 GUI-layout</code>，会在当前路径下创建虚拟环境，自由操作了，进入虚拟环境后命令行会有所变化。（一定不要<code>sudo</code>）</p>
@@ -318,7 +318,7 @@
 <h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>同样要先激活，然后<code>rmvirtualenv</code> 如 <code>rmvirtualenv GUI-layout</code>。</p>
 <h2 id="查看所有虚拟环境"><a href="#查看所有虚拟环境" class="headerlink" title="查看所有虚拟环境"></a>查看所有虚拟环境</h2><p>当前用户的主目录下<code>cd .virtualenvs/</code>。</p>
 <p>如下所示，在虚拟环境里面python版本已经变成了3.5</p>
-<p><img src="/2019/09/21/python-virenv/1.png" alt></p>
+<p><img alt data-src="/2019/09/21/python-virenv/1.png"></p>
 
     </div>
 
@@ -485,13 +485,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">357k</span>
+    <span title="站点总字数">364k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:24</span>
+    <span title="站点阅读时长">5:30</span>
 </div>
 
 
@@ -553,72 +553,15 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      element.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -644,7 +587,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
 
   
 
@@ -728,6 +670,5 @@ window.addEventListener('pjax:success', () => {
   }, window.Gitalk);
 </script>
 
-    </div>
 </body>
 </html>

@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -298,31 +298,47 @@
         <p>起初是为了刷题而学习使用<code>C++</code>的，毕竟算法很重要。为什么不使用<code>python</code>作为刷题工具呢，第一性能很差劲，第二，上学期学算法我写<code>python</code>的第一句就是<code>import numpy as np</code>，这是个不太好的习惯。</p>
 <p>刷题的过程中，因为对<code>C++</code>的一些形如<code>STL</code>的特性并不是很了解，与其说是<code>C++</code>倒不如说是<code>C</code>，所以不如学习一下<code>C++</code>的特性先。</p>
 <a id="more"></a>
+
 <h1 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h1><p>同学<code>A</code>写了个函数<code>fun</code>，而同学<code>B</code>也写了个同名函数<code>fun</code>，若函数无法重载的情况下，需要引入命名空间对两个函数加以区分，所以在使用的时候<code>A：fun</code>和<code>B:fun</code>是不同的，基于这样的考虑，<code>iostream</code>和<code>algorithm</code>定义的内容放在了<code>std</code>空间内，<code>using namespace std</code>即可。</p>
 <h1 id="C语言中的字符串"><a href="#C语言中的字符串" class="headerlink" title="C语言中的字符串"></a>C语言中的字符串</h1><p>C语言中的字符串不能作为参数返回，因为子函数在执行完毕后所有变量的空间都会释放，（当然全局变量除外），处理起来比较麻烦。</p>
 <h1 id="到C-中String类的世界"><a href="#到C-中String类的世界" class="headerlink" title="到C++中String类的世界"></a>到C++中String类的世界</h1><p>参考注明：<a href="https://walesexcitedmei.github.io/2018/12/27/C-%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">这是一个会深度学习会人脸识别会ACM，知道Twitter知道github的高中生的博客</a></p>
 <h2 id="查找方法"><a href="#查找方法" class="headerlink" title="查找方法"></a>查找方法</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> str = <span class="string">"cat"</span>;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    \\ 在str中寻找c的位置，并返回，这里输出<span class="number">0</span></span><br><span class="line">    a = str.<span class="built_in">find</span>(<span class="string">"c"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, a);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> str = <span class="string">"0123456789"</span>;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    a = str.<span class="built_in">find</span>(<span class="string">"0"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, a);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在 str[2]~str[n-1] 范围内查找并返回字符串 ab 在 str 的位置</span></span><br><span class="line">    a = str.<span class="built_in">find</span>(<span class="string">"5"</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, a);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在 str[0]~str[2] 范围内查找并返回字符串 ab 在 str 的位置</span></span><br><span class="line">    a = str.rfind(<span class="string">"1"</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, a);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="first系列函数"><a href="#first系列函数" class="headerlink" title="first系列函数"></a>first系列函数</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// first 系列函数</span></span><br><span class="line"><span class="comment">// 返回 apple 中任何一个字符首次在 str 中出现的位置</span></span><br><span class="line">str.find_first_of(<span class="string">"apple"</span>);</span><br><span class="line"><span class="comment">// 返回 apple 中任何一个字符首次在 str[2]~str[n-1] 范围中出现的位置</span></span><br><span class="line">str.find_first_of(<span class="string">"apple"</span>, <span class="number">2</span>);</span><br><span class="line"><span class="comment">// 返回除 apple 以外的任何一个字符在 str 中首次出现的位置</span></span><br><span class="line">str.find_first_not_of(<span class="string">"apple"</span>);</span><br><span class="line"><span class="comment">// 返回除 apple 以外的任何一个字符在 str[2]~str[n-1] 范围中首次出现的位置</span></span><br><span class="line">str.find_first_not_of(<span class="string">"apple"</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
 <h2 id="last系列函数"><a href="#last系列函数" class="headerlink" title="last系列函数"></a>last系列函数</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// last 系列函数</span></span><br><span class="line"><span class="comment">// 返回 apple 中任何一个字符最后一次在 str 中出现的位置</span></span><br><span class="line">str.find_last_of(<span class="string">"apple"</span>);</span><br><span class="line"><span class="comment">// 返回 apple 中任何一个字符最后一次在 str[0]~str[2] 范围中出现的位置</span></span><br><span class="line">str.find_last_of(<span class="string">"apple"</span>, <span class="number">2</span>);</span><br><span class="line"><span class="comment">// 返回除 apple 以外的任何一个字符在 str 中最后一次出现的位置</span></span><br><span class="line">str.find_last_not_of(<span class="string">"apple"</span>);</span><br><span class="line"><span class="comment">// 返回除 apple 以外的任何一个字符在 str[0]~str[2] 范围中最后一次出现的位置</span></span><br><span class="line">str.find_last_not_of(<span class="string">"apple"</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
 <h2 id="没找到"><a href="#没找到" class="headerlink" title="没找到"></a>没找到</h2><p>没找到的话，返回值是-1。</p>
 <h2 id="子串"><a href="#子串" class="headerlink" title="子串"></a>子串</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> str = <span class="string">"0123456789"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回 [3] 及以后的子串</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;str.substr(<span class="number">3</span>)&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">// 返回 str[2]~str[2+(4-1)] 子串(即从[2]开始4个字符组成的字符串)</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;str.substr(<span class="number">2</span>, <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">if</span> (s.<span class="built_in">find</span>(<span class="string">"aa1"</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"找不到该子串！"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 返回把 [2]~[2+(4-1)] 的内容替换为 "sz" 后的新字符串</span></span><br><span class="line">str.replace(<span class="number">2</span>, <span class="number">4</span>, <span class="string">"sz"</span>);</span><br><span class="line"><span class="comment">// 返回把 [2]~[2+(4-1)] 的内容替换为 "abcd" 的前3个字符后，得到新字符串</span></span><br><span class="line">str.replace(<span class="number">2</span>, <span class="number">4</span>, <span class="string">"abcd"</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
 <h2 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 从 [2] 位置开始添加字符串 "sz"，并返回形成的新字符串</span></span><br><span class="line">str.insert(<span class="number">2</span>, <span class="string">"sz"</span>);</span><br><span class="line"><span class="comment">// 从 [2] 位置开始添加字符串 "abcd" 的前 3 个字符，并返回形成的新字符串</span></span><br><span class="line">str.insert(<span class="number">2</span>, <span class="string">"abcd"</span>, <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 从 [2] 位置开始添加字符串 "abcd" 中从1开始，共插入3个，并返回形成的新字符串</span></span><br><span class="line">str.insert(<span class="number">2</span>, <span class="string">"abcd"</span>, <span class="number">1</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
 <h2 id="追加"><a href="#追加" class="headerlink" title="追加"></a>追加</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">str.push_back(<span class="string">'a'</span>); <span class="comment">// 在 str 末尾添加字符 'a'，只能插入一个</span></span><br><span class="line">str.append(<span class="string">"abc"</span>);  <span class="comment">// 在 str 末尾添加字符串 "abc"</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">str.erase(<span class="number">3</span>);    <span class="comment">// 删除 [3] 及以后的字符，并返回新字符串</span></span><br><span class="line">str.erase(<span class="number">3</span>, <span class="number">5</span>); <span class="comment">// 删除从 [3] 开始的 5 个字符，并返回新字符串</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="交换"><a href="#交换" class="headerlink" title="交换"></a>交换</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">str1.swap(str2); <span class="comment">// 把 str1 与 str2 交换</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">s.compare(pos1,n1,s2); 让s中从pos下标开始的n1个字符跟s2做比较</span><br></pre></td></tr></table></figure>
+
 <h2 id="求长度"><a href="#求长度" class="headerlink" title="求长度"></a>求长度</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">(<span class="number">0</span>, <span class="string">'a'</span>)</span></span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;str.<span class="built_in">size</span>()&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;str.empty()&lt;&lt;<span class="built_in">endl</span>;      <span class="comment">// 空为1，不空为0</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;str.length()&lt;&lt;<span class="built_in">endl</span>;     <span class="comment">// 和size输出相同</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="拼接"><a href="#拼接" class="headerlink" title="拼接"></a>拼接</h2><p>两个String类的字符串直接相加即可</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">(<span class="number">10</span>, <span class="string">'a'</span>)</span></span>;</span><br><span class="line"><span class="comment">// 从 [2] 位置开始添加字符串 "abcd" 的前 [2]~[2+(3-1)] 个字符，并返回形成的新字符串</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">str1</span><span class="params">(<span class="number">11</span>, <span class="string">'b'</span>)</span></span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;str + str1&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>
+
 <h2 id="迭代器访问"><a href="#迭代器访问" class="headerlink" title="迭代器访问"></a>迭代器访问</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">(<span class="string">"iUEgFDBIWEJFIDB"</span>)</span></span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">string</span>::iterator it = str.<span class="built_in">begin</span>(); it != str.<span class="built_in">end</span>(); it++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; *it &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="C-中的输入输出流"><a href="#C-中的输入输出流" class="headerlink" title="C++中的输入输出流"></a>C++中的输入输出流</h1><center>参考：https://blog.csdn.net/qq_36016407/article/details/70254640</center>
 
 <p>C++中的输入输出都是通过流来进行的，而具体的输出输入都是通过对流进行操作来完成的。输入和输出并不是C++语言中的正式组成成分，而是在编译系统提供的I/O库中定义的。</p>
 <p>在定义流对象时，系统会在内存中开辟一段缓冲区，用来暂存输入输出流的数据。在执行cout语句时，先把插入的数据顺序存放在输出缓冲区中，直到输出缓冲区满或遇到cout语句中的endl(或’\n’,ends,flush)为止，此时将缓冲区中已有的数据一起输出，并清空缓冲区。输出流中的数据在系统默认的设备(一般为显示器)输出。</p>
 <h2 id="cin"><a href="#cin" class="headerlink" title="cin"></a>cin</h2><p>完全吸收回车和空格，输入变量之间可以有任意的空格和回车。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">char</span> b;</span><br><span class="line">    <span class="keyword">float</span> c;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;a&gt;&gt;b&gt;&gt;c;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;a&lt;&lt;b&lt;&lt;c;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="重要的函数"><a href="#重要的函数" class="headerlink" title="重要的函数"></a>重要的函数</h1><ul>
 <li><code>cin</code></li>
 <li><code>cin.get()</code></li>
@@ -335,20 +351,27 @@
 <p>但是在<code>cin.getline()</code>，<code>getline()</code>之后不需要进行吸收回车。</p>
 <h2 id="cin-get"><a href="#cin-get" class="headerlink" title="cin.get()"></a>cin.get()</h2><p>接受回车的情况，cin.get()吸收的回车符会表示为换行符，只接收一个字符。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> ch;</span><br><span class="line">    <span class="built_in">cin</span>.<span class="built_in">get</span>(ch); <span class="comment">//或者ch=cin.get();接受了回车</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;ch&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>指定数据长度大小</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> a[<span class="number">20</span>];</span><br><span class="line">    <span class="built_in">cin</span>.<span class="built_in">get</span>(a,<span class="number">20</span>);         <span class="comment">//19个字符加一个'\0'</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;a&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="cin-getline"><a href="#cin-getline" class="headerlink" title="cin.getline()"></a>cin.getline()</h2><p>接受一个字符串，可以吸收空格、回车等，回车后意味输入结束。<code>cin.getline</code>(接受字符串的数组m,接受个数5,结束字符) 当第三个参数省略时，系统默认为’\0’。 如果将上面的例子中<code>cin.getline()</code>改为<code>cin.getline(m,5,’a’)</code>;当输入jlkjkljkl时输出jklj，输入jkaljkljkl时，输出jk。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> m[<span class="number">20</span>];</span><br><span class="line">    <span class="built_in">cin</span>.getline(m,<span class="number">5</span>);</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;m&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="getline"><a href="#getline" class="headerlink" title="getline()"></a>getline()</h2><p>接受一个字符串，可以吸收空格、回车符等。在读取字符时，遇到文件结束符、分隔符、回车符时，将终止读入，文件结束符、分隔符、回车符在字符串中不保存。和cin.getline()的作用类似，但是cin.getline()属于istream流，而getline()属于string流，是不一样的两个函数。</p>
 <p>格式：<code>getline(cin, str);</code> //str必须是string类型</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> a;<span class="comment">//注意是string类型</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"请输入一个字符串"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    getline(<span class="built_in">cin</span>, a);<span class="comment">//注意函数的参数</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;a&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="gets"><a href="#gets" class="headerlink" title="gets()"></a>gets()</h2><p>接受一个字符串，可以接收空格并输出。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> m[<span class="number">20</span>];</span><br><span class="line">gets(m);</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;m&lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure>
+
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>写法过于灵活和多样，还是多练练吧。</p>
 <h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><p>输入数据并求和</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a, b, len;</span><br><span class="line"><span class="built_in">cin</span> &gt;&gt; a &gt;&gt; b;</span><br><span class="line"><span class="built_in">string</span> s = to_string(a + b);</span><br><span class="line">len = s.length();</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;s;</span><br></pre></td></tr></table></figure>
+
 <p>字符倒序输出</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="comment">// #include &lt;string&gt;</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">(<span class="string">"cvicses"</span>)</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">s</span><span class="params">(str.rbegin(),str.rend())</span></span>;    <span class="comment">//反向迭代器，指定初始位置和结束位置开始迭代</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; s &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 
     </div>
@@ -516,13 +539,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">357k</span>
+    <span title="站点总字数">364k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:24</span>
+    <span title="站点阅读时长">5:30</span>
 </div>
 
 
@@ -584,72 +607,15 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      element.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -675,7 +641,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
 
   
 
@@ -759,6 +724,5 @@ window.addEventListener('pjax:success', () => {
   }, window.Gitalk);
 </script>
 
-    </div>
 </body>
 </html>

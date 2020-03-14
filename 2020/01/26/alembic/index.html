@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -54,15 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="数据表并不是一成不变的，添加新的模型类或者给已有的模型类添加删除属性都是很正常的事情，此时都需要更新表。而只修改原有代码的表，重新部署是不能生效的，原因是那个表已经存在了。 举一个苛刻的例子：你的老板说，我们不要时间戳这个属性，你说好，写好代码并用了一年。一年后，你的老板说，把时间戳给我加上。这就涉及到了数据库的迁移。但是又不想：拷贝原有数据、重新建表、复制数据这样的更新，这种工作量很大很累赘，且">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/1.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/2.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/5.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/26/alembic/6.png">
 <meta property="og:updated_time" content="2020-01-31T09:06:14.603Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据库系列（三）——Alembic数据库迁移">
 <meta name="twitter:description" content="数据表并不是一成不变的，添加新的模型类或者给已有的模型类添加删除属性都是很正常的事情，此时都需要更新表。而只修改原有代码的表，重新部署是不能生效的，原因是那个表已经存在了。 举一个苛刻的例子：你的老板说，我们不要时间戳这个属性，你说好，写好代码并用了一年。一年后，你的老板说，把时间戳给我加上。这就涉及到了数据库的迁移。但是又不想：拷贝原有数据、重新建表、复制数据这样的更新，这种工作量很大很累赘，且">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2020/01/26/alembic/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/01/26/alembic/">
 
@@ -304,34 +299,44 @@
 <p>举一个苛刻的例子：你的老板说，我们不要时间戳这个属性，你说好，写好代码并用了一年。一年后，你的老板说，把时间戳给我加上。这就涉及到了数据库的迁移。但是又不想：拷贝原有数据、重新建表、复制数据这样的更新，这种工作量很大很累赘，且数据是无价的，所以学会数据库迁移很有必要。</p>
 <p>我想起了一个培训班来我们学校上课，说：公司不会给你重启服务器，所以一定要保证一次性把表写对不能更爱，呵，怪不得你的水平也只能来我校讲课。</p>
 <a id="more"></a>
+
 <h1 id="创建数据表"><a href="#创建数据表" class="headerlink" title="创建数据表"></a>创建数据表</h1><p>首先创立数据表，<code>python models.py</code>执行，并提交一个实例。（但这里并不用写提交的代码，只需要写数据表这个类即可，因为在数据库迁移的时候，这个表的内容会被系统自动提交）</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String, Text, Date, Time, create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker </span><br><span class="line"></span><br><span class="line">Model = declarative_base()</span><br><span class="line"></span><br><span class="line">engine = create_engine(<span class="string">"mysql+pymysql://root:MyNewPass@localhost:3306/alembic"</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">"users"</span></span><br><span class="line"> </span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">45</span>))</span><br><span class="line"></span><br><span class="line">Model.metadata.create_all(bind=engine)</span><br><span class="line"></span><br><span class="line">test = User(name = <span class="string">'lanling'</span>)</span><br><span class="line"></span><br><span class="line">session = sessionmaker(bind=engine)()</span><br><span class="line">session.add(test)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <p>可以看到数据库中的记录：</p>
-<p><img src="/2020/01/26/alembic/1.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/1.png"></p>
 <h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><p>在<code>models.py</code>目录下<code>执行初始化命令</code>：<code>alembic init migrate</code>，其中的<code>migrate</code>是要初始化的文件夹名称。会得到以下的目录结构：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Alembic</span><br><span class="line">│   models.py</span><br><span class="line">│   falembic.ini    </span><br><span class="line">└───migrate</span><br><span class="line">   │   env.py</span><br><span class="line">   │   README</span><br><span class="line">   │   script.py.mako</span><br><span class="line">   └───versions (现在里面还没有，更新一次才会有)</span><br><span class="line">       │   version1.py</span><br><span class="line">       │   version2.py</span><br></pre></td></tr></table></figure>
+
 <h2 id="修改-alembic-ini"><a href="#修改-alembic-ini" class="headerlink" title="修改 alembic.ini"></a>修改 alembic.ini</h2><p>我的是MySQL, 其他的DBMS可能不一样，密码，端口，数据库名改成和自己一样的。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">sqlalchemy.url = mysql+pymysql://root:MyNewPass@localhost:<span class="number">3306</span>/alembic</span><br></pre></td></tr></table></figure>
+
 <h2 id="修改-env-py"><a href="#修改-env-py" class="headerlink" title="修改 env.py"></a>修改 env.py</h2><p>目标是让 alembic 获取模型模块中定义的信息。我的目录结构的修改方式代码如下，如果代码结构不同，下面代码无法生效。</p>
 <p>将<code>target_metadata = None</code> 改为以下代码，</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="comment"># 返回当前路径的上级路径 寻找 models.py 这个文件</span></span><br><span class="line">sys.path.append(os.path.dirname(os.path.abspath(__file__)) + <span class="string">"/../"</span>)</span><br><span class="line"><span class="keyword">from</span> models <span class="keyword">import</span> Model</span><br><span class="line">target_metadata = Model.metadata</span><br></pre></td></tr></table></figure>
+
 <h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>假设想在数据库内新建一个表，那么先自动创建更新的版本，执行以下命令（字符串里面的是备注信息，随意改）：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">alembic revision  -m <span class="string">"create tables password"</span></span><br></pre></td></tr></table></figure>
+
 <p>然后会在命令行内得到提示：生成了一个乱码开头的<code>.py</code>版本文件，在versions文件夹内找到这个文件，手动编写升级操作和降级操作，必须要写降级，万一升级升错了，岂不降不回去。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.create_table(</span><br><span class="line">        <span class="string">'password'</span>,</span><br><span class="line">        sa.Column(<span class="string">'id'</span>, sa.Integer, primary_key=<span class="literal">True</span>),</span><br><span class="line">        sa.Column(<span class="string">'password'</span>, sa.Unicode(<span class="number">200</span>)),</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">downgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.drop_table(<span class="string">'password'</span>)</span><br></pre></td></tr></table></figure>
+
 <h1 id="开始升级"><a href="#开始升级" class="headerlink" title="开始升级"></a>开始升级</h1><p>命令行执行：<code>alembic upgrade head</code>，但更新会重新执行<code>models.py</code>里面的内容，所以会有</p>
-<p><img src="/2020/01/26/alembic/2.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/2.png"></p>
 <p>所以建议 <code>models.py</code> 里面只定义和提交，不写入数据。发现已经新建了password这个数据库：</p>
-<p><img src="/2020/01/26/alembic/5.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/5.png"></p>
 <p>推荐的<code>models.py</code>写法（不用提交和创建实例）：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String, Text, Date, Time, create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker </span><br><span class="line"></span><br><span class="line">Model = declarative_base()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Model)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">"users"</span></span><br><span class="line"></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">45</span>))</span><br></pre></td></tr></table></figure>
+
 <p>假设我们要给一个表格新加一列，而重启服务器，拷贝原有数据库的数据，在创建新的数据表加入新的一列，在写入新的数据是很猥琐的行为，所以有必要使用数据库迁移。</p>
 <p>我们再次创建一个更新版本：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">alembic revision  -m <span class="string">"add location column in users table"</span></span><br></pre></td></tr></table></figure>
+
 <p>同样会在命令行的提示中，得到一个乱码开头的<code>.py</code>更新文件，在文件中编写更新函数：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.add_column(<span class="string">'users'</span>, sa.Column(<span class="string">'location'</span>, sa.DateTime()))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">downgrade</span><span class="params">()</span>:</span></span><br><span class="line">    op.drop_column(<span class="string">'users'</span>, <span class="string">'location'</span>)</span><br></pre></td></tr></table></figure>
+
 <p>命令行执行：<code>alembic upgrade head</code>开始升级，发现升级成功，而数据库内也做了改动：</p>
-<p><img src="/2020/01/26/alembic/6.png" alt></p>
+<p><img alt data-src="/2020/01/26/alembic/6.png"></p>
 <h1 id="本文参考"><a href="#本文参考" class="headerlink" title="本文参考"></a>本文参考</h1><p><a href="https://www.cnblogs.com/turingbrain/p/6372086.html" target="_blank" rel="noopener">https://www.cnblogs.com/turingbrain/p/6372086.html</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/90106173" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/90106173</a></p>
 <p><a href="https://www.cnblogs.com/derek1184405959/p/9100502.html" target="_blank" rel="noopener">https://www.cnblogs.com/derek1184405959/p/9100502.html</a></p>
@@ -507,13 +512,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">357k</span>
+    <span title="站点总字数">364k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:24</span>
+    <span title="站点阅读时长">5:30</span>
 </div>
 
 
@@ -575,72 +580,15 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      element.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -666,7 +614,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
 
   
 
@@ -750,6 +697,5 @@ window.addEventListener('pjax:success', () => {
   }, window.Gitalk);
 </script>
 
-    </div>
 </body>
 </html>

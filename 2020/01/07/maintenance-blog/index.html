@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -53,12 +53,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="放心，不久的将来会继续更新的。本来是说停止的，结果也没停止成功，算是维护吧。 停止更新的理由很简单，受之有愧啊。最近打开博客，看到每天的访问人数和访问量都在一百左右，对于我来说很大了。而有的文章的访问量在500+，可那篇文章我写的并不好，受之有愧；假设不是写的不好而是写错了，我将会耽误很多人的时间和精力，更加惭愧。如果哪些文章写错了，请来信声讨。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/07/maintenance-blog/6.jpg">
 <meta property="og:updated_time" content="2020-01-07T13:59:16.661Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于停止更新博客的通知">
 <meta name="twitter:description" content="放心，不久的将来会继续更新的。本来是说停止的，结果也没停止成功，算是维护吧。 停止更新的理由很简单，受之有愧啊。最近打开博客，看到每天的访问人数和访问量都在一百左右，对于我来说很大了。而有的文章的访问量在500+，可那篇文章我写的并不好，受之有愧；假设不是写的不好而是写错了，我将会耽误很多人的时间和精力，更加惭愧。如果哪些文章写错了，请来信声讨。">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2020/01/07/maintenance-blog/6.jpg">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/01/07/maintenance-blog/">
 
@@ -293,6 +291,7 @@
         <p>放心，不久的将来会继续更新的。本来是说停止的，结果也没停止成功，算是维护吧。</p>
 <p>停止更新的理由很简单，受之有愧啊。最近打开博客，看到每天的访问人数和访问量都在一百左右，对于我来说很大了。而有的文章的访问量在500+，可那篇文章我写的并不好，受之有愧；假设不是写的不好而是写错了，我将会耽误很多人的时间和精力，更加惭愧。如果哪些文章写错了，请来信声讨。</p>
 <a id="more"></a>
+
 <p>为啥不用某乎、某DN、某书和某聊天号？因为：</p>
 <blockquote>
 <ul>
@@ -304,7 +303,7 @@
 <p>而新建博客的时候还是在大二末，知识储备不足，技术能力差，见识范围狭窄。以至于写出来的文章都很『年轻』，甚至有些许的错误。我翻了的当年写过的代码，这是哪个zz写出来的，哦，对了原来是我写的，已经不想承认那些代码是我写的了。</p>
 <p>当时只是觉得搭博客很好玩，是自己技术的DIY，不是处处受限的第三方平台，能体现我是科班出身的，新鲜感十足，于是写了很多不太好的技术文章甚至还有很多愤青的东西，甚至还有错别字，暴露了我阅历的不足。正如开头所说，搭博客的初衷是好玩和DIY，也有写好几篇技术文章的想法，并无蹭流量和打广告等恰饭行为，于是停止更新也算预料之中的事情。</p>
 <p>当然也感谢各位多年来的支持and不骂之恩，我也会越做越好and，等我有钱了可以办网页在线抽奖活动呀。</p>
-<p><img src="/2020/01/07/maintenance-blog/6.jpg" alt></p>
+<p><img alt data-src="/2020/01/07/maintenance-blog/6.jpg"></p>
 
     </div>
 
@@ -467,13 +466,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">357k</span>
+    <span title="站点总字数">364k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:24</span>
+    <span title="站点阅读时长">5:30</span>
 </div>
 
 
@@ -535,72 +534,15 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      element.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -626,7 +568,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
 
   
 
@@ -710,6 +651,5 @@ window.addEventListener('pjax:success', () => {
   }, window.Gitalk);
 </script>
 
-    </div>
 </body>
 </html>

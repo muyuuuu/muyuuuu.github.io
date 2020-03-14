@@ -30,7 +30,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: false,
     mediumzoom: false,
-    lazyload: false,
+    lazyload: true,
     pangu: false,
     algolia: {
       appID: '',
@@ -54,14 +54,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="AVL是平衡树，平衡因子概念什么的就不阐述了，主要是在不平衡时候如何旋转。（1）右子树右节点插入：左旋转。（2）左子树左节点插入：右旋转。（3）右子树左节点插入：右旋转后左旋转。（4）左子树右节点插入：左旋转后右旋转。  所谓的左旋和右旋都是以子树为原点的：如b是a的子树，那么旋转就围绕b来进行。 如果b是a的左子树，那么就围绕b将a向右旋转，看着就像是a直接掉下来了，掉成了b的右子树。 如果b是">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/i.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/d.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/1.png">
 <meta property="og:updated_time" content="2019-02-15T09:07:50.837Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AVL树的Python实现">
 <meta name="twitter:description" content="AVL是平衡树，平衡因子概念什么的就不阐述了，主要是在不平衡时候如何旋转。（1）右子树右节点插入：左旋转。（2）左子树左节点插入：右旋转。（3）右子树左节点插入：右旋转后左旋转。（4）左子树右节点插入：左旋转后右旋转。  所谓的左旋和右旋都是以子树为原点的：如b是a的子树，那么旋转就围绕b来进行。 如果b是a的左子树，那么就围绕b将a向右旋转，看着就像是a直接掉下来了，掉成了b的右子树。 如果b是">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/i.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/">
 
@@ -306,12 +302,15 @@
 <li>如果b是a的右子树，那么就围绕b将a向左旋转，看着就像是a直接掉下来了，掉成了b的左子树。</li>
 </ul>
 <a id="more"></a>
+
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式。</a></p>
 <p>有关AVL树的具体旋转操作请看<a href="https://blog.csdn.net/qq_25806863/article/details/74755131" target="_blank" rel="noopener">这里，讲的贼详细</a>。</p>
 <p>AVL树有左右孩子的概念，所以，在实现AVL树之前，有必要先引入Python中类的概念，先来个MWE。</p>
 <h3 id="Python的类"><a href="#Python的类" class="headerlink" title="Python的类"></a>Python的类</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>:</span></span><br><span class="line">    <span class="comment"># 初始化</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, brand, gas)</span>:</span></span><br><span class="line">        self.brand = brand</span><br><span class="line">        self.gas = gas</span><br><span class="line">        print(<span class="string">'一辆新的'</span>, self.brand, <span class="string">'被生产出来了！'</span>)</span><br><span class="line">    <span class="comment"># 定义方法</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add_gas</span><span class="params">(self, amount)</span>:</span></span><br><span class="line">        self.gas += amount</span><br><span class="line">    <span class="comment"># 定义方法</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_gas</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'剩余汽油：'</span>, self.gas)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化</span></span><br><span class="line">benz = Car(<span class="string">'Benz'</span>, <span class="number">100</span>)</span><br><span class="line"><span class="comment"># 调用方法</span></span><br><span class="line">benz.add_gas(<span class="number">200</span>)</span><br><span class="line">benz.show_gas()</span><br></pre></td></tr></table></figure>
+
 <h3 id="AVL树的实现"><a href="#AVL树的实现" class="headerlink" title="AVL树的实现"></a>AVL树的实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="comment"># 定义每个节点的数据，左孩子右孩子，平衡因子</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.data = <span class="number">0</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.height = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BTree</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.root = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__Max</span><span class="params">(self, h1, h2)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> h1 &gt; h2:</span><br><span class="line">            <span class="keyword">return</span> h1</span><br><span class="line">        <span class="keyword">elif</span> h1 &lt;= h2:</span><br><span class="line">            <span class="keyword">return</span> h2</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 左左情况，向右旋转</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__LL</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        node = r.left</span><br><span class="line">        r.left = node.right</span><br><span class="line">        node.right = r</span><br><span class="line">        r.height = self.__Max(self.getHeight(r.right), self.getHeight(r.left)) + <span class="number">1</span></span><br><span class="line">        node.height = self.__Max(self.getHeight(node.right), self.getHeight(node.left)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> node</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 右右，左旋</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__RR</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        node = r.right</span><br><span class="line">        r.right = node.left</span><br><span class="line">        node.left = r</span><br><span class="line">        r.height = self.__Max(self.getHeight(r.right), self.getHeight(r.left)) + <span class="number">1</span></span><br><span class="line">        node.height = self.__Max(self.getHeight(node.right), self.getHeight(node.left)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> node</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 左右，先左旋再右旋</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__LR</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        r.left = self.__RR(r.left)</span><br><span class="line">        <span class="keyword">return</span> self.__LL(r)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 右左，先右旋再左旋</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__RL</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        r.right = self.__LL(r.right)</span><br><span class="line">        <span class="keyword">return</span> self.__RR(r)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># r是self.root</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__insert</span><span class="params">(self, data, r)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> r == <span class="literal">None</span>:</span><br><span class="line">            node = TreeNode()</span><br><span class="line">            node.data = data</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        <span class="keyword">elif</span> data == r.data:</span><br><span class="line">            <span class="keyword">return</span> r</span><br><span class="line">        <span class="keyword">elif</span> data &lt; r.data:</span><br><span class="line">            r.left = self.__insert(data, r.left)</span><br><span class="line">            <span class="comment"># 左高右低</span></span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.left) - self.getHeight(r.right) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> data &lt; r.left.data:</span><br><span class="line">                    r = self.__LL(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__LR(r)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            r.right = self.__insert(data, r.right)</span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.right) - self.getHeight(r.left) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> data &gt; r.right.data:</span><br><span class="line">                    r = self.__RR(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__RL(r)</span><br><span class="line"></span><br><span class="line">        r.height = self.__Max(self.getHeight(r.left), self.getHeight(r.right)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 删除data节点</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete</span><span class="params">(self, data, r)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> r == <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> r.data == data:</span><br><span class="line">            <span class="comment"># 如果只有右子树，直接将右子树赋值到此节点</span></span><br><span class="line">            <span class="keyword">if</span> r.left == <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">return</span> r.right</span><br><span class="line">            <span class="comment"># 如果只有左子树，直接将左子树赋值到此节点</span></span><br><span class="line">            <span class="keyword">elif</span> r.right == <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">return</span> r.left</span><br><span class="line">            <span class="comment"># 如果同时有左右子树</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 左子树高度大于右子树</span></span><br><span class="line">                <span class="keyword">if</span> self.getHeight(r.left) &gt; self.getHeight(r.right):</span><br><span class="line">                    <span class="comment"># 找到最右节点 返回节点值 并删除该节点</span></span><br><span class="line">                    node = r.left</span><br><span class="line">                    <span class="keyword">while</span>(node.right != <span class="literal">None</span>):</span><br><span class="line">                        node = node.right</span><br><span class="line">                    r = self.__delete(node.data, r)</span><br><span class="line">                    r.data = node.data</span><br><span class="line">                    <span class="keyword">return</span> r</span><br><span class="line">                <span class="comment"># 右子树高度大于左子树</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    node = r.right</span><br><span class="line">                    <span class="keyword">while</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                        node = node.left</span><br><span class="line">                    r = self.__delete(node.data, r)</span><br><span class="line">                    r.data = node.data</span><br><span class="line">                    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> data &lt; r.data:</span><br><span class="line">            <span class="comment"># 在左子树中删除</span></span><br><span class="line">            r.left = self.__delete(data, r.left)</span><br><span class="line">            <span class="comment"># 右子树高度与左子树高度相差超过1</span></span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.right) - self.getHeight(r.left) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> self.getHeight(r.right.left) &gt; self.getHeight(r.right.right):</span><br><span class="line">                    r = self.__RL(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__RR(r)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> data &gt; r.data:</span><br><span class="line">            <span class="comment"># 右子树中删除</span></span><br><span class="line">            r.right = self.__delete(data, r.right)</span><br><span class="line">            <span class="comment"># 左子树与右子树高度相差超过1</span></span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.left)-self.getHeight(r.right) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> self.getHeight(r.left.right)&gt;self.getHeight(r.left.left):</span><br><span class="line">                    r = self.__LR(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__LL(r)</span><br><span class="line">        <span class="comment"># 更新高度</span></span><br><span class="line">        r.height = self.__Max(self.getHeight(r.left), self.getHeight(r.right))+<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 先序遍历</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__show</span><span class="params">(self, root)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> root != <span class="literal">None</span>:</span><br><span class="line">            <span class="comment"># print (root.data)</span></span><br><span class="line">            self.__show(root.left)</span><br><span class="line">            self.__show(root.right)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Insert</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.root = self.__insert(data, self.root)</span><br><span class="line">        <span class="keyword">return</span> self.root</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Delete</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.root = self.__delete(data, self.root)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 求结点的高度</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getHeight</span><span class="params">(self, node)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> node == <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">        <span class="comment"># print node</span></span><br><span class="line">        <span class="keyword">return</span> node.height</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Show</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__show(self.root)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    bi = BTree()</span><br><span class="line">    insert_time = []</span><br><span class="line">    delete_time = []</span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">500000</span>, <span class="number">50000</span>):</span><br><span class="line">        array = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        since = time.time()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> array:</span><br><span class="line">            bi.Insert(i)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        insert_time.append(end)</span><br><span class="line">        print(<span class="string">'AVL insert : '</span> + str(right_interval) + <span class="string">' Data: '</span> + str(end) + <span class="string">'s'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">500000</span>, <span class="number">50000</span>):</span><br><span class="line">        array = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        since = time.time()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> array:</span><br><span class="line">            bi.Delete(i)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        delete_time.append(end)</span><br><span class="line">        print(<span class="string">'AVL delete : '</span> + str(right_interval) + <span class="string">' Data: '</span> + str(end) + <span class="string">'s'</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> array:</span><br><span class="line">            bi.Insert(i)</span><br></pre></td></tr></table></figure>
-<h3 id="结果展示"><a href="#结果展示" class="headerlink" title="结果展示"></a>结果展示</h3><p>  Have a look about the result of insertion and delete operation to AVL。<br>  <strong>Insertion:</strong><br><img src="/2018/11/03/AVL-RB-tree/i.png" alt><br>  <strong>Delete:</strong><br><img src="/2018/11/03/AVL-RB-tree/d.png" alt><br>  <strong>Statistic:</strong><br><img src="/2018/11/03/AVL-RB-tree/1.png" alt></p>
+
+<h3 id="结果展示"><a href="#结果展示" class="headerlink" title="结果展示"></a>结果展示</h3><p>  Have a look about the result of insertion and delete operation to AVL。<br>  <strong>Insertion:</strong><br><img alt data-src="/2018/11/03/AVL-RB-tree/i.png"><br>  <strong>Delete:</strong><br><img alt data-src="/2018/11/03/AVL-RB-tree/d.png"><br>  <strong>Statistic:</strong><br><img alt data-src="/2018/11/03/AVL-RB-tree/1.png"></p>
 <hr>
 
     </div>
@@ -480,13 +479,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">357k</span>
+    <span title="站点总字数">364k</span>
     <span class="post-meta-divider"> </span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">5:24</span>
+    <span title="站点阅读时长">5:30</span>
 </div>
 
 
@@ -548,72 +547,15 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      element.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -639,7 +581,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
 
   
 
@@ -723,6 +664,5 @@ window.addEventListener('pjax:success', () => {
   }, window.Gitalk);
 </script>
 
-    </div>
 </body>
 </html>
