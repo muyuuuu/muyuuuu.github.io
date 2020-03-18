@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>爬虫系列（三）——多进程爬虫</title>
+    <url>/2020/03/18/multi-process/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>承接上文，实现多任务的方法一般有三种，今日来实现其中的一种：多进程爬虫。而剩余的多线程并发和协程暂时没时间搞了，一方面是要先学习下Python的yield和send如何使用，其次要准备毕设的中期答辩和被老师安排了去读源代码，日后会补上的。但仅仅是多进程，<strong>就将IO密集的任务从1153秒提升到了105秒</strong>，且极高的提升了资源利用率。</p>
+<p>还有一点，本文的代码可能只适用于Next主题，但方法思路是通解，只要改改参数适应你的主题，代码同样能用。结果展示：<a href="https://muyuuuu.github.io/hot/">本站热门</a></p>
+<a id="more"></a>
+
+<h1 id="爬虫"><a href="#爬虫" class="headerlink" title="爬虫"></a>爬虫</h1><p>如果对爬虫不太了解，可以参考我之前的几篇文章。如果你计算机功底还不错，那么实现爬虫入门，完成简单的爬虫任务还是可以的：</p>
+<ul>
+<li><a href="https://muyuuuu.github.io/2019/02/24/school-start1/">爬虫入门</a></li>
+<li><a href="https://muyuuuu.github.io/2020/01/11/resptile/">借助自动化测试的爬虫</a></li>
+</ul>
+<p>这次的爬取任务很简单，之前看到了别人博客有<strong>『热榜』</strong>这个东西，很是眼馋，查询了一下发现实现热榜这个东西得经过很多的配置，但是我懒不想配置。于是准备自己动手爬虫，爬取每篇博客的访问量，以此作为博客每排文章的热度，说干就干，开工。</p>
+<h2 id="爬虫思路"><a href="#爬虫思路" class="headerlink" title="爬虫思路"></a>爬虫思路</h2><ol>
+<li><p>本次爬虫需要request、BeautiulSoup和selenium联合使用，只有其中的一方完不成任务。</p>
+</li>
+<li><p>因为每篇博客的访问量并不在外部显示，必须点击到文章内部才难加载，所以，这次爬虫必须使用selenium控制浏览器模拟点击，之后进入对应网页，以此来获取不蒜子统计的浏览数量。</p>
+</li>
+<li><p>首先打开网页的根域名，按<code>F12</code>发现每篇文章的链接的类是<code>post-title-link</code>，以此来获取第一篇文章的名称，点击，进入第一篇博客。部分代码如下所示：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 寻找第一篇文章</span></span><br><span class="line">first_page = body.find(<span class="string">'a'</span>, &#123;<span class="string">'class'</span>, <span class="string">'post-title-link'</span>&#125;)</span><br><span class="line"><span class="comment"># 记录第一篇文章的标题</span></span><br><span class="line">first = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> first_page:</span><br><span class="line">    first = i</span><br><span class="line"><span class="comment"># 进入第一篇文章</span></span><br><span class="line">driver.find_element_by_xpath(<span class="string">"//a[contains(text(),'&#123;&#125;')]"</span>.format(first)).click()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>本来想的是，进入网页后，使用requests库直接请求，然后解析出不蒜子统计那个标签的数量。但是，requests网页后发现不蒜子标签下数量根本不显示。意思是，仅仅依靠requests和beautifulsoup的爬虫是爬取不到不蒜子统计的。</p>
+</li>
+<li><p>所以，还得靠selenium。再次按一下<code>F12</code>，发现不蒜子统计的id是<code>busuanzi_value_page_pv</code>。利用selenium的id定位法，定位到不蒜子统计元素，然后输出定位元素里的文本。部分代码如下所示：</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">view = driver.find_element_by_id(<span class="string">"busuanzi_value_page_pv"</span>)</span><br><span class="line"><span class="comment"># num 就是每篇文章的访问量 </span></span><br><span class="line">num = int(view.text)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>而后，在每篇博客的末尾，都有指向下一篇博客的链接，点击既能进入下一篇博客。如下图所示：<img alt data-src="/2020/03/18/multi-process/1.jpg"></p>
+</li>
+<li><p>而selenium定位到链接的文字又很费劲，不如用selenium获取当前网页的URL，然后使用requests和beautifulsoup库跟去获取的URL，进一步解析出指向下一篇博客链接的文字。而后把解析出的文字传给selenium的链接定位法，让selenium按照文字去点击链接，进入下一篇博客。如此循环往复，直到最后一篇博客。</p>
+</li>
+<li><p>因某些博客的图片数量过多，导致加载过慢，如果5秒内加载不完，则直接进入下一篇文章。中间为防止爬虫过猛被屏蔽，其中使用了一些延时函数放缓进度。</p>
+</li>
+<li><p>最终的结果要把文章的名称、文章的网址和文章的访问量都记录下来。考虑使用字典这种结构，将文章名称和网址作为key，访问量作为value。</p>
+</li>
+<li><p>将字典保存为json文件，而后将json文件中的结果稍微清洗一下，做成markdown文件，放到博客里，热榜就做成了。</p>
+</li>
+<li><p>最后，对爬虫任务的整体时间进行记录，对比单进程和多进程的效率。</p>
+</li>
+</ol>
+<h1 id="单进程"><a href="#单进程" class="headerlink" title="单进程"></a>单进程</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">home_url = <span class="string">"https://muyuuuu.github.io/"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 申请当前页面</span></span><br><span class="line">r = requests.get(home_url)</span><br><span class="line">soup = BeautifulSoup(r.text, <span class="string">"lxml"</span>)</span><br><span class="line">body = soup.body</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用selenium点开每个页面，统计访问人数和评论数</span></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">driver = webdriver.Chrome(executable_path=<span class="string">'/home/lanling/chromedriver_linux64/chromedriver'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记录文章的数量</span></span><br><span class="line">article = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 先进入第一页</span></span><br><span class="line"><span class="comment"># 打开网页</span></span><br><span class="line">driver.get(home_url)</span><br><span class="line"><span class="comment"># 寻找第一篇文章</span></span><br><span class="line">first_page = body.find(<span class="string">'a'</span>, &#123;<span class="string">'class'</span>, <span class="string">'post-title-link'</span>&#125;)</span><br><span class="line"><span class="comment"># 记录第一篇文章的标题</span></span><br><span class="line">first = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> first_page:</span><br><span class="line">    first = i</span><br><span class="line"><span class="comment"># 进入第一篇文章</span></span><br><span class="line">driver.find_element_by_xpath(<span class="string">"//a[contains(text(),'&#123;&#125;')]"</span>.format(first)).click()</span><br><span class="line">time.sleep(<span class="number">3</span>)</span><br><span class="line"><span class="comment"># 记录浏览数</span></span><br><span class="line">dr = driver.find_element_by_id(<span class="string">"busuanzi_value_page_pv"</span>)</span><br><span class="line"><span class="comment"># 标题名和域名作为字典的 key</span></span><br><span class="line">string = <span class="string">"["</span> + first + <span class="string">"]"</span> + <span class="string">"("</span> + driver.current_url + <span class="string">")"</span></span><br><span class="line">article[string] = int(dr.text)</span><br><span class="line">print(article)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 而后点击 每篇博客末尾的指向下一篇文章的链接 直到遍历完所有文章</span></span><br><span class="line"><span class="comment"># 记录开始时间</span></span><br><span class="line">start = time.time()</span><br><span class="line"><span class="comment"># 捕获当前的 url</span></span><br><span class="line">url = driver.current_url</span><br><span class="line">data = requests.get(url)</span><br><span class="line">data = BeautifulSoup(data.text, <span class="string">"lxml"</span>)</span><br><span class="line"><span class="comment"># 解析当前页面，获取下一页的按钮</span></span><br><span class="line">next = data.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'post-nav-next post-nav-item'</span>&#125;)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">while</span> next:</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 点击下一页的链接 进入 下一个网页</span></span><br><span class="line">        driver.find_element_by_link_text(next.text.strip()).click()</span><br><span class="line">        time.sleep(<span class="number">5</span>)</span><br><span class="line">        <span class="comment"># 查看浏览数，图片较多加载缓慢，5秒内加载不出来跳过</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            view = driver.find_element_by_id(<span class="string">"busuanzi_value_page_pv"</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">        <span class="comment"># 获取当前页面的url</span></span><br><span class="line">        url = driver.current_url</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        data = requests.get(url)</span><br><span class="line">        <span class="comment"># 解析当前url</span></span><br><span class="line">        data = BeautifulSoup(data.text, <span class="string">"lxml"</span>)</span><br><span class="line">        <span class="comment"># 当前文章的标题和域名传入字典</span></span><br><span class="line">        string = <span class="string">"["</span> + data.title.text + <span class="string">"]"</span> + <span class="string">"("</span> + driver.current_url + <span class="string">")"</span></span><br><span class="line">        <span class="comment"># 如果没有加载到浏览数 就给一个负数</span></span><br><span class="line">        <span class="keyword">if</span> view.text == <span class="string">""</span>:</span><br><span class="line">            article[string] = <span class="number">-2</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            article[string] = int(view.text)</span><br><span class="line">            print(string, int(view.text))</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 寻找下一篇博客的链接名，然后点击，直到最后一篇文章。</span></span><br><span class="line">        next = data.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'post-nav-next post-nav-item'</span>&#125;)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    <span class="comment"># 记录结束时间</span></span><br><span class="line">    end = time.time()</span><br><span class="line"></span><br><span class="line">print(end - start)</span><br><span class="line">driver.quit()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将博客按访问数排序</span></span><br><span class="line">article_save = sorted(article.items(), key = <span class="keyword">lambda</span> item:item[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="comment"># encoding='utf-8'，用于确保写入中文不乱码</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'data.json'</span>,<span class="string">'w'</span>,encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f_obj:</span><br><span class="line">    <span class="comment"># ensure_ascii=False，用于确保写入json的中文不发生乱码</span></span><br><span class="line">    json.dump(article_save,f_obj,ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个单进程的任务总共耗时<strong>1153</strong>秒左右（毕竟网络时延说不准），资源利用率很少，如下所示：<img alt data-src="/2020/03/18/multi-process/1.gif"></p>
+<h1 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h1><p>多进程仅需在单进程的代码上做一点改动即可：（如果你不懂多进程，请参考我的上一篇文章，<a href="https://muyuuuu.github.io/2020/03/16/multi-process-thread/">如何理解多进程</a>）</p>
+<ol>
+<li><p>首先统计一下博客有几页，就创建几个进程。比如，我的博客目前有14页，就创建14个进程：<img alt data-src="/2020/03/18/multi-process/2.jpg"></p>
+</li>
+<li><p>进程扔到一个进程池里，等待所有进程执行完毕即可。</p>
+</li>
+<li><p>多进程之间不共享变量，所以字典的创建方法需要更改。</p>
+</li>
+<li><p>同样，防止爬虫过猛，中间同样适用延时函数放缓进度。</p>
+</li>
+<li><p>记录多进程的耗时，与单进程对比。代码如下所示：</p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">home_url = <span class="string">"https://muyuuuu.github.io/"</span></span><br><span class="line"></span><br><span class="line">r = requests.get(home_url)</span><br><span class="line">soup = BeautifulSoup(r.text, <span class="string">"lxml"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 有几个页面就创建几个进程</span></span><br><span class="line">body = soup.body</span><br><span class="line">page_number = body.find(<span class="string">'nav'</span>, &#123;<span class="string">'class'</span> : <span class="string">'pagination'</span>&#125;)</span><br><span class="line">a = page_number.find_all(<span class="string">'a'</span>)</span><br><span class="line">max_page_number = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> i:</span><br><span class="line">        <span class="keyword">if</span> str(j).isdigit():</span><br><span class="line">            <span class="keyword">if</span> int(j) &gt; max_page_number:</span><br><span class="line">                max_page_number = int(j)</span><br><span class="line">print(max_page_number)</span><br><span class="line">process_num = max_page_number</span><br><span class="line"></span><br><span class="line"><span class="comment"># 扔进进程池统一管理 并计时</span></span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> time, random</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程的字典 </span></span><br><span class="line">article = multiprocessing.Manager().dict()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记录每个进程爬几次，就是一个页面有几篇文章，我懒的爬取了，手动设置下</span></span><br><span class="line">per_page = <span class="number">7</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 每个进程的任务</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">respite_task</span><span class="params">(url_num)</span>:</span></span><br><span class="line">    num = <span class="number">1</span></span><br><span class="line">    sub_url = <span class="string">""</span></span><br><span class="line">    <span class="keyword">if</span> url_num == <span class="number">0</span>:</span><br><span class="line">        sub_url = <span class="string">"https://muyuuuu.github.io/"</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        sub_url = <span class="string">"https://muyuuuu.github.io/page/"</span> + str(url_num) + <span class="string">"/"</span></span><br><span class="line">    <span class="comment"># 每个进程启动一个 driver</span></span><br><span class="line">    print(<span class="string">"here"</span>)</span><br><span class="line">    driver = webdriver.Chrome(executable_path=<span class="string">'/home/lanling/chromedriver_linux64/chromedriver'</span>)</span><br><span class="line">    driver.get(sub_url)</span><br><span class="line">    time.sleep(random.randint(<span class="number">2</span>, <span class="number">6</span>))</span><br><span class="line">    r = requests.get(sub_url)</span><br><span class="line">    soup = BeautifulSoup(r.text, <span class="string">"lxml"</span>)</span><br><span class="line">    body = soup.body</span><br><span class="line">    <span class="comment"># 寻找第一篇文章</span></span><br><span class="line">    first_page = body.find(<span class="string">'a'</span>, &#123;<span class="string">'class'</span>, <span class="string">'post-title-link'</span>&#125;)</span><br><span class="line">    <span class="comment"># 记录第一篇文章的标题</span></span><br><span class="line">    first = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> first_page:</span><br><span class="line">        first = i</span><br><span class="line">    <span class="comment"># 进入第一篇文章</span></span><br><span class="line">    driver.find_element_by_xpath(<span class="string">"//a[contains(text(),'&#123;&#125;')]"</span>.format(first)).click()</span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    <span class="comment"># 记录浏览数</span></span><br><span class="line">    <span class="keyword">try</span>: </span><br><span class="line">        view = driver.find_element_by_id(<span class="string">"busuanzi_value_page_pv"</span>)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="comment"># 标题名和域名作为字典的 key</span></span><br><span class="line">    string = <span class="string">"["</span> + first + <span class="string">"]"</span> + <span class="string">"("</span> + driver.current_url + <span class="string">")"</span></span><br><span class="line">    <span class="comment"># 如果没有加载到浏览数 就给一个负数</span></span><br><span class="line">    <span class="keyword">if</span> view.text == <span class="string">""</span>:</span><br><span class="line">        article[string] = <span class="number">-2</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        article[string] = int(view.text)</span><br><span class="line">        print(string, int(view.text))</span><br><span class="line">    <span class="comment"># 捕获当前的 url (已经进入了新页面)</span></span><br><span class="line">    url = driver.current_url</span><br><span class="line">    data = requests.get(url)</span><br><span class="line">    data = BeautifulSoup(data.text, <span class="string">"lxml"</span>)</span><br><span class="line">    <span class="comment"># 解析当前页面，获取下一页的按钮</span></span><br><span class="line">    next = data.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'post-nav-next post-nav-item'</span>&#125;)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> next <span class="keyword">and</span> num &lt; per_page:</span><br><span class="line">            num += <span class="number">1</span></span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line">            <span class="comment"># 点击下一页的链接 进入 下一个网页</span></span><br><span class="line">            driver.find_element_by_link_text(next.text.strip()).click()</span><br><span class="line">            time.sleep(<span class="number">5</span>)</span><br><span class="line">            <span class="comment"># 查看浏览数，图片较多加载缓慢，5秒内加载不出来跳过</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                view = driver.find_element_by_id(<span class="string">"busuanzi_value_page_pv"</span>)</span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                <span class="keyword">pass</span></span><br><span class="line">            <span class="comment"># 获取当前页面的url</span></span><br><span class="line">            url = driver.current_url</span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line">            data = requests.get(url)</span><br><span class="line">            <span class="comment"># 解析当前url</span></span><br><span class="line">            data = BeautifulSoup(data.text, <span class="string">"lxml"</span>)</span><br><span class="line">            <span class="comment"># 当前文章的标题和域名传入字典</span></span><br><span class="line">            string = <span class="string">"["</span> + data.title.text + <span class="string">"]"</span> + <span class="string">"("</span> + driver.current_url + <span class="string">")"</span></span><br><span class="line">            <span class="comment"># 如果没有加载到浏览数 就给一个负数</span></span><br><span class="line">            <span class="keyword">if</span> view.text == <span class="string">""</span>:</span><br><span class="line">                article[string] = <span class="number">-2</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                article[string] = int(view.text)</span><br><span class="line">                print(string, int(view.text))</span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line">            <span class="comment"># 寻找下一篇博客的链接名，然后点击，直到最后一篇文章。</span></span><br><span class="line">            next = data.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'post-nav-next post-nav-item'</span>&#125;)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        driver.quit()</span><br><span class="line">    </span><br><span class="line">p = Pool(process_num)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range (process_num + <span class="number">1</span>):</span><br><span class="line">    p.apply_async(respite_task, args=(i,))</span><br><span class="line"></span><br><span class="line">print(<span class="string">'waitting for all subprocess done'</span>)</span><br><span class="line">start = time.time()</span><br><span class="line">p.close()</span><br><span class="line">p.join()</span><br><span class="line">end = time.time()</span><br><span class="line">print(<span class="string">'All subprocesses done costs &#123;&#125; seconds'</span>.format(end - start))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升序排列并保存</span></span><br><span class="line">article_save = sorted(article.items(), key = <span class="keyword">lambda</span> item:item[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="comment"># encoding='utf-8'，用于确保写入中文不乱码</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'data_multiprocess.json'</span>,<span class="string">'w'</span>,encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f_obj:</span><br><span class="line">    <span class="comment"># ensure_ascii=False，用于确保写入json的中文不发生乱码</span></span><br><span class="line">    json.dump(article_save,f_obj,ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<p>最终的结果和单线程的结果保持一致，但仅仅用了<strong>105</strong>秒就执行完毕，足足提升了10倍。因为每个进程都有一个主线程，将主线程分配给多个核，所以导致了资源利用率比单线程要高的多：<img alt data-src="/2020/03/18/multi-process/2.gif"></p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>这好像不是传说中的并行计算，毕竟不是计算密集的任务，但这个几个进程的任务确实在并行执行，『知识就是力量』还是有道理的。</p>
+]]></content>
+      <tags>
+        <tag>Resptile</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>多线程与多进程, 基于Python实现</title>
     <url>/2020/03/16/multi-process-thread/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，大多东西为网上搜刮而来后整理，可能不严谨。本文收录：</p>
@@ -2573,8 +2637,8 @@
 <p>出了问题去StackOverflow上或者谷歌一下，能搜出来很多、很有效的解决方案，至少国内的搜索引擎还做不到能快速的搜索出有效的科技文档来。</p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
         <tag>GUI</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2704,8 +2768,8 @@
 <p>下一步，自定义信号与槽，类与函数进阶，多线程。</p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
         <tag>GUI</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -2933,8 +2997,8 @@
 <p><a href="/download/WebPage.zip">加载外部网页（无JavaScript相关）</a></p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
         <tag>GUI</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4679,8 +4743,8 @@
 <h2 id="归结原因"><a href="#归结原因" class="headerlink" title="归结原因"></a>归结原因</h2><p>近期系统的学了一下PyQt5的知识后，总结了踩坑的原因：干活之前不读文档，吓折腾只会浪费更多时间。</p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
         <tag>GUI</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -4833,6 +4897,50 @@
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img alt data-src="/2019/02/18/rnn1/1.png"></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：<br>$$\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)$$</p>
+<p>简单的kears实现：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img alt data-src="/2019/02/18/rnn1/2.png"></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：<br>$$c_1=\sum_t \alpha_{1t} a_t$$</p>
+<p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<p>$$\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}$$</p>
+<p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<p>$$e_{t,x}=f(s_{t-1};a_x)$$</p>
+<p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>Python</tag>
+        <tag>DeepLearning</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -4898,50 +5006,6 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>Python</tag>
-        <tag>DeepLearning</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img alt data-src="/2019/02/18/rnn1/1.png"></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：<br>$$\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)$$</p>
-<p>简单的kears实现：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img alt data-src="/2019/02/18/rnn1/2.png"></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：<br>$$c_1=\sum_t \alpha_{1t} a_t$$</p>
-<p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<p>$$\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}$$</p>
-<p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<p>$$e_{t,x}=f(s_{t-1};a_x)$$</p>
-<p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
