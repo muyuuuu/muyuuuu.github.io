@@ -228,13 +228,11 @@
               </span>
 
           
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span><br>
+              <span id="busuanzi_value_page_pv"></span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-file-word-o"></i>
@@ -281,7 +279,7 @@
 <li>使服务器辨别不出来是人在看他的网页还是机器在看他的网页。</li>
 <li>触发<code>Ajax</code>，使浏览器自动加载剩下的内容，而不用使人去手动翻阅加载。如下图所示：</li>
 </ul>
-<p><img data-src="/2020/01/11/resptile/1.png" alt></p>
+<p><img data-src="resptile/1.png" alt></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">scroll_down</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (num):</span><br><span class="line">        <span class="comment"># 向下翻阅1000个像素单位</span></span><br><span class="line">        driver.execute_script(<span class="string">"window.scrollBy(0,1000)"</span>)</span><br><span class="line">        <span class="comment">#　停两秒在向下翻阅 等他加载</span></span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 翻阅10次</span></span><br><span class="line">scroll_down(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 
 <p><code>(0, 1000)</code>中的<code>0</code>表示水平翻阅0个像素点，<code>1000</code>表示向下翻阅1000个像素点。还记得屏幕的分辨率是<code>1920X1080</code>吗，1080就是指竖直方向排列的像素点的数量。记住这段代码，一会儿配合其他任务一起用。</p>
@@ -551,17 +549,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
         经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

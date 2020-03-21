@@ -222,13 +222,11 @@
             </span>
 
           
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span><br>
+              <span id="busuanzi_value_page_pv"></span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-file-word-o"></i>
@@ -259,7 +257,7 @@
 
 <h1 id="深度优先与广度优先"><a href="#深度优先与广度优先" class="headerlink" title="深度优先与广度优先"></a>深度优先与广度优先</h1><p>深度优先和广度优先有共同点：图的遍历指每个节点仅仅被访问一次，都是一个递归的过程。</p>
 <p>深度优先指：先遍历孩子结点，在考虑兄弟节点，即先往深了去搜；广度优先指：先遍历兄弟节点，在考虑孩子节点，即先往广了去搜。如下图所示，<code>1</code>为起始顶点，深度优先(DFS)的遍历顺序是：<code>1, 4, 3, 7, 5, 6, 2</code>：广度优先(BFS)的遍历顺序是：<code>1, 4, 2, 3, 5, 7, 6</code>。如果这是一张旅游景点的地图，你可以和你的小伙伴说，我们是深度优先玩呢，还是广度优先玩呢。</p>
-<p><img data-src="/2020/02/26/graph-algorithm-search/1.png" alt></p>
+<p><img data-src="graph-algorithm-search/1.png" alt></p>
 <h1 id="二维搜索"><a href="#二维搜索" class="headerlink" title="二维搜索"></a>二维搜索</h1><p>来一个实际题目(PAT乙级1068)：要求你找出万绿丛中的一点红，即有独一无二颜色的那个像素点，并且该点的颜色与其周围 8 个相邻像素的颜色差充分大。输入第一行给出三个正整数，分别是 $M$ 和 $N(\leq 1000)$，即图像的分辨率；以及 TOL，是所求像素点与相邻点的颜色差阈值，色差超过 TOL 的点才被考虑。随后 $N$行，每行给出$M$个像素的颜色值，范围在$[0,2^{24}]$内。</p>
 <p>在一行中按照 <code>(x, y): color</code> 的格式输出所求像素点的位置以及颜色值，其中位置 <code>x</code> 和 <code>y</code> 分别是该像素在图像矩阵中的列、行编号（从 1 开始编号）。如果这样的点不唯一，则输出 <code>Not Unique</code>；如果这样的点不存在，则输出 <code>Not Exist</code>。</p>
 <h2 id="输入样例"><a href="#输入样例" class="headerlink" title="输入样例"></a>输入样例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">8 6 200</span><br><span class="line">0 	 0 	  0 	   0	    0 	     0 	      0        0</span><br><span class="line">65280 	 65280    65280    16711479 65280    65280    65280    65280</span><br><span class="line">16711479 65280    65280    65280    16711680 65280    65280    65280</span><br><span class="line">65280 	 65280    65280    65280    65280    65280    165280   165280</span><br><span class="line">65280 	 65280 	  16777015 65280    65280    165280   65480    165280</span><br><span class="line">16777215 16777215 16777215 16777215 16777215 16777215 16777215 16777215</span><br></pre></td></tr></table></figure>
@@ -319,10 +317,10 @@
       <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++刷题后的初步整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\03\02\algorithm-time-complexity\" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
@@ -531,17 +529,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
         经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

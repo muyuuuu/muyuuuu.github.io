@@ -228,13 +228,11 @@
               </span>
 
           
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span><br>
+              <span id="busuanzi_value_page_pv"></span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-file-word-o"></i>
@@ -260,7 +258,7 @@
 
       
         <p>优化器这种东西之前从来不去接触，以为是很高深莫测的东西。直到今天自己去亲自探测才发现，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。</p>
-<p><img data-src="/2019/02/20/gradient-function/opt1.gif" alt></p>
+<p><img data-src="gradient-function/opt1.gif" alt></p>
 <a id="more"></a>
 
 <p>本文收录内容：</p>
@@ -283,7 +281,7 @@
 <h2 id="加权移动平均"><a href="#加权移动平均" class="headerlink" title="加权移动平均"></a>加权移动平均</h2><p>给出加权移动平均的公式：</p>
 <p>$$v_n=\beta V_{n-1}+(1-\beta)x_n,v_0=0$$</p>
 <p>$x_n$是第$n$个数值，$v_n$是第$n$个的平均值，$\beta$是对前面数值的学习情况，因为设置初始值为0，前期的函数数值会偏低，不过这点误差可以接受。来看下图，首先产生一堆随机数，然后用不同的$\beta$去求随机数的平均值。</p>
-<p><img data-src="/2019/02/20/gradient-function/1.png" alt></p>
+<p><img data-src="gradient-function/1.png" alt></p>
 <p>我们发现，当$\beta$过大的时候(0.98)，学习的趋势呈现出了随机性，而$\beta$太小时(0.5)，学习的趋势呈现出了滞后性，也就是对前面的信息学的慢，反应也慢。选择一个合适的$\beta$(0.9)，就能很好的描述出数据的平均走势。而接下来的优化器，也很大程度借鉴了这个观念。</p>
 <h3 id="python实现："><a href="#python实现：" class="headerlink" title="python实现："></a>python实现：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">date = <span class="number">365</span></span><br><span class="line">x = np.linspace(<span class="number">-1</span>, <span class="number">1</span>, date)</span><br><span class="line">x = x.reshape(date, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 噪音数据</span></span><br><span class="line">noise = <span class="number">0.1</span> * np.random.randn(date)</span><br><span class="line">noise = noise.reshape(date, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 产生随机函数</span></span><br><span class="line">y = - x * x + noise + <span class="number">1</span></span><br><span class="line"><span class="comment"># 加权移动平均函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">weight__move_average</span><span class="params">(beta, date, y_value)</span>:</span></span><br><span class="line"></span><br><span class="line">    v = [<span class="number">0</span>] * date</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">1</span>, date):</span><br><span class="line">        v[i] = beta * v[i - <span class="number">1</span>] + (<span class="number">1</span> - beta) * y_value[i]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line"></span><br><span class="line">y_beta1 = weight__move_average(<span class="number">0.90</span>, <span class="number">365</span>, y)</span><br><span class="line">y_beta2 = weight__move_average(<span class="number">0.98</span>, <span class="number">365</span>, y)</span><br><span class="line">y_beta3 = weight__move_average(<span class="number">0.50</span>, <span class="number">365</span>, y)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plt.plot(x, y, label=<span class="string">'data'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plt.plot(x, y_beta1, label = <span class="string">'0.9'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">plt.plot(x, y_beta2, label = <span class="string">'0.98'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">4</span>)</span><br><span class="line">plt.plot(x, y_beta3, label = <span class="string">'0.5'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.savefig(<span class="string">'test.png'</span>, dpi = <span class="number">200</span>)</span><br></pre></td></tr></table></figure>
 
@@ -551,17 +549,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
         经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

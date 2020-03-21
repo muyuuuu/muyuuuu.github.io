@@ -222,13 +222,11 @@
             </span>
 
           
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span><br>
+              <span id="busuanzi_value_page_pv"></span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-file-word-o"></i>
@@ -260,7 +258,7 @@
 <h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><p>$$(a+b)%c = a % c + b % c$$</p>
 <p>如 $101 % 100 + 50 % 100 = (100 + 51) % 100 = 51$</p>
 <h2 id="错解思路"><a href="#错解思路" class="headerlink" title="错解思路"></a>错解思路</h2><p>当时的思路记不太清，我现在的想法是使用遍历的方法，先寻找<code>P</code>，在寻找<code>A</code>，在寻找<code>T</code>，当前字符不满足就跳到下一个字符，一条路走不通就走下一条路。以<code>APPAPT</code>第二位的<code>P</code>为例。从<code>P</code>开始，依次向后遍历字符，遇到错误的字符跳过，遇到正确的字符+1，如下图所示。</p>
-<p><img data-src="/2020/02/23/substring-match/1.png" alt></p>
+<p><img data-src="substring-match/1.png" alt></p>
 <p>第二位的<code>P</code>处理完毕后开始第三位<code>P</code>的处理，也很容易看出来，查找3个字符，复杂度为$O(n^3)$，查找4个字符，复杂度为$O(n^4)$，且代码维护不易容易超时。粗糙的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (s[i] != <span class="string">'P'</span>)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; s.length(); j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">'A'</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">1</span>; j &lt; s.length(); k++)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (s[k] == <span class="string">'T'</span>)&#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -297,10 +295,10 @@
       <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++刷题后的初步整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\03\02\algorithm-time-complexity\" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
@@ -509,17 +507,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
         经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 
