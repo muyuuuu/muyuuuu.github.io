@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="好久不更新博客，主要是最近破事太多了，老师没完没了的留作业，没完没了的写实验报告。关键是你讲课讲的特别好也就忍了，如果你讲课讲的好的话，我认为留的课下作业是对我们的督促，是个好事。关键是吧，上课就念PPT，普通话都说不好，PPT念完后下课，一点都不讲，意义在哪。 回归正题，清明节后到现在10天的时间里，在PAT的乙级刷了34道题，不过不准备在继续刷乙级了。因为当初刷乙级的目的就是熟练C++的各种算">
+<meta name="keywords" content="C++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="刷题后对数据结构的新感想">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/04/17/PAT-B/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="好久不更新博客，主要是最近破事太多了，老师没完没了的留作业，没完没了的写实验报告。关键是你讲课讲的特别好也就忍了，如果你讲课讲的好的话，我认为留的课下作业是对我们的督促，是个好事。关键是吧，上课就念PPT，普通话都说不好，PPT念完后下课，一点都不讲，意义在哪。 回归正题，清明节后到现在10天的时间里，在PAT的乙级刷了34道题，不过不准备在继续刷乙级了。因为当初刷乙级的目的就是熟练C++的各种算">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-11T14:20:07.791Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="刷题后对数据结构的新感想">
+<meta name="twitter:description" content="好久不更新博客，主要是最近破事太多了，老师没完没了的留作业，没完没了的写实验报告。关键是你讲课讲的特别好也就忍了，如果你讲课讲的好的话，我认为留的课下作业是对我们的督促，是个好事。关键是吧，上课就念PPT，普通话都说不好，PPT念完后下课，一点都不讲，意义在哪。 回归正题，清明节后到现在10天的时间里，在PAT的乙级刷了34道题，不过不准备在继续刷乙级了。因为当初刷乙级的目的就是熟练C++的各种算">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/04/17/PAT-B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>刷题后对数据结构的新感想 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-image"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-books">
+
+    <a href="/books/" rel="section"><i class="fa fa-fw fa-book"></i>书籍推荐</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-fw fa-list"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-link"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-fw fa-history"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/04/17/PAT-B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          刷题后对数据结构的新感想
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-17 22:40:28" itemprop="dateCreated datePublished" datetime="2019-04-17T22:40:28+08:00">2019-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-11 22:20:07" itemprop="dateModified" datetime="2020-02-11T22:20:07+08:00">2020-02-11</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>好久不更新博客，主要是最近破事太多了，老师没完没了的留作业，没完没了的写实验报告。关键是你讲课讲的特别好也就忍了，如果你讲课讲的好的话，我认为留的课下作业是对我们的督促，是个好事。关键是吧，上课就念PPT，普通话都说不好，PPT念完后下课，一点都不讲，意义在哪。</p>
+<p>回归正题，清明节后到现在10天的时间里，在PAT的乙级刷了34道题，不过不准备在继续刷乙级了。因为当初刷乙级的目的就是熟练<code>C++</code>的各种算法库，现在大概也可以了。</p>
+<p>准备在复习一波数据结构之后，再看看《算法竞赛》那本书，然后开始正儿八经的刷甲级纯数据结构，反正数据结构也是考研送命课。</p>
+<p>毕竟，时至今日学了这么多计算机的理论，也发现了数据结构的地位。无论是搞后端，前端，数据库，系统开发，机器学习，软件开发，网络开发，自动化测试，硬件开发等等等等，只要跟计算机有一点点关系，数据结构是逃不掉的。</p>
+<a id="more"></a>
+<h1 id="刷题为何用C"><a href="#刷题为何用C" class="headerlink" title="刷题为何用C++"></a>刷题为何用C++</h1><p>原因很简单，比如对数组排序，或者数组增添新的元素，C语言用起来很不顺手，python太慢，java不会，只需要在C语言的基础上学一点点C++的特性就好了，比如刷题专用的算法工具<code>STL</code>。</p>
+<p><img data-src="/2019/04/17/PAT-B/4.jpg" alt></p>
+<h1 id="计算机专业为什么要精通数据结构"><a href="#计算机专业为什么要精通数据结构" class="headerlink" title="计算机专业为什么要精通数据结构"></a>计算机专业为什么要精通数据结构</h1><p>很多⼈，包括我，可能会觉得算法在开发过程中的用处不大，然⽽而并不是这样～</p>
+<p>⾸先，刷算法可以培养清晰的逻辑思维能力，改变人的思维方式。就像一个标准的理工男一样，使用清晰客观的证明来分析这个世界，理性分析正确还是错误。</p>
+<p>其次，看过很多IT公司招聘信息的人就会发现，他们都会优先选择有一定算法基础的人，当然这个基础不是计算机二级那种没用的东西，至少不会有任何一家上规模的IT公司要求计算机二级。</p>
+<p>尤其是一些大公司在面试过程中，对于应届生，更多考察的是数据结构与算法、计算机网络、操作系统等这些计算机基础课程，而并非都是在考察实际应聘岗位的相关技术、工具、知识等。开发的相关技术都可以短期培训的来，而决定培训与否的还是你的基本功是否扎实。</p>
+<p>再者，提高算法能力不是一蹴而就的，需要静下心来用⼤片的时间去看书、学习、刷题、找bug或者参加竞赛，至少我认识的ACM大佬刷题量都在几千道左右，每道题100行代码来看，至少也有十万行代码的深厚功底。</p>
+<p>市面上有很多开发类的培训班，如前端、JavaWeb、安卓之类。但少有算法类的培训，因为学习算法是实实在在、需要⾃己付出努力的过程，⾃己对题目的思考、学习、钻研，别人无法替代，也不可能通过培训速成。</p>
+<p>所以这也是为什么很多公司会在应聘的笔试面试环节考察算法能力的原因，也许语言的特性、工具的使用、开发的技巧可以短期培训，但数据结构和算法的能力足以证明应聘者在计算机知识方面的硬实力～⽽且很多大公司在考察算法时都是⽩板编程。</p>
+<p>相反，这些底层知识不会过时，因为我们学的是原理，是思想，是如何解决问题，而不是枯燥的知识点。就像大树的根基，绿叶繁花只是根基牢固的表象。的确可以通过培训班的努力获取繁华的表象，那么几十年后呢？如果现在最火的技术几十年后过时了，还拖着40岁的身体跟20岁的小伙子去比吗？核心价值应该在于对知识和体系的透彻领悟。</p>
+<p>我相信花时间去学习的知识，都不会浪费时间，可能就在某天某个机遇下，就会发现自己学过看起来无用的东西，有用。既然意识到积累太少，就更应该补上专业方面的知识，将书读薄再读厚。</p>
+<h1 id="关于数据结构的领悟"><a href="#关于数据结构的领悟" class="headerlink" title="关于数据结构的领悟"></a>关于数据结构的领悟</h1><p>当初并非老师讲课不好，反而我知道数据结构的老师的确有着深厚的算法功底，但我当时的确没把数据结构当回事，而且实在智商不够听不懂。至少我会把数据结构的所有东西全部手动实现。</p>
+<p>从计算机的起源谈起，可以理解为电源、电阻、电容、电杆、二极管三极管组成了一个计算机，那么计算机如何理解人输入的指令即编程语言呢？这里面有个学问，叫编译原理。</p>
+<p>首先思考语言的定义，语言是一种事物与另一种事物之间的交流的方式。人与人之间的语言可以是中文，可以是英文。那么和电路交流的语言呢？通俗的可以理解为编程语言，计算机语言同样也是一种交流的方式，只不过在这个时候交流的对象由人变成了计算机而已。这就是编译原理，很荣幸，编译原理对数据结构的要求还是很高的。</p>
+<p>既然想根据编译原理做出编译系统，那么就需要底层硬件的支持，这个时候微型计算机登场了，由微型计算机出发，做起来的操作系统可以调配资源实现并发、异步。那么怎么在操作系统上执行指令呢？又回归到了计算机原理，最后要完成两个计算机的通信呢？计算机网络。如果在面向高级应用，那么就是异步编程，爬虫，AI这些东西。从刚才的编译原理开始到高级应用，所有的背后都是数据结构的强力支持。</p>
+<p>数据结构使得计算机可以进行快速运算(算法优化)，通过人为设计的种种数据结构将知识以计算机所能处理的数据类型进行组织并表示，使得计算机处理起来更加简单，同时对人而言可读性强、解释性高。</p>
+<p>计算机发展至今有许多经典的案例，学习它们不失为一种好的办法。比如链表、栈、图、树等等，也许在学过后觉得可有可无，作用不大，其实不然。数据结构更多的是一种形而上的东西，一种思想，解决问题，思考问题的思想，举个生动形象的例子，只要是老师在数据结构课上讲的东西，我全部手动实现了，即使我为此付出的巨大的代价，一道题甚至能写上几天，但至今编程没有太大障碍，至少不是会想不会写，也了解了如何去写一个好程序。</p>
+<p>在实际应用中的数据结构往往都是从基础数据结构中发展而来的，任意组合或是构建全新的数据结构可以都是可以的，直至时间复杂度令人满意。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/31/C-string/" rel="prev" title="C++字符串类的奇技淫巧">
+      <i class="fa fa-chevron-left"></i> C++字符串类的奇技淫巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/04/19/romantic-time-of-modeling/" rel="next" title="那些年建模的时光">
+      那些年建模的时光 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#刷题为何用C"><span class="nav-number">1.</span> <span class="nav-text">刷题为何用C++</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算机专业为什么要精通数据结构"><span class="nav-number">2.</span> <span class="nav-text">计算机专业为什么要精通数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于数据结构的领悟"><span class="nav-number">3.</span> <span class="nav-text">关于数据结构的领悟</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">366k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:33</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'e8b771698173d9268bac93218880865c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

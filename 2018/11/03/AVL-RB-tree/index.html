@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="AVL是平衡树，平衡因子概念什么的就不阐述了，主要是在不平衡时候如何旋转。（1）右子树右节点插入：左旋转。（2）左子树左节点插入：右旋转。（3）右子树左节点插入：右旋转后左旋转。（4）左子树右节点插入：左旋转后右旋转。  所谓的左旋和右旋都是以子树为原点的：如b是a的子树，那么旋转就围绕b来进行。 如果b是a的左子树，那么就围绕b将a向右旋转，看着就像是a直接掉下来了，掉成了b的右子树。 如果b是">
+<meta name="keywords" content="Algorithm,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AVL树的Python实现">
+<meta property="og:url" content="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="AVL是平衡树，平衡因子概念什么的就不阐述了，主要是在不平衡时候如何旋转。（1）右子树右节点插入：左旋转。（2）左子树左节点插入：右旋转。（3）右子树左节点插入：右旋转后左旋转。（4）左子树右节点插入：左旋转后右旋转。  所谓的左旋和右旋都是以子树为原点的：如b是a的子树，那么旋转就围绕b来进行。 如果b是a的左子树，那么就围绕b将a向右旋转，看着就像是a直接掉下来了，掉成了b的右子树。 如果b是">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-02-15T09:07:50.837Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AVL树的Python实现">
+<meta name="twitter:description" content="AVL是平衡树，平衡因子概念什么的就不阐述了，主要是在不平衡时候如何旋转。（1）右子树右节点插入：左旋转。（2）左子树左节点插入：右旋转。（3）右子树左节点插入：右旋转后左旋转。（4）左子树右节点插入：左旋转后右旋转。  所谓的左旋和右旋都是以子树为原点的：如b是a的子树，那么旋转就围绕b来进行。 如果b是a的左子树，那么就围绕b将a向右旋转，看着就像是a直接掉下来了，掉成了b的右子树。 如果b是">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>AVL树的Python实现 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-image"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-books">
+
+    <a href="/books/" rel="section"><i class="fa fa-fw fa-book"></i>书籍推荐</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-fw fa-list"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-link"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-fw fa-history"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2018/11/03/AVL-RB-tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AVL树的Python实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-03 19:53:32" itemprop="dateCreated datePublished" datetime="2018-11-03T19:53:32+08:00">2018-11-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-02-15 17:07:50" itemprop="dateModified" datetime="2019-02-15T17:07:50+08:00">2019-02-15</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>AVL是平衡树，平衡因子概念什么的就不阐述了，主要是在不平衡时候如何旋转。（1）右子树右节点插入：左旋转。（2）左子树左节点插入：右旋转。（3）右子树左节点插入：右旋转后左旋转。（4）左子树右节点插入：左旋转后右旋转。</p>
+<ul>
+<li><strong>所谓的左旋和右旋</strong>都是以子树为原点的：如b是a的子树，那么旋转就围绕b来进行。</li>
+<li>如果b是a的左子树，那么就围绕b将a向右旋转，看着就像是a直接掉下来了，掉成了b的右子树。</li>
+<li>如果b是a的右子树，那么就围绕b将a向左旋转，看着就像是a直接掉下来了，掉成了b的左子树。</li>
+</ul>
+<a id="more"></a>
+<p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式。</a></p>
+<p>有关AVL树的具体旋转操作请看<a href="https://blog.csdn.net/qq_25806863/article/details/74755131" target="_blank" rel="noopener">这里，讲的贼详细</a>。</p>
+<p>AVL树有左右孩子的概念，所以，在实现AVL树之前，有必要先引入Python中类的概念，先来个MWE。</p>
+<h3 id="Python的类"><a href="#Python的类" class="headerlink" title="Python的类"></a>Python的类</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span>:</span></span><br><span class="line">    <span class="comment"># 初始化</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, brand, gas)</span>:</span></span><br><span class="line">        self.brand = brand</span><br><span class="line">        self.gas = gas</span><br><span class="line">        print(<span class="string">'一辆新的'</span>, self.brand, <span class="string">'被生产出来了！'</span>)</span><br><span class="line">    <span class="comment"># 定义方法</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add_gas</span><span class="params">(self, amount)</span>:</span></span><br><span class="line">        self.gas += amount</span><br><span class="line">    <span class="comment"># 定义方法</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_gas</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'剩余汽油：'</span>, self.gas)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例化</span></span><br><span class="line">benz = Car(<span class="string">'Benz'</span>, <span class="number">100</span>)</span><br><span class="line"><span class="comment"># 调用方法</span></span><br><span class="line">benz.add_gas(<span class="number">200</span>)</span><br><span class="line">benz.show_gas()</span><br></pre></td></tr></table></figure>
+<h3 id="AVL树的实现"><a href="#AVL树的实现" class="headerlink" title="AVL树的实现"></a>AVL树的实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="comment"># 定义每个节点的数据，左孩子右孩子，平衡因子</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.data = <span class="number">0</span></span><br><span class="line">        self.left = <span class="literal">None</span></span><br><span class="line">        self.right = <span class="literal">None</span></span><br><span class="line">        self.height = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BTree</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.root = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__Max</span><span class="params">(self, h1, h2)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> h1 &gt; h2:</span><br><span class="line">            <span class="keyword">return</span> h1</span><br><span class="line">        <span class="keyword">elif</span> h1 &lt;= h2:</span><br><span class="line">            <span class="keyword">return</span> h2</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 左左情况，向右旋转</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__LL</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        node = r.left</span><br><span class="line">        r.left = node.right</span><br><span class="line">        node.right = r</span><br><span class="line">        r.height = self.__Max(self.getHeight(r.right), self.getHeight(r.left)) + <span class="number">1</span></span><br><span class="line">        node.height = self.__Max(self.getHeight(node.right), self.getHeight(node.left)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> node</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 右右，左旋</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__RR</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        node = r.right</span><br><span class="line">        r.right = node.left</span><br><span class="line">        node.left = r</span><br><span class="line">        r.height = self.__Max(self.getHeight(r.right), self.getHeight(r.left)) + <span class="number">1</span></span><br><span class="line">        node.height = self.__Max(self.getHeight(node.right), self.getHeight(node.left)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> node</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 左右，先左旋再右旋</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__LR</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        r.left = self.__RR(r.left)</span><br><span class="line">        <span class="keyword">return</span> self.__LL(r)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 右左，先右旋再左旋</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__RL</span><span class="params">(self, r)</span>:</span></span><br><span class="line">        r.right = self.__LL(r.right)</span><br><span class="line">        <span class="keyword">return</span> self.__RR(r)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># r是self.root</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__insert</span><span class="params">(self, data, r)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> r == <span class="literal">None</span>:</span><br><span class="line">            node = TreeNode()</span><br><span class="line">            node.data = data</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        <span class="keyword">elif</span> data == r.data:</span><br><span class="line">            <span class="keyword">return</span> r</span><br><span class="line">        <span class="keyword">elif</span> data &lt; r.data:</span><br><span class="line">            r.left = self.__insert(data, r.left)</span><br><span class="line">            <span class="comment"># 左高右低</span></span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.left) - self.getHeight(r.right) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> data &lt; r.left.data:</span><br><span class="line">                    r = self.__LL(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__LR(r)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            r.right = self.__insert(data, r.right)</span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.right) - self.getHeight(r.left) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> data &gt; r.right.data:</span><br><span class="line">                    r = self.__RR(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__RL(r)</span><br><span class="line"></span><br><span class="line">        r.height = self.__Max(self.getHeight(r.left), self.getHeight(r.right)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 删除data节点</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delete</span><span class="params">(self, data, r)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> r == <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> r.data == data:</span><br><span class="line">            <span class="comment"># 如果只有右子树，直接将右子树赋值到此节点</span></span><br><span class="line">            <span class="keyword">if</span> r.left == <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">return</span> r.right</span><br><span class="line">            <span class="comment"># 如果只有左子树，直接将左子树赋值到此节点</span></span><br><span class="line">            <span class="keyword">elif</span> r.right == <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">return</span> r.left</span><br><span class="line">            <span class="comment"># 如果同时有左右子树</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 左子树高度大于右子树</span></span><br><span class="line">                <span class="keyword">if</span> self.getHeight(r.left) &gt; self.getHeight(r.right):</span><br><span class="line">                    <span class="comment"># 找到最右节点 返回节点值 并删除该节点</span></span><br><span class="line">                    node = r.left</span><br><span class="line">                    <span class="keyword">while</span>(node.right != <span class="literal">None</span>):</span><br><span class="line">                        node = node.right</span><br><span class="line">                    r = self.__delete(node.data, r)</span><br><span class="line">                    r.data = node.data</span><br><span class="line">                    <span class="keyword">return</span> r</span><br><span class="line">                <span class="comment"># 右子树高度大于左子树</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    node = r.right</span><br><span class="line">                    <span class="keyword">while</span> node.left != <span class="literal">None</span>:</span><br><span class="line">                        node = node.left</span><br><span class="line">                    r = self.__delete(node.data, r)</span><br><span class="line">                    r.data = node.data</span><br><span class="line">                    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> data &lt; r.data:</span><br><span class="line">            <span class="comment"># 在左子树中删除</span></span><br><span class="line">            r.left = self.__delete(data, r.left)</span><br><span class="line">            <span class="comment"># 右子树高度与左子树高度相差超过1</span></span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.right) - self.getHeight(r.left) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> self.getHeight(r.right.left) &gt; self.getHeight(r.right.right):</span><br><span class="line">                    r = self.__RL(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__RR(r)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> data &gt; r.data:</span><br><span class="line">            <span class="comment"># 右子树中删除</span></span><br><span class="line">            r.right = self.__delete(data, r.right)</span><br><span class="line">            <span class="comment"># 左子树与右子树高度相差超过1</span></span><br><span class="line">            <span class="keyword">if</span> self.getHeight(r.left)-self.getHeight(r.right) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> self.getHeight(r.left.right)&gt;self.getHeight(r.left.left):</span><br><span class="line">                    r = self.__LR(r)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    r = self.__LL(r)</span><br><span class="line">        <span class="comment"># 更新高度</span></span><br><span class="line">        r.height = self.__Max(self.getHeight(r.left), self.getHeight(r.right))+<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 先序遍历</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__show</span><span class="params">(self, root)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> root != <span class="literal">None</span>:</span><br><span class="line">            <span class="comment"># print (root.data)</span></span><br><span class="line">            self.__show(root.left)</span><br><span class="line">            self.__show(root.right)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Insert</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.root = self.__insert(data, self.root)</span><br><span class="line">        <span class="keyword">return</span> self.root</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Delete</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.root = self.__delete(data, self.root)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 求结点的高度</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getHeight</span><span class="params">(self, node)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> node == <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">        <span class="comment"># print node</span></span><br><span class="line">        <span class="keyword">return</span> node.height</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">Show</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__show(self.root)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    bi = BTree()</span><br><span class="line">    insert_time = []</span><br><span class="line">    delete_time = []</span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">500000</span>, <span class="number">50000</span>):</span><br><span class="line">        array = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        since = time.time()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> array:</span><br><span class="line">            bi.Insert(i)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        insert_time.append(end)</span><br><span class="line">        print(<span class="string">'AVL insert : '</span> + str(right_interval) + <span class="string">' Data: '</span> + str(end) + <span class="string">'s'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> right_interval <span class="keyword">in</span> range(<span class="number">1000</span>, <span class="number">500000</span>, <span class="number">50000</span>):</span><br><span class="line">        array = np.random.randint(<span class="number">1</span>, <span class="number">100</span>, right_interval)</span><br><span class="line">        since = time.time()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> array:</span><br><span class="line">            bi.Delete(i)</span><br><span class="line">        end = time.time() - since</span><br><span class="line">        delete_time.append(end)</span><br><span class="line">        print(<span class="string">'AVL delete : '</span> + str(right_interval) + <span class="string">' Data: '</span> + str(end) + <span class="string">'s'</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> array:</span><br><span class="line">            bi.Insert(i)</span><br></pre></td></tr></table></figure>
+<h3 id="结果展示"><a href="#结果展示" class="headerlink" title="结果展示"></a>结果展示</h3><p>  Have a look about the result of insertion and delete operation to AVL。<br>  <strong>Insertion:</strong><br><img data-src="/2018/11/03/AVL-RB-tree/i.png" alt><br>  <strong>Delete:</strong><br><img data-src="/2018/11/03/AVL-RB-tree/d.png" alt><br>  <strong>Statistic:</strong><br><img data-src="/2018/11/03/AVL-RB-tree/1.png" alt></p>
+<hr>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/02/playball-2018-11-2/" rel="prev" title="打球～～～">
+      <i class="fa fa-chevron-left"></i> 打球～～～
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/07/min-span-tree/" rel="next" title="最小生成树">
+      最小生成树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python的类"><span class="nav-number">1.</span> <span class="nav-text">Python的类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AVL树的实现"><span class="nav-number">2.</span> <span class="nav-text">AVL树的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果展示"><span class="nav-number">3.</span> <span class="nav-text">结果展示</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">366k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:33</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'cef8e12927a57cefbcaf76e0057869fb',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
