@@ -199,7 +199,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行">
+      <meta itemprop="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -253,15 +253,12 @@
       
         <p>19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。</p>
 <a id="more"></a>
-
 <h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>字符串 <code>APPAPT</code> 中包含了两个单词 <code>PAT</code>，其中第一个 PAT 是第 2 位(P)，第 4 位(A)，第 6 位(T)；第二个 PAT 是第 3 位(P)，第 4 位(A)，第 6 位(T)。那么可以类比到：<code>PPPAAATTT</code>有27个<code>PAT</code>。现给定字符串，问一共可以形成多少个 <code>PAT</code>？由于结果可能比较大，只输出对 1000000007 取余数的结果。</p>
-<h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><p>$$(a+b)%c = a % c + b % c$$</p>
-<p>如 $101 % 100 + 50 % 100 = (100 + 51) % 100 = 51$</p>
+<h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><script type="math/tex; mode=display">(a+b)\%c = a \% c + b \% c</script><p>如 $101 \% 100 + 50 \% 100 = (100 + 51) \% 100 = 51$</p>
 <h2 id="错解思路"><a href="#错解思路" class="headerlink" title="错解思路"></a>错解思路</h2><p>当时的思路记不太清，我现在的想法是使用遍历的方法，先寻找<code>P</code>，在寻找<code>A</code>，在寻找<code>T</code>，当前字符不满足就跳到下一个字符，一条路走不通就走下一条路。以<code>APPAPT</code>第二位的<code>P</code>为例。从<code>P</code>开始，依次向后遍历字符，遇到错误的字符跳过，遇到正确的字符+1，如下图所示。</p>
 <p><img data-src="/2020/02/23/substring-match/1.png" alt></p>
 <p>第二位的<code>P</code>处理完毕后开始第三位<code>P</code>的处理，也很容易看出来，查找3个字符，复杂度为$O(n^3)$，查找4个字符，复杂度为$O(n^4)$，且代码维护不易容易超时。粗糙的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (s[i] != <span class="string">'P'</span>)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; s.length(); j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">'A'</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">1</span>; j &lt; s.length(); k++)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (s[k] == <span class="string">'T'</span>)&#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h1 id="正解"><a href="#正解" class="headerlink" title="正解"></a>正解</h1><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>既然容易超时，得想办法把时间复杂度给降下来，争取一次遍历在时间复杂度为$O(n)$内把问题解决掉。既然假设只能遍历一次，那么也可以理解为最终的个数是：有序字符<code>P,A,T</code>的排列组合数。</p>
 <p>有序是指<code>P</code>要在<code>A</code>的前面，<code>A</code>要在<code>T</code>的前面，顺序错了的不能计算。最后，统计有几个有序的<code>P, A, T</code>，相乘一下即可解决。如<code>PPPAAATTT</code>中，有序的<code>P</code>是3个，<code>A</code>是3个，<code>T</code>是3个，那么最后的结果就是：$3\times3\times3=27$。</p>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p><code>T</code>的个数为<code>countt</code>，<code>P</code>的个数为<code>countp</code>，最终结果的个数为<code>result</code>。</p>
@@ -273,10 +270,8 @@
 <li>遇到一个<code>T</code>，<code>T</code>的个数减一。这样可以做到：<code>A</code>前面的<code>T</code>无效，遇到<code>A</code>后计算一次<code>P, T</code>的组合数，指针向后移动继续遍历，<code>T</code>的数量减少一个。如字符串<code>PPPAAAATTTTAT</code>，计算到倒数第二个<code>A</code>时，此时只有一个<code>T</code>。</li>
 </ol>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">    <span class="keyword">int</span> len = s.length(), result = <span class="number">0</span>, countp = <span class="number">0</span>, countt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>)</span><br><span class="line">            countt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'P'</span>) countp++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) countt--;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'A'</span>) result = (result + countp * countt) % <span class="number">1000000007</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><p>如果题目要求是寻找有几个<code>PSAT</code>呢，如果是寻找有几个<code>PNSAT</code>呢。错误的思路只会无限制的增加循环次数，而正解仍然能够在$O(n)$内解决问题。只需要把<code>PS</code>看作一个整体，在增加一个<code>S</code>的计数变量即可。如寻找<code>PSSSATTAAT</code>中<code>PSAT</code>的个数：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">    <span class="keyword">int</span> len = s.length(), result = <span class="number">0</span>, countp = <span class="number">0</span>, countt = <span class="number">0</span>, counts = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>)</span><br><span class="line">            countt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'P'</span>) countp++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'S'</span>) counts++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) countt--;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'A'</span>) result = (result + countp * counts * countt) % <span class="number">1000000007</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>输出为15。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/liuchuo/PAT/tree/master/BasicLevel_C%2B%2B" target="_blank" rel="noopener">柳神的代码, 1040</a></p>
 
@@ -295,10 +290,10 @@
       <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++刷题后的初步整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\03\02\algorithm-time-complexity\" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
@@ -324,6 +319,25 @@
 
   </div>
 </div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
 
 
       <footer class="post-footer">
@@ -413,7 +427,7 @@
     <img class="site-author-image" itemprop="image" alt="兰铃"
       src="/images/avatar.gif">
   <p class="site-author-name" itemprop="name">兰铃</p>
-  <div class="site-description" itemprop="description">爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行</div>
+  <div class="site-description" itemprop="description">爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -469,12 +483,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">372k</span>
+    <span title="站点总字数">365k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:38</span>
+    <span title="站点阅读时长">5:32</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
