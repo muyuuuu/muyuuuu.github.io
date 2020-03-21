@@ -261,7 +261,6 @@
 <p>学了一个星期的PyQt5(主要是玩)，用于GUI（graphicx user interface）开发。想在这里整理基本控件的用法和功能，在后期开发软件中便于查询（整理知识，按照软件需求的功能，筛选合理的控件）。</p>
 <p>因代码太长，所以每节的代码都会在章节最后一压缩包的形式呈现，且，本文不适合没有GUI开发经验的人看，但是代码适合新手观看。如果真的是新手来看此文，还是建议多写写，结合代码多看看。</p>
 <a id="more"></a>
-
 <p>多年前写过的GUI（西电的优研答辩）效果如下，可以做到不错的效果，但是还是要系统的学一下。</p>
 <p><img data-src="/2019/10/06/pyqt5-basic/1.gif" alt></p>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="https://muyuuuu.github.io/2019/11/16/A-Beautiful-PyQt5-Interface/">一个好看的通用的界面</a></p>
@@ -278,140 +277,153 @@
 <h2 id="尺寸"><a href="#尺寸" class="headerlink" title="尺寸"></a>尺寸</h2><p>可以通过QtDesigner里面的<code>minimumsize</code>和<code>maximumsize</code>属性设置控件随窗口大小变化而变动的最小尺寸与最大尺寸(用于撑开布局)。<code>sizepolicy</code>可以设置水平、竖直方向的延伸策略，如<code>minimum</code>,<code>maximum</code>,<code>fixed</code>等。</p>
 <h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p><a href="/download/layout.zip">在窗口中加载子窗口。</a></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- childrenform.py 是 childrenform2.ui 的生成文件</span><br><span class="line">- mainwindow2.py 是  mainwindow.ui 的生成文件</span><br><span class="line">- layout.py 是主文件，调用了mainwindow2和childrenform</span><br><span class="line">所以执行方式为 ：python layout.py</span><br></pre></td></tr></table></figure>
-
 <p>单击工具栏按钮会调用子窗口</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">    <span class="comment"># 单击工具栏按钮触发</span></span><br><span class="line">    self.actiontst.triggered.connect(self.child_show) </span><br><span class="line">    <span class="comment"># 单击后，加载子窗口</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">child_show</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.gridLayout.addWidget(self.child)</span><br><span class="line">    self.child.show()</span><br></pre></td></tr></table></figure>
-
 <h1 id="基本窗口控件"><a href="#基本窗口控件" class="headerlink" title="基本窗口控件"></a>基本窗口控件</h1><p>窗口是指：没有嵌入到其他控件中，还有标题栏，菜单栏等，是程序的整体界面，控件是指按钮、文本框等组成程序的基本元素。一个程序可以有多个窗口，一个窗口可以有多个元素。</p>
 <p><code>QMainWindow</code> 是最常见的窗口形式，继承自<code>QWidget</code>，<code>QWidget</code>也是所有用户界面对象的基类。</p>
 <p>主函数的执行流程如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment"># 在shell中执行</span></span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    mywin = MyMainWindow()</span><br><span class="line">    mywin.show()</span><br><span class="line">    sys.exit(app.exec()) <span class="comment"># 开始主循环，直到退出</span></span><br></pre></td></tr></table></figure>
-
 <p>事件代码在主循环开始，接受消息发送给各个控件，点用<code>exit()</code> 或者主窗口被销毁，主循环就会退出。程序运行成功，返回0。</p>
 <p>返回0的原因是：PyQt5的底层是C++，C++的<code>main</code>函数返回结果相当与调用了<code>exit</code>函数，<code>main</code>函数的返回值会传送给<code>exit</code>函数，0表示圆满结束。<code>return 1</code> 不具备移植性。`````</p>
-<h2 id="窗口基本实现"><a href="#窗口基本实现" class="headerlink" title="窗口基本实现"></a>窗口基本实现</h2><table>
+<h2 id="窗口基本实现"><a href="#窗口基本实现" class="headerlink" title="窗口基本实现"></a>窗口基本实现</h2><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">功能与控件</th>
-<th align="left">描述</th>
+<th style="text-align:left">功能与控件</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">创建主窗口</td>
-<td align="left">继承自<code>QMainWindow</code></td>
+<tbody>
+<tr>
+<td style="text-align:left">创建主窗口</td>
+<td style="text-align:left">继承自<code>QMainWindow</code> </td>
 </tr>
 <tr>
-<td align="left">窗口居中显示</td>
-<td align="left">计算屏幕尺寸，窗口尺寸，除以2</td>
+<td style="text-align:left">窗口居中显示</td>
+<td style="text-align:left">计算屏幕尺寸，窗口尺寸，除以2</td>
 </tr>
 <tr>
-<td align="left">关闭窗口</td>
-<td align="left"><code>QApplication.instance().quit()</code></td>
+<td style="text-align:left">关闭窗口</td>
+<td style="text-align:left"><code>QApplication.instance().quit()</code></td>
 </tr>
 <tr>
-<td align="left">设置图标</td>
-<td align="left">仿苹果主题不会被显示，因为苹果左上角是三个按钮</td>
+<td style="text-align:left">设置图标</td>
+<td style="text-align:left">仿苹果主题不会被显示，因为苹果左上角是三个按钮</td>
 </tr>
 <tr>
-<td align="left">显示气泡信息</td>
-<td align="left">设置为随鼠标移动比较合适</td>
+<td style="text-align:left">显示气泡信息</td>
+<td style="text-align:left">设置为随鼠标移动比较合适</td>
 </tr>
 <tr>
-<td align="left"><code>Qlabel</code></td>
-<td align="left">用于信息提示，显示图片、网页链接、不可编辑的文本</td>
+<td style="text-align:left"><code>Qlabel</code></td>
+<td style="text-align:left">用于信息提示，显示图片、网页链接、不可编辑的文本</td>
 </tr>
 <tr>
-<td align="left"><code>QLineEdit</code></td>
-<td align="left">单行文本编辑，可设置掩代码、显示方式，内容改变后可发射信号链接到槽函数。可以增加验证器，屏蔽无效输入。</td>
+<td style="text-align:left"><code>QLineEdit</code></td>
+<td style="text-align:left">单行文本编辑，可设置掩代码、显示方式，内容改变后可发射信号链接到槽函数。可以增加验证器，屏蔽无效输入。</td>
 </tr>
 <tr>
-<td align="left"><code>QTextEdit</code></td>
-<td align="left">多行文本编辑，与但行文本编辑基本类似，可以显示Html文档。</td>
+<td style="text-align:left"><code>QTextEdit</code></td>
+<td style="text-align:left">多行文本编辑，与但行文本编辑基本类似，可以显示Html文档。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="按钮类控件"><a href="#按钮类控件" class="headerlink" title="按钮类控件"></a>按钮类控件</h2><p>在任何GUI中，按钮都是常用的出发动作的请求方式，用于和用户的交互操作。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">控件</th>
-<th align="left">描述</th>
+<th style="text-align:left">控件</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>QPushButton</code></td>
-<td align="left">常见按钮，可设置图标，可控制按钮可用与不可用，点击后发射信号到槽函数。</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>QPushButton</code></td>
+<td style="text-align:left">常见按钮，可设置图标，可控制按钮可用与不可用，点击后发射信号到槽函数。</td>
 </tr>
 <tr>
-<td align="left"><code>QRadioButton</code></td>
-<td align="left">用户之可以选择一个选项，用于多选一的互斥选项，如性别。切换状态后发射信号。</td>
+<td style="text-align:left"><code>QRadioButton</code></td>
+<td style="text-align:left">用户之可以选择一个选项，用于多选一的互斥选项，如性别。切换状态后发射信号。</td>
 </tr>
 <tr>
-<td align="left"><code>QCheckBox</code></td>
-<td align="left">多选多，可以设置图标。</td>
+<td style="text-align:left"><code>QCheckBox</code></td>
+<td style="text-align:left">多选多，可以设置图标。</td>
 </tr>
 <tr>
-<td align="left"><code>QComboBox</code></td>
-<td align="left">下拉列表框，可以获得当前所选项和索引，可用于限制输入。</td>
+<td style="text-align:left"><code>QComboBox</code></td>
+<td style="text-align:left">下拉列表框，可以获得当前所选项和索引，可用于限制输入。</td>
 </tr>
 <tr>
-<td align="left"><code>Qslider</code></td>
-<td align="left">滑动条，设置刻度，最大值最小值，如控制坐标轴的大小。</td>
+<td style="text-align:left"><code>Qslider</code></td>
+<td style="text-align:left">滑动条，设置刻度，最大值最小值，如控制坐标轴的大小。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="对话框类控件"><a href="#对话框类控件" class="headerlink" title="对话框类控件"></a>对话框类控件</h2><p>一些提示框，如选择字体、颜色等，所有对话框的父类是<code>QDialog</code>，子类如下。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">控件</th>
-<th align="left">描述</th>
+<th style="text-align:left">控件</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>QMessageBox</code></td>
-<td align="left">用于提示信息, 如警告、询问和严重出错等。</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>QMessageBox</code></td>
+<td style="text-align:left">用于提示信息, 如警告、询问和严重出错等。</td>
 </tr>
 <tr>
-<td align="left"><code>QFileDialog</code></td>
-<td align="left">用于打开文件和保存文件，可以设置过滤器限制文件后缀名。</td>
+<td style="text-align:left"><code>QFileDialog</code></td>
+<td style="text-align:left">用于打开文件和保存文件，可以设置过滤器限制文件后缀名。</td>
 </tr>
 <tr>
-<td align="left"><code>QFontDialog</code></td>
-<td align="left">用于设置字体。</td>
+<td style="text-align:left"><code>QFontDialog</code></td>
+<td style="text-align:left">用于设置字体。</td>
 </tr>
 <tr>
-<td align="left"><code>QInputDialog</code></td>
-<td align="left">用于控件的标准输入，如<code>getInt</code>只能获得整数输入。</td>
+<td style="text-align:left"><code>QInputDialog</code></td>
+<td style="text-align:left">用于控件的标准输入，如<code>getInt</code>只能获得整数输入。</td>
 </tr>
 <tr>
-<td align="left"><code>QColorDialog</code></td>
-<td align="left">用于设置颜色。</td>
+<td style="text-align:left"><code>QColorDialog</code></td>
+<td style="text-align:left">用于设置颜色。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="日期"><a href="#日期" class="headerlink" title="日期"></a>日期</h2><p>用日期类的控件输入，可以避免用户的输入不规范。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">控件</th>
-<th align="left">描述</th>
+<th style="text-align:left">控件</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>QCalendar</code></td>
-<td align="left">以网格日历的形式输入日期，可以获取日期，日期改变后发射信号</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>QCalendar</code></td>
+<td style="text-align:left">以网格日历的形式输入日期，可以获取日期，日期改变后发射信号</td>
 </tr>
 <tr>
-<td align="left"><code>QDateTimeEdit</code></td>
-<td align="left">可编辑日期，感觉不好用，可以设置为弹出日历。</td>
+<td style="text-align:left"><code>QDateTimeEdit</code></td>
+<td style="text-align:left">可编辑日期，感觉不好用，可以设置为弹出日历。</td>
 </tr>
 <tr>
-<td align="left"><code>QCalendar</code></td>
-<td align="left">以日历的形式输入日期</td>
+<td style="text-align:left"><code>QCalendar</code></td>
+<td style="text-align:left">以日历的形式输入日期</td>
 </tr>
 <tr>
-<td align="left"><code>QCalendar</code></td>
-<td align="left">以日历的形式输入日期</td>
+<td style="text-align:left"><code>QCalendar</code></td>
+<td style="text-align:left">以日历的形式输入日期</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="菜单栏、状态栏、工具栏"><a href="#菜单栏、状态栏、工具栏" class="headerlink" title="菜单栏、状态栏、工具栏"></a>菜单栏、状态栏、工具栏</h2><p>菜单栏、工具栏的创建和编辑在QtDesigner里面比较容易实现。用代码实现反而舍近求远。</p>
 <p>状态栏的理想是：鼠标在哪里就显示什么信息，但不太好实现。但也不是不能实现，只是学完基本控件还不能实现，需要学一下信号与槽的高级设置。</p>
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p><a href="/download/BasicWin.zip">基本控件练习</a></p>
@@ -420,56 +432,64 @@
 <p>软件运行界面如下：（上面提到的基本内容都有）</p>
 <p><img data-src="/2019/10/06/pyqt5-basic/3.png" alt></p>
 <h1 id="高级控件"><a href="#高级控件" class="headerlink" title="高级控件"></a>高级控件</h1><h2 id="表格与树"><a href="#表格与树" class="headerlink" title="表格与树"></a>表格与树</h2><p>表格与树可以有效的解决在一个控件中有规律的呈现更多的数据。如对一批数据进行交互，以表格的形式输出这些信息。</p>
-<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><table>
-<thead>
-<tr>
-<th align="left">控件</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>QTableView</code></td>
-<td align="left">可以使用自定义的数据模型，<code>setModel</code>绑定数据源，也可以对<code>SQL</code>的查询结果进行封装，更新控件内容。更类似于视图，更能较少。</td>
-</tr>
-<tr>
-<td align="left"><code>QListView</code></td>
-<td align="left">先建立数据模型，然后在保存数据，单列显示。</td>
-</tr>
-<tr>
-<td align="left"><code>QListWidget</code></td>
-<td align="left">是<code>QListView</code>的子类，列表条目的添加与删除。</td>
-</tr>
-<tr>
-<td align="left"><code>QTableWidget</code></td>
-<td align="left">是<code>QTableView</code>的子类，也就是父类所有的方法子类均可以使用。对表格的编辑操作比较多，如对齐、禁止编辑、整行选中、排序、嵌套其他控件、设置单元格颜色和支持右键菜单栏等。功能较为强大。</td>
-</tr>
-</tbody></table>
-<h2 id="树"><a href="#树" class="headerlink" title="树"></a>树</h2><p><code>QTreeWidget</code>实现了树形结构，一添加子节点的形式对树形结构进行扩充，实现最基本的树形预览。可以设置节点的背景颜色，节点状态，给节点添加响应事件，也可以定制系统模式实现复杂的树形结构，如文件系统盘的树列表。</p>
-<h2 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h2><p>所开发的程序包含太多控件，一个窗口装载不下或者装载太多控件而不美观，应该使用容器装载更多的控件。</p>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">控件</th>
-<th align="left">描述</th>
+<th style="text-align:left">控件</th>
+<th style="text-align:left">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>QTabWidget</code></td>
-<td align="left">一个选项卡，一个页面区域，单击选项卡查看各个页面。</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>QTableView</code></td>
+<td style="text-align:left">可以使用自定义的数据模型，<code>setModel</code>绑定数据源，也可以对<code>SQL</code>的查询结果进行封装，更新控件内容。更类似于视图，更能较少。</td>
 </tr>
 <tr>
-<td align="left"><code>QDockWidgetWidget</code></td>
-<td align="left">浮动窗口，类似与Dev C++ 中的底层Debug窗口，保持浮动状态或者在制定位置附加到主窗口。</td>
+<td style="text-align:left"><code>QListView</code></td>
+<td style="text-align:left">先建立数据模型，然后在保存数据，单列显示。</td>
 </tr>
 <tr>
-<td align="left"><code>QScrollBar</code></td>
-<td align="left">提供水平或者垂直的滚动条，扩大窗口的有效装载面积。（暂时没有尝试）</td>
+<td style="text-align:left"><code>QListWidget</code></td>
+<td style="text-align:left">是<code>QListView</code>的子类，列表条目的添加与删除。</td>
 </tr>
 <tr>
-<td align="left"><code>QGroupBox</code></td>
-<td align="left">下拉框，就是，一个页面内一直向下拖动</td>
+<td style="text-align:left"><code>QTableWidget</code></td>
+<td style="text-align:left">是<code>QTableView</code>的子类，也就是父类所有的方法子类均可以使用。对表格的编辑操作比较多，如对齐、禁止编辑、整行选中、排序、嵌套其他控件、设置单元格颜色和支持右键菜单栏等。功能较为强大。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
+<h2 id="树"><a href="#树" class="headerlink" title="树"></a>树</h2><p><code>QTreeWidget</code>实现了树形结构，一添加子节点的形式对树形结构进行扩充，实现最基本的树形预览。可以设置节点的背景颜色，节点状态，给节点添加响应事件，也可以定制系统模式实现复杂的树形结构，如文件系统盘的树列表。</p>
+<h2 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h2><p>所开发的程序包含太多控件，一个窗口装载不下或者装载太多控件而不美观，应该使用容器装载更多的控件。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">控件</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>QTabWidget</code></td>
+<td style="text-align:left">一个选项卡，一个页面区域，单击选项卡查看各个页面。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>QDockWidgetWidget</code></td>
+<td style="text-align:left">浮动窗口，类似与Dev C++ 中的底层Debug窗口，保持浮动状态或者在制定位置附加到主窗口。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>QScrollBar</code></td>
+<td style="text-align:left">提供水平或者垂直的滚动条，扩大窗口的有效装载面积。（暂时没有尝试）</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>QGroupBox</code></td>
+<td style="text-align:left">下拉框，就是，一个页面内一直向下拖动</td>
+</tr>
+</tbody>
+</table>
+</div>
 <h2 id="网页交互"><a href="#网页交互" class="headerlink" title="网页交互"></a>网页交互</h2><p>使用<code>PyQt5.QtWebKitWidgets.QWebEngineView</code>类来使用网页控件，可以加载外部的网页地址，也可以加载本地的html文档。但是并不推荐，建议使用系统浏览器完成打开网页的功能。</p>
 <p>效果如下图所示：</p>
 <p><img data-src="/2019/10/06/pyqt5-basic/4.png" alt></p>
@@ -668,12 +688,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">373k</span>
+    <span title="站点总字数">365k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:39</span>
+    <span title="站点阅读时长">5:32</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
