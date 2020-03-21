@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本来打算剩余的几天寒假是好好看会儿高数的，结果吧，可能在家里实在是一点书都看不下去，昨晚看了俩小时高数骨头差点散架，学习这种事还是回学校再说吧。 倒是有一点记忆尤甚，空间中的点$(x,y,z)$到$x$轴的距离是多少，我居然脑子有坑算了向径的模，在和向径的$\alpha$角来了个正弦操作，晚上散步才想起来，这个距离不就是$y^2+z^2$嘛。。。 无聊到玩手机，还不如玩会儿带你闹，这几天的收获也较">
+<meta name="keywords" content="Python,GUI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="临近开学的瞎折腾——软件开发(PyQt5)">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/02/24/school-start/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="本来打算剩余的几天寒假是好好看会儿高数的，结果吧，可能在家里实在是一点书都看不下去，昨晚看了俩小时高数骨头差点散架，学习这种事还是回学校再说吧。 倒是有一点记忆尤甚，空间中的点$(x,y,z)$到$x$轴的距离是多少，我居然脑子有坑算了向径的模，在和向径的$\alpha$角来了个正弦操作，晚上散步才想起来，这个距离不就是$y^2+z^2$嘛。。。 无聊到玩手机，还不如玩会儿带你闹，这几天的收获也较">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-30T03:24:58.534Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="临近开学的瞎折腾——软件开发(PyQt5)">
+<meta name="twitter:description" content="本来打算剩余的几天寒假是好好看会儿高数的，结果吧，可能在家里实在是一点书都看不下去，昨晚看了俩小时高数骨头差点散架，学习这种事还是回学校再说吧。 倒是有一点记忆尤甚，空间中的点$(x,y,z)$到$x$轴的距离是多少，我居然脑子有坑算了向径的模，在和向径的$\alpha$角来了个正弦操作，晚上散步才想起来，这个距离不就是$y^2+z^2$嘛。。。 无聊到玩手机，还不如玩会儿带你闹，这几天的收获也较">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/02/24/school-start/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>临近开学的瞎折腾——软件开发(PyQt5) | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-image"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-books">
+
+    <a href="/books/" rel="section"><i class="fa fa-fw fa-book"></i>书籍推荐</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-fw fa-list"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-link"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-fw fa-history"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/24/school-start/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          临近开学的瞎折腾——软件开发(PyQt5)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-24 17:54:19" itemprop="dateCreated datePublished" datetime="2019-02-24T17:54:19+08:00">2019-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-30 11:24:58" itemprop="dateModified" datetime="2020-01-30T11:24:58+08:00">2020-01-30</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本来打算剩余的几天寒假是好好看会儿高数的，结果吧，可能在家里实在是一点书都看不下去，昨晚看了俩小时高数骨头差点散架，学习这种事还是回学校再说吧。</p>
+<p>倒是有一点记忆尤甚，空间中的点$(x,y,z)$到$x$轴的距离是多少，我居然脑子有坑算了向径的模，在和向径的$\alpha$角来了个正弦操作，晚上散步才想起来，这个距离不就是$y^2+z^2$嘛。。。</p>
+<p>无聊到玩手机，还不如玩会儿带你闹，这几天的收获也较为丰富。</p>
+<ul>
+<li>自己没事瞎折腾，整理了<strong>windows</strong>窗口，任务栏，还安装了<strong>Mac</strong>系统下的dock栏，用(看)着很爽，但是，突然发现电脑的时间被我整没了，也就是我打开电脑看不了时间，很无语。于是就自己用所学知识(<strong>python+QT+pyinstaller</strong>)写了个图形化的小软件，可能这是我电脑上第一次运行自己安装的软件吧，当然这个过程遇到了一堆坑。</li>
+</ul>
+<p>爬虫的东西准备放下一篇博客了。</p>
+<a id="more"></a>
+
+<h2 id="前言传记"><a href="#前言传记" class="headerlink" title="前言传记"></a>前言传记</h2><p>电脑总体的折腾效果如下，这个dock真的比windows的任务栏舒服多了。</p>
+<p><img data-src="/2019/02/24/school-start/1.png" alt></p>
+<p>然后安排了一些新软件</p>
+<ul>
+<li>快速启动 Wox</li>
+<li>快速查找 Everything</li>
+<li>及时预览 Quciklook</li>
+</ul>
+<p>更多强大实惠的软件look这里：</p>
+<blockquote>
+<p><a href="https://camuseblog.top/2019-02-10-/software/" target="_blank" rel="noopener">https://camuseblog.top/2019-02-10-/software/</a></p>
+</blockquote>
+<hr>
+<h2 id="软件开发记"><a href="#软件开发记" class="headerlink" title="软件开发记"></a>软件开发记</h2><p>回归正题，很早之前接触了QT也写过一些小程序，还解决了上学期的课设，感觉基本的问题应该能驾驭了，既然把自己电脑的时间折腾没了，就自己写一个时钟小程序吧。</p>
+<p>思路很简单，调时间的库，把返回的时间截取为字符串，在窗口(QTextEdit)中显示就行了，然后用<code>pyinstaller</code>打包一下，结果到处是坑23333。</p>
+<p>不过在各种谷歌和stackoverflow的帮助下还是解决了，没有谷歌和stackoverflow我可能真的生活不能自理。</p>
+<p>软件效果如下，点击show time就可以显示时间啦</p>
+<p><img data-src="/2019/02/24/school-start/2.png" alt></p>
+<h3 id="控件线程的坑"><a href="#控件线程的坑" class="headerlink" title="控件线程的坑"></a>控件线程的坑</h3><p>QTextEdit这个控件如果想实现刷新功能，就是显示完上一时刻的时间后，清空控件，然后显示下一时刻的时间，得进行如下操作，仅仅<code>clear()</code>是不够的。</p>
+<p>有时候需要处理一些跟界面无关的但非常耗时的事情，这些事情跟界面在同一个线程中，由于时间太长，导致界面无法响应，处于“假死”状态。例如：在应用程序中保存文件到硬盘上，从开始保存直到文件保存完毕，程序不响应用户的任何操作，窗口也不会重新绘制，从而处于“无法响应”状态，这是一个非常糟糕的体验 。</p>
+<p>在这种情况下，有一种方法是使用多线程，即在子线程中处理文件保存，主线程负责界面相关。</p>
+<p>而如果不想使用多线程，最简单的办法就是在文件保存过程中调用<code>QtWidgets.QApplication.processEvents()</code>，该函数的作用是让程序处理那些还没有处理的事件，然后再把使用权返回给调用者。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 刷新界面命令：</span></span><br><span class="line">QtWidgets.QApplication.processEvents()</span><br><span class="line">self.ui.results_window.clear()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="字体的坑"><a href="#字体的坑" class="headerlink" title="字体的坑"></a>字体的坑</h3><p>导入北京时间后，截取字符串一切OK，可就是显示不到QT的窗口中去(QTextEdit)。其实也不是，当时怀疑是转义的问题，我当时用字符串测试了一下，22，33，44这些数字都能显示上去，唯独11这个数字显示不上去？？？得亏是11点写的这个程序，不然真的又是一个BUG。为什么呢？</p>
+<p>其实原因很吐血，我随便换了个别的字体，就又能正常显示了，无语。可能原因：QTextEdit的字体我设置的是<code>palatino</code>，这个字体无法显示<code>11</code>这个字符串。</p>
+<p>(虽然我知道可能不是字体的原因，但每个程序员都能碰到一些脑仁疼无法解释的玄学BUG)</p>
+<hr>
+<h3 id="pyinstaller的坑"><a href="#pyinstaller的坑" class="headerlink" title="pyinstaller的坑"></a>pyinstaller的坑</h3><p>很早之前听说过这个库，能把<code>.py</code>文件打包为可执行的<code>.exe</code>文件，我试了一下，又是一堆坑。</p>
+<p>比如，GUI界面的程序打包姿势和命令行的程序打包姿势是不一样的，而且尤其是使用了PyQt5的情况下。</p>
+<p>正确打包姿势为：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pyinstaller -F -w -i logo.ico clock.py</span><br></pre></td></tr></table></figure>
+
+<p>如果使用了<code>QTdesigner</code>工具的话，<code>add-data</code>把外部的<code>ui</code>文件包含进来，不然的话：整个过程没有错误没有警告，但是程序就是不对让你找bug到怀疑人生。</p>
+<p>而且，GUI文件是不需要输出命令行<code>console</code>的，所以后面使用<code>-w</code>取消<code>console</code>的输出，不然软件运行会有个大黑窗口。</p>
+<p><code>pyinstaller</code>虽然是python的第三方库，也能<code>pip</code>安装，但是千万别<code>import pyinstaller</code>，没有这个操作，<code>pyinstaller</code>就是在<code>cmd</code>里面直接用的。（我以为是我<code>pip</code>错了包的原因，又瞎搜了半天，无语）。</p>
+<p>而且，<code>pyinstaller</code>之后会生成<code>dist</code>文件，需要把程序执行所需要的图片，数据，copy一份到<code>dist</code>文件夹里面，和<code>.exe</code>文件在同一个目录。</p>
+<p>经过了无数的坑，终于开发出了自己的<code>.exe</code>程序，自己留着用呗。但是这个是个很好的开始啊，比如给这个软件扩充功能，能显示地区，温度等信息，或者当个记事本，记录一些待解决事件，这的确是个好的开始，但是这些功能等着以后闲的没事在扩充吧。</p>
+<hr>
+<p>时钟程序如下：那些png文件什么的，自己寻找一个吧。那个<code>.ui</code>文件我是使用的QTdesigner，布局的话自己画一个。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="comment"># 这里我们进行了一些必要模块的导入。最基础的widget组件</span></span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> QMainWindow, qApp, QApplication, \</span><br><span class="line">    QVBoxLayout, QToolTip, QMessageBox, QAction</span><br><span class="line"><span class="keyword">from</span> PyQt5 <span class="keyword">import</span> uic, QtWidgets, QtGui</span><br><span class="line"><span class="comment"># 显示图标</span></span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QIcon</span><br><span class="line"><span class="comment"># 显示提示文字</span></span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QFont</span><br><span class="line"><span class="comment"># 退出程序</span></span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QCoreApplication, Qt</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta, timezone</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> PyQt5.QtGui</span><br><span class="line"></span><br><span class="line">Ui_MainWindow, QtBaseClass = uic.loadUiType(<span class="string">"mainWindow.ui"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.ui = Ui_MainWindow()</span><br><span class="line">        self.ui.setupUi(self)</span><br><span class="line">        <span class="comment"># 状态栏</span></span><br><span class="line">        self.statusBar().showMessage(<span class="string">'Ready'</span>)</span><br><span class="line">        <span class="comment"># 我们调用sender()方法来判断哪一个按钮是我们按下的。</span></span><br><span class="line">        <span class="comment"># self.ui.pushButton_3.clicked.connect(self.calculate_tax)</span></span><br><span class="line">        self.ui.pushButton.clicked.connect(self.calculate_time)</span><br><span class="line">        <span class="comment"># 鼠标位于按钮上显示的提示信息</span></span><br><span class="line">        <span class="comment"># self.ui.pushButton.setToolTip('task of calculate Button')</span></span><br><span class="line">        <span class="comment"># 这里我们设置了我们窗口的标题。这个标题显示在标题栏中。</span></span><br><span class="line">        self.setWindowTitle(<span class="string">'CLOCK'</span>)</span><br><span class="line">        <span class="comment"># 设置窗口透明度</span></span><br><span class="line">        self.setWindowOpacity(<span class="number">0.8</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># window_pale = QtGui.QPalette() </span></span><br><span class="line">        <span class="comment"># window_pale.setBrush(self.backgroundRole(),QtGui.QBrush(QtGui.QPixmap())) </span></span><br><span class="line">        <span class="comment"># self.setPalette(window_pale)</span></span><br><span class="line">        <span class="comment"># 设置图片和窗口一样大</span></span><br><span class="line">        palette = QtGui.QPalette()</span><br><span class="line">        pix = QtGui.QPixmap(<span class="string">'test.jpg'</span>)</span><br><span class="line">        pix = pix.scaled(self.width(),self.height())</span><br><span class="line">        palette.setBrush(QtGui.QPalette.Background,QtGui.QBrush(pix))</span><br><span class="line">        self.setPalette(palette)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># QIcon对象接收一个我们要显示的图片路径作为参数。</span></span><br><span class="line">        self.setWindowIcon(QIcon(<span class="string">'icon.png'</span>))</span><br><span class="line">        QToolTip.setFont(QFont(<span class="string">'SansSerif'</span>, <span class="number">10</span>))</span><br><span class="line">        <span class="comment"># 鼠标位于整个界面内是显示的提示信息</span></span><br><span class="line">        self.setToolTip(<span class="string">'This is my Clock'</span>)</span><br><span class="line">        <span class="comment"># 点击即退出</span></span><br><span class="line">        <span class="comment"># self.ui.pushButton_2.clicked.connect(QCoreApplication.instance().quit)</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 工具栏</span></span><br><span class="line">        exit_action = QAction(QIcon(<span class="string">'exit.png'</span>), <span class="string">'Exit'</span>, self)</span><br><span class="line">        exit_action.setShortcut(<span class="string">'Ctrl+Q'</span>)</span><br><span class="line">        exit_action.triggered.connect(qApp.quit)</span><br><span class="line">        self.ui.toolbar = self.addToolBar(<span class="string">'Exit'</span>)</span><br><span class="line">        self.ui.toolbar.addAction(exit_action)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 菜单栏</span></span><br><span class="line">        exit_action1 = QAction(QIcon(<span class="string">'exit.png'</span>), <span class="string">'&amp;Exit'</span>, self)</span><br><span class="line">        exit_action1.setShortcut(<span class="string">'Ctrl+Q'</span>)</span><br><span class="line">        exit_action1.setStatusTip(<span class="string">'Exit application'</span>)</span><br><span class="line">        exit_action1.triggered.connect(qApp.quit)</span><br><span class="line">        menu_bar = self.menuBar()</span><br><span class="line">        file_menu = menu_bar.addMenu(<span class="string">'&amp;退出'</span>)</span><br><span class="line">        file_menu.addAction(exit_action1)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 主要事件的处理函数，点击Esc键退出</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">keyPressEvent</span><span class="params">(self, e)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> e.key() == Qt.Key_Escape:</span><br><span class="line">            self.close()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 关闭事件，练习消息盒</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closeEvent</span><span class="params">(self, event)</span>:</span></span><br><span class="line">        reply = QMessageBox.question(self, <span class="string">'Message'</span>, \</span><br><span class="line">                                     <span class="string">"Are you sure to quit?"</span>, \</span><br><span class="line">                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)</span><br><span class="line">        <span class="keyword">if</span> reply == QMessageBox.Yes:</span><br><span class="line">            event.accept()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            event.ignore()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将事件连接到一个槽中</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">calculate_time</span><span class="params">(self)</span>:</span></span><br><span class="line">        time_number = <span class="number">0</span></span><br><span class="line">        self.ui.results_window.clear()</span><br><span class="line">        <span class="comment"># 我只想让他显示20秒就退出</span></span><br><span class="line">        <span class="keyword">while</span> time_number &lt; <span class="number">20</span>:</span><br><span class="line">            utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)</span><br><span class="line">            bj_dt = utc_dt.astimezone(timezone(timedelta(hours=<span class="number">8</span>)))</span><br><span class="line">            bj_dt = str(bj_dt)</span><br><span class="line">            bj_dt = bj_dt[<span class="number">0</span>:<span class="number">19</span>]</span><br><span class="line">            self.ui.results_window.setText(<span class="string">'              '</span>+bj_dt)</span><br><span class="line"></span><br><span class="line">            QtWidgets.QApplication.processEvents()</span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">            self.ui.results_window.clear()</span><br><span class="line">            time_number = time_number + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        QtWidgets.QApplication.processEvents()</span><br><span class="line">        self.ui.results_window.clear()</span><br><span class="line">        self.ui.results_window.setText(<span class="string">' I don\'t wanna to show time,try button again~'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment"># 所有的PyQt5应用必须创建一个应用（Application）对象</span></span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    <span class="comment"># Qwidget组件是PyQt5中所有用户界面类的基础类</span></span><br><span class="line">    window = MyApp()</span><br><span class="line">    <span class="comment"># show()**方法在屏幕上显示出widget**</span></span><br><span class="line">    window.show()</span><br><span class="line">    <span class="comment"># 一个widget对象在这里第一次被在内存中创建，并且之后在屏幕上显示。</span></span><br><span class="line">    <span class="comment"># 当我们调用应用的exec_()方法时，应用进入了主循环</span></span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="成品"><a href="#成品" class="headerlink" title="成品"></a>成品</h2><p><img data-src="/2019/02/24/school-start/3.png" alt></p>
+<p><img data-src="/2019/02/24/school-start/4.png" alt></p>
+<hr>
+<h2 id="归结原因"><a href="#归结原因" class="headerlink" title="归结原因"></a>归结原因</h2><p>近期系统的学了一下PyQt5的知识后，总结了踩坑的原因：干活之前不读文档，吓折腾只会浪费更多时间。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\10\06\pyqt5-basic\" rel="bookmark">PyQt5的基本控件整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/GUI/" rel="tag"># GUI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/20/gradient-function/" rel="prev" title="优化梯度函数">
+      <i class="fa fa-chevron-left"></i> 优化梯度函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/24/school-start1/" rel="next" title="爬虫系列（一）——简单的爬取与页面解析">
+      爬虫系列（一）——简单的爬取与页面解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言传记"><span class="nav-number">1.</span> <span class="nav-text">前言传记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#软件开发记"><span class="nav-number">2.</span> <span class="nav-text">软件开发记</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#控件线程的坑"><span class="nav-number">2.1.</span> <span class="nav-text">控件线程的坑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字体的坑"><span class="nav-number">2.2.</span> <span class="nav-text">字体的坑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pyinstaller的坑"><span class="nav-number">2.3.</span> <span class="nav-text">pyinstaller的坑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#成品"><span class="nav-number">3.</span> <span class="nav-text">成品</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#归结原因"><span class="nav-number">4.</span> <span class="nav-text">归结原因</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活----爱读书----爱摄影   爱运动----爱睡觉----爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">373k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:39</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lozad.js/1.14.0/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '75905fabe79909cffc333544520adf3c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
