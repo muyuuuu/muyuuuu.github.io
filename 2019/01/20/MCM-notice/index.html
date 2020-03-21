@@ -262,6 +262,7 @@
         <p>大概是去年做的E题，和别人做了对比，又重新阅读了美赛的<strong>官方说明</strong>。</p>
 <p>也包括阅读评委评审意见的收获，整理如下。</p>
 <a id="more"></a>
+
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
 <p>2019 Contest changes/updates can be found in below:</p>
 <p>MCM/ICM is an all electronic submission!</p>
@@ -308,8 +309,8 @@
 <p>Limit one solution per email.</p>
 <p> The names of the students, advisor, or institution should NOT appear on any page of the electronic solution. Your team’s summary should be included as the first page of your file. Note: The attachment must be less than 17MB.</p>
 <hr>
-<h2 id="About-MCM-competition-time"><a href="#About-MCM-competition-time" class="headerlink" title="About MCM competition time:"></a>About MCM competition time:</h2><p>Each team is required to submit an electronic copy of its solution paper by email to solutions@comap.com. Any team member or the advisor may submit this email.</p>
-<p>Send the signed Control Sheet by email to COMAP:After the signed control sheet is prepared, email it to: forms@comap.com.</p>
+<h2 id="About-MCM-competition-time"><a href="#About-MCM-competition-time" class="headerlink" title="About MCM competition time:"></a>About MCM competition time:</h2><p>Each team is required to submit an electronic copy of its solution paper by email to <a href="mailto:solutions@comap.com" target="_blank" rel="noopener">solutions@comap.com</a>. Any team member or the advisor may submit this email.</p>
+<p>Send the signed Control Sheet by email to COMAP:After the signed control sheet is prepared, email it to: <a href="mailto:forms@comap.com" target="_blank" rel="noopener">forms@comap.com</a>.</p>
 <p>In the subject line of your email write: your team’s control number. For example: 1900000.</p>
 <hr>
 <h2 id="Some-Thinking-About-Reading-UMAP"><a href="#Some-Thinking-About-Reading-UMAP" class="headerlink" title="Some Thinking About Reading UMAP"></a>Some Thinking About Reading UMAP</h2><p>论文中的某些部分可以简写，但是考虑因素要全面。符号说明简明清晰的包含所有要素。摘要写一页，包括使用的方法和对结果的总结,传达模型的意义(有所限制的展示基本的模型和潜在的假设)。包含你的结果，结果做到量化。</p>
@@ -328,6 +329,17 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\01\15\MCM-template\" rel="bookmark">美赛论文LaTeX模板</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\04\19\romantic-time-of-modeling\" rel="bookmark">那些年建模的时光</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -492,32 +504,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -621,6 +654,8 @@ window.addEventListener('pjax:success', () => {
 
 
     <div id="pjax">
+  
+
   
 
   

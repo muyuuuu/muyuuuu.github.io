@@ -273,6 +273,7 @@
 <p>想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。</p>
 <p>一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。</p>
 <a id="more"></a>
+
 <h2 id="随便走走"><a href="#随便走走" class="headerlink" title="随便走走"></a>随便走走</h2><p>当初的操场和远方的山丘。<br><img data-src="/2016/07/29/highschool/1.jpeg" alt><br><img data-src="/2016/07/29/highschool/2.jpeg" alt><br><img data-src="/2016/07/29/highschool/3.jpeg" alt><br><img data-src="/2016/07/29/highschool/4.jpeg" alt><br><img data-src="/2016/07/29/highschool/5.jpeg" alt><br><img data-src="/2016/07/29/highschool/6.jpeg" alt><br><img data-src="/2016/07/29/highschool/7.jpeg" alt></p>
 <h2 id="宁静的回忆"><a href="#宁静的回忆" class="headerlink" title="宁静的回忆"></a>宁静的回忆</h2><p><img data-src="/2016/07/29/highschool/8.jpeg" alt><br><img data-src="/2016/07/29/highschool/9.jpeg" alt><br><img data-src="/2016/07/29/highschool/10.jpeg" alt><br><img data-src="/2016/07/29/highschool/11.jpeg" alt><br><img data-src="/2016/07/29/highschool/12.jpeg" alt><br><img data-src="/2016/07/29/highschool/13.jpeg" alt><br><img data-src="/2016/07/29/highschool/14.jpeg" alt></p>
 <h2 id="最后的平静"><a href="#最后的平静" class="headerlink" title="最后的平静"></a>最后的平静</h2><p><img data-src="/2016/07/29/highschool/15.jpeg" alt><br><img data-src="/2016/07/29/highschool/16.jpeg" alt><br><img data-src="/2016/07/29/highschool/17.jpeg" alt><br><img data-src="/2016/07/29/highschool/18.jpeg" alt></p>
@@ -289,6 +290,26 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\06\08\DuanWu\" rel="bookmark">端午&高考乱弹</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\10\13\MMA-Party-2018\" rel="bookmark">聚会的说～</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\03\28\Prime-minister-music\" rel="bookmark">迟暮的丞相：遂许先帝以驱驰，尔来二十又一年</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\06\30\bye\" rel="bookmark">归尘</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\03\20\college-graduation\" rel="bookmark">大学毕业的前夕</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -453,32 +474,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -582,6 +624,8 @@ window.addEventListener('pjax:success', () => {
 
 
     <div id="pjax">
+  
+
   
 
   

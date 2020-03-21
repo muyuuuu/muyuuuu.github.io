@@ -261,7 +261,9 @@
       
         <p>作为一个<code>Texer</code>，说实话对字体的设置掌握一直不是很好，今天又学习到了新姿势，分别设置中英文字体。</p>
 <a id="more"></a>
+
 <figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">documentclass</span><span class="string">&#123;ctexart&#125;</span></span></span><br><span class="line"><span class="comment">% 英文字体配置部分</span></span><br><span class="line"><span class="tag">\<span class="name">setmainfont</span><span class="string">&#123;Source Serif Pro&#125;</span></span><span class="comment">%Times New Roman</span></span><br><span class="line"><span class="tag">\<span class="name">setsansfont</span><span class="string">&#123;Source Sans Pro&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">setmonofont</span><span class="string">&#123;Source Code Pro&#125;</span></span></span><br><span class="line"><span class="comment">% 中文字体配置部分</span></span><br><span class="line"><span class="tag">\<span class="name">usepackage</span><span class="string">&#123;xeCJK&#125;</span></span><span class="comment">%中文字体</span></span><br><span class="line"><span class="tag">\<span class="name">setCJKmainfont</span><span class="string">&#123;宋体&#125;</span></span><span class="comment">%正文字体</span></span><br><span class="line"><span class="tag">\<span class="name">setCJKsansfont</span><span class="string">&#123;黑体&#125;</span></span><span class="comment">%无衬线字体</span></span><br><span class="line"><span class="tag">\<span class="name">setCJKmonofont</span><span class="string">&#123;楷体&#125;</span></span><span class="comment">%等宽字体</span></span><br><span class="line"><span class="tag">\<span class="name">setCJKfamilyfont</span><span class="string">&#123;boldsong&#125;</span><span class="string">&#123;Source Han Serif SC Heavy&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line">  	中文测试</span><br><span class="line">  	</span><br><span class="line">  	English test</span><br><span class="line">  	</span><br><span class="line">  	<span class="tag">\<span class="name">sffamily</span></span> 无衬线字体</span><br><span class="line">  	</span><br><span class="line">  	<span class="tag">\<span class="name">ttfamily</span></span> 等宽字体</span><br><span class="line">  	</span><br><span class="line">  	<span class="tag">\<span class="name">sffamily</span></span> in English typing</span><br><span class="line">  	</span><br><span class="line">  	<span class="tag">\<span class="name">ttfamily</span></span> in English typing</span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure>
+
 <p>结果如下：</p>
 <p><img data-src="/2019/03/02/latex-supplement3/1.png" alt></p>
 <p>此处参考：</p>
@@ -273,6 +275,26 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\11\07\Brief-introduction-to-LaTex\" rel="bookmark">一份不太简短的LaTeX简介</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\11\17\LaTeX-supplement\" rel="bookmark">LaTeX补充:矩阵外加描述元素</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\01\15\MCM-template\" rel="bookmark">美赛论文LaTeX模板</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\08\06\latex-feel-stonezeng\" rel="bookmark">正确打开LaTeX的姿势</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\04\latex-supplement2\" rel="bookmark">LaTeX补充:如何设置代码字体</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -436,32 +458,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -565,6 +608,8 @@ window.addEventListener('pjax:success', () => {
 
 
     <div id="pjax">
+  
+
   
 
   

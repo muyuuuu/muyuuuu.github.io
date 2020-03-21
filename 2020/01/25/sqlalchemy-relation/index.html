@@ -261,6 +261,7 @@
       
         <p>往一个领域里走的越深，发现设计的知识越多越难(<del>主要是自己知识过于贫瘠</del>)，虽然我很确信我还处于很浅的位置。今天又鼓捣了一天，发现涉及的内容太多了，一个文章放不下，还是单独成文，组成一个系列？算了，先整理下所学知识吧。</p>
 <a id="more"></a>
+
 <p>通过关系让不同表的字段之间建立联系，比如用外键去约束另一个表字段的取值，而这在实际开发中也是很常见的东西。</p>
 <p>对两个表创立了联系，这样查询和操作起来也会方便很多：只在表中声明表之间的关系，之后每次使用就完全无需手动交叉搜索，而是像对待一个表中的数据一样直接使用。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://segmentfault.com/a/1190000018006031" target="_blank" rel="noopener">relation 相关代码的参考</a> 这篇文章写的不错的。</p>
@@ -268,6 +269,7 @@
 <p>建议参考全部代码进行学习。</p>
 <h1 id="外键"><a href="#外键" class="headerlink" title="外键"></a>外键</h1><p>外键是在<code>A</code>表中存储<code>B</code>表的主键，以便和<code>B</code>表建立联系的关系字段，且外键只能存储单一的数据。如：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">A表：学号，姓名，专业</span><br><span class="line">B表：课程号，成绩，学号</span><br></pre></td></tr></table></figure>
+
 <p>那么<code>B</code>表的学号是<code>B</code>表的外键，能确定<code>A</code>表唯一的学生，且取值受限于<code>A</code>表。</p>
 <h1 id="一对多关系"><a href="#一对多关系" class="headerlink" title="一对多关系"></a>一对多关系</h1><p>比如一个作者可以写多篇文章，一个文章只能属于一个作者(不考虑科技论文的第一作者、第二作者等)，我们想查询一个作者的所有文章。</p>
 <ul>
@@ -275,6 +277,7 @@
 <li>而关系属性在<code>出发侧</code>定义，所以关系定义在作者表内。代码如下(连接数据库那部分的就不写了，详情参考<a href="https://muyuuuu.github.io/2020/01/24/sqlalchemy/">这里</a>)：</li>
 </ul>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Author</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># __tablename__ 指定在 MySQL 中表的名字</span></span><br><span class="line">    __tablename__ = <span class="string">'authors'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)  </span><br><span class="line">    username = Column(String(<span class="number">64</span>), index=<span class="literal">True</span>)</span><br><span class="line">    email = Column(String(<span class="number">64</span>), unique=<span class="literal">True</span>)</span><br><span class="line">    <span class="comment"># 关系定义在出发侧，即 一对多 的 一 这一侧</span></span><br><span class="line">    <span class="comment"># 没有用column记录，可以返回集合关系属性</span></span><br><span class="line">    to_articles = relationship(<span class="string">'Article'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Article</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'articles'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    title = Column(String(<span class="number">50</span>), index=<span class="literal">True</span>)</span><br><span class="line">    body = Column(Text)</span><br><span class="line">    <span class="comment"># 定义外键 authors 对应表名 id 是字段名</span></span><br><span class="line">    <span class="comment"># 外键在 aricle 表存储 author 表的主键，和 author 表建立联系，所以外键在多的一侧</span></span><br><span class="line">    author_id = Column(Integer, ForeignKey(<span class="string">'authors.id'</span>))</span><br></pre></td></tr></table></figure>
+
 <p>注意事项：</p>
 <ul>
 <li><code>authors.id</code> 中的 authors 是表名，id是那个类里面的属性。</li>
@@ -282,27 +285,35 @@
 </ul>
 <p>在作者数据表中，没有使用<code>Column</code>去定义文章这一栏，是因为<code>relation</code>会将Author类和Article类建立联系，这个关系被调用时，会在关系的另一侧article内的外键字段内，查找所有外键字段为当前查询值（author表的主键id），并返回查询结果，即对应该作者的多篇文章。</p>
 <h2 id="写入实例"><a href="#写入实例" class="headerlink" title="写入实例"></a>写入实例</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling = Author(username = <span class="string">'lanling'</span>, email = <span class="string">'lanling@gmail.com'</span>)</span><br><span class="line">test1 = Article(title = <span class="string">'test1'</span>, body = <span class="string">'asdasdasd'</span>)</span><br><span class="line">test2 = Article(title = <span class="string">'test2'</span>, body = <span class="string">'eiubfefvwiev'</span>)</span><br><span class="line">session.add(lanling)</span><br><span class="line">session.add(test1)</span><br><span class="line">session.add(test2)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <h2 id="建立联系"><a href="#建立联系" class="headerlink" title="建立联系"></a>建立联系</h2><h3 id="从多的一侧建立联系"><a href="#从多的一侧建立联系" class="headerlink" title="从多的一侧建立联系"></a>从多的一侧建立联系</h3><p>设立当前文章的作者的id是1：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test1.author_id = <span class="number">1</span></span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <p>查看数据库端的更改：</p>
 <p><img data-src="/2020/01/25/sqlalchemy-relation/1.png" alt></p>
 <h3 id="从少的一侧建立联系"><a href="#从少的一侧建立联系" class="headerlink" title="从少的一侧建立联系"></a>从少的一侧建立联系</h3><p>给lanling作者追加一篇文章：（lanling作者的id是1）</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling.to_articles.append(test2)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <p>再次查看数据库内是否修改：</p>
 <p><img data-src="/2020/01/25/sqlalchemy-relation/2.png" alt></p>
 <p>可以看到两篇文章的<code>author_id</code>表示作者都是lanling。</p>
 <h2 id="查看联系结果"><a href="#查看联系结果" class="headerlink" title="查看联系结果"></a>查看联系结果</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">a = session.query(Author).filter(Author.id == <span class="number">1</span>)</span><br><span class="line">print(a[<span class="number">0</span>].username)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.title)</span><br><span class="line">print(test1.author_id)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.body)</span><br></pre></td></tr></table></figure>
+
 <p>输出：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling</span><br><span class="line">test1</span><br><span class="line">test2</span><br><span class="line"><span class="number">1</span></span><br><span class="line">asdasdasd</span><br><span class="line">eiubfefvwiev</span><br></pre></td></tr></table></figure>
+
 <h2 id="移除关系"><a href="#移除关系" class="headerlink" title="移除关系"></a>移除关系</h2><p>在<code>一</code>这一侧直接remove即可。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling.to_articles.remove(test2)</span><br><span class="line">session.commit()</span><br><span class="line"><span class="comment"># 查看结果</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.body)</span><br></pre></td></tr></table></figure>
+
 <p>数据库端情况：（之后的创建实例、设置关系的操作均会影响数据库端，所以不再重复展示）。</p>
 <p><img data-src="/2020/01/25/sqlalchemy-relation/3.png" alt></p>
 <p>输出：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">asdasdasd</span><br></pre></td></tr></table></figure>
+
 <h2 id="建立双向联系"><a href="#建立双向联系" class="headerlink" title="建立双向联系"></a>建立双向联系</h2><p>在两侧都添加关系属性，用于获取对方记录的关系称为双向关系。</p>
 <p>比如：查询一个作者写了哪些书，查询书的作者是谁这样的双向查询。但在<code>多</code>的一侧，返回值是一个数据，即一本书的作者只能是单个人，不能以列表的形式去访问。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Writer</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'writers'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">10</span>))</span><br><span class="line">    <span class="comment"># writers是建立联系的类的属性</span></span><br><span class="line">    books = relationship(<span class="string">'Book'</span>, back_populates=<span class="string">'writers'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'books'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">    publish = Column(String(<span class="number">10</span>))</span><br><span class="line">    writer_id = Column(Integer, ForeignKey(<span class="string">'writers.id'</span>))</span><br><span class="line">    <span class="comment"># 返回单个标量 可以直接掉属性 不能使用列表访问</span></span><br><span class="line">    writers = relationship(<span class="string">'Writer'</span>, back_populates=<span class="string">'books'</span>)</span><br></pre></td></tr></table></figure>
+
 <p>其中<code>back_populates</code>用来连接对方，不连接只是简单的增加一个属性，操作关系的一方并不会影响另一方，但连接双方后，操作关系的一方，涉及到的另一方也会跟随变。</p>
 <p>且参数必须严格设置为关系另一侧的类的属性值。</p>
 <blockquote>
@@ -310,20 +321,29 @@
 </blockquote>
 <p>加入实例：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">muyu = Writer(name=<span class="string">'muyu'</span>)</span><br><span class="line">test1 = Book(publish=<span class="string">'asde'</span>)</span><br><span class="line">test2 = Book(publish=<span class="string">'fwf'</span>)</span><br><span class="line">session.add(muyu)</span><br><span class="line">session.add(test1)</span><br><span class="line">session.add(test2)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <p>建立关系：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test1.writers = muyu</span><br><span class="line">print(test1.writers.name)  <span class="comment"># 输出 muyu</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 返回对象不是单个表量 所以迭代访问</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> muyu.books:</span><br><span class="line">    print(i.publish)  <span class="comment"># 输出 asde</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 新加一本书</span></span><br><span class="line">test2.writers = muyu</span><br><span class="line">print(test2.writers.name)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> muyu.books:</span><br><span class="line">    print(i.publish)</span><br></pre></td></tr></table></figure>
+
 <p>输出：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">muyu</span><br><span class="line">asde</span><br><span class="line">fwf</span><br></pre></td></tr></table></figure>
+
 <p>因为设置了双向关系，所以将某个<code>book</code>的<code>writer</code>属性设为None，就会解除对应 Writer 对象的关系，此时在 writer 方查询，并不会查询到对应的 book 信息。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test2.writers = <span class="literal">None</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> muyu.books:</span><br><span class="line">    print(i.publish)</span><br></pre></td></tr></table></figure>
+
 <p>只输出：asde。</p>
 <h1 id="一对一关系"><a href="#一对一关系" class="headerlink" title="一对一关系"></a>一对一关系</h1><p>一个丈夫有一个妻子，一个妻子有一个丈夫，用这个例子吧(不考虑重婚和离婚)。此处不建立双向关系，与上个例子不同的是需要加入<code>uselist=False</code>。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">husband</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'husband'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">10</span>))</span><br><span class="line">    <span class="comment"># 一对一 返回单个属性</span></span><br><span class="line">    wife = relationship(<span class="string">'wife'</span>, uselist=<span class="literal">False</span>)</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">wife</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'wife'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">10</span>))</span><br><span class="line">    husband_id = Column(Integer, ForeignKey(<span class="string">'husband.id'</span>))</span><br><span class="line">    husband = relationship(<span class="string">'husband'</span>, uselist=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
 <h2 id="加入实例"><a href="#加入实例" class="headerlink" title="加入实例"></a>加入实例</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">name1 = husband(name=<span class="string">'name1'</span>)</span><br><span class="line">name2 = husband(name=<span class="string">'name2'</span>)</span><br><span class="line"></span><br><span class="line">name3 = wife(name=<span class="string">'name3'</span>)</span><br><span class="line">name4 = wife(name=<span class="string">'name4'</span>)</span><br><span class="line"></span><br><span class="line">session.add(name1)</span><br><span class="line">session.add(name2)</span><br><span class="line">session.add(name3)</span><br><span class="line">session.add(name4)</span><br><span class="line"></span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <h2 id="建立联系-1"><a href="#建立联系-1" class="headerlink" title="建立联系"></a>建立联系</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">name1.wife = name3</span><br><span class="line">name2.wife = name4</span><br></pre></td></tr></table></figure>
+
 <p>查看联系的结果：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(name1.wife.name) <span class="comment"># 输出 name3</span></span><br></pre></td></tr></table></figure>
+
 <p>此外，即使在表内建立了联系，而不执行<code>session.commit()</code>，联系的更改不会提交的数据库：</p>
 <p><img data-src="/2020/01/25/sqlalchemy-relation/4.png" alt></p>
 <p>而在最后执行<code>session.commit()</code>后，更改会提交到数据库：</p>
@@ -332,10 +352,15 @@
 <p>在多对多关系中，每一个记录都可以与关系另一侧的多个记录建立关系，而不是一个。所以需要把多对多分拆成两个一对多关系。做法是：新创建一个表，专门存储映射关系。原本的两个表无需设置任何外键。</p>
 <p>关系表一定要写在数据表前面：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">assocation_table = Table(<span class="string">'association'</span>, Base.metadata,</span><br><span class="line">    Column(<span class="string">'stu_id'</span>, Integer, ForeignKey(<span class="string">'students.id'</span>)),</span><br><span class="line">    Column(<span class="string">'teach_id'</span>, Integer, ForeignKey(<span class="string">'teachers.id'</span>)),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'students'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">10</span>))</span><br><span class="line">    teachers = relationship(<span class="string">'Teacher'</span>, secondary=assocation_table, back_populates=<span class="string">'students'</span>)</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Teacher</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'teachers'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">10</span>))</span><br><span class="line">    <span class="comment"># 建立了双向联系</span></span><br><span class="line">    students = relationship(<span class="string">'Student'</span>, secondary=assocation_table, back_populates=<span class="string">'teachers'</span>)</span><br></pre></td></tr></table></figure>
+
 <h2 id="创建实例"><a href="#创建实例" class="headerlink" title="创建实例"></a>创建实例</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">stu1 = Student(name=<span class="string">'name1'</span>)</span><br><span class="line">stu2 = Student(name=<span class="string">'name2'</span>)</span><br><span class="line">stu3 = Student(name=<span class="string">'name3'</span>)</span><br><span class="line">stu4 = Student(name=<span class="string">'name4'</span>)</span><br><span class="line"></span><br><span class="line">teach1 = Teacher(name=<span class="string">'teach1'</span>)</span><br><span class="line">teach2 = Teacher(name=<span class="string">'teach2'</span>)</span><br><span class="line">teach3 = Teacher(name=<span class="string">'teach3'</span>)</span><br><span class="line">teach4 = Teacher(name=<span class="string">'teach4'</span>)</span><br><span class="line"></span><br><span class="line">session.add(stu1)</span><br><span class="line">session.add(stu2)</span><br><span class="line">session.add(stu3)</span><br><span class="line">session.add(stu4)</span><br><span class="line"></span><br><span class="line">session.add(teach1)</span><br><span class="line">session.add(teach2)</span><br><span class="line">session.add(teach3)</span><br><span class="line">session.add(teach4)</span><br><span class="line"></span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+
 <h2 id="建立联系-2"><a href="#建立联系-2" class="headerlink" title="建立联系"></a>建立联系</h2><p>同样，要使用append和remove去添加和删除。stu1 有两个老师，teach2 有 两个学生。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">stu1.teachers.append(teach1)</span><br><span class="line">stu1.teachers.append(teach2)</span><br><span class="line">teach2.students.append(stu3)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> teach2.students:</span><br><span class="line">    print(i.name)</span><br><span class="line">    <span class="comment"># 学生的老师也是对象 需要迭代访问</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> i.teachers:</span><br><span class="line">        print(j.name)</span><br></pre></td></tr></table></figure>
-<p>输出<br><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">name1</span><br><span class="line">teach1</span><br><span class="line">teach2</span><br><span class="line">name3</span><br><span class="line">teach2</span><br></pre></td></tr></table></figure></p>
+
+<p>输出</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">name1</span><br><span class="line">teach1</span><br><span class="line">teach2</span><br><span class="line">name3</span><br><span class="line">teach2</span><br></pre></td></tr></table></figure>
+
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>感觉我还是描述的有些混乱，且，建议参考<a href="https://github.com/muyuuuu/SQLAlchemy/tree/master/SQLAlchemy/relation" target="_blank" rel="noopener">全部代码</a>进行练习。</p>
 
     </div>
@@ -343,6 +368,17 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\01\26\alembic\" rel="bookmark">数据库系列（三）——Alembic数据库迁移</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\01\24\sqlalchemy\" rel="bookmark">数据库系列（一）——SQLAlchemy的使用(CRUD)</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -507,32 +543,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -636,6 +693,8 @@ window.addEventListener('pjax:success', () => {
 
 
     <div id="pjax">
+  
+
   
 
   

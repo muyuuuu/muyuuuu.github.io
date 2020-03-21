@@ -268,6 +268,7 @@
 <p>还是和往常一样，只写思考，不写算法过程，重点是对这些观念的理解和收获呗。</p>
 <hr>
 <a id="more"></a>
+
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
 <h2 id="目标识别"><a href="#目标识别" class="headerlink" title="目标识别"></a>目标识别</h2><p>在上一部分内容中，已经成功做到了图片的分类识别。那么面临新的问题，比如某公司实现的机器人送快递，那么这个机器人应该能够自动遵守交通规则，首先他应该能检测出红绿灯、行人、车辆等。</p>
 <h2 id="YOLO算法"><a href="#YOLO算法" class="headerlink" title="YOLO算法"></a>YOLO算法</h2><p>这个时候<a href="https://pjreddie.com/darknet/yolo/" target="_blank" rel="noopener">YOLO(you only look once)</a>算法问世了，当然令我虎躯一震的是，大量的数据集居然全靠手动标注，算了，毕竟是为了人类做贡献。在识别分类的基础之上，增加了新的预测输出：坐标：$x$,$y$，大小$h$,$w$，即判定目标在哪里。如果你需要预测新的特征点，那么就不断的增加新的输出，当然训练集也需要对这些特征点进行标注。</p>
@@ -288,10 +289,11 @@
 <p>文件结构如图：</p>
 <p><img data-src="/2019/02/10/Computer-Vision-opencv/2.png" alt></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">image：原始图片的路径</span></span><br><span class="line"><span class="string">classes：类别标签文件的路径</span></span><br><span class="line"><span class="string">config：模型配置文件的路径</span></span><br><span class="line"><span class="string">weights：模型权重文件的路径</span></span><br><span class="line"><span class="string">confidence：0-1，置信度（概率/打分）阈值，即保留概率大于这个值的边界框，默认为0.5</span></span><br><span class="line"><span class="string">nms_threshold = 0.4：非极大值抑制的阈值，默认为0.3</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"></span><br><span class="line">ap = argparse.ArgumentParser()</span><br><span class="line">ap.add_argument(<span class="string">'-i'</span>, <span class="string">'--image'</span>, required=<span class="literal">True</span>,</span><br><span class="line">                help = <span class="string">'path to input image'</span>)</span><br><span class="line">ap.add_argument(<span class="string">'-c'</span>, <span class="string">'--config'</span>, required=<span class="literal">True</span>,</span><br><span class="line">                help = <span class="string">'path to yolo config file'</span>)</span><br><span class="line">ap.add_argument(<span class="string">'-w'</span>, <span class="string">'--weights'</span>, required=<span class="literal">True</span>,</span><br><span class="line">                help = <span class="string">'path to yolo pre-trained weights'</span>)</span><br><span class="line">ap.add_argument(<span class="string">'-cl'</span>, <span class="string">'--classes'</span>, required=<span class="literal">True</span>,</span><br><span class="line">                help = <span class="string">'path to text file containing class names'</span>)</span><br><span class="line">args = ap.parse_args()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_output_layers</span><span class="params">(net)</span>:</span></span><br><span class="line">    layer_names = net.getLayerNames()</span><br><span class="line">    <span class="comment"># 获取YOLO输出层的名字</span></span><br><span class="line">    output_layers = [layer_names[i[<span class="number">0</span>] - <span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> net.getUnconnectedOutLayers()]</span><br><span class="line">    <span class="keyword">return</span> output_layers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">draw_prediction</span><span class="params">(img, class_id, confidence, x, y, x_plus_w, y_plus_h)</span>:</span></span><br><span class="line">    label = str(classes[class_id])</span><br><span class="line">    color = COLORS[class_id]</span><br><span class="line">    cv2.rectangle(img, (x,y), (x_plus_w,y_plus_h), color, <span class="number">2</span>)</span><br><span class="line">    cv2.putText(img, label, (x<span class="number">-10</span>,y<span class="number">-10</span>), cv2.FONT_HERSHEY_SIMPLEX, <span class="number">0.5</span>, color, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 载入图片并获取其维度  </span></span><br><span class="line">image = cv2.imread(args.image)</span><br><span class="line">Width = image.shape[<span class="number">1</span>]</span><br><span class="line">Height = image.shape[<span class="number">0</span>]</span><br><span class="line">scale = <span class="number">0.00392</span></span><br><span class="line">classes = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载类别标签文件</span></span><br><span class="line"><span class="keyword">with</span> open(args.classes, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    classes = [line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines()]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为每个类别的边界框随机匹配相应颜色</span></span><br><span class="line">COLORS = np.random.uniform(<span class="number">0</span>, <span class="number">255</span>, size=(len(classes), <span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载模型配置和权重文件</span></span><br><span class="line">net = cv2.dnn.readNet(args.weights, args.config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将图片构建成一个blob，设置图片尺寸，然后执行一次</span></span><br><span class="line">blob = cv2.dnn.blobFromImage(image, scale, (<span class="number">416</span>,<span class="number">416</span>), (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>), <span class="literal">True</span>, crop=<span class="literal">False</span>)</span><br><span class="line">net.setInput(blob)</span><br><span class="line"></span><br><span class="line"><span class="comment"># YOLO前馈网络计算，最终获取边界框和相应概率</span></span><br><span class="line">outs = net.forward(get_output_layers(net))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化边界框，置信度（概率）以及类别</span></span><br><span class="line">class_ids = []</span><br><span class="line">confidences = []</span><br><span class="line">boxes = []</span><br><span class="line">conf_threshold = <span class="number">0.5</span></span><br><span class="line">nms_threshold = <span class="number">0.4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 迭代每个输出层，总共三个</span></span><br><span class="line"><span class="keyword">for</span> out <span class="keyword">in</span> outs:</span><br><span class="line">    <span class="comment"># 迭代每个检测</span></span><br><span class="line">    <span class="keyword">for</span> detection <span class="keyword">in</span> out:</span><br><span class="line">        <span class="comment"># 提取类别ID和置信度，</span></span><br><span class="line">        scores = detection[<span class="number">5</span>:]</span><br><span class="line">        class_id = np.argmax(scores)</span><br><span class="line">        confidence = scores[class_id]</span><br><span class="line">        <span class="comment"># 只保留置信度大于某值的边界框</span></span><br><span class="line">        <span class="comment"># 将边界框的坐标还原至与原图片相匹配，YOLO返回的是</span></span><br><span class="line">        <span class="comment"># 边界框的中心坐标以及边界框的宽度和高度</span></span><br><span class="line">        <span class="keyword">if</span> confidence &gt; <span class="number">0.5</span>:</span><br><span class="line">            <span class="comment"># 计算边界框的左上角位置</span></span><br><span class="line">            center_x = int(detection[<span class="number">0</span>] * Width)</span><br><span class="line">            center_y = int(detection[<span class="number">1</span>] * Height)</span><br><span class="line">            w = int(detection[<span class="number">2</span>] * Width)</span><br><span class="line">            h = int(detection[<span class="number">3</span>] * Height)</span><br><span class="line">            x = center_x - w / <span class="number">2</span></span><br><span class="line">            y = center_y - h / <span class="number">2</span></span><br><span class="line">            class_ids.append(class_id)</span><br><span class="line">            confidences.append(float(confidence))</span><br><span class="line">            <span class="comment"># 更新边界框，置信度（概率）以及类别</span></span><br><span class="line">            boxes.append([x, y, w, h])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用非极大值抑制方法抑制弱、重叠边界框</span></span><br><span class="line">indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 迭代每个边界框</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> indices:</span><br><span class="line">    i = i[<span class="number">0</span>]</span><br><span class="line">    box = boxes[i]</span><br><span class="line">    x = box[<span class="number">0</span>]</span><br><span class="line">    y = box[<span class="number">1</span>]</span><br><span class="line">    w = box[<span class="number">2</span>]</span><br><span class="line">    h = box[<span class="number">3</span>]</span><br><span class="line">    draw_prediction(image, class_ids[i], confidences[i], round(x), round(y), round(x+w), round(y+h))</span><br><span class="line"></span><br><span class="line">cv2.imwrite(<span class="string">"object-detection.jpg"</span>, image)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h2 id="人脸识别"><a href="#人脸识别" class="headerlink" title="人脸识别"></a>人脸识别</h2><p>比如面临传闻的亚洲四大邪术P图，数据库里可能只有你的一个图片，怎么判断新的图片是不是一个人呢？把新的图片导入神经网络重新训练？醒醒，这么浪费money的操作，你会被开除的。</p>
 <p>首先呢，还是需要一批数据集合，数据集里面有一个人的多个图片，同时也有好多人。怎么办呢？</p>
-<p>对于一个人$A$，我们假设$A$的其余照片为$A<em>1,A_2,…,A</em>{10}$，即只有同一个人的10张图片，那么就想尽办法使得这几个元素：$A_1,A_2,…,A_10$的卷积神经网络的softmax单元输出很接近，而$A$和$B，C,…,Z$(其他人)的输出很远，那么这个网络就会提取特征，使得同一个人的输出接近，而不同人的输出增加。</p>
+<p>对于一个人$A$，我们假设$A$的其余照片为$A_1,A_2,…,A_{10}$，即只有同一个人的10张图片，那么就想尽办法使得这几个元素：$A_1,A_2,…,A_10$的卷积神经网络的softmax单元输出很接近，而$A$和$B，C,…,Z$(其他人)的输出很远，那么这个网络就会提取特征，使得同一个人的输出接近，而不同人的输出增加。</p>
 <p>当需要识别的时候，记待识别的人为：$X$，如果$X$和数据库里面的任何人输出都很远，那么判断这个人是外人，不是公司里面的人，不能让他进来；反之和某个人的输出误差很小时，认为他是内人，让他进来。</p>
 <p>这个优化函数称为三元组优化(triple)，$\mathrm{dis}=d(A,A_n)-d(A,B,…,Z)+\alpha$，$\alpha$是修正参数，一般取0.2，然后$\mathrm{max}(\mathrm{dis}, 0)$，当达到理想目标时，损失函数就是0，如果识别的很烂，那么损失值就会很大，所以不断的使损失值减小，就达到了目标。</p>
 <p>此外，还可以把同一个人所有照片的激活输出放到一个二分类里面，让分类器输出0或1来判断也不是不可以，只是近似的问题转化。</p>
@@ -312,6 +314,26 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\05\19\basic-nlp\" rel="bookmark">从分词到自然语言的世界</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\20\gradient-function\" rel="bookmark">优化梯度函数</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\19\optimizeDL\" rel="bookmark">正则化调教神经网络</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\18\rnn\" rel="bookmark">循环神经网络</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\18\rnn1\" rel="bookmark">循环神经网络的进化</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -477,32 +499,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -607,6 +650,61 @@ window.addEventListener('pjax:success', () => {
 
     <div id="pjax">
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

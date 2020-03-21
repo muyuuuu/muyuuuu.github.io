@@ -266,11 +266,13 @@
 <li>顺路介绍下L298N电机驱动模块</li>
 </ul>
 <a id="more"></a>
+
 <h3 id="L298N"><a href="#L298N" class="headerlink" title="L298N"></a>L298N</h3><p><img data-src="/2018/05/23/c511/3.png" alt></p>
 <p>可能这个图片已经写的很清楚了，一个驱动模块带动两个电极，一个L298N模块需要三个IO口。</p>
 <h3 id="寻迹程序"><a href="#寻迹程序" class="headerlink" title="寻迹程序"></a>寻迹程序</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/******************寻迹IO口声明********************/</span></span><br><span class="line">sbit trace1 = P3^<span class="number">5</span>;     <span class="comment">/*1路*/</span>设置的为两个模块去寻迹</span><br><span class="line">sbit trace2 = P2^<span class="number">5</span>;     <span class="comment">/*2路*/</span></span><br><span class="line"><span class="comment">/**********************电机的IO口*****************/</span></span><br><span class="line">sbit em1 = P1^<span class="number">4</span>;        <span class="comment">//左后，四个电机的驱动</span></span><br><span class="line">sbit em2 = P1^<span class="number">7</span>;        <span class="comment">//右后</span></span><br><span class="line">sbit em3 = P2^<span class="number">7</span>;        <span class="comment">//右前</span></span><br><span class="line">sbit em4 = P2^<span class="number">3</span>;        <span class="comment">//左前</span></span><br><span class="line"><span class="comment">/*电机口*/</span></span><br><span class="line">sbit in1 = P1^<span class="number">2</span>;        <span class="comment">//左后</span></span><br><span class="line">sbit in2 = P1^<span class="number">3</span>;</span><br><span class="line">sbit in3 = P1^<span class="number">5</span>;        <span class="comment">//右后</span></span><br><span class="line">sbit in4 = P1^<span class="number">6</span>;</span><br><span class="line">sbit in5 = P3^<span class="number">6</span>;        <span class="comment">//右前</span></span><br><span class="line">sbit in6 = P3^<span class="number">7</span>;</span><br><span class="line">sbit in7 = P2^<span class="number">1</span>;        <span class="comment">//左前</span></span><br><span class="line">sbit in8 = P2^<span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> cycle 200       <span class="comment">//宏定义一个周期，下面会进行说明</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*****************延时函数*****************/</span> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delayms</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> a, b;</span><br><span class="line">        <span class="keyword">for</span> (a = z; a &gt; <span class="number">0</span>; a--)</span><br><span class="line">            <span class="keyword">for</span> (b = <span class="number">110</span>; b &gt; <span class="number">0</span>; b--);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/****因为单片机上电后，电机对应端口送高电平，所以电机被启动，em1就没赋值****/</span></span><br><span class="line"><span class="comment">/********************电机转动************************/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Forward</span><span class="params">()</span> <span class="comment">//前进</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    in1 = <span class="number">1</span>;</span><br><span class="line">    in2 = <span class="number">0</span>;</span><br><span class="line">    in3 = <span class="number">1</span>;</span><br><span class="line">    in4 = <span class="number">0</span>;</span><br><span class="line">    in5 = <span class="number">1</span>;</span><br><span class="line">    in6 = <span class="number">0</span>;</span><br><span class="line">    in7 = <span class="number">1</span>;</span><br><span class="line">    in8 = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Stop</span><span class="params">()</span>    <span class="comment">//停止</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    in1 = <span class="number">0</span>;</span><br><span class="line">    in2 = <span class="number">0</span>;</span><br><span class="line">    in3 = <span class="number">0</span>;</span><br><span class="line">    in4 = <span class="number">0</span>;</span><br><span class="line">    in5 = <span class="number">0</span>;</span><br><span class="line">    in6 = <span class="number">0</span>;</span><br><span class="line">    in7 = <span class="number">0</span>;</span><br><span class="line">    in8 = <span class="number">0</span>;    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Reverse</span><span class="params">()</span>  <span class="comment">//倒车</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    in1 = <span class="number">0</span>;</span><br><span class="line">    in2 = <span class="number">1</span>;</span><br><span class="line">    in3 = <span class="number">0</span>;</span><br><span class="line">    in4 = <span class="number">1</span>;</span><br><span class="line">    in5 = <span class="number">0</span>;</span><br><span class="line">    in6 = <span class="number">1</span>;</span><br><span class="line">    in7 = <span class="number">0</span>;</span><br><span class="line">    in8 = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Turn_left</span><span class="params">()</span>  <span class="comment">//左转</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    in1 = <span class="number">0</span>;</span><br><span class="line">    in2 = <span class="number">1</span>;</span><br><span class="line">    in3 = <span class="number">1</span>;</span><br><span class="line">    in4 = <span class="number">0</span>;</span><br><span class="line">    in5 = <span class="number">1</span>;</span><br><span class="line">    in6 = <span class="number">0</span>;</span><br><span class="line">    in7 = <span class="number">0</span>;</span><br><span class="line">    in8 = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Turn_right</span><span class="params">()</span>   <span class="comment">//右转   </span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    in1 = <span class="number">1</span>;</span><br><span class="line">    in2 = <span class="number">0</span>;</span><br><span class="line">    in3 = <span class="number">0</span>;</span><br><span class="line">    in4 = <span class="number">1</span>;</span><br><span class="line">    in5 = <span class="number">0</span>;</span><br><span class="line">    in6 = <span class="number">1</span>;</span><br><span class="line">    in7 = <span class="number">1</span>;</span><br><span class="line">    in8 = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*************************寻迹函数************************/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Trace</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">if</span>((trace1 == <span class="number">0</span>) &amp;&amp; (trace2 == <span class="number">0</span>))       <span class="comment">//0代表检测到黑线</span></span><br><span class="line">    &#123;  </span><br><span class="line">        Delayms(<span class="number">50</span>);                         <span class="comment">//首先先做略微的延时，因为trace1、2不是很稳定</span></span><br><span class="line">        Forward();                           <span class="comment">//前进</span></span><br><span class="line">        Delayms(cycle);                      <span class="comment">//前面宏定义的周期</span></span><br><span class="line">        Stop();                              <span class="comment">//小车停止，防止小车走的太快，不能很好的寻迹  </span></span><br><span class="line">        Delayms(cycle);                      <span class="comment">//再次延时，结束后进入下次循环</span></span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//因为这里没有写PWM小车的调速程序，怕小车走的太快而不能很好的寻迹，因此，就让小车以</span></span><br><span class="line"><span class="comment">//“走走停停的”形式缓慢前进。</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>((trace1 == <span class="number">0</span>) &amp;&amp; (trace2 == <span class="number">1</span>))       <span class="comment">//0代表检测到黑线</span></span><br><span class="line">    &#123;  </span><br><span class="line">        Delayms(<span class="number">50</span>);</span><br><span class="line">        Turn_left();</span><br><span class="line">        Delayms(cycle);</span><br><span class="line">        Stop();                           <span class="comment">//防止走的太快  </span></span><br><span class="line">        Delayms(cycle);  </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>((trace1 == <span class="number">1</span>) &amp;&amp; (trace2 == <span class="number">0</span>))       <span class="comment">//0代表检测到黑线</span></span><br><span class="line">    &#123;  </span><br><span class="line">        Delayms(<span class="number">50</span>);</span><br><span class="line">        Turn_right();</span><br><span class="line">        Delayms(cycle); </span><br><span class="line">        Stop();                           <span class="comment">//防止走的太快  </span></span><br><span class="line">        Delayms(cycle);  </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>((trace1 == <span class="number">1</span>) &amp;&amp; (trace2 == <span class="number">1</span>))  </span><br><span class="line">    &#123;  </span><br><span class="line">        Delayms(<span class="number">50</span>);</span><br><span class="line">        Forward();</span><br><span class="line">        Delayms(cycle);  </span><br><span class="line">        Stop();                           <span class="comment">//防止走的太快  </span></span><br><span class="line">        Delayms(cycle); </span><br><span class="line">    &#125;   </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;   </span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)  </span><br><span class="line">    &#123;          </span><br><span class="line">       Trace();                          <span class="comment">//死循环，进入寻迹</span></span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="寻迹收获"><a href="#寻迹收获" class="headerlink" title="寻迹收获"></a>寻迹收获</h3><ul>
-<li>可能没啥好展示的，其中宏定义中的cycle数值，可能要根据自己的实际情况去改变一下，好了，明天写蓝牙的那部分代码，今晚有点困，先睡了，不熬夜~~~</li>
+<li>可能没啥好展示的，其中宏定义中的cycle数值，可能要根据自己的实际情况去改变一下，好了，明天写蓝牙的那部分代码，今晚有点困，先睡了，不熬夜<del>~</del></li>
 <li>以及这些代码都是能运行的，不知道当初调了多少BUG，莫名其妙的不对，寻迹模块还是中途换过<br>的，今晚过了测试，才写的这个博客。</li>
 <li>每个程序猿经历过的莫名奇妙的让人脑仁疼的破BUG，可能都能当一段故事吹一下，前几天不对，<br>今天又对了，还真是奇怪，被我归结为模块原因（其实是代码是在改不动了）。嗯，Goodnight.</li>
 </ul>
@@ -281,6 +283,20 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\05\22\C51\" rel="bookmark">DIY智能小车——超声波与液晶显示</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\05\24\c512\" rel="bookmark">DIY智能小车——手机蓝牙</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\05\25\c513\" rel="bookmark">DIY智能小车——PWM调速与产品问世</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -445,32 +461,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -575,6 +612,61 @@ window.addEventListener('pjax:success', () => {
 
     <div id="pjax">
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

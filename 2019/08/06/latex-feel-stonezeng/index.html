@@ -265,6 +265,7 @@
 <p>$\LaTeX$是一门编程语言，在随便挑个编程语言如<code>Python</code>，任何人上手恐怕都会难免遇到错误吧。代码出错的语言不是好语言？不读想文档但我想解决问题，哪个语言能这样？恐怕是自然语言。<code>Java</code>的文档也不在少数吧，但是有人读有人会呀。不读文档，直接用别人代码，出错了就开始搜索，这种毒瘤观念，怕不是你写代码的样子也像那谁。</p>
 <p>基础不牢，地动山摇。心浮气躁，邪魔乱道。要么仔细看，要么别看，这么糊弄，很浪费时间的。</p>
 <a id="more"></a>
+
 <h1 id="我的回答"><a href="#我的回答" class="headerlink" title="我的回答"></a>我的回答</h1><p>准备给他讲解$\LaTeX$的正确姿势，看评论区也是普遍：我不想学，我想直接抄，我想$\LaTeX$特别好用，我想要好模板交差，我还是不想学没必要学的态度，罢了罢了。宛如给一个人解释：买菜不用微积分，可为什么所有的大学都要开高等数学这门课一样。眼光不同，视野不同让我咋交流。</p>
 <p>我只想说，要不您下次生病吃药也别看说明书了，直接吃吧，挺好的，别管一粒两粒一百粒药丸直接往嘴里塞。吃坏身体然后去怪设计药品的人太菜了设计不出好药，然后写一个知乎：论吃药的罪与罚，然后在评论区大家吃药五分钟，住院两星期的跟风。</p>
 <p>不是设计药品的人不懂如何设计药品也没关系，吃药之前仔细看说明书就好了。不是开发者不懂 $\LaTeX$ 内部原理没关系，然而不看说明书就乱用，然后浪费你时间我只想说：真好。$\LaTeX$ 是一门编程语言不是Word，你学任何一门编程语言不都先看书然后一点一点敲代码嘛？写论文的编程语言就不是编程语言了？Word确实不用，要不你还是回Word吧，上手快还没不容易出错。</p>
@@ -410,6 +411,26 @@
     
     
     
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\11\07\Brief-introduction-to-LaTex\" rel="bookmark">一份不太简短的LaTeX简介</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\11\17\LaTeX-supplement\" rel="bookmark">LaTeX补充:矩阵外加描述元素</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\01\15\MCM-template\" rel="bookmark">美赛论文LaTeX模板</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\04\latex-supplement2\" rel="bookmark">LaTeX补充:如何设置代码字体</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\03\latex-supplement1\" rel="bookmark">LaTeX补充:有关参考文献大小写问题</a></div>
+    </li>
+  </ul>
+
         <div class="reward-container">
   <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ 如果这样不行的话，我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
@@ -574,32 +595,53 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:33</span>
-</div>
+    <span title="站点阅读时长">5:39</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
 
         
 <div class="busuanzi-count">
   <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: inline;">
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
     </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: inline;">
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
     </span>
 </div>
@@ -704,6 +746,61 @@ window.addEventListener('pjax:success', () => {
 
     <div id="pjax">
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
