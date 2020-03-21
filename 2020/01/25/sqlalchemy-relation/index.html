@@ -288,12 +288,12 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test1.author_id = <span class="number">1</span></span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
 
 <p>查看数据库端的更改：</p>
-<p><img data-src="sqlalchemy-relation/1.png" alt></p>
+<p><img data-src="/2020/01/25/sqlalchemy-relation/1.png" alt></p>
 <h3 id="从少的一侧建立联系"><a href="#从少的一侧建立联系" class="headerlink" title="从少的一侧建立联系"></a>从少的一侧建立联系</h3><p>给lanling作者追加一篇文章：（lanling作者的id是1）</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling.to_articles.append(test2)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
 
 <p>再次查看数据库内是否修改：</p>
-<p><img data-src="sqlalchemy-relation/2.png" alt></p>
+<p><img data-src="/2020/01/25/sqlalchemy-relation/2.png" alt></p>
 <p>可以看到两篇文章的<code>author_id</code>表示作者都是lanling。</p>
 <h2 id="查看联系结果"><a href="#查看联系结果" class="headerlink" title="查看联系结果"></a>查看联系结果</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">a = session.query(Author).filter(Author.id == <span class="number">1</span>)</span><br><span class="line">print(a[<span class="number">0</span>].username)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.title)</span><br><span class="line">print(test1.author_id)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.body)</span><br></pre></td></tr></table></figure>
 
@@ -304,7 +304,7 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling.to_articles.remove(test2)</span><br><span class="line">session.commit()</span><br><span class="line"><span class="comment"># 查看结果</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.body)</span><br></pre></td></tr></table></figure>
 
 <p>数据库端情况：（之后的创建实例、设置关系的操作均会影响数据库端，所以不再重复展示）。</p>
-<p><img data-src="sqlalchemy-relation/3.png" alt></p>
+<p><img data-src="/2020/01/25/sqlalchemy-relation/3.png" alt></p>
 <p>输出：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">asdasdasd</span><br></pre></td></tr></table></figure>
 
@@ -343,9 +343,9 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(name1.wife.name) <span class="comment"># 输出 name3</span></span><br></pre></td></tr></table></figure>
 
 <p>此外，即使在表内建立了联系，而不执行<code>session.commit()</code>，联系的更改不会提交的数据库：</p>
-<p><img data-src="sqlalchemy-relation/4.png" alt></p>
+<p><img data-src="/2020/01/25/sqlalchemy-relation/4.png" alt></p>
 <p>而在最后执行<code>session.commit()</code>后，更改会提交到数据库：</p>
-<p><img data-src="sqlalchemy-relation/5.png" alt></p>
+<p><img data-src="/2020/01/25/sqlalchemy-relation/5.png" alt></p>
 <h1 id="多对多联系"><a href="#多对多联系" class="headerlink" title="多对多联系"></a>多对多联系</h1><p>一个学生有多个老师，一个老师有多个学生，以这个例子说明。</p>
 <p>在多对多关系中，每一个记录都可以与关系另一侧的多个记录建立关系，而不是一个。所以需要把多对多分拆成两个一对多关系。做法是：新创建一个表，专门存储映射关系。原本的两个表无需设置任何外键。</p>
 <p>关系表一定要写在数据表前面：</p>
@@ -714,5 +714,5 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 </script>
 
     </div>
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</body>
 </html>
