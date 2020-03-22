@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的一">
@@ -28,13 +28,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的一">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/05/24/c512/4.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2018/05/24/c512/5.png">
 <meta property="og:updated_time" content="2019-03-02T15:06:30.033Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DIY智能小车——手机蓝牙">
 <meta name="twitter:description" content="承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的一">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2018/05/24/c512/4.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2018/05/24/c512/">
 
@@ -291,13 +288,14 @@
       
         <p>承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。<br>  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的<strong>一知半解</strong>，不过学习终究是自己的事情。因此，在后续的文章中，将会对这些基本概念提出自己的理解，弄清楚这些最基本的概念，毕竟总不能糊弄着去写程序，闲扯结束，进入正题。</p>
 <a id="more"></a>
+
 <h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><ul>
 <li>蓝牙控制小车的前进、后退等功能。 </li>
 <li>由于本人学渣，不会写手机APP，用的手机软件是“蓝牙串口助手”，应用商店搜索就能下载。</li>
 </ul>
-<p><img src="/2018/05/24/c512/4.png" alt></p>
+<p><img data-src="/2018/05/24/c512/4.png" alt></p>
 <h3 id="HC-05"><a href="#HC-05" class="headerlink" title="HC-05"></a>HC-05</h3><p>HC-05模块就是市场（淘宝）中一搜索就有的，也是最常见的那种。之前说的“蓝牙串口助手”也支持HC-05模块，虽然他说的是支持HC-06模块，不过也没关系。 </p>
-<p><img src="/2018/05/24/c512/5.png" alt></p>
+<p><img data-src="/2018/05/24/c512/5.png" alt></p>
 <p>在程序的调试过程中发现了一个问题，蓝牙模块能正常连接，但是却接收不到手机发送的信息。思来想去，改过了$n$次程序，却还是不对，索性搜索起了有关蓝牙模块的东西，最终发现了问题，重要的事情说三遍：</p>
 <blockquote>
 <p>蓝牙模块的RXD接到单片机的TXD，蓝牙的TXD接到单片机的RXD，不然串口中断无法受到手机发来的信息 。</p>
@@ -311,6 +309,7 @@
 <li>LED指示灯，指示模块工作状态，模块上电后闪烁，不同的状态闪烁间隔不同。</li>
 </ul>
 <h3 id="蓝牙控制程序"><a href="#蓝牙控制程序" class="headerlink" title="蓝牙控制程序"></a>蓝牙控制程序</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg51.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"></span><br><span class="line">sbit led = P2^<span class="number">0</span>;             <span class="comment">//led灯的IO口</span></span><br><span class="line"></span><br><span class="line">uchar bluetoothdata;   </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delay</span><span class="params">(uint z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    uint a, b;</span><br><span class="line">    <span class="keyword">for</span>(a = z; a &gt; <span class="number">0</span>; a--)</span><br><span class="line">        <span class="keyword">for</span>(b = <span class="number">115</span>; b &gt; <span class="number">0</span>; b--);</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span>        </span></span><br><span class="line"><span class="function"></span>&#123;                                                                       </span><br><span class="line">    SCON = <span class="number">0x50</span>;                        </span><br><span class="line">    TMOD = <span class="number">0x21</span>;</span><br><span class="line">    PCON = <span class="number">0x00</span>;</span><br><span class="line">    TH1 = <span class="number">0xfd</span>;</span><br><span class="line">    TL1 = <span class="number">0xfd</span>;</span><br><span class="line">    RI = <span class="number">0</span>；</span><br><span class="line">    EA = <span class="number">1</span>;</span><br><span class="line">    ES = <span class="number">1</span>;    </span><br><span class="line">    TR1 = <span class="number">1</span>;                         </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    led = <span class="number">1</span>;</span><br><span class="line">    init();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);                  <span class="comment">//一直执行中断</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ckzd</span><span class="params">()</span> interrupt 4        <span class="comment">//串口中断</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(RI)                     <span class="comment">//RI为收到信息</span></span><br><span class="line">    &#123;</span><br><span class="line">        RI = <span class="number">0</span>;                <span class="comment">//手动清零</span></span><br><span class="line">        bluetoothdata = SBUF;</span><br><span class="line">        bluetoothdata = bluetoothdata &amp; <span class="number">0x0f</span>;</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">switch</span>(bluetoothdata)<span class="comment">//实现流水灯的闪烁</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x00</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>; </span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x01</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x02</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x03</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x04</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>; </span><br><span class="line">        <span class="keyword">default</span>:<span class="keyword">break</span>;                                          </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>等过几天，一定看懂中断、寄存器、波特率，完善以下代码的注释，起码自己写的代码自己要懂，啊啊啊啊，学艺不精不太好。先去忙考试去了，撤。后序更新会把所有程序整合到一起。哦，对了，还有PWM调速，看书，看书，看书……把东西都搞懂。</p>
 <hr>
 
@@ -526,12 +525,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:39</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -563,7 +562,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -586,76 +585,17 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '.languages',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      script.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.subMenu)
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -667,7 +607,7 @@ window.addEventListener('pjax:success', () => {
 
 
 
-  <script pjax>
+  <script>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -701,7 +641,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
   
 
   
@@ -781,6 +720,5 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
-    </div>
 </body>
 </html>

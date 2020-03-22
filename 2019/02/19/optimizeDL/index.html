@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="来整理一下在机器学习中常用的优化方法，无非是在容易出问题的地方加入人的调控，包括数据数据，数据处理，反向传播，梯度函数等方面，在各种容易出问题的地方加入调控，使得神经网络更有效，或者说神经网络的运行在你的控制之中，而不是调了一堆参数后网络没有优化，甚至调一些无关紧要的参数。 本文收录内容：  正则化的常用方式与实现 有关数据输入和传输的处理 优化后的梯度函数  还是在实际的背景下对于这些概念的理解">
@@ -28,16 +28,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="来整理一下在机器学习中常用的优化方法，无非是在容易出问题的地方加入人的调控，包括数据数据，数据处理，反向传播，梯度函数等方面，在各种容易出问题的地方加入调控，使得神经网络更有效，或者说神经网络的运行在你的控制之中，而不是调了一堆参数后网络没有优化，甚至调一些无关紧要的参数。 本文收录内容：  正则化的常用方式与实现 有关数据输入和传输的处理 优化后的梯度函数  还是在实际的背景下对于这些概念的理解">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/02/19/optimizeDL/1.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/02/19/optimizeDL/2.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/02/19/optimizeDL/3.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/02/19/optimizeDL/4.png">
-<meta property="og:image" content="https://muyuuuu.github.io/2019/02/19/optimizeDL/5.png">
 <meta property="og:updated_time" content="2019-03-04T14:43:13.126Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="正则化调教神经网络">
 <meta name="twitter:description" content="来整理一下在机器学习中常用的优化方法，无非是在容易出问题的地方加入人的调控，包括数据数据，数据处理，反向传播，梯度函数等方面，在各种容易出问题的地方加入调控，使得神经网络更有效，或者说神经网络的运行在你的控制之中，而不是调了一堆参数后网络没有优化，甚至调一些无关紧要的参数。 本文收录内容：  正则化的常用方式与实现 有关数据输入和传输的处理 优化后的梯度函数  还是在实际的背景下对于这些概念的理解">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2019/02/19/optimizeDL/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/02/19/optimizeDL/">
 
@@ -301,24 +295,30 @@
 </ul>
 <p>还是在实际的背景下对于这些概念的理解，学会变通和利用已有的知识进行问题转换。</p>
 <a id="more"></a>
+
 <hr>
 <h2 id="L2正则化"><a href="#L2正则化" class="headerlink" title="L2正则化"></a>L2正则化</h2><p>假设此时的成本函数为：</p>
-<script type="math/tex; mode=display">J(w,b)=\frac{1}{m}\sum_1^m L(\hat{y}^i,y^i)</script><p>那么在这个成本函数的后面加入正则项，修改之前的成本函数为：</p>
-<script type="math/tex; mode=display">J(w,b)=\frac{1}{m}\sum_1^m L(\hat{y}^i,y^i)+\frac{\lambda}{2m}||w||^2_2</script><p>$\lambda$是需要自己调节的正则化参数，因为对于网络的参数而言，$w$比$b$要多得多，而且影响在非线性空间内，对于线性空间的调节较为容易，所以正则项中是不含有$b$的。</p>
+<p>$$J(w,b)=\frac{1}{m}\sum_1^m L(\hat{y}^i,y^i)$$</p>
+<p>那么在这个成本函数的后面加入正则项，修改之前的成本函数为：</p>
+<p>$$J(w,b)=\frac{1}{m}\sum_1^m L(\hat{y}^i,y^i)+\frac{\lambda}{2m}||w||^2_2$$</p>
+<p>$\lambda$是需要自己调节的正则化参数，因为对于网络的参数而言，$w$比$b$要多得多，而且影响在非线性空间内，对于线性空间的调节较为容易，所以正则项中是不含有$b$的。</p>
 <h3 id="L2正则化为何有效"><a href="#L2正则化为何有效" class="headerlink" title="L2正则化为何有效"></a>L2正则化为何有效</h3><p>这个正则项是如何工作的呢？在反向传播时，利用代价函数对$l$层的$w$进行梯度下降，得到：</p>
-<script type="math/tex; mode=display">dw^{[l]}=\frac{\partial{J}}{\partial{w^{[l]}}}+\frac{\lambda}{m}w^{[l]}</script><p>于是在参数$w$更新的过程中，会减去额外的正则项，假设当$\lambda$足够大时，会有许多的$w$会近似为零，导致正向传播时输出$z$也位于0的附近。两点好处：$w$近似为0会缩小了网络的规模，防止了过拟合。输出$z$近似0会使得$z$位于激活函数最容易激活的区域，比如$\mathrm{sigmoid}$函数在$x=0$处的导数最大，利于网络的学习。</p>
+<p>$$dw^{[l]}=\frac{\partial{J}}{\partial{w^{[l]}}}+\frac{\lambda}{m}w^{[l]}$$</p>
+<p>于是在参数$w$更新的过程中，会减去额外的正则项，假设当$\lambda$足够大时，会有许多的$w$会近似为零，导致正向传播时输出$z$也位于0的附近。两点好处：$w$近似为0会缩小了网络的规模，防止了过拟合。输出$z$近似0会使得$z$位于激活函数最容易激活的区域，比如$\mathrm{sigmoid}$函数在$x=0$处的导数最大，利于网络的学习。</p>
 <p>而且观察更新时的正则梯度，对于数值越大的$w$，参数下降的幅度也就越大，同样会导致权重衰减，参数近似于0之后相当于缩小了网络规模。</p>
 <h3 id="简单的Tensorflow实现"><a href="#简单的Tensorflow实现" class="headerlink" title="简单的Tensorflow实现"></a>简单的Tensorflow实现</h3><p>这里创建了一个差不多的模型，一个小规模网络，一个大规模网络，还有一个正则化的网络，进行对比，了解正则项的作用。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow <span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">NUM_WORDS = <span class="number">10000</span></span><br><span class="line"></span><br><span class="line">(train_data, train_labels), (test_data, test_labels) = keras.datasets.imdb.load_data(num_words=NUM_WORDS)</span><br><span class="line"></span><br><span class="line"><span class="comment"># data preprocessing</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi_hot_sequences</span><span class="params">(sequences, dimension)</span>:</span></span><br><span class="line">    <span class="comment"># Create an all-zero matrix of shape (len(sequences), dimension)</span></span><br><span class="line">    results = np.zeros((len(sequences), dimension))</span><br><span class="line">    <span class="keyword">for</span> i, word_indices <span class="keyword">in</span> enumerate(sequences):</span><br><span class="line">        results[i, word_indices] = <span class="number">1.0</span>  <span class="comment"># set specific indices of results[i] to 1s</span></span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line"></span><br><span class="line">train_data = multi_hot_sequences(train_data, dimension=NUM_WORDS)</span><br><span class="line">test_data = multi_hot_sequences(test_data, dimension=NUM_WORDS)</span><br><span class="line"></span><br><span class="line"><span class="comment"># basic model</span></span><br><span class="line">baseline_model = keras.Sequential([</span><br><span class="line">    <span class="comment"># `input_shape` is only required here so that `.summary` works.</span></span><br><span class="line">    keras.layers.Dense(<span class="number">16</span>, activation=tf.nn.relu, input_shape=(NUM_WORDS,)),</span><br><span class="line">    keras.layers.Dense(<span class="number">16</span>, activation=tf.nn.relu),</span><br><span class="line">    keras.layers.Dense(<span class="number">1</span>, activation=tf.nn.sigmoid)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">baseline_model.compile(optimizer=<span class="string">'adam'</span>,</span><br><span class="line">                       loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">                       metrics=[<span class="string">'accuracy'</span>, <span class="string">'binary_crossentropy'</span>])</span><br><span class="line"></span><br><span class="line">baseline_history = baseline_model.fit(train_data,</span><br><span class="line">                                      train_labels,</span><br><span class="line">                                      epochs=<span class="number">20</span>,</span><br><span class="line">                                      batch_size=<span class="number">512</span>,</span><br><span class="line">                                      validation_data=(test_data, test_labels),</span><br><span class="line">                                      verbose=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># smaller model</span></span><br><span class="line">smaller_model = keras.Sequential([</span><br><span class="line">    keras.layers.Dense(<span class="number">4</span>, activation=tf.nn.relu, input_shape=(NUM_WORDS,)),</span><br><span class="line">    keras.layers.Dense(<span class="number">4</span>, activation=tf.nn.relu),</span><br><span class="line">    keras.layers.Dense(<span class="number">1</span>, activation=tf.nn.sigmoid)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">smaller_model.compile(optimizer=<span class="string">'adam'</span>,</span><br><span class="line">                loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">                metrics=[<span class="string">'accuracy'</span>, <span class="string">'binary_crossentropy'</span>])</span><br><span class="line"></span><br><span class="line">smaller_history = smaller_model.fit(train_data,</span><br><span class="line">                                    train_labels,</span><br><span class="line">                                    epochs=<span class="number">20</span>,</span><br><span class="line">                                    batch_size=<span class="number">512</span>,</span><br><span class="line">                                    validation_data=(test_data, test_labels),</span><br><span class="line">                                    verbose=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># bigger model</span></span><br><span class="line">bigger_model = keras.models.Sequential([</span><br><span class="line">    keras.layers.Dense(<span class="number">512</span>, activation=tf.nn.relu, input_shape=(NUM_WORDS,)),</span><br><span class="line">    keras.layers.Dense(<span class="number">512</span>, activation=tf.nn.relu),</span><br><span class="line">    keras.layers.Dense(<span class="number">1</span>, activation=tf.nn.sigmoid)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">bigger_model.compile(optimizer=<span class="string">'adam'</span>,</span><br><span class="line">                     loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">                     metrics=[<span class="string">'accuracy'</span>,<span class="string">'binary_crossentropy'</span>])</span><br><span class="line"></span><br><span class="line">bigger_history = bigger_model.fit(train_data, train_labels,</span><br><span class="line">                                  epochs=<span class="number">20</span>,</span><br><span class="line">                                  batch_size=<span class="number">512</span>,</span><br><span class="line">                                  validation_data=(test_data, test_labels),</span><br><span class="line">                                  verbose=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对比效果</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_history</span><span class="params">(histories, key=<span class="string">'binary_crossentropy'</span>)</span>:</span></span><br><span class="line">    plt.figure(figsize=(<span class="number">16</span>,<span class="number">10</span>))</span><br><span class="line">    <span class="keyword">for</span> name, history <span class="keyword">in</span> histories:</span><br><span class="line">        val = plt.plot(history.epoch, history.history[<span class="string">'val_'</span>+key],</span><br><span class="line">                   <span class="string">'--'</span>, label=name.title()+<span class="string">' Val'</span>)</span><br><span class="line">        plt.plot(history.epoch, history.history[key], color=val[<span class="number">0</span>].get_color(),</span><br><span class="line">             label=name.title()+<span class="string">' Train'</span>)</span><br><span class="line"></span><br><span class="line">    plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">    plt.ylabel(key.replace(<span class="string">'_'</span>,<span class="string">' '</span>).title())</span><br><span class="line">    plt.legend()</span><br><span class="line"></span><br><span class="line">    plt.xlim([<span class="number">0</span>,max(history.epoch)])</span><br><span class="line"></span><br><span class="line">plot_history([(<span class="string">'baseline'</span>, baseline_history),</span><br><span class="line">              (<span class="string">'smaller'</span>, smaller_history),</span><br><span class="line">              (<span class="string">'bigger'</span>, bigger_history)])</span><br></pre></td></tr></table></figure>
+
 <p>发现效果是这样的，较大的网络几乎仅仅1个周期之后便立即开始过拟合，并且之后严重多。网络容量越大，便能够越快对训练数据进行建模（产生较低的训练损失），但越容易过拟合（导致训练损失与验证损失之间的差异很大）。</p>
 <p>奥卡姆剃刀定律：如果对于同一现象有两种解释，最可能正确的解释是“最简单”的解释，即做出最少量假设的解释。这也适用于神经网络学习的模型：给定一些训练数据和一个网络架构，有多组权重值（多个模型）可以解释数据，而简单模型比复杂模型更不容易过拟合。</p>
 <hr>
-<p><img src="/2019/02/19/optimizeDL/1.png" alt></p>
+<p><img data-src="/2019/02/19/optimizeDL/1.png" alt></p>
 <hr>
 <p>加入正则的效果：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">l2_model = keras.models.Sequential([</span><br><span class="line">    keras.layers.Dense(<span class="number">16</span>, kernel_regularizer=keras.regularizers.l2(<span class="number">0.001</span>),</span><br><span class="line">                       activation=tf.nn.relu, input_shape=(NUM_WORDS,)),</span><br><span class="line">    keras.layers.Dense(<span class="number">16</span>, kernel_regularizer=keras.regularizers.l2(<span class="number">0.001</span>),</span><br><span class="line">                       activation=tf.nn.relu),</span><br><span class="line">    keras.layers.Dense(<span class="number">1</span>, activation=tf.nn.sigmoid)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">l2_model.compile(optimizer=<span class="string">'adam'</span>,</span><br><span class="line">                 loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">                 metrics=[<span class="string">'accuracy'</span>, <span class="string">'binary_crossentropy'</span>])</span><br><span class="line"></span><br><span class="line">l2_model_history = l2_model.fit(train_data, train_labels,</span><br><span class="line">                                epochs=<span class="number">20</span>,</span><br><span class="line">                                batch_size=<span class="number">512</span>,</span><br><span class="line">                                validation_data=(test_data, test_labels),</span><br><span class="line">                                verbose=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">plot_history([(<span class="string">'baseline'</span>, baseline_history),</span><br><span class="line">              (<span class="string">'l2'</span>, l2_model_history)])</span><br></pre></td></tr></table></figure>
+
 <hr>
-<p><img src="/2019/02/19/optimizeDL/2.png" alt></p>
+<p><img data-src="/2019/02/19/optimizeDL/2.png" alt></p>
 <p>这样，正则项的确有效的降低了在测试集中的方差，没有产生严重的过拟合现象。</p>
 <hr>
 <h2 id="DropOut正则化"><a href="#DropOut正则化" class="headerlink" title="DropOut正则化"></a>DropOut正则化</h2><p>DropOut是随机丢弃的意思（应用于某个层），指在训练期间随机“丢弃”该层的多个输出特征。假设某个指定的层通常会在训练期间针对给定的输入样本返回一个向量 [0.2, 0.5, 0.3, 0.8, 0.7]；在应用丢弃后，取消低于某概率的神经元连接。</p>
@@ -326,25 +326,31 @@
 <p>在测试时，网络不会丢弃任何单元，而是将层的输出值按等同于丢弃率的比例进行缩减，以便平衡以下事实：测试时的活跃单元数大于训练时的活跃单元数。</p>
 <h3 id="简单的Tensorflow实现-1"><a href="#简单的Tensorflow实现-1" class="headerlink" title="简单的Tensorflow实现"></a>简单的Tensorflow实现</h3><p>在网络中添加两个丢弃层，看看它们在降低过拟合方面表现如何：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">dpt_model = keras.models.Sequential([</span><br><span class="line">    keras.layers.Dense(<span class="number">16</span>, activation=tf.nn.relu, input_shape=(NUM_WORDS,)),</span><br><span class="line">    keras.layers.Dropout(<span class="number">0.5</span>),</span><br><span class="line">    keras.layers.Dense(<span class="number">16</span>, activation=tf.nn.relu),</span><br><span class="line">    keras.layers.Dropout(<span class="number">0.5</span>),</span><br><span class="line">    keras.layers.Dense(<span class="number">1</span>, activation=tf.nn.sigmoid)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">dpt_model.compile(optimizer=<span class="string">'adam'</span>,</span><br><span class="line">                  loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">                  metrics=[<span class="string">'accuracy'</span>,<span class="string">'binary_crossentropy'</span>])</span><br><span class="line"></span><br><span class="line">dpt_model_history = dpt_model.fit(train_data, train_labels,</span><br><span class="line">                                  epochs=<span class="number">20</span>,</span><br><span class="line">                                  batch_size=<span class="number">512</span>,</span><br><span class="line">                                  validation_data=(test_data, test_labels),</span><br><span class="line">                                  verbose=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">plot_history([(<span class="string">'baseline'</span>, baseline_history),</span><br><span class="line">              (<span class="string">'dropout'</span>, dpt_model_history)])</span><br></pre></td></tr></table></figure>
+
 <hr>
-<p><img src="/2019/02/19/optimizeDL/3.png" alt></p>
+<p><img data-src="/2019/02/19/optimizeDL/3.png" alt></p>
 <p>我们发现，效果还说的过去，在测试集中表现良好。</p>
 <hr>
 <h2 id="正则化的输入与传播"><a href="#正则化的输入与传播" class="headerlink" title="正则化的输入与传播"></a>正则化的输入与传播</h2><p>其实对输入数据和网络中正向传播的数据进行正则化的处理，也能加快网络的学习速度。先放上正则化的处理方式：</p>
-<script type="math/tex; mode=display">x_i=\frac{x_i-\mu_i}{\sigma_i}</script><p>也就是每个特征减去自己的均值在除以自己的方差（测试是均值，方差保持一致），如果学过概率论的话，这样处理后的数据会服从均值为0，方差为1的正态分布，即$X\sim N(0,1)$，看下图：</p>
-<p><img src="/2019/02/19/optimizeDL/4.png" alt></p>
+<p>$$x_i=\frac{x_i-\mu_i}{\sigma_i}$$</p>
+<p>也就是每个特征减去自己的均值在除以自己的方差（测试是均值，方差保持一致），如果学过概率论的话，这样处理后的数据会服从均值为0，方差为1的正态分布，即$X\sim N(0,1)$，看下图：</p>
+<p><img data-src="/2019/02/19/optimizeDL/4.png" alt></p>
 <h3 id="优化意义"><a href="#优化意义" class="headerlink" title="优化意义"></a>优化意义</h3><p>当不对数据进行正则化时，比如特征$x_1$可能分布在$[1,1000]$，而特征$x_2$可能分布在$[0,1]$，这样的输入会使得成本函数分布在一个乱七八糟(左图)的空间内，可能会沿着最复杂的梯度进行下降，而对所有特征数据正则化到$[0,1]$区间内部时，无论是哪个方向的梯度，都能很快的寻找到最优点。</p>
 <p>此外，在网络的正向传播过程中，如果对网络的每一层的接受的输出(激活之前)也进行这样的处理，后面的网络也会运行的更快，如此，正则化便从输入推广到了传播。</p>
 <p>传播过程对数据的政策化会使得参数$b$没有意义($x-\mu$)，所以也就取消了这个参数，而且还可以正则化为任意的均值和方差：</p>
-<script type="math/tex; mode=display">z=\gamma z_{norm}+\beta</script><p>所以$\gamma$决定了方差，$\beta$决定了均值，这两个参数也是由网络学习而来(每层和煤层不一样，测试时使用的$\mu,\sigma$为所有的batch的加权平均值)。</p>
+<p>$$z=\gamma z_{norm}+\beta$$</p>
+<p>所以$\gamma$决定了方差，$\beta$决定了均值，这两个参数也是由网络学习而来(每层和煤层不一样，测试时使用的$\mu,\sigma$为所有的batch的加权平均值)。</p>
 <p>此外，当对数据进行正则化时，网络也能更加泛化。比如面临不同的输入：黑猫与白猫。网络在学习了认识黑猫后，可能还不认识白猫，因为两者的RGB数值差异很大。但是正则化会限制输入的均值与方差，保证了数据在$[-1,1]$范围内，也就是前层无论面临何种输入，对后层的权重影响都不会太大。</p>
 <h3 id="Python的简单实现"><a href="#Python的简单实现" class="headerlink" title="Python的简单实现"></a>Python的简单实现</h3><p>该层在每个batch上将前一层的激活值重新规范化，即使得其输出数据的均值接近0，其标准差接近1。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">keras.layers.normalization.BatchNormalization(axis=<span class="number">-1</span>)</span><br></pre></td></tr></table></figure>
+
 <p>利用numpy的广播机制快速对输入的数据标准化。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = (a - np.mean(a, axis=<span class="number">0</span>)) / (np.std(a, axis=<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
 <h2 id="其他正则化方案"><a href="#其他正则化方案" class="headerlink" title="其他正则化方案"></a>其他正则化方案</h2><p>简单的介绍一种early_stop的方法，在测试误差达到最低点并开始上升的时刻终止训练，也就是在训练没有结束是提前结束训练过程。</p>
 <h3 id="Tensorflow的实现"><a href="#Tensorflow的实现" class="headerlink" title="Tensorflow的实现"></a>Tensorflow的实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PrintDot</span><span class="params">(keras.callbacks.Callback)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_epoch_end</span><span class="params">(self, epoch, logs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> epoch % <span class="number">100</span> == <span class="number">0</span>: </span><br><span class="line">            print(epoch / <span class="number">100</span>)</span><br><span class="line"></span><br><span class="line">EPOCHS = <span class="number">500</span></span><br><span class="line"><span class="comment"># The patience parameter is the amount of epochs to check for improvement</span></span><br><span class="line">early_stop = keras.callbacks.EarlyStopping(monitor=<span class="string">'val_loss'</span>, patience=<span class="number">200</span>)</span><br><span class="line"><span class="comment"># Store training stats</span></span><br><span class="line">history = model.fit(train_data, train_labels, epochs=EPOCHS,</span><br><span class="line">                    validation_split=<span class="number">0.2</span>, verbose=<span class="number">0</span>,</span><br><span class="line">                    callbacks=[early_stop, PrintDot()])</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_history</span><span class="params">(history)</span>:</span></span><br><span class="line">    plt.figure()</span><br><span class="line">    plt.xlabel(<span class="string">'Epoch'</span>)</span><br><span class="line">    plt.ylabel(<span class="string">'Mean Abs Error [1000$]'</span>)</span><br><span class="line">    plt.plot(history.epoch, np.array(history.history[<span class="string">'mean_absolute_error'</span>]),</span><br><span class="line">           label=<span class="string">'Train Loss'</span>)</span><br><span class="line">    plt.plot(history.epoch, np.array(history.history[<span class="string">'val_mean_absolute_error'</span>]),</span><br><span class="line">           label = <span class="string">'Val loss'</span>)</span><br><span class="line">    plt.legend()</span><br><span class="line">    plt.ylim([<span class="number">0</span>, <span class="number">5</span>])</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line">plot_history(history)</span><br></pre></td></tr></table></figure>
-<p><img src="/2019/02/19/optimizeDL/5.png" alt></p>
+
+<p><img data-src="/2019/02/19/optimizeDL/5.png" alt></p>
 <p>希望根据这些数据判断：对模型训练多长时间之后它会停止优化。此图显示，在大约200个周期之后，模型几乎不再出现任何改进。所以更新一下model.fit方法，以便在验证分数不再提高时自动停止训练。将使用一个回调来测试每个周期的训练状况。如果模型在一定数量的周期之后没有出现任何改进，则自动停止训练。</p>
 <h3 id="缺陷与不足"><a href="#缺陷与不足" class="headerlink" title="缺陷与不足"></a>缺陷与不足</h3><p>缺陷是什么呢？在之前的几种正则化方案中，降低成本函数$J(w,b)$和防止过拟合是两部分，但是early_stop中降低成本函数和防止过拟合成为了一部分，也就是为了防止过拟合，停止了训练，也停止了降低成本函数。这样得到的精确度不是最高的，但是训练速度可能比较快，在某些简单的场合也不是不能用。</p>
 <hr>
@@ -568,12 +574,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:39</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -605,7 +611,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -628,76 +634,17 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '.languages',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      script.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.subMenu)
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -709,7 +656,7 @@ window.addEventListener('pjax:success', () => {
 
 
 
-  <script pjax>
+  <script>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -743,7 +690,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
   
 
   
@@ -823,6 +769,5 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
-    </div>
 </body>
 </html>

@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="关于如何实现爬虫，可以简单看这里：入门级别的难度，两个例子。 更主要的目的是，把当时上课讲过的Selenium整理一下，毕竟当时我还做PPT上去讲课来，Selenium虽然是自动化测试工具，但也可以很好的用在爬虫领域。 在很多网页中使用了Ajax技术，即：你往下翻阅或者点击加载更多按钮才会加载剩下的内容，否则不会加载你暂时不看的内容。或者网页使用了反爬虫技术，爬取速度过快会严重影响对方服务器的流量">
@@ -28,12 +28,10 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="关于如何实现爬虫，可以简单看这里：入门级别的难度，两个例子。 更主要的目的是，把当时上课讲过的Selenium整理一下，毕竟当时我还做PPT上去讲课来，Selenium虽然是自动化测试工具，但也可以很好的用在爬虫领域。 在很多网页中使用了Ajax技术，即：你往下翻阅或者点击加载更多按钮才会加载剩下的内容，否则不会加载你暂时不看的内容。或者网页使用了反爬虫技术，爬取速度过快会严重影响对方服务器的流量">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://muyuuuu.github.io/2020/01/11/resptile/1.png">
 <meta property="og:updated_time" content="2020-01-31T16:48:37.128Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="爬虫系列（二）——操控浏览器模拟访问、点击与设置等待">
 <meta name="twitter:description" content="关于如何实现爬虫，可以简单看这里：入门级别的难度，两个例子。 更主要的目的是，把当时上课讲过的Selenium整理一下，毕竟当时我还做PPT上去讲课来，Selenium虽然是自动化测试工具，但也可以很好的用在爬虫领域。 在很多网页中使用了Ajax技术，即：你往下翻阅或者点击加载更多按钮才会加载剩下的内容，否则不会加载你暂时不看的内容。或者网页使用了反爬虫技术，爬取速度过快会严重影响对方服务器的流量">
-<meta name="twitter:image" content="https://muyuuuu.github.io/2020/01/11/resptile/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/01/11/resptile/">
 
@@ -293,6 +291,7 @@
 <p>在很多网页中使用了<code>Ajax</code>技术，即：你往下翻阅或者点击加载更多按钮才会加载剩下的内容，否则不会加载你暂时不看的内容。或者网页使用了反爬虫技术，爬取速度过快会严重影响对方服务器的流量，提高对方的成本，因此对方服务器会把你拉黑防止你的爬虫行为。</p>
 <p>如何解决呢？</p>
 <a id="more"></a>
+
 <p>对于第一类问题，可以靠<code>Selenium</code>模拟网页浏览、按钮点击动作解决；<br>对于第二类问题，可以设置两种等待方式，放缓爬取速度，避免被拉黑。</p>
 <p>所需软件和库：</p>
 <ul>
@@ -301,6 +300,7 @@
 </ul>
 <h1 id="模拟按钮点击下一页"><a href="#模拟按钮点击下一页" class="headerlink" title="模拟按钮点击下一页"></a>模拟按钮点击下一页</h1><p>以著名的<code>ICU996</code>为例，我想看哪些人<code>star</code>了这个项目，且<code>star</code>这也页面的域名毫无规律可言，必须使用点击下一页的按钮才能看到下一页的结果。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line"><span class="comment"># 爬取网页的根域名</span></span><br><span class="line">star_url = <span class="string">r"https://github.com/996icu/996.ICU/stargazers"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个driver用于打开网页，记得找到brew安装的chromedriver的位置，在创建driver的时候指定这个位置</span></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line"><span class="comment"># 打开网页</span></span><br><span class="line">driver.get(star_url)</span><br><span class="line"></span><br><span class="line">name_counter = <span class="number">1</span></span><br><span class="line">page = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> page &lt; <span class="number">500</span>: <span class="comment"># 爬500页的，这里是手工指定的 | 每页30个人 共249000人 </span></span><br><span class="line">    print(page)</span><br><span class="line">    soup = BeautifulSoup(driver.page_source, <span class="string">"lxml"</span>)</span><br><span class="line">    data = p.findall(str(soup.body))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> data:</span><br><span class="line">        i = i.strip(<span class="string">'Works for "'</span>)</span><br><span class="line">        <span class="keyword">if</span> i <span class="keyword">in</span> df.index:</span><br><span class="line">            po=df.loc[[i],:]</span><br><span class="line">            po.Sum += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            df.loc[i] = <span class="number">1</span></span><br><span class="line">    <span class="comment"># selenium的xpath用法，找到包含“下一页”的a标签去点击</span></span><br><span class="line">    driver.find_element_by_xpath(<span class="string">"//a[contains(text(),'Next')]"</span>).click() </span><br><span class="line">    page = page + <span class="number">1</span></span><br><span class="line">    <span class="comment"># 睡0.5秒让网页加载完再去读它的html代码 防止爬虫过猛</span></span><br><span class="line">    time.sleep(<span class="number">0.5</span>) </span><br><span class="line">df.to_csv(<span class="string">'9961.csv'</span>, sheet_name = <span class="string">'watch'</span>)</span><br></pre></td></tr></table></figure>
+
 <p>这样一个简单的代码就完成了，但是爬下来的<a href="/download/9961.csv">数据</a>没有经过处理，如<code>NCST</code>，<code>NCUST</code>和华北理工大学表示的是一个东西，数据应该经过后期处理整合，但这里在说爬虫，到此为止。</p>
 <p>在上面的例子中，已经介绍了一种等待方式：显示等待，<code>time.sleep(0.5)</code>，而这也是显示等待中最糟糕的一个。即到这里强行停止0.5秒，然后在访问下一页，防止爬中速度快被拉黑。</p>
 <h1 id="模拟浏览器翻阅"><a href="#模拟浏览器翻阅" class="headerlink" title="模拟浏览器翻阅"></a>模拟浏览器翻阅</h1><p>主要是用代码控制浏览器，完成向下翻阅浏览的功能，两点好处：</p>
@@ -308,30 +308,40 @@
 <li>使服务器辨别不出来是人在看他的网页还是机器在看他的网页。</li>
 <li>触发<code>Ajax</code>，使浏览器自动加载剩下的内容，而不用使人去手动翻阅加载。如下图所示：</li>
 </ul>
-<p><img src="/2020/01/11/resptile/1.png" alt></p>
+<p><img data-src="/2020/01/11/resptile/1.png" alt></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">scroll_down</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (num):</span><br><span class="line">        <span class="comment"># 向下翻阅1000个像素单位</span></span><br><span class="line">        driver.execute_script(<span class="string">"window.scrollBy(0,1000)"</span>)</span><br><span class="line">        <span class="comment">#　停两秒在向下翻阅 等他加载</span></span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 翻阅10次</span></span><br><span class="line">scroll_down(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
 <p><code>(0, 1000)</code>中的<code>0</code>表示水平翻阅0个像素点，<code>1000</code>表示向下翻阅1000个像素点。还记得屏幕的分辨率是<code>1920X1080</code>吗，1080就是指竖直方向排列的像素点的数量。记住这段代码，一会儿配合其他任务一起用。</p>
 <h1 id="设置页面等待"><a href="#设置页面等待" class="headerlink" title="设置页面等待"></a>设置页面等待</h1><h2 id="隐性等待"><a href="#隐性等待" class="headerlink" title="隐性等待"></a>隐性等待</h2><p>官方文档永远是第一：<br><a href="https://selenium-python-zh.readthedocs.io/en/latest/waits.html" target="_blank" rel="noopener">https://selenium-python-zh.readthedocs.io/en/latest/waits.html</a></p>
 <p>如果某些元素不是立即可用的（可能页面不会第一时间加载该元素，可能浏览器翻阅到一定位置才加载），隐式等待是告诉WebDriver去等待一定的时间后去查找元素。 默认等待时间是0秒，一旦设置该值，隐式等待是设置该WebDriver的实例的生命周期（意思是：设置隐性等待30秒的话，全部代码全部的等待时间是30秒，第一次等了12秒，后续代码就只有剩下的18秒可用了）。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line">driver.implicitly_wait(<span class="number">10</span>)  <span class="comment"># 隐性等待，最长等 10 秒</span></span><br><span class="line"></span><br><span class="line">driver.get(<span class="string">'https://cn.bing.com'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正常可以查找到</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_element_by_id(<span class="string">'sb_form_q'</span>)</span><br><span class="line">    print(<span class="string">'yes'</span>)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    print(<span class="string">'false'</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 查找不到</span></span><br><span class="line">since = time.time()</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    driver.find_element_by_id(<span class="string">'bs_form_q'</span>)</span><br><span class="line">    print(<span class="string">'yes 1'</span>)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    print(<span class="string">'false 1'</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    driver.quit()</span><br><span class="line">    </span><br><span class="line">print(end - since)</span><br></pre></td></tr></table></figure>
+
 <p>输出如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">yes</span><br><span class="line">false <span class="number">1</span></span><br><span class="line"><span class="number">10.114457607269287</span></span><br></pre></td></tr></table></figure>
+
 <p>因为第一次能找到，所以输出<code>yes</code>，第二次找不到，等了10秒，输出了<code>false</code>。重点：一定要用异常捕获，否则寻找不到代码会强行停止，影响后续代码执行。</p>
 <p>当然隐性等待只用于加载元素，而<code>不是</code>打开网页：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line">driver.implicitly_wait(<span class="number">10</span>)  <span class="comment"># 隐性等待，最长等 10 秒</span></span><br><span class="line"></span><br><span class="line">page = [</span><br><span class="line">    <span class="string">"https://www.qq.com/"</span>,</span><br><span class="line">    <span class="string">"https://baidu.com"</span>,</span><br><span class="line">    <span class="string">"https://cn.bing.com"</span>,</span><br><span class="line">    <span class="string">"https://www.google.com/"</span>,  <span class="comment"># skip it automatic</span></span><br><span class="line">    <span class="string">"https://baidu.com"</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> url <span class="keyword">in</span> page:</span><br><span class="line">    since = time.time()</span><br><span class="line">    driver.get(url)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(end - since)</span><br><span class="line"></span><br><span class="line">driver.quit()</span><br></pre></td></tr></table></figure>
+
 <p>输出如下（第四行输出显示：等了三十秒没打开网页 已经超出了设置的10秒，所以隐形等待是用来加载元素而不是加载整个网页）：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">3.0922935009002686</span></span><br><span class="line"><span class="number">1.215383768081665</span></span><br><span class="line"><span class="number">13.705082416534424</span></span><br><span class="line"><span class="number">33.13365077972412</span>   <span class="comment"># 等了三十秒没打开网页 已经超出了设置的10秒</span></span><br><span class="line"><span class="number">0.6389157772064209</span></span><br></pre></td></tr></table></figure>
+
 <h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>以<a href="https://gallery.echartsjs.com/explore.html#sort=rank~timeframe=all~author=all" target="_blank" rel="noopener">ECharts数据可视化实验室网站</a>为例，（百度 ECharts 团队创建，联合公司内外众多数据可视化从业人组成的技术研究虚拟组织，致力于数据可视化的相关研究、教育普及、产品研发及生态建设。），虽然是百度的，但是这个可视化网站还不错。</p>
 <p>而这个网站使用了<code>Ajax</code>技术，不往下翻阅是不会加载内容的，正好用上之前写的控制浏览器翻阅的代码。</p>
 <blockquote>
 <p>我往下翻阅了很久，有个实例的作者叫 隐居威海 ，我们来爬取这个作者。（当然那个网站一直在变动，可能这个名字没了，或者加入了新的用例需要多翻阅几次，或者本次代码实效都很正常，主要介绍理念。我几个月前还是可以运行的。）</p>
+</blockquote>
+<blockquote>
 <p>以下代码的效果：不往下翻阅浏览器加载不出来，只有向下加载才能定位到目标元素。意思是，不写<code>scroll_down(10)</code>会报错，写了这个函数才能爬取到。</p>
 </blockquote>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line"><span class="comment"># 隐性等待，最长等 30 秒</span></span><br><span class="line">driver.implicitly_wait(<span class="number">30</span>) </span><br><span class="line"></span><br><span class="line">driver.get(<span class="string">"https://gallery.echartsjs.com/explore.html#sort=rank~timeframe=all~author=all"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">scroll_down</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (num):</span><br><span class="line">        driver.execute_script(<span class="string">"window.scrollBy(0,1000)"</span>)</span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    since = time.time()</span><br><span class="line">    <span class="comment"># 向下翻阅 10 次</span></span><br><span class="line">    scroll_down(<span class="number">10</span>) <span class="comment"># 这个代码注释掉程序会输出 loading......</span></span><br><span class="line">    <span class="comment"># 因为下面有个作者是叫 隐居威海</span></span><br><span class="line">    print(driver.find_element_by_link_text(<span class="string">'隐居威海'</span>).text)</span><br><span class="line">    end = time.time()</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'loading....'</span>)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    print(end - since)</span><br><span class="line">    driver.quit()</span><br></pre></td></tr></table></figure>
+
 <p>写<code>scroll_down(10)</code>的输出：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">隐居威海</span><br></pre></td></tr></table></figure>
+
 <p>不写<code>scroll_down(10)</code>的输出</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">loading....</span><br><span class="line"><span class="number">30.12252512365</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="显性等待"><a href="#显性等待" class="headerlink" title="显性等待"></a>显性等待</h2><p>第一种等待方式<code>time.sleep</code>已经在<code>模拟按钮点击下一页</code>这一内容下介绍，并给出了程序实例，这也是最糟糕的。强制让浏览器等待X秒，不管当前操作是否完成，是否可以进行下一步操作，都必须等X秒的时间。</p>
 <ul>
 <li><p>缺点：不能准确把握需要等待的时间（有时操作还未完成，等待就结束了，导致报错；有时操作已经完成了，但等待时间还没有到，浪费时间），如果在用例中大量使用，会浪费不必要的等待时间，影响执行效率。</p>
@@ -341,8 +351,10 @@
 </ul>
 <p>另一种显示等待：程序每隔xx秒看一眼，如果条件成立了，则执行下一步，否则继续等待，直到超过设置的最长时间，然后抛出TimeoutException。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line">driver.implicitly_wait(<span class="number">15</span>)  </span><br><span class="line"><span class="comment"># 隐性等待和显性等待可以同时用，但要注意：等待的最长时间取两者之中的大者</span></span><br><span class="line">driver.get(<span class="string">'https://liam.page/'</span>)</span><br><span class="line">locator = (By.LINK_TEXT, <span class="string">'NexT.Gemini'</span>)</span><br><span class="line"></span><br><span class="line">since = time.time()</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    WebDriverWait(driver, <span class="number">10</span>, <span class="number">0.5</span>).until(EC.presence_of_element_located(locator))</span><br><span class="line">    print(<span class="string">'yes'</span>)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    print(<span class="string">'no'</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    end = time.time()</span><br><span class="line">    driver.close()</span><br><span class="line">    </span><br><span class="line">print(end - since)</span><br></pre></td></tr></table></figure>
+
 <p>输出：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">yes</span><br><span class="line"><span class="number">0.019946813583374023</span></span><br></pre></td></tr></table></figure>
+
 <p>可见用了不到一秒的时间加载了该元素。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>如果我们设置了隐性等待和显性等待，最长的等待时间取决于两者之间的大者，如果隐性等待时间 &gt; 显性等待时间，则该句代码的最长等待时间等于隐性等待时间。</p>
 <p>可以很好的利用自动化测试工具<code>Selenium</code>的元素查找、等待模式来完成爬虫中的工作。</p>
@@ -557,12 +569,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:39</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -594,7 +606,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -617,76 +629,17 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
-  <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '.languages',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.getAttribute('pjax') !== null) {
-      script.setAttribute('pjax', '');
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.subMenu)
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
-
 
 
 
   
-  <script pjax>
+  <script>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -698,7 +651,7 @@ window.addEventListener('pjax:success', () => {
 
 
 
-  <script pjax>
+  <script>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -732,7 +685,6 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
   
 
   
@@ -759,6 +711,5 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
-    </div>
 </body>
 </html>
