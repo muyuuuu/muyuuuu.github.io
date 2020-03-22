@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
@@ -104,6 +104,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -163,11 +164,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -177,6 +205,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -232,14 +261,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>643</span>
+              <span>5.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -253,11 +282,6 @@
       
           <p>计算机网络的坑还没有填完，于是我决定开个新坑。<br>二刷完了数据结构，来一个粗暴的整理。<br>高能慎入，只是简单的总结，并没有复杂的推导过程和代码。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/06/26/datastructure/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -346,11 +370,6 @@
 <p>以下内容纯属为作者背写的，理解的，并非考试重点。可能词汇不够严谨，但思维和观念是易于理解的。</p>
 <p>中间出了点插曲，写的内容过于详细发现写不完了，于是，写了个粗暴的汇总版本。关于其中具体的知识，还建议查阅相关书籍，不要企图靠网络资源能学会什么东西。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/06/12/Computer-network/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -434,11 +453,6 @@
       
           <p>&emsp;&emsp;怀念的，也许只是怀念本身。一年前，不是2016年，而是2018年。高考对我来说是3年前的事情了。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/06/08/DuanWu/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -522,11 +536,6 @@
       
           <p>&emsp;&emsp;课不多但破事不少，莫名其妙的停止了OJ，然偶今天又重新刷了两道题，准备整理下之前用过的内容。算是自己的知识库吧，虽然可能并无卵用。（基于C++）</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/06/02/OJ-Cpp-cumulative/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -617,11 +626,6 @@
 </ul>
 <p>&emsp;&emsp;其实我总在思考，感觉编译原理中对句法成分分析的东西也不是不能用到NLP中，不过最近事太多了，有时间再去研究吧。应该有前人的研究成果的，到时候读论文先。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/19/basic-nlp/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -705,11 +709,6 @@
       
           <p>&emsp;&emsp;内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看起来不连贯，可以阅读原书，计算机专业推荐这两本书都读，非计算机专业只推荐阅读《数学之美》）</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/19/search-engine/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -804,11 +803,6 @@
 <p>去的路上看了一本叫《文化苦旅》的书，杭州宣言和黄州突围。一个地区总有属于自己的内涵文化，而且我文字功底也差，就不写狗屁的散文游记了，单纯的留个相册作为纪念然后就溜。</p>
 <p><img src="/2019/05/02/pic-Huang/104.jpg" alt></p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/02/pic-Huang/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -917,6 +911,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -948,12 +947,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -1078,9 +1077,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

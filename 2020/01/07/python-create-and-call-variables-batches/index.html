@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="这几天写代码中遇到的一个常见问题，在Python中如何批量的生成一些变量，如生成变量X1, X2, X3，并在后续的方法中调用，完成赋值、取值等操作。这个问题也算是常见的吧，之前遇到过，也不了了之了。而这次遇到了同样的问题，虽然是创建三个变量数量较少，但从代码维护和易读性的角度考虑，需要使用一些恰当的手段，来避免重复写三次同样代码带来的弊端。一百次，一万次？总不能复制这么多次吧。（为何不复制？详情">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -165,11 +166,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -179,6 +207,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -254,19 +283,26 @@
         <p>这几天写代码中遇到的一个常见问题，在<code>Python</code>中如何批量的生成一些变量，如生成变量<code>X1, X2, X3</code>，并在后续的方法中调用，完成赋值、取值等操作。这个问题也算是常见的吧，之前遇到过，也不了了之了。而这次遇到了同样的问题，虽然是创建三个变量数量较少，但从代码维护和易读性的角度考虑，需要使用一些恰当的手段，来避免重复写三次同样代码带来的弊端。一百次，一万次？总不能复制这么多次吧。（为何不复制？详情参考软件工程中的软件维护）。</p>
 <p>因此有必要养成良好的习惯，而不是复制三次同样的代码。</p>
 <a id="more"></a>
+
 <h1 id="使用Locals-方法"><a href="#使用Locals-方法" class="headerlink" title="使用Locals()方法"></a>使用Locals()方法</h1><p>在普通函数内的确可以使用，但在类中不行。这个问题也困扰了我很久，所以，建议在编写类时需要批量创建和调用变量时，不建议使用。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    locals() [<span class="string">'x'</span> + str(i)] = i</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    a = locals() [<span class="string">'x'</span> + str(j)]</span><br><span class="line">    print(a)</span><br><span class="line">print(x0)</span><br></pre></td></tr></table></figure>
+
 <p>执行结果如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
 <p>此时在普通函数中一切正常，但在编写的类中无法运行：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            locals() [<span class="string">'self.x'</span> + str(i)] = i</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            a = locals() [<span class="string">'self.x'</span> + str(i)]</span><br><span class="line">            print(a)</span><br><span class="line"></span><br><span class="line">a = test()</span><br><span class="line">a.run()</span><br></pre></td></tr></table></figure>
+
 <p>报错信息如下，并没有找到这个变量。而我在编写<code>GUI</code>时，类是常用的工具，所以在类中调用这个方法时，导致了错误。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">KeyError: <span class="string">'self.x0'</span></span><br></pre></td></tr></table></figure>
+
 <p>所以我找到了一种更加优雅的方式，使用字典。</p>
 <h1 id="使用字典"><a href="#使用字典" class="headerlink" title="使用字典"></a>使用字典</h1><p>字典键值对的形式，尤其是键可设置为字符串，对此类问题可以提供良好的解决方案。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.d = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            self.d[<span class="string">'x'</span> + str(i)] = i</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            a = self.d[<span class="string">'x'</span> + str(i)]</span><br><span class="line">            print(a)</span><br><span class="line"></span><br><span class="line">asd = test()</span><br><span class="line">asd.run()</span><br></pre></td></tr></table></figure>
+
 <p>此时便可以愉快的在类中批量的生成与调用变量。而在普通函数中也是可以的：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">d = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    d[<span class="string">'x'</span> + str(i)] = i</span><br><span class="line">    </span><br><span class="line">print(d.keys())</span><br><span class="line">print(d[<span class="string">'x0'</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    print(d[<span class="string">'x'</span> + str(i)])</span><br></pre></td></tr></table></figure>
+
 <p>输出结果如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">dict_keys([<span class="string">'x0'</span>, <span class="string">'x1'</span>, <span class="string">'x2'</span>])</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
     </div>
@@ -446,6 +482,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -477,12 +518,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -607,9 +648,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

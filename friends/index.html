@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="友情链接(单方面)如下： 原谅我换主题了，这个主题(之前的了，现在的next是有的，但这个页面还是保留了下来)没有加友情链接的地方，关键是我还不会写前端。于是新建了一个页面。 为什么还要费劲了hexo new page links呢？因为，自从我搭博客以来，认识的这么多人，都是好人哈哈哈哈哈哈。   zeroto521  和我一届，两年建模队友。大一入学开始写代码，野生程序员，全栈工程师，网页设计">
@@ -107,6 +107,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -166,11 +167,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -180,6 +208,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -219,14 +248,32 @@
 <hr>
 <blockquote>
 <p><a href="https://zeroto521.github.io" target="_blank" rel="noopener">zeroto521</a>  和我一届，两年建模队友。大一入学开始写代码，野生程序员，全栈工程师，网页设计、GUI、算法、机器学习深度学习等等等等，写过各种类型的代码，经验丰富。考研中，爱动漫，无更多个人介绍。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://camusecao.top/" target="_blank" rel="noopener">CamuseCao</a> 爱好买酸奶喝酸奶，LaTeX爱好者，一个爱好广泛的标准理工男，物理系在读研究生。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://dgimoyeran.github.io" target="_blank" rel="noopener">Li Qiuran</a> 学弟，编程算法爱好者，职业修电脑（滑稽），平时很皮，干正事还是在线的。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://angericky.github.io/" target="_blank" rel="noopener">JingJing</a> 偶然刷到，超级可爱beautiful，曾在英伟达实习，计算机专业在读研究生，做什么都是因为喜欢。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://www.liuchuo.net/" target="_blank" rel="noopener">liuchuo</a> 柳神，爱读书，爱学习。能吓死人的那种博客，反正我是看她的算法代码入门的。没话说，代码质量很高，全场她最萌。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://www.xpshuai.cn/" target="_blank" rel="noopener">Xue Pengshuai</a>  高一同学，文科生，爱好编程，考研中。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://liam.page/" target="_blank" rel="noopener">Liam Huang</a> 数学系出身的计算机大佬，计算机还有算法学的比我好多了，90后。宝藏男孩，丈夫、工程师，有一位他很爱同时也很他的妻子。LaTeX开发者，精通C++，好像是深度学习类工作岗位，初看他的博客以为是中年稳重大叔，直到和他聊天……</p>
+</blockquote>
+<blockquote>
 <p><a href="https://stone-zeng.github.io/" target="_blank" rel="noopener">Stone-Zeng</a> LaTeX爱好者（用的很好），物理系在读研究生，特别强的大佬，简历好吓人好吓人，学识广泛，脾气很好（比我要好），习惯晚睡晚起，典型夜猫子。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://yihui.org/cn/about/" target="_blank" rel="noopener">谢益辉</a> 偶然看到他的文章，一个有趣的人。</p>
+</blockquote>
+<blockquote>
 <p><a href="https://blog.dlzhang.com/" target="_blank" rel="noopener">班班</a> 目前坐标香港，喜欢看一些纪录片和美剧，也喜欢瞎折腾数码产品。有时也会看看书、玩玩游戏，没事胡思乱想碎碎念。本站主要记录一些我的日常生活、碎碎念与科研随笔。他，emmm也可能是她，博客整理的很漂亮，博客大多也在记录生活，质量也不错。这也是我建立博客的初衷，奈何逐步跑偏开始记录代码，向她学习。</p>
 </blockquote>
 <p><img data-src="/friends/index/54.jpg" alt></p>
@@ -327,6 +374,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -358,12 +410,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -488,9 +540,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

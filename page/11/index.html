@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
@@ -104,6 +104,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -163,11 +164,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -177,6 +205,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -253,11 +282,6 @@
       
           <div class="note success"><p>写 LaTeX 的时候排版表格是不是有想杀人的冲动？Ctex 发行版问题太多？数学符号不会写？参考文献管理太复杂？这里给出常用的实惠小工具，愉快的书写LaTeX 代码。</p></div>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/02/04/latex-supplement4/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -342,11 +366,6 @@
           <h1 id="设置代码字体"><a href="#设置代码字体" class="headerlink" title="设置代码字体"></a>设置代码字体</h1><p><code>listings</code> 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」<code>lstlisting</code> 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。</p>
 <p>很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一样的，例如 <code>m</code> 就会比较宽、<code>i</code> 就会比较窄。「比例字体」不适合用于源代码的抄录，所以强调了要设置「等宽字体」。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/02/04/latex-supplement2/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -430,11 +449,6 @@
       
           <h1 id="参考文献中的大小写问题"><a href="#参考文献中的大小写问题" class="headerlink" title="参考文献中的大小写问题"></a>参考文献中的大小写问题</h1><div class="note success"><p>如果给定了指定的bst样式，比如选择plain或者IEEE或者ACM，此时可能会出现：原本的参考文献标题是大写，但是在论文中编程小写的情况，此时，并不算自己引用错误，而是格式要求，按要求来即可。</p></div>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/02/03/latex-supplement1/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -519,11 +533,6 @@
           <p>大概是去年做的E题，和别人做了对比，又重新阅读了美赛的<strong>官方说明</strong>。</p>
 <p>也包括阅读评委评审意见的收获，整理如下。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/01/20/MCM-notice/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -614,11 +623,6 @@
 <p>文章主体内容：给出MCM的模板代码，使用说明和最终结果。</p>
 <p>既然你能检索到这个网站，说明你的搜索能力不一般，可能有良好的计算机使用习惯。祝你比赛顺利and文末有论文和模板的代码。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/01/15/MCM-template/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -703,11 +707,6 @@
           <p>很遗憾的是这里不给出算法的实现过程，但是我可以给个讲的不错的链接。<a href="https://blog.csdn.net/LiRewriter/article/details/78759337" target="_blank" rel="noopener">这里的最大流讲的不错</a></p>
 <p>主要给出最大流的实现代码和应用背景，以及问题变化时的解决方案。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/12/13/max-flow/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -798,11 +797,6 @@
 </ul>
 <p>如果问题发生了变化，比如最短路径不唯一时，我想走顶点最少的路径；或者在两点之间，我想走那个顶点最少的路径，又该怎么转化呢？则称为最短路最小顶点问题，<del>本文也给出自己的解决方案</del>写的太烂，删除了。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/24/min-path/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -911,6 +905,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -942,12 +941,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -1072,9 +1071,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

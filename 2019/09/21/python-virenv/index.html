@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="起因话说Linux下的Typora真的是难用，能卡死，也可能是我电脑老了。本来下午是想把Linux下的GUI开发工具配置好，PyQt5安装一切正常，Qt5 Designer一直安装不上，就开始各种搜索。好在后来配置上了，但是也折腾了好久，配置PyQt5的过程放在另外的文章里，这里写一下创建虚拟环境的过程。毕竟这个很重要，而我居然刚学会。">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -165,11 +166,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -179,6 +207,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -259,6 +288,7 @@
       
         <h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>话说Linux下的Typora真的是难用，能卡死，也可能是我电脑老了。本来下午是想把Linux下的GUI开发工具配置好，PyQt5安装一切正常，Qt5 Designer一直安装不上，就开始各种搜索。好在后来配置上了，但是也折腾了好久，配置PyQt5的过程放在另外的文章里，这里写一下创建虚拟环境的过程。毕竟这个很重要，而我居然刚学会。</p>
 <a id="more"></a>
+
 <h1 id="选择一份好文档"><a href="#选择一份好文档" class="headerlink" title="选择一份好文档"></a>选择一份好文档</h1><p>折腾好久的一个原因是，我看了份CSDN的文档，原因说的是版本原因，python3.7不行，得python3.5。好，既然版本错误，我就在安装一个python3.5, 创建python3.5的虚拟环境在试一下（然后就开始了瞎折腾）。</p>
 <p>但折腾到最后创建了虚拟环境，也安装了python3.5, 可还不行，后来去了官网，呵，没有linux版本的。<a href="https://pypi.org/project/pyqt5-tools/#files" target="_blank" rel="noopener">https://pypi.org/project/pyqt5-tools/#files</a></p>
 <p>windows用户安装Qt Designer就很简单了：<code>pip install pyqt5-tools</code>, 然后去安装的库文件中寻找designer.exe即可（<code>python3.5\Lib\site-packages\pyqt5-tools</code>）。</p>
@@ -267,8 +297,9 @@
 <p>安装python3.5的过程借鉴：<a href="https://www.cnblogs.com/kimyeee/p/7250560.html" target="_blank" rel="noopener">https://www.cnblogs.com/kimyeee/p/7250560.html</a></p>
 <p>我的安装路径为：<code>./configure --prefix=/usr/local/python3.5</code></p>
 <p>我创立的软链接为：<code>ln -s /usr/local/python3/bin/python3.5 /usr/bin/python3.5</code>（后文创立虚拟环境要用，所以请好好写路径）</p>
-<h1 id="虚拟环境的创建"><a href="#虚拟环境的创建" class="headerlink" title="虚拟环境的创建"></a>虚拟环境的创建</h1><p>安装—&gt;激活—&gt;创建—&gt;退出，这几个流程请按顺序走完。剩下的随意。</p>
+<h1 id="虚拟环境的创建"><a href="#虚拟环境的创建" class="headerlink" title="虚拟环境的创建"></a>虚拟环境的创建</h1><p>安装–&gt;激活–&gt;创建–&gt;退出，这几个流程请按顺序走完。剩下的随意。</p>
 <h2 id="安装工具库"><a href="#安装工具库" class="headerlink" title="安装工具库"></a>安装工具库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pip install virtualenv</span><br><span class="line">sudo pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
+
 <h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><p><code>source virtualenvwrapper.sh</code></p>
 <h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p><code>mkvirtualenv -p [地址] [名称]</code></p>
 <p>地址是python3.5所在的地址，只需要输入<code>whereis python3.5</code>查询即可（所以，一定记得python安装在哪里，对我来说就是<code>/usr/bin/python3.5</code>）。如<code>mkvirtualenv -p /usr/bin/python3.5 GUI-layout</code>，会在当前路径下创建虚拟环境，自由操作了，进入虚拟环境后命令行会有所变化。（一定不要<code>sudo</code>）</p>
@@ -457,6 +488,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -488,12 +524,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -618,9 +654,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

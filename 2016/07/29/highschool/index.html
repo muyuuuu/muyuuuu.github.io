@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="我应该是有过高中生活的，虽然很不愿意承认这一点。 不知道当年为什么会如此的叛逆，会如此的浪费时间，也许我成了老师口中的反面教材吧。 想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。 一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -165,11 +166,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -179,6 +207,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -271,6 +300,7 @@
 <p>想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。</p>
 <p>一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。</p>
 <a id="more"></a>
+
 <h2 id="随便走走"><a href="#随便走走" class="headerlink" title="随便走走"></a>随便走走</h2><p>当初的操场和远方的山丘。<br><img data-src="/2016/07/29/highschool/1.jpeg" alt><br><img data-src="/2016/07/29/highschool/2.jpeg" alt><br><img data-src="/2016/07/29/highschool/3.jpeg" alt><br><img data-src="/2016/07/29/highschool/4.jpeg" alt><br><img data-src="/2016/07/29/highschool/5.jpeg" alt><br><img data-src="/2016/07/29/highschool/6.jpeg" alt><br><img data-src="/2016/07/29/highschool/7.jpeg" alt></p>
 <h2 id="宁静的回忆"><a href="#宁静的回忆" class="headerlink" title="宁静的回忆"></a>宁静的回忆</h2><p><img data-src="/2016/07/29/highschool/8.jpeg" alt><br><img data-src="/2016/07/29/highschool/9.jpeg" alt><br><img data-src="/2016/07/29/highschool/10.jpeg" alt><br><img data-src="/2016/07/29/highschool/11.jpeg" alt><br><img data-src="/2016/07/29/highschool/12.jpeg" alt><br><img data-src="/2016/07/29/highschool/13.jpeg" alt><br><img data-src="/2016/07/29/highschool/14.jpeg" alt></p>
 <h2 id="最后的平静"><a href="#最后的平静" class="headerlink" title="最后的平静"></a>最后的平静</h2><p><img data-src="/2016/07/29/highschool/15.jpeg" alt><br><img data-src="/2016/07/29/highschool/16.jpeg" alt><br><img data-src="/2016/07/29/highschool/17.jpeg" alt><br><img data-src="/2016/07/29/highschool/18.jpeg" alt></p>
@@ -459,6 +489,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -490,12 +525,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -620,9 +655,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

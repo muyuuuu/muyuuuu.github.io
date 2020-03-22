@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="写这个的主要目的是，整理那些年写 LaTeX中遇到的坑，有些东西在教科书里面没有，遇到就记下来。毕竟这玩意，见过就是会，没见过就是不会。">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -165,11 +166,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -179,6 +207,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -259,9 +288,11 @@
       
         <p>写这个的主要目的是，整理那些年写 LaTeX中遇到的坑，有些东西在教科书里面没有，遇到就记下来。毕竟这玩意，见过就是会，没见过就是不会。</p>
 <a id="more"></a>
+
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式。</a></p>
 <h1 id="矩阵外加描述元素"><a href="#矩阵外加描述元素" class="headerlink" title="矩阵外加描述元素"></a>矩阵外加描述元素</h1><p><img data-src="/2018/11/17/LaTeX-supplement/1.png" alt></p>
 <figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">usepackage</span><span class="string">&#123;blkarray&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;blockarray&#125;</span><span class="string">&#123;ccccccc&#125;</span></span></span><br><span class="line">  &amp; 0 &amp; 1 &amp; 2 &amp; 3 &amp; 4 &amp; 5<span class="tag">\<span class="name">\</span></span></span><br><span class="line">  <span class="tag">\<span class="name">begin</span><span class="string">&#123;block&#125;</span><span class="string">&#123;c[cccccc]&#125;</span></span></span><br><span class="line">    0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0<span class="tag">\<span class="name">\</span></span></span><br><span class="line">    1 &amp; 0.6 &amp; 0 &amp; 0.4 &amp; 0 &amp; 0 &amp; 0<span class="tag">\<span class="name">\</span></span></span><br><span class="line">    2 &amp; 0 &amp; 0.6 &amp; 0 &amp; 0.4 &amp; 0 &amp; 0<span class="tag">\<span class="name">\</span></span></span><br><span class="line">    3 &amp; 0 &amp; 0 &amp; 0.6 &amp; 0 &amp; 0.4 &amp; 0<span class="tag">\<span class="name">\</span></span></span><br><span class="line">    4 &amp; 0 &amp; 0 &amp; 0 &amp; 0.6 &amp; 0 &amp; 0.4<span class="tag">\<span class="name">\</span></span></span><br><span class="line">    5 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1<span class="tag">\<span class="name">\</span></span></span><br><span class="line">  <span class="tag">\<span class="name">end</span><span class="string">&#123;block&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;blockarray&#125;</span></span></span><br></pre></td></tr></table></figure>
+
 <p>此处感谢福州的一位网友的帮助，可惜无法引用一下。。。</p>
 <hr>
 
@@ -286,7 +317,7 @@
       <div class="popular-posts-title"><a href="\2019\02\03\latex-supplement1\" rel="bookmark">LaTeX补充:有关参考文献大小写问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\04\latex-supplement2\" rel="bookmark">LaTeX补充:如何设置代码字体</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\02\latex-supplement3\" rel="bookmark">LaTeX补充:中英文不同的字体设置</a></div>
     </li>
   </ul>
 
@@ -442,6 +473,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -473,12 +509,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -603,9 +639,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

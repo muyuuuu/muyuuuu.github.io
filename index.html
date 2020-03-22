@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
@@ -104,6 +104,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -163,11 +164,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -177,6 +205,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -253,11 +282,6 @@
       
           <p>想来也快要大学毕业了，2016年唐县一中毕业，2020年某不太行大学毕业，四年了。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/20/college-graduation/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -342,11 +366,6 @@
           <p>承接上文，实现多任务的方法一般有三种，今日来实现其中的一种：多进程爬虫。而剩余的多线程并发和协程暂时没时间搞了，一方面是要先学习下Python的yield和send如何使用，其次要准备毕设的中期答辩和被老师安排了去读源代码，日后会补上的。但仅仅是多进程，<strong>就将IO密集的任务从1153秒提升到了105秒</strong>，且极高的提升了资源利用率。</p>
 <p>还有一点，本文的代码可能只适用于Next主题，但方法思路是通解，只要改改参数适应你的主题，代码同样能用。结果展示：<a href="https://muyuuuu.github.io/hot/">本站热门</a></p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/18/multi-process/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -430,11 +449,6 @@
 <li>实际项目：暂时的目标是多线程爬虫，内容过多准备放下一个文章（同时也包括防止线程死锁、协程等）。</li>
 </ul>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/16/multi-process-thread/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -524,11 +538,6 @@
 </ul>
 <p>本文给出此类问题的修复方法。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/13/v2ray-date/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -617,11 +626,6 @@
 </ul>
 <p>此外，本次优化仅针对<code>next</code>主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/12/blog-optimize/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -706,11 +710,6 @@
 </ul>
 <p>首先，默认本文的读者有数据结构的基础，或者从任何一本《数据结构》教材里寻找：时间复杂度、插入排序、双向链表的定义。对于外行人(数据结构基础四舍五入等于没有或者只想来看热闹)，可以选择只看本文你能看懂得部分，同样很有意思。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/02/algorithm-time-complexity/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -797,11 +796,6 @@
 </ul>
 <p>而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适用于：编程不太好、但了解基本数据结构的人，你仅仅需要知道深度优先遍历、广度优先遍历、二叉树的根节点、普通节点、叶子节点的区别即可。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/02/29/tree-algorithm/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -910,6 +904,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -941,12 +940,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -1071,9 +1070,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

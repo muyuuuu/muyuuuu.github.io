@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
@@ -104,6 +104,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -163,11 +164,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -177,6 +205,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -255,11 +284,6 @@
 <p>学了一个星期的PyQt5(主要是玩)，用于GUI（graphicx user interface）开发。想在这里整理基本控件的用法和功能，在后期开发软件中便于查询（整理知识，按照软件需求的功能，筛选合理的控件）。</p>
 <p>因代码太长，所以每节的代码都会在章节最后一压缩包的形式呈现，且，本文不适合没有GUI开发经验的人看，但是代码适合新手观看。如果真的是新手来看此文，还是建议多写写，结合代码多看看。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/10/06/pyqt5-basic/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -340,11 +364,6 @@
 <p>(3) 执行被调用的函数;</p>
 <p>(4) 调用函数结束, 给出返回值, 函数回到调用前的暂停位置继续执行.</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/09/22/stack/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -428,11 +447,6 @@
       
           <h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>话说Linux下的Typora真的是难用，能卡死，也可能是我电脑老了。本来下午是想把Linux下的GUI开发工具配置好，PyQt5安装一切正常，Qt5 Designer一直安装不上，就开始各种搜索。好在后来配置上了，但是也折腾了好久，配置PyQt5的过程放在另外的文章里，这里写一下创建虚拟环境的过程。毕竟这个很重要，而我居然刚学会。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/09/21/python-virenv/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -525,11 +539,6 @@
 
           </blockquote>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/09/13/new/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -617,11 +626,6 @@
 <p>大量代码摘抄自这里：<a href="https://github.com/liuchuo/PAT/tree/master/AdvancedLevel_C%2B%2B" target="_blank" rel="noopener">https://github.com/liuchuo/PAT/tree/master/AdvancedLevel_C%2B%2B</a></p>
 <p>有的代码人家写出来了，不过我实在看不懂。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/09/04/PAT/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -709,11 +713,6 @@
 <p>$\LaTeX$是一门编程语言，在随便挑个编程语言如<code>Python</code>，任何人上手恐怕都会难免遇到错误吧。代码出错的语言不是好语言？不读想文档但我想解决问题，哪个语言能这样？恐怕是自然语言。<code>Java</code>的文档也不在少数吧，但是有人读有人会呀。不读文档，直接用别人代码，出错了就开始搜索，这种毒瘤观念，怕不是你写代码的样子也像那谁。</p>
 <p>基础不牢，地动山摇。心浮气躁，邪魔乱道。要么仔细看，要么别看，这么糊弄，很浪费时间的。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/08/06/latex-feel-stonezeng/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -806,11 +805,6 @@
 <p>以至于看了标题，剧情也猜的差不多。尤其是强行煽情看的真难受，一定要有乱七八糟莫名其妙的爱情线，男主女主没爱情是不是拍不了电影了，有了爱情是不是得有误会？然后还得无聊的洗澡，有了误会还得再加一条线加深误会，比如女二，最后因为啥啥啥原因误会解除，比如男主得病了，癌症，治不好，woc。以至于垃圾电影遍地。</p>
 <p>可漫威不是啊，每个人物都有鲜明的性格，以至于他们做什么，都在情理之中，意料之外。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/06/30/bye/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -919,6 +913,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -950,12 +949,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -1080,9 +1079,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

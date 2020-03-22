@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="当初在上大学之前，终于摆脱了刷题的世界，也曾怒发冲冠的想去读读课外书。当初是对这些文学很感兴趣的，尤其是古诗词和小说的阅读，冥冥之中我总能感觉到作者想要表达的意图，意会不言传的感觉很爽。 现在想来，大学其实也读过一些书，不过随着时间的增长，读书的数量也随时间变化服从指数下降的分布规律。 不过还是要在百忙之中来拾起这个爱好，隔断时间写一本书的读后感，毕竟人不可偏科，缺少前辈在文字上的教诲是万万不行的">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -165,11 +166,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -179,6 +207,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -255,6 +284,7 @@
 <p>现在想来，大学其实也读过一些书，不过随着时间的增长，读书的数量也随时间变化服从指数下降的分布规律。</p>
 <p>不过还是要在百忙之中来拾起这个爱好，隔断时间写一本书的读后感，毕竟人不可偏科，缺少前辈在文字上的教诲是万万不行的。写一些自己的收获，和标准答案完全不同的想法。或许也是转移注意力吧，总比看那些浮躁的，没有营养的，低俗的娱乐视频要好得多，读读故事，修理修理自己的三观，没有浓郁的扯淡鸡汤，只是看看外面的世界。</p>
 <a id="more"></a>
+
 <h2 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h2><p>发生在20世纪20年代的美国，书中并没有交代太多的历史背景，但是了解故事总得从背景出发，不然没有味道。</p>
 <p>那个时候是美国历史上一个短暂而特殊的时期，史称“喧嚣年代”，指的是第一次世界大战结束后，资本主义的蓬勃发展，让美国从农业文明迅速进人了工业化的现代社会。同时，在一战后期参战的美国，因没有受到战争的重创反而大发战争财。而且政府实施“自由放任”的经济政策，能使经济运作更有效率。这创造了奇迹般的“柯立芝繁荣时代”。所以，当时美国国内经济形势一片大好，交通、矿产、建筑业扩展迅速，电器、汽车制造业猛然倔起，给不少美国人的生活带来前所未有的舒适，导致一些投机家在这类赌博性行业中一夜之间成为暴发户。</p>
 <p>财富的多少成了评判一个人成功与否的标准，人们开始了盲目地赚钱，赚“快”钱，赚更多的钱；追逐变富裕，变得更富裕，大概是书中想表达的美国梦吧，浮躁与迷失。同时，美国的享乐主义在美国大行其道，传统清教徒式的道德观念和宗教信仰所推崇的“勤劳节俭”等思想，逐渐被追求个人财富、享受物质生活等消费享乐主义所取代，美国正处在新旧交替的历史交叉口。似乎每个国家的发展都要经过这么一段浮夸的时代。</p>
@@ -458,6 +488,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -489,12 +524,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -619,9 +654,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 

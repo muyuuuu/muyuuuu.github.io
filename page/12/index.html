@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
@@ -104,6 +104,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -163,11 +164,38 @@
     <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -177,6 +205,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -254,11 +283,6 @@
           <p><strong>I exist because you need me.——The reaction of Ferryman.</strong></p>
 <p><img src="/2018/11/18/ferryman-reaction/5.png" alt></p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/18/ferryman-reaction/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -342,11 +366,6 @@
       
           <p>写这个的主要目的是，整理那些年写 LaTeX中遇到的坑，有些东西在教科书里面没有，遇到就记下来。毕竟这玩意，见过就是会，没见过就是不会。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/17/LaTeX-supplement/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -430,11 +449,6 @@
       
           <p>我脑子不好使，有些代码不写一遍实在是记不住。<br>本文简述了$\LaTeX$的发展历史和使用方法，确切的说是使用方法，对历史我没有了解过，其实是我的$\LaTeX$速查笔记。<br>如果你想从这里面学习$\LaTeX$的操作，也不是不可以，涵盖了所有的基本操作～<br>后来有人提到：能不能整理Lshort这里面的MWE，我想想，把我之前学习时写过的代码整理一下是可以的，虽然不太全面，也欢迎大家补充或者有更好的方案。<br>但本文并不正规，你甚至能在里面发现几个错别字。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/07/Brief-introduction-to-LaTex/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -523,11 +537,6 @@
 <li>Prim是从某个定点出发，定点加入点集$T$，选择与定点相邻距离最短的点加入$T$，并从$T$出发继续寻找，以此类推。</li>
 </ul>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/07/min-span-tree/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -616,11 +625,6 @@
 <li>如果b是a的右子树，那么就围绕b将a向左旋转，看着就像是a直接掉下来了，掉成了b的左子树。</li>
 </ul>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/03/AVL-RB-tree/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -705,11 +709,6 @@
           <p>好久不打球的说。</p>
 <p>赶在一个大家都没有课的下午，阳关暖人，秋风惬意。拿着球拍，去隔壁学校打球（舒缓一下筋骨）。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/02/playball-2018-11-2/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -793,11 +792,6 @@
       
           <p>建模聚会的说，大概是第三次在这里了，很开心。重要的是这里的风格很自由，很``没大没小”；有很多很多很好的人，很舒服，就酱。</p>
           <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/10/13/MMA-Party-2018/#more" rel="contents">
-                还想看更多吗, 是的你想 &raquo;
-              </a>
-            </div>
           <!--/noindex-->
         
       
@@ -906,6 +900,11 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -937,12 +936,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">365k</span>
+    <span title="站点总字数">372k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -1067,9 +1066,20 @@ window.addEventListener('pjax:success', () => {
 
 
   
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
 
 
 
+
+  <script src="/js/local-search.js"></script>
 
 
 
