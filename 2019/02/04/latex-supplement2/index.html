@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="设置代码字体listings 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」lstlisting 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。 很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一">
@@ -28,10 +28,12 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="设置代码字体listings 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」lstlisting 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。 很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/02/04/latex-supplement2/2.png">
 <meta property="og:updated_time" content="2019-03-03T03:35:51.747Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LaTeX补充:如何设置代码字体">
 <meta name="twitter:description" content="设置代码字体listings 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」lstlisting 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。 很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/02/04/latex-supplement2/2.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/02/04/latex-supplement2/">
 
@@ -294,7 +296,7 @@
 <p>我在这里给出一个同时设置正文字体与等宽字体的例子。重要的事情重复三遍：用了 <code>fontspec</code> 之后，<strong>不要再用传统字体包！不要再用传统字体包！不要再用传统字体包！</strong></p>
 <figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="comment">% 用 XeLaTeX 或 LuaLaTeX 编译</span></span><br><span class="line"><span class="tag">\<span class="name">documentclass</span><span class="string">&#123;article&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">usepackage</span><span class="string">&#123;fontspec&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 以下设置正文字体为 Palatino 的克隆体</span></span><br><span class="line"><span class="tag">\<span class="name">setmainfont</span><span class="string">&#123;TeX Gyre Pagella&#125;</span></span></span><br><span class="line"><span class="comment">% 以下设置等宽字体为 Courier 的克隆体</span></span><br><span class="line"><span class="tag">\<span class="name">setmonofont</span><span class="string">&#123;TeX Gyre Cursor&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">usepackage</span><span class="string">&#123;listings&#125;</span></span></span><br><span class="line"><span class="comment">% 以下告诉 lstlisting 环境：我要用等宽字体列代码！</span></span><br><span class="line"><span class="tag">\<span class="name">lstset</span><span class="string">&#123;basicstyle=\ttfamily&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">section</span><span class="string">&#123;Hello, world!&#125;</span></span></span><br><span class="line"></span><br><span class="line">Hello, world! Would you like to see some code?</span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;lstlisting&#125;</span></span></span><br><span class="line">Happy <span class="tag">\<span class="name">LaTeX</span><span class="string">&#123;&#125;</span></span>ing!</span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;lstlisting&#125;</span></span></span><br><span class="line">See? Mono-spaced font for code and proportional font for body text.</span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure>
 <p>结果如下所示：</p>
-<p><img data-src="/2019/02/04/latex-supplement2/2.png" alt></p>
+<p><img src="/2019/02/04/latex-supplement2/2.png" alt></p>
 <p>此处参考与鸣谢：</p>
 <p><a href="https://github.com/CTeX-org/forum/issues/7" target="_blank" rel="noopener">https://github.com/CTeX-org/forum/issues/7</a></p>
 <hr>
@@ -578,7 +580,6 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>

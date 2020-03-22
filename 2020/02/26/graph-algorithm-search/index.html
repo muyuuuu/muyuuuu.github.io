@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="​在面临一个搜索问题时，如找出一个矩阵中不一样的元素，可能大多人和我想的一样：几层for循环，变量自增继续访问下一个。看着简单，但是，当问题逐渐复杂，如搜索出矩阵中的元素，要求是这个元素和周围的元素不一样，要求相差超过某个阈值，此时在用for循环去写，遍历元素和元素周围的元素，便显得不够明智。 ​在搜索算法中，常用的为深度优先和广度优先。但是题目很少去单纯的考察搜索算法，搜索经常会和树、图的遍历一">
@@ -28,10 +28,12 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="​在面临一个搜索问题时，如找出一个矩阵中不一样的元素，可能大多人和我想的一样：几层for循环，变量自增继续访问下一个。看着简单，但是，当问题逐渐复杂，如搜索出矩阵中的元素，要求是这个元素和周围的元素不一样，要求相差超过某个阈值，此时在用for循环去写，遍历元素和元素周围的元素，便显得不够明智。 ​在搜索算法中，常用的为深度优先和广度优先。但是题目很少去单纯的考察搜索算法，搜索经常会和树、图的遍历一">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/26/graph-algorithm-search/1.png">
 <meta property="og:updated_time" content="2020-02-26T07:22:21.584Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图问题中的搜索算法">
 <meta name="twitter:description" content="​在面临一个搜索问题时，如找出一个矩阵中不一样的元素，可能大多人和我想的一样：几层for循环，变量自增继续访问下一个。看着简单，但是，当问题逐渐复杂，如搜索出矩阵中的元素，要求是这个元素和周围的元素不一样，要求相差超过某个阈值，此时在用for循环去写，遍历元素和元素周围的元素，便显得不够明智。 ​在搜索算法中，常用的为深度优先和广度优先。但是题目很少去单纯的考察搜索算法，搜索经常会和树、图的遍历一">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/02/26/graph-algorithm-search/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/02/26/graph-algorithm-search/">
 
@@ -285,7 +287,7 @@
 <a id="more"></a>
 <h1 id="深度优先与广度优先"><a href="#深度优先与广度优先" class="headerlink" title="深度优先与广度优先"></a>深度优先与广度优先</h1><p>深度优先和广度优先有共同点：图的遍历指每个节点仅仅被访问一次，都是一个递归的过程。</p>
 <p>深度优先指：先遍历孩子结点，在考虑兄弟节点，即先往深了去搜；广度优先指：先遍历兄弟节点，在考虑孩子节点，即先往广了去搜。如下图所示，<code>1</code>为起始顶点，深度优先(DFS)的遍历顺序是：<code>1, 4, 3, 7, 5, 6, 2</code>：广度优先(BFS)的遍历顺序是：<code>1, 4, 2, 3, 5, 7, 6</code>。如果这是一张旅游景点的地图，你可以和你的小伙伴说，我们是深度优先玩呢，还是广度优先玩呢。</p>
-<p><img data-src="/2020/02/26/graph-algorithm-search/1.png" alt></p>
+<p><img src="/2020/02/26/graph-algorithm-search/1.png" alt></p>
 <h1 id="二维搜索"><a href="#二维搜索" class="headerlink" title="二维搜索"></a>二维搜索</h1><p>来一个实际题目(PAT乙级1068)：要求你找出万绿丛中的一点红，即有独一无二颜色的那个像素点，并且该点的颜色与其周围 8 个相邻像素的颜色差充分大。输入第一行给出三个正整数，分别是 $M$ 和 $N(\leq 1000)$，即图像的分辨率；以及 TOL，是所求像素点与相邻点的颜色差阈值，色差超过 TOL 的点才被考虑。随后 $N$行，每行给出$M$个像素的颜色值，范围在$[0,2^{24}]$内。</p>
 <p>在一行中按照 <code>(x, y): color</code> 的格式输出所求像素点的位置以及颜色值，其中位置 <code>x</code> 和 <code>y</code> 分别是该像素在图像矩阵中的列、行编号（从 1 开始编号）。如果这样的点不唯一，则输出 <code>Not Unique</code>；如果这样的点不存在，则输出 <code>Not Exist</code>。</p>
 <h2 id="输入样例"><a href="#输入样例" class="headerlink" title="输入样例"></a>输入样例</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">8 6 200</span><br><span class="line">0 	 0 	  0 	   0	    0 	     0 	      0        0</span><br><span class="line">65280 	 65280    65280    16711479 65280    65280    65280    65280</span><br><span class="line">16711479 65280    65280    65280    16711680 65280    65280    65280</span><br><span class="line">65280 	 65280    65280    65280    65280    65280    165280   165280</span><br><span class="line">65280 	 65280 	  16777015 65280    65280    165280   65480    165280</span><br><span class="line">16777215 16777215 16777215 16777215 16777215 16777215 16777215 16777215</span><br></pre></td></tr></table></figure>
@@ -337,10 +339,10 @@
       <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++刷题后的初步整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\03\02\algorithm-time-complexity\" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
@@ -601,7 +603,6 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>

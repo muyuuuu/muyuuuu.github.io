@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="问题描述：并不是不蒜子域名的问题，就是那种即使修改了_config.yml文件的busuanzi为true，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使busuanzi显示正常，结果还真改出来了，我可真是个天才。 昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不">
@@ -28,10 +28,12 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="问题描述：并不是不蒜子域名的问题，就是那种即使修改了_config.yml文件的busuanzi为true，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使busuanzi显示正常，结果还真改出来了，我可真是个天才。 昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/1.png">
 <meta property="og:updated_time" content="2020-03-21T12:52:43.507Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="修补hexo-next不蒜子不显示问题">
 <meta name="twitter:description" content="问题描述：并不是不蒜子域名的问题，就是那种即使修改了_config.yml文件的busuanzi为true，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使busuanzi显示正常，结果还真改出来了，我可真是个天才。 昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/">
 
@@ -300,7 +302,7 @@
 <h1 id="开始修改"><a href="#开始修改" class="headerlink" title="开始修改"></a>开始修改</h1><h2 id="主题的配置文件"><a href="#主题的配置文件" class="headerlink" title="主题的配置文件"></a>主题的配置文件</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: <span class="literal">true</span></span><br><span class="line">  total_visitors: <span class="literal">true</span></span><br><span class="line">  total_visitors_icon: user</span><br><span class="line">  total_views: <span class="literal">true</span></span><br><span class="line">  total_views_icon: eye</span><br><span class="line">  post_views: <span class="literal">true</span></span><br><span class="line">  post_views_icon: eye</span><br></pre></td></tr></table></figure>
 <p>可是这样丝毫没用，还是不显示。没有浏览人数和浏览量的博客没有灵魂，于是决定在线Debug查找问题所在。</p>
 <h2 id="修复总访问量和总访问人数"><a href="#修复总访问量和总访问人数" class="headerlink" title="修复总访问量和总访问人数"></a>修复总访问量和总访问人数</h2><p>在网页中按下<code>F12</code>这个键，点击图中的鼠标，定位到要显示总访客人的地方。不要因为界面很复杂就感觉自己不会，在这之前我啥也不会，在这之后我还是不会。</p>
-<p><img data-src="/2019/11/22/busuanzi-notdisplay/1.png" alt></p>
+<p><img src="/2019/11/22/busuanzi-notdisplay/1.png" alt></p>
 <p>定位后，发现不蒜子的东西是有的，span还有数量都有，可就是不显示。再次定位到页脚访问人数那里，看看不蒜子的<code>span id</code>里是否有<code>style = &quot;display: none&quot;</code>这句话，如果有，去掉后面的<code>style = &quot;display: none&quot;</code>才可以正常显示（纯属巧合发现，我没学过前端嘛），我也不知道开发者明明开发出了显示，为啥还要加这句话使开发出来的东西不显示，我想不通。</p>
 <p>两种去除方法：</p>
 <ol>
@@ -587,7 +589,6 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>

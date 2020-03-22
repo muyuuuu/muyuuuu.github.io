@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="&amp;emsp;&amp;emsp;内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并">
@@ -28,10 +28,15 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/1.jpg">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/4.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/2.jpg">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/3.jpg">
 <meta property="og:updated_time" content="2019-09-17T09:31:44.468Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="编程与数学的结晶：从数据结构到搜索引擎">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/1.jpg">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/05/19/search-engine/">
 
@@ -327,18 +332,18 @@
 <li>这个表的后期维护也需要很大的努力，起码得精通数据结构中的查询、插入等操作吧。</li>
 </ul>
 <h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>&emsp;&emsp;如果有 100 个网页都出现了Captain，那么又如何确定网页的排名，即推荐网页的顺序呢？这就是接下来的内容，pagerank算法和基于信息熵的TF-IDF算法。</p>
-<p><img data-src="/2019/05/19/search-engine/1.jpg" alt></p>
+<p><img src="/2019/05/19/search-engine/1.jpg" alt></p>
 <h1 id="提取高质量网页——pagerank"><a href="#提取高质量网页——pagerank" class="headerlink" title="提取高质量网页——pagerank"></a>提取高质量网页——pagerank</h1><h2 id="引言-1"><a href="#引言-1" class="headerlink" title="引言"></a>引言</h2><p>&emsp;&emsp;这曾经是谷歌搜索引擎确定网页排名的算法，不过现在被抛弃了。但是这个算法的确在曾经发挥了不可替代的作用，至少使得当初弱小的谷歌能够发展起来。</p>
 <p>&emsp;&emsp;既然在倒排索引后能得到一些网页，假设得到了10000个网页甚至更多。那么得确定这10000个网页的排名吧，哪个作为第一个推荐，哪个作为第二个。还有一些卖假药的网站，比如给的链接题目是：我是Iron Man， 但是点击打开之后却是卖假药的，这种网页显然不能推荐。</p>
 <p>&emsp;&emsp;那么pagerank做了一件事情(虽然我感觉这个事情和马尔可夫模型好像)。暂时忽略查询内容和网页的相关性，先考虑网页之间的相关性。一个不需任何人工干预的算法诞生了，思想：在某次历史课中，老师问谁是刘邦，如果99%的人都指着那个人说他是刘邦，那么他就是刘邦。在网页中，$a<em>{mn}$表示第$m$个网页指向第$n$个网页的连接数，将$a</em>{mn}$理解为投票数，如果第$N$个网页获得的支持最多，就认为它的质量越好。</p>
 <h2 id="算法："><a href="#算法：" class="headerlink" title="算法："></a>算法：</h2><p>Step1：假设倒排索引后得到$N$个网页，所有的网站的初始排名是$B_0=(\frac{1}{N},\frac{1}{N},…,\frac{1}{N})^T$。</p>
 <p>Step2：矩阵$A$是网页之间的链接数目，得到这个矩阵并不难，只要有个爬虫机器人就好了。</p>
-<p><img data-src="/2019/05/19/search-engine/4.png" alt></p>
+<p><img src="/2019/05/19/search-engine/4.png" alt></p>
 <p>Step3：终止点问题：互联网上的网页不满足强连通的特性，因为有一些网页不指向任何网页，如果按照上面的计算，上网者到达这样的网页后便走投无路、四顾茫然。导致前面累计得到的转移概率被清零，这样下去，最终的得到的概率分布向量所有元素几乎都为0。陷阱问题：另外一个问题就是陷阱问题，即有些网页不存在指向其他网页的链接，但存在指向自己的链接。</p>
 <p>Step4：完善。假定上网者在每一步，都可能不想看当前网页了。假设上网者每一步查看当前网页的概率是$\alpha$，从地址栏跳转的概率是$1−\alpha$。$\alpha$一般取0.85,迭代公式如下:</p>
 <script type="math/tex; mode=display">B_{i+1}=\alpha A B_i + (1−\alpha)B_0</script><p>迭代计算直至$|B_{i+1}−B_i|&lt;\epsilon$，可以得到最终结果。（选排名前几的就可以了）</p>
 <h2 id="扩展-1"><a href="#扩展-1" class="headerlink" title="扩展"></a>扩展</h2><p>&emsp;&emsp;其实还有问题，比如搜索的问题是：application of time crystal 。相对而言，形如 of , a, an, the 等介词出现频率虽然很高但是并无卵用。application 和 time 是常用词，也是很多背景下的应用词。crystal 虽然是不常用词汇，出现频率也很低，但是却能体现查询的核心含义。如果关于crystal 的链接很少，pagerank出来的结果都是关于application of time的，那么这个查询岂不是要凉？接下来接着填坑，这个坑填完后一个简朴的搜索引擎就完成了，但是实际中的搜索引擎还需要很多细节的技术需要完善，比如是不是要考虑点击量。</p>
-<p><img data-src="/2019/05/19/search-engine/2.jpg" alt></p>
+<p><img src="/2019/05/19/search-engine/2.jpg" alt></p>
 <h1 id="在高质量网页中筛选最相关"><a href="#在高质量网页中筛选最相关" class="headerlink" title="在高质量网页中筛选最相关"></a>在高质量网页中筛选最相关</h1><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>&emsp;&emsp;假设查询application of time crystal, 有三个网页是关于时间晶体的，有100个网页是关于时间应用的。这103个网页都是高质量网页，但只有3个网页才是真正想要的网页。既然确定了目标，就想办法整俩公式把问题解决掉。然后传说中的TF-IDF算法诞生了。</p>
 <ul>
 <li>一个词预测主题的能力越强，它的权重就应该越大，反之权重越小。在网页中的“时间晶体”这个词，或多或少可以推测出查询内容。但是看到“应用”一词，还是不知道想要查询什么。</li>
@@ -352,7 +357,7 @@
 <script type="math/tex; mode=display">\mathrm{TFIDF}=I(w)-TF(w)\log \frac{M}{c(w)}=TF(w)\log \frac{D}{D(w)}</script><p>&emsp;&emsp;看两个等号之间的式子，第一项越大越好，第二项越小越好，推导出了新的式子。</p>
 <p>&emsp;&emsp;而新的式子$\mathrm{TFIDF}=TF(w)\log \frac{D}{D(w)}$也是现在最常用的方案。$TF(w)$是词频率，而IDF的英文是inverse document frequency，逆文本频率指数，公式是$\log \frac{D}{D(w)}$。其实是先给出的TF-IDF公式，多年后信息论发展起来才用信息熵证明了IDF公式为什么这么写，是用$\log$ 而为什么不是根号。本文是直接从证明开始，引出的IDF公式。没想到数学还能严谨到如此境界，我还是好好用数学吧，我这脑子研究不了数学。</p>
 <p>&emsp;&emsp;最终，计算关键词和内容相关性就变成了简单的加权求和：</p>
-<script type="math/tex; mode=display">TF_1\cdot IDF_1 + TF_2\cdot IDF_2 +\cdots + TF_n\cdot IDF_n</script><p><img data-src="/2019/05/19/search-engine/3.jpg" alt></p>
+<script type="math/tex; mode=display">TF_1\cdot IDF_1 + TF_2\cdot IDF_2 +\cdots + TF_n\cdot IDF_n</script><p><img src="/2019/05/19/search-engine/3.jpg" alt></p>
 <h1 id="结尾语"><a href="#结尾语" class="headerlink" title="结尾语"></a>结尾语</h1><p>&emsp;&emsp;至此，从开始的倒排索引寻找出所有满足需求的网页，再用pagerank从满足需求的网页中求出高质量网页，在用TF-IDF算法在高质量网页中求出和查询最相关的网页。一步步完善，将自然语言以恰当的方式转为数字进行处理。当然还需要更详细的处理步骤，比如网页的反作弊技术，比如点击量，如何屏蔽相似性很高的广告等等。</p>
 <p>&emsp;&emsp;计算机和数学的应用层出不穷，即使也存在过时的技术，比如pagerank已经被谷歌淘汰，但背后的数学思维值得我们借鉴。比如2019年的美国大学生数学建模竞赛的C题，如何确定毒品的传播源头，不就是pagerank可以应用的场景吗。</p>
 <p>&emsp;&emsp;其实还有坑的，比如使用中文查询：“什么是汇编语言的中断”，那么新的问题又来了。英文单词之间有分割，自动提取关键词。中文的是句子呀，怎么让计算机认识句子并从里面抠出关键词呢？下次再写吧，这就涉及到了一些中文的自然语言处理的知识了。</p>
@@ -638,7 +643,6 @@ show_date_time();
   
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
