@@ -293,7 +293,6 @@
 </ul>
 <p>此外，本次优化仅针对<code>next</code>主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。</p>
 <a id="more"></a>
-
 <h1 id="降低网页功耗"><a href="#降低网页功耗" class="headerlink" title="降低网页功耗"></a>降低网页功耗</h1><p>起初，我还真没在意网页的功耗问题，首先举个例子明白功耗是干什么用的。假设，你打开电脑，不管是写<code>word</code>，听音乐还是看电影，只要电脑在工作就会产生功耗，单位是瓦(W)。一般打开网页和浏览网页的功耗是10W~15W左右(我亲手测过)，而你笔记本的电池是60Wh的，那么你笔记本在满电、不充电的情况下，浏览网页的时长大约为6小时（$60\text{Wh} \div 10\text{W} = 6\text{h}$）。而浏览网页的同时，如果再有一些写<code>word</code>，听音乐或者跑程序的操作，那么电脑的续航时长也就4小时左右。</p>
 <p>这就是笔记本续航的粗暴计算方法。但是很遗憾，市面上常见轻薄本的电池均为60Wh左右，但都在宣传自己笔记本续航高达10小时以上，我实在不能理解这是怎么计算出来的。所以，买电脑的时候不要看它吹嘘的续航时间多长，应该看电池是多少Wh的。</p>
 <p>扯远了，回归正题，如何降低博客的功耗呢？我第一次发现问题是在<code>Linux</code>系统中，打开我的博客后发现，电脑风扇在飞速旋转，键盘也开始发烫。嗯？这是为何，我也没载入杀病毒啊。找了一个查看功耗的命令显示下现在的功耗。右上角为查看<code>CPU</code>，内存等利用率，右下角为功耗，单位W。可以看到，我博客当初的功耗为55W。</p>
@@ -307,7 +306,6 @@
 <p><code>pjax</code>是一个<code>jQuery</code>插件，它提供了极速的浏览体验，并且保持了真实的地址、网页标题，浏览器的后退（前进）按钮也可以正常使用。没学过前端的我只注意到了<code>pjax</code>能提速，其他一概不懂。好，那就直接开启设置。以下所有操作均在主题文件夹下的<code>_config.yml</code>文件里进行。</p>
 <p>第一步，将<code>pjax: false</code>改为<code>pjax: true</code>，先开启，而后，在<code>vendors</code>选项中，将注释取消，即导入这么一句话，指定<code>CDN</code>的链接即可。</p>
 <figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">pjax:</span> <span class="string">//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js</span></span><br></pre></td></tr></table></figure>
-
 <p>之后你博客的访问速度就能飞速提升啦～</p>
 <h2 id="其余杂项优化"><a href="#其余杂项优化" class="headerlink" title="其余杂项优化"></a>其余杂项优化</h2><ul>
 <li><code>minify</code>，意思是不<code>push</code>无关的东西，看着有用，改为<code>true</code>。</li>
@@ -526,12 +524,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">373k</span>
+    <span title="站点总字数">366k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:39</span>
+    <span title="站点阅读时长">5:32</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
