@@ -294,6 +294,7 @@
 <p>另一方面是，当初在学习元胞自动机这个模型时，网上的资料是在少之又少，且内容凌乱的不堪入目，我猜作者也不知道他在写啥，自己也走了很多弯路。遂决定，以实战的背景，演示元胞自动机的工作原理和使用方法。而在看本文之前，你只需要知道元胞自动机里面有很多格子，格子间通过某种规则相互影响即可。</p>
 <p><img data-src="/2020/02/14/autocell/1.gif" alt></p>
 <a id="more"></a>
+
 <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>模拟题是2015年的MCM的A题，决定用元胞自动机去模拟埃博拉病毒的传播。但我不会把论文的全部内容放上来，只写关键的文字，什么参考文献，数据网址就不放了。且时过境迁，本文使用的数据为过去式，和今天对不上则选择性忽略。</p>
 <p>The world medical association has announced that their new medication could stop Ebola and cure patients whose disease is not advanced. Build a realistic, sensible, and useful model that considers not only the spread of the disease, the quantity of the medicine needed, possible feasible delivery systems (sending the medicine to where it is needed), (geographical) locations of delivery, speed of manufacturing of the vaccine or drug, but also any other critical factors your team considers necessary as part of the model to optimize the eradication of Ebola, or at least its current strain. In addition to your modeling approach for the contest, prepare a 1-2 page non-technical letter for the world medical association to use in their announcement.</p>
 <p>代码的原作者和链接：<a href="https://zeroto521.github.io/2018/09/23/MVC.html" target="_blank" rel="noopener">https://zeroto521.github.io/2018/09/23/MVC.html</a></p>
@@ -345,18 +346,12 @@
 <h2 id="数学表达CA所需的参数"><a href="#数学表达CA所需的参数" class="headerlink" title="数学表达CA所需的参数"></a>数学表达CA所需的参数</h2><h3 id="理论死亡率"><a href="#理论死亡率" class="headerlink" title="理论死亡率"></a>理论死亡率</h3><p>埃博拉病毒传染具有潜伏期，潜伏期的时间通常为为5-10天，过了潜伏期之后便会死亡，因此感染时间越长，死亡率越高。当被感染埃博拉病毒的人足够多时，可认为潜伏期$\phi(t)$服从正态分布$N(\mu, \sigma^2)$，$\mu=7.5, \sigma^2=1$为假定参数。以易染状态的元胞$i$举例，若在第一次迭代后被感染变为状态$I$；第二次迭代以$\Phi(5+\lambda)$的概率变为死亡状态（ 为迭代一次所代表的时间长度）；第三次迭代以$\Phi(5+3\lambda)$的概率变为死亡状态，以此类推第j次迭代后以$\Phi(5+(j-1)\lambda)$的概率变为死亡状态。</p>
 <p><img data-src="/2020/02/14/autocell/3.png" alt></p>
 <h3 id="理论治愈率"><a href="#理论治愈率" class="headerlink" title="理论治愈率"></a>理论治愈率</h3><p>实际情况中，国家政府会对埃博拉病毒采取一定的抵抗措施，因此定义治愈率函数$f_1(t)$，治愈率包含自身对埃博拉的抵抗力，以及国家对疫情的控制情况，如隔离、医疗救助、及时医治等措施能够减缓疫情的蔓延率与死亡率。</p>
-<p>因自身免疫力与国家对疫情控制度共同影响了死亡率，而在前期调查中得知三个国家的死亡率并不相同，三个国家死亡率分布：利比里亚死亡率$\eta’=42.7\%$，几内亚死亡率$\eta’’=63.1\%$，塞拉利昂死亡率$\eta’’’=29.2\%$。</p>
+<p>因自身免疫力与国家对疫情控制度共同影响了死亡率，而在前期调查中得知三个国家的死亡率并不相同，三个国家死亡率分布：利比里亚死亡率$\eta’=42.7%$，几内亚死亡率$\eta’’=63.1%$，塞拉利昂死亡率$\eta’’’=29.2%$。</p>
 <p>当元胞$i$变为感染状态$I$时，随着时间增加，治愈系数会逐渐减弱。假设这种减弱的关系服从指数分布，则治愈函数$f_1(t)$的表达式为$f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1}$。而实际中三个国家的治愈系数并不相同，为反应出三个国家治愈率的不同之处，用三个国家的死亡率进一步表示治愈率，得到如下的关系式：</p>
-<script type="math/tex; mode=display">
-f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} + 
-\begin{cases}
-    1 - \eta' & \text{利比里亚} \\
-    1 - \eta'' & \text{几内亚} \\
-    1 - \eta''' & \text{塞拉利昂} \\
-\end{cases}</script><p>理论死亡率与康复率分布图如下：</p>
+<p>$$<br>f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +<br>\begin{cases}<br>    1 - \eta’ &amp; \text{利比里亚} \<br>    1 - \eta’’ &amp; \text{几内亚} \<br>    1 - \eta’’’ &amp; \text{塞拉利昂} \<br>\end{cases}<br>$$</p>
+<p>理论死亡率与康复率分布图如下：</p>
 <p><img data-src="/2020/02/14/autocell/4.png" alt></p>
 <h2 id="计算真实死亡率与真实治愈率"><a href="#计算真实死亡率与真实治愈率" class="headerlink" title="计算真实死亡率与真实治愈率"></a>计算真实死亡率与真实治愈率</h2><p>计算真实死亡率与康复率：目前只提出了理论死亡率与理论治愈率的计算方法，因假设死亡率随时间增加符合正态分布，因此死亡率会逐渐增加，并十分接近100%，因此提出的理论情况并非真实情况下的死亡率与康复率。在实际情况中，当死亡率很高时，仍会有个体康复；在个体康复率很高时，仍会有个体死亡；为表示这一关系，采用下列方程式计算真实情况下的康复率与死亡率：</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -366,8 +361,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <th>真实死亡率$\eta_3$</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>$f_1(t)&gt;\Phi$</td>
 <td>$\frac{1}{t}e^{f_1(t)-\Phi}\sqrt{f_1(t)-\Phi}$</td>
 <td>$1-O_1-\eta_3$</td>
@@ -379,14 +373,13 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <td>$1-O_1-\eta_3$</td>
 <td>$\frac{t}{t+\epsilon}e^{\Phi-f_1(t)}\sqrt{\Phi-f_1(t)}$</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>$\frac{1}{t}$和$\frac{t}{t+\epsilon}$为时间修正公式：$\frac{1}{t}$是减函数，随时间增加而减小，用于修正康复率，则康复率随感染时间增加而减小；$\frac{t}{t+\epsilon}$是增函数，随时间增加而增加，用于修正死亡率，则死亡率随感染时间增加而增加，更具真实性。</p>
 <p>$e^{f_1(t)-\Phi}$为概率修正公式：在理论治愈率$f_1(t)$大于理论死亡率$\Phi$时，有一定几率死亡，也有一定几率康复；当$\Phi$大于$f_1(t)$时，仍有一定几率被治愈；但$f_1(t)+\Phi$可能高于100%，且死亡率与康复率之间存在着继续感染的几率。因此，需要将理论死亡率$\Phi$、治愈率$f_1(t)$进行变换为$e^{f_1(t)-\Phi}$，得到更接近实际的死亡率与治愈率，并求解继续感染的几率。</p>
 <p>借鉴模拟退火算法的思想，在解空间内以一定的几率发生跳变,即某种事件发生的概率较低时，仍能有一定几率发生。因而，在$\Phi$大于$f_1(t)$时，康复的概率修正为$e^{f_1(t)-\Phi}$，当$\Phi$小于$f_1(t)$时，死亡的概率修正为$e^{\Phi-f_1(t)}$。</p>
 <p>$\sqrt{f_1(t)-\Phi}$为误差修正公式：当$f_1(t)&lt;\Phi$且$f_1(t)$接近于$\Phi$时，存在</p>
-<script type="math/tex; mode=display">\text{limit:}f_1(t)\rightarrow \Phi, e^{f_1(t)-\Phi}=1</script><p>的现象，得到了当死亡率接近康复率时，康复率接近于1的错误结论。为避免这种现象的发生，增加修正项$\sqrt{\Phi-f_1(t)}$，当$f_1(t)\rightarrow\Phi^{-}$时，$e^{\Phi-f_1(t)}\sqrt{\Phi-f_1(t)}$趋于稳定（不是高数题，没那么无限趋近于0），因此避免治愈率接近于死亡率时概率计算错误现象。</p>
+<p>$$\text{limit:}f_1(t)\rightarrow \Phi, e^{f_1(t)-\Phi}=1$$</p>
+<p>的现象，得到了当死亡率接近康复率时，康复率接近于1的错误结论。为避免这种现象的发生，增加修正项$\sqrt{\Phi-f_1(t)}$，当$f_1(t)\rightarrow\Phi^{-}$时，$e^{\Phi-f_1(t)}\sqrt{\Phi-f_1(t)}$趋于稳定（不是高数题，没那么无限趋近于0），因此避免治愈率接近于死亡率时概率计算错误现象。</p>
 <h2 id="开始CA模拟"><a href="#开始CA模拟" class="headerlink" title="开始CA模拟"></a>开始CA模拟</h2><ul>
 <li><p>当元胞$i$为状态$S$时，若它的邻居中存在感染者(即有状态$I$的邻居)，则在下个时间步里，元胞$i$的状态以概率$\eta_1$变为被感染状态$I$。</p>
 </li>
@@ -449,10 +442,10 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++刷题后的初步整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\03\02\algorithm-time-complexity\" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
@@ -652,12 +645,12 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">366k</span>
+    <span title="站点总字数">373k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:32</span>
+    <span title="站点阅读时长">5:39</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
