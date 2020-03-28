@@ -283,11 +283,14 @@
         <p>栈有着广泛的应用，比如逆波兰表达式，表达式求值，迷宫问题求解，程序调用等，不过这些问题今天都不涉及哈哈哈哈。关于程序执行期间，各个函数的相互调用使用的调用栈，可以<a href="https://muyuuuu.github.io/2019/09/22/stack/">参考这里</a>。</p>
 <p>也许在上数据结构这门课的时候，经常遇到一个问题，一个栈压入一个序列，随缘pop，判断哪个是合理的pop，哪个是不合理的pop，之前都是脑内演算。很巧的今天我在刷题期间也遇到了，记录一下如何用代码判断pop序列是否合理。</p>
 <a id="more"></a>
+
 <h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>Given a stack which can keep $M$ numbers at most. Push $N$ numbers in the order of 1, 2, 3, …, $N$ and pop randomly. You are supposed to tell if a given sequence of numbers is a possible pop sequence of the stack. </p>
 <p>Each input file contains one test case. For each case, the first line contains 3 numbers (all no more than 1000): $M$ (the maximum capacity of the stack), $N$ (the length of push sequence), and $K$ (the number of pop sequences to be checked). Then $K$ lines follow, each contains a pop sequence of $N$ numbers. All the numbers in a line are separated by a space.</p>
 <p>For each pop sequence, print in one line “YES” if it is indeed a possible pop sequence of the stack, or “NO” if not.</p>
 <h2 id="示例输入"><a href="#示例输入" class="headerlink" title="示例输入"></a>示例输入</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">5 7 5</span><br><span class="line">1 2 3 4 5 6 7</span><br><span class="line">3 2 1 7 5 6 4</span><br><span class="line">7 6 5 4 3 2 1</span><br><span class="line">5 6 4 3 7 2 1</span><br><span class="line">1 7 6 5 4 3 2</span><br></pre></td></tr></table></figure>
+
 <h2 id="示例输出"><a href="#示例输出" class="headerlink" title="示例输出"></a>示例输出</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">YES</span><br><span class="line">NO</span><br><span class="line">NO</span><br><span class="line">YES</span><br><span class="line">NO</span><br></pre></td></tr></table></figure>
+
 <p>众所周知，栈是先进先出的一种数据结构，进栈为push，出栈为pop。题目的大概意思就是给定栈的最大空间，压入的序列和待检查的pop序列，因为栈是随缘pop的，判断哪个pop序列是正确的，哪个pop序列是错误的。</p>
 <h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><h2 id="脑内演算"><a href="#脑内演算" class="headerlink" title="脑内演算"></a>脑内演算</h2><ul>
 <li>对于序列 1, 2, 3, 4, 5, 6, 7， 很容易得到栈是如何工作的，即压入一个元素立刻弹出即可。push 1，pop 1，push 2，pop 2，一直到push 7，pop 7。</li>
@@ -305,11 +308,13 @@
 </li>
 <li><p>对输入序列设立标志位，并初始化标志位为1。当刚进栈的元素和输入序列标志位的元素相等时，说明此时元素要弹栈，则执行弹栈操作，且标志位自增向后移动；若不相等，则继续组织进栈，直到进栈元素和输入序列中标志位的元素相等。若一直不相等，则表明此序列错误。因此核心算法程序如下：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 设立标志位</span></span><br><span class="line"><span class="keyword">int</span> pos = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= n; j++) &#123;</span><br><span class="line">    <span class="comment">// 按元素顺序组织进栈</span></span><br><span class="line">    s.push(j);</span><br><span class="line">    <span class="comment">// 超过栈允许的最大空间</span></span><br><span class="line">    <span class="keyword">if</span>(s.<span class="built_in">size</span>() &gt; m) <span class="keyword">break</span>;</span><br><span class="line">    <span class="comment">// 按序列元素的弹栈顺序开始模拟</span></span><br><span class="line">    <span class="comment">// 栈非空且栈顶元素和当前标志位的元素相等</span></span><br><span class="line">    <span class="keyword">while</span>(!s.empty() &amp;&amp; s.top() == arr[pos]) &#123;</span><br><span class="line">        <span class="comment">// 弹栈</span></span><br><span class="line">        s.pop();</span><br><span class="line">        <span class="comment">// 标志位自增</span></span><br><span class="line">        pos++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>得到最终的程序如下：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> arr[<span class="number">1002</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m, n, k;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; m &gt;&gt; n &gt;&gt; k;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;arr[i]);</span><br><span class="line">        <span class="keyword">int</span> flag = <span class="number">0</span>, pos = <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">stack</span> &lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            s.push(i);</span><br><span class="line">            <span class="keyword">if</span> (s.<span class="built_in">size</span>() &gt; m) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">while</span> (!s.empty() &amp;&amp; s.top() == arr[pos])</span><br><span class="line">            &#123;</span><br><span class="line">                s.pop();</span><br><span class="line">                pos += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pos == n + <span class="number">1</span>) flag = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) <span class="built_in">printf</span>(<span class="string">"YES\n"</span>);</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">"NO\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img data-src="stack-pop-sequence/1.png" alt></p>
+
+<p><img data-src="/2020/03/28/stack-pop-sequence/1.png" alt></p>
 
     </div>
 
@@ -526,12 +531,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">368k</span>
+    <span title="站点总字数">375k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:35</span>
+    <span title="站点阅读时长">5:41</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
