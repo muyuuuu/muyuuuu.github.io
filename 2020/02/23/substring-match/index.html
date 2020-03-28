@@ -21,14 +21,14 @@
   </script>
 
   <meta name="description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
-<meta name="keywords" content="Algorithm">
+<meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
 <meta property="og:title" content="通用的子串匹配问题求解算法">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/02/23/substring-match/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-23T13:18:33.139Z">
+<meta property="og:updated_time" content="2020-03-28T09:20:24.418Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="通用的子串匹配问题求解算法">
 <meta name="twitter:description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-23 20:30:13 / 修改时间：21:18:33" itemprop="dateCreated datePublished" datetime="2020-02-23T20:30:13+08:00">2020-02-23</time>
+              <time title="创建时间：2020-02-23 20:30:13" itemprop="dateCreated datePublished" datetime="2020-02-23T20:30:13+08:00">2020-02-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-28 17:20:24" itemprop="dateModified" datetime="2020-03-28T17:20:24+08:00">2020-03-28</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -287,7 +293,7 @@
 <h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><p>$$(a+b)%c = a % c + b % c$$</p>
 <p>如 $101 % 100 + 50 % 100 = (100 + 51) % 100 = 51$</p>
 <h2 id="错解思路"><a href="#错解思路" class="headerlink" title="错解思路"></a>错解思路</h2><p>当时的思路记不太清，我现在的想法是使用遍历的方法，先寻找<code>P</code>，在寻找<code>A</code>，在寻找<code>T</code>，当前字符不满足就跳到下一个字符，一条路走不通就走下一条路。以<code>APPAPT</code>第二位的<code>P</code>为例。从<code>P</code>开始，依次向后遍历字符，遇到错误的字符跳过，遇到正确的字符+1，如下图所示。</p>
-<p><img data-src="/2020/02/23/substring-match/1.png" alt></p>
+<p><img data-src="substring-match/1.png" alt></p>
 <p>第二位的<code>P</code>处理完毕后开始第三位<code>P</code>的处理，也很容易看出来，查找3个字符，复杂度为$O(n^3)$，查找4个字符，复杂度为$O(n^4)$，且代码维护不易容易超时。粗糙的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (s[i] != <span class="string">'P'</span>)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; s.length(); j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">'A'</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">1</span>; j &lt; s.length(); k++)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (s[k] == <span class="string">'T'</span>)&#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -376,7 +382,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
           </div>
 
         
@@ -473,7 +479,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -486,7 +492,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -527,12 +533,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">373k</span>
+    <span title="站点总字数">375k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:39</span>
+    <span title="站点阅读时长">5:41</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
