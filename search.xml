@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>核密度聚类</title>
+    <url>/2020/03/30/KDE-cluster/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>当问题需要自动地确定聚类数目时，传统的KMeans等聚类方法不在适用。因此，使用“核概率密度估计”的思路自行设计了两种聚类方法。本文收录：</p>
+<ul>
+<li>核是什么</li>
+<li>核密度估计</li>
+<li>基于核密度估计的两种聚类方法</li>
+<li>代码实现</li>
+</ul>
+<a id="more"></a>
+
+<h1 id="核函数"><a href="#核函数" class="headerlink" title="核函数"></a>核函数</h1><p>有一些数据，想“看看”它长什么样，基于高中的知识，我们一般会画频率分布直方图（Histogram）。但基于大学的知识，此时也可以用核密度估计，因为之前的知识水平让我们默认为频率等于概率，但实际情况不一定如此。</p>
+<p>这里的“核”是一个函数，用来提供权重。例如高斯函数 (Gaussian) 就是一个常用的核函数。举个例子，假设我们现在想买房，钱不够要找亲戚朋友借，我们用一个数组来表示 5 个亲戚的财产状况： [8, 2, 5, 6, 4]。我们是中间这个数 5。“核”是一个权重函数，假设这个核函数的取值为[0.1, 0.4, 1, 0.3, 0.2]，以此来代表同的亲戚朋友亲疏有别。</p>
+<p>在借钱的时候，关系好的朋友出力多，关系不好的朋友出力少，于是我们可以用权重来表示。总共能借到的钱是： $8\times 0.1 + 2\times 0.4 + 5\times 1 + 6\times 0.3 + 4\times 0.2 = 9.2$。</p>
+<p>那么“核”的作用就是用来决定权重，例如高斯函数（即正态分布），呈现出距离中心越远，权重越小；反之，距离中心越近，权重越大的特点。核函数还有以下重要的性质：</p>
+<ul>
+<li>$\int_{-\infty}^{+\infty}K(x)\text{d}x=1$</li>
+<li>$K(-x)=K(x)$</li>
+</ul>
+<h1 id="核密度估计"><a href="#核密度估计" class="headerlink" title="核密度估计"></a>核密度估计</h1><p>如果我们画频率分布直方图，其实目的是画出“概率密度函数”，因为统计直方图的组距无限接近于0时，得到的函数就是概率密度函数。</p>
+<p>但直方图本质上是认为频率等于概率，但这种假设不是必然的。</p>
+<p>核密度估计方法是一种非参数估计方法，非参数估计法指：如果一个估计问题所涉及的分布未知或不能用有穷参数来刻划，称这种估计为非参数估计。非参数估计是一种“平滑(smooth)”的手段：设 $(x_1,x_2,\cdots,x_n)$ 是独立同分布的 $n$ 个样本点，于是我们的估计：</p>
+<p>$$\hat{p}(x)=\frac{1}{n}\sum_{i=1}^nK_h(x-x_i)=\frac{1}{nh}\sum_{i=1}^nK(\frac{x-x_i}{h})$$</p>
+<p>上面式子中 $x−x_i$ 要提前归一化到 $[-1, 1]$ 之间。</p>
+<p>这个公式的意思相当于是<strong>“我说的你可能不信，一起看看别人怎么说我的你就信了”</strong>。别人是指除自己外的其他样本点，距离越远的样本点权重越小，说话没有分量；距离样本点越近则权重越大，说话的可信度也就越高。当然权重的大小取决于实际采用的核函数，也可能距离越远权重越大，这里只是举个例子。</p>
+<p>其中距离的远近通过$x-x_i$的大小来衡量。相当于加权平均后，就能更好地了解我了，于是乎得到新的函数值作为这一点概率的取值。$h$ 是人为指定的，代表“朋友圈”的大小，正式的叫法是“带宽”(bandwidth)，且带宽越大曲线越平滑。</p>
+<p>看一下核密度估计和频率分布直方图就能更好的理解了，蓝色的线为概率密度估计，橙色的柱状图为数据出现的频率统计。</p>
+<p><img data-src="/2020/03/30/KDE-cluster/1.png" alt></p>
+<h1 id="核密度聚类"><a href="#核密度聚类" class="headerlink" title="核密度聚类"></a>核密度聚类</h1><p>当然文章到这里还没有结束，要是到这里结束我就真成了抄袭文章的了。这组数据看上去很有聚类的趋势不是么，有两种聚类方法：</p>
+<ol>
+<li>第一种方法。取曲线中的极大值和极小值分成几个区间，将数据的出现频率完成分类，此时会将出现频率相近的数据聚合在一起。按出现频率的高低分为四个居间A,B,C,D共四个类。则A类的数据出现频率最高，D类的数据出现频率最低。如下图所示：<img data-src="/2020/03/30/KDE-cluster/2.png" alt></li>
+<li>第二种方法。既然曲线有多个极大值和极小值，那么何不以极大值极小值为分界点进行划分区间？按极值点的横坐标取值将数据分为四个居间A,B,C,D共四个类。那么此时对数据的含义也有了要求，即：每个数据段都有不同的含义，不能以数据出现的频率进行笼统划分。如下图所示：<img data-src="/2020/03/30/KDE-cluster/3.png" alt>举个例子：图片的灰度值的取值范围是[0,255]，假设[0,50]区间数据的出现频率和[200,255]区间数据的出现频率相近，但一定不能把这两组数据放在一起，因为前者代表黑色图层，后者代表白色图层。此时应以极大值、极小值等极值点的横坐标的取值划分区间，而后进行聚类更为合适。</li>
+<li>无论哪种方法，都能自动确定聚类数量。</li>
+</ol>
+<h2 id="核密度估计-1"><a href="#核密度估计-1" class="headerlink" title="核密度估计"></a>核密度估计</h2><p>本文着重实现第二种聚类方法，第一种其实同理。</p>
+<p>首先产生一组随机数：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">N = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line"><span class="comment"># concatenate 用来组合两种数据，第一组数据均值0方差1，数量占 30% </span></span><br><span class="line"><span class="comment"># 第二组数据均值 5 方差1 数量占 70%</span></span><br><span class="line"><span class="comment"># [:, np.newaxis] 把数据维度更新为二维一列的数据</span></span><br><span class="line">X = np.concatenate((np.random.normal(<span class="number">0</span>, <span class="number">1</span>, int(<span class="number">0.3</span> * N)), np.random.normal(<span class="number">5</span>, <span class="number">1</span>, int(<span class="number">0.7</span> * N))))[:, np.newaxis]</span><br></pre></td></tr></table></figure>
+
+<p>其次调用sklearn这个库实现核密度估计即可：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">X_plot = np.linspace(<span class="number">-5</span>, <span class="number">10</span>, <span class="number">1000</span>)[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">colors = [<span class="string">'blue'</span>]</span><br><span class="line">kernels = [<span class="string">'gaussian'</span>]</span><br><span class="line">lw = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> color, kernel <span class="keyword">in</span> zip(colors, kernels):</span><br><span class="line">    <span class="comment"># Fit the Kernel Density model on the data.</span></span><br><span class="line">    kde = KernelDensity(kernel=kernel, bandwidth=<span class="number">0.5</span>).fit(X)</span><br><span class="line">    <span class="comment"># Evaluate the log density model on the data. </span></span><br><span class="line">    log_dens = kde.score_samples(X_plot)</span><br><span class="line">    plt.plot(X_plot[:, <span class="number">0</span>], np.exp(log_dens), color=color, lw=lw,</span><br><span class="line">            linestyle=<span class="string">'-'</span>, label=<span class="string">"kernel = '&#123;0&#125;'"</span>.format(kernel))</span><br><span class="line">    arr = np.exp(log_dens)</span><br><span class="line">    np.save(<span class="string">'data.npy'</span>, arr)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>X_plot ：An array of points to query；</li>
+<li>kde = KernelDensity(kernel=kernel, bandwidth=0.5).fit(X) 完成训练工作，计算核密度；</li>
+<li>log_dens = kde.score_samples(X_plot) 评估这点的概率值该是多少。画图是连续的曲线，曲线上的点不一定在样本中，所以要弥补一些缺失的点；</li>
+<li>np.exp 是因为kde.score_samples反馈结果的概率值取了ln(可参看源码实现)，所以计算真实概率值要exp一下；</li>
+<li>保存数据用于后期聚类处理。</li>
+</ul>
+<p>完整代码如下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KernelDensity</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> norm</span><br><span class="line"></span><br><span class="line">N = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line">X = np.concatenate((np.random.normal(<span class="number">0</span>, <span class="number">1</span>, int(<span class="number">0.3</span> * N)), np.random.normal(<span class="number">5</span>, <span class="number">1</span>, int(<span class="number">0.7</span> * N))))[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">X_plot = np.linspace(<span class="number">-5</span>, <span class="number">10</span>, <span class="number">1000</span>)[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">colors = [<span class="string">'blue'</span>]</span><br><span class="line">kernels = [<span class="string">'gaussian'</span>]</span><br><span class="line">lw = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> color, kernel <span class="keyword">in</span> zip(colors, kernels):</span><br><span class="line">    kde = KernelDensity(kernel=kernel, bandwidth=<span class="number">0.5</span>).fit(X)</span><br><span class="line">    log_dens = kde.score_samples(X_plot)</span><br><span class="line">    plt.plot(X_plot[:, <span class="number">0</span>], np.exp(log_dens), color=color, lw=lw,</span><br><span class="line">            linestyle=<span class="string">'-'</span>, label=<span class="string">"kernel = '&#123;0&#125;'"</span>.format(kernel))</span><br><span class="line">    arr = np.exp(log_dens)</span><br><span class="line">    np.save(<span class="string">'data.npy'</span>, arr)</span><br><span class="line"></span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line">plt.hist(X, <span class="number">70</span>, normed = <span class="number">1</span>, histtype=<span class="string">'bar'</span>, facecolor=<span class="string">'salmon'</span>, rwidth=<span class="number">0.9</span>)  </span><br><span class="line"><span class="comment"># plt.set_xlim(-4, 9)</span></span><br><span class="line"><span class="comment"># plt.set_ylim(-0.02, 0.4)</span></span><br><span class="line"></span><br><span class="line">plt.title(<span class="string">"$N$ = 1000 points"</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">plt.xlabel(<span class="string">"Data"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.ylabel(<span class="string">"Density Function"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.savefig(<span class="string">'test.png'</span>, dpi=<span class="number">300</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="求极值以聚类"><a href="#求极值以聚类" class="headerlink" title="求极值以聚类"></a>求极值以聚类</h2><p>之后借助scipy求出核密度估计的点中的几个极大值和极小值（极值并不唯一）</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.signal <span class="keyword">import</span> argrelextrema</span><br><span class="line"><span class="comment"># 加载数据</span></span><br><span class="line">data = np.load(<span class="string">'data.npy'</span>)</span><br><span class="line"><span class="comment"># 求极大值</span></span><br><span class="line">maxn = argrelextrema(data, np.greater)</span><br><span class="line"><span class="comment"># 求极小值</span></span><br><span class="line">minn = argrelextrema(data, np.less)</span><br><span class="line"><span class="comment"># 打印极大值的索引</span></span><br><span class="line">print(maxn)</span><br><span class="line"><span class="comment"># 打印极小值的索引</span></span><br><span class="line">print(minn)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果如下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">(array([<span class="number">340</span>, <span class="number">667</span>], dtype=int64),)</span><br><span class="line">(array([<span class="number">480</span>], dtype=int64),)</span><br></pre></td></tr></table></figure>
+
+<p>得到的结果显示有两个极大值两个极小值，与概率密度估计图象相吻合。按照返回的极值索引访问极值即可。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(data[minn])</span><br></pre></td></tr></table></figure>
+
+<p>进而按照极值划分数据，即可完成聚类。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
+<ol>
+<li><a href="https://lotabout.me/2018/kernel-density-estimation/" target="_blank" rel="noopener">https://lotabout.me/2018/kernel-density-estimation/</a></li>
+<li><a href="https://spaces.ac.cn/archives/3785" target="_blank" rel="noopener">https://spaces.ac.cn/archives/3785</a></li>
+<li><a href="https://scikit-learn.org/stable/auto_examples/neighbors/plot_kde_1d.html" target="_blank" rel="noopener">https://scikit-learn.org/stable/auto_examples/neighbors/plot_kde_1d.html</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KernelDensity.html" target="_blank" rel="noopener">https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KernelDensity.html</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/referenc/generated/scipy.signal.argrelextrema.html" target="_blank" rel="noopener">https://docs.scipy.org/doc/scipy/referenc/generated/scipy.signal.argrelextrema.html</a></li>
+<li><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html" target="_blank" rel="noopener">https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html</a></li>
+<li><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html" target="_blank" rel="noopener">https://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html</a></li>
+</ol>
+<p>你也可以看到我查看翻阅了大量的官方文档，其实对于这种技术东西，官方文档的解释往往是最好的，不懂的问题就多动动手多思考嘛，哪能不懂就问。</p>
+]]></content>
+      <tags>
+        <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>栈的应用——判断pop序列是否合理</title>
     <url>/2020/03/28/stack-pop-sequence/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>栈有着广泛的应用，比如逆波兰表达式，表达式求值，迷宫问题求解，程序调用等，不过这些问题今天都不涉及哈哈哈哈。关于程序执行期间，各个函数的相互调用使用的调用栈，可以<a href="https://muyuuuu.github.io/2019/09/22/stack/">参考这里</a>。</p>
