@@ -298,7 +298,7 @@
         <p>只是想出来走走，谁能想到来了北京就下雪了呢。雪后的故宫少了几分平时的端庄肃穆和威严，多了些许的轻快、明丽和舒适。就像传统的中国古风，生于盛世，站于城墙之上，俯览灯火通明的闹市，忙碌一天的官人手里攥着刚买的冰糖葫芦，腰间别着集市上刚买的香包，散步于角楼水畔，栖身在城市的夜景中也算是一天后的休息；遥想日出而作日落而息穿梭于大街小巷的常人，叫卖声走路声喜悦声甚至发呆的声音, 记录于画记录于诗也描述不了盛世的画卷，袅袅炊烟后的万家灯火，金谷鸣响后的烽烟四起，沧桑风雨后的山河依旧，像一曲悠长的古曲，跌宕起伏。</p>
 <p>多年不读书不写作，大概不会写文字了。</p>
 <a id="more"></a>
-<p><img data-src="/2020/01/07/the-palace-museum-in-snow/1.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/3.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/4.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/5.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/6.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/11.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/17.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/29.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/31.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/32.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/39.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/40.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/42.jpg" alt></p>
+<p><img data-src="the-palace-museum-in-snow/1.jpg" alt><br><img data-src="the-palace-museum-in-snow/3.jpg" alt><br><img data-src="the-palace-museum-in-snow/4.jpg" alt><br><img data-src="the-palace-museum-in-snow/5.jpg" alt><br><img data-src="the-palace-museum-in-snow/6.jpg" alt><br><img data-src="the-palace-museum-in-snow/11.jpg" alt><br><img data-src="the-palace-museum-in-snow/17.jpg" alt><br><img data-src="the-palace-museum-in-snow/29.jpg" alt><br><img data-src="the-palace-museum-in-snow/31.jpg" alt><br><img data-src="the-palace-museum-in-snow/32.jpg" alt><br><img data-src="the-palace-museum-in-snow/39.jpg" alt><br><img data-src="the-palace-museum-in-snow/40.jpg" alt><br><img data-src="the-palace-museum-in-snow/42.jpg" alt></p>
 
     </div>
 
@@ -318,10 +318,10 @@
       <div class="popular-posts-title"><a href="\2020\01\15\FeiCuiHu\" rel="bookmark">云雾缭绕，人间仙境——翡翠湖</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
+      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
+      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
     </li>
   </ul>
 
@@ -554,7 +554,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -577,17 +577,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -599,7 +659,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -633,6 +693,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -659,5 +720,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

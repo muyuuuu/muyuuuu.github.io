@@ -300,9 +300,9 @@
 <p>想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。</p>
 <p>一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。</p>
 <a id="more"></a>
-<h2 id="随便走走"><a href="#随便走走" class="headerlink" title="随便走走"></a>随便走走</h2><p>当初的操场和远方的山丘。<br><img data-src="/2016/07/29/highschool/1.jpeg" alt><br><img data-src="/2016/07/29/highschool/2.jpeg" alt><br><img data-src="/2016/07/29/highschool/3.jpeg" alt><br><img data-src="/2016/07/29/highschool/4.jpeg" alt><br><img data-src="/2016/07/29/highschool/5.jpeg" alt><br><img data-src="/2016/07/29/highschool/6.jpeg" alt><br><img data-src="/2016/07/29/highschool/7.jpeg" alt></p>
-<h2 id="宁静的回忆"><a href="#宁静的回忆" class="headerlink" title="宁静的回忆"></a>宁静的回忆</h2><p><img data-src="/2016/07/29/highschool/8.jpeg" alt><br><img data-src="/2016/07/29/highschool/9.jpeg" alt><br><img data-src="/2016/07/29/highschool/10.jpeg" alt><br><img data-src="/2016/07/29/highschool/11.jpeg" alt><br><img data-src="/2016/07/29/highschool/12.jpeg" alt><br><img data-src="/2016/07/29/highschool/13.jpeg" alt><br><img data-src="/2016/07/29/highschool/14.jpeg" alt></p>
-<h2 id="最后的平静"><a href="#最后的平静" class="headerlink" title="最后的平静"></a>最后的平静</h2><p><img data-src="/2016/07/29/highschool/15.jpeg" alt><br><img data-src="/2016/07/29/highschool/16.jpeg" alt><br><img data-src="/2016/07/29/highschool/17.jpeg" alt><br><img data-src="/2016/07/29/highschool/18.jpeg" alt></p>
+<h2 id="随便走走"><a href="#随便走走" class="headerlink" title="随便走走"></a>随便走走</h2><p>当初的操场和远方的山丘。<br><img data-src="highschool/1.jpeg" alt><br><img data-src="highschool/2.jpeg" alt><br><img data-src="highschool/3.jpeg" alt><br><img data-src="highschool/4.jpeg" alt><br><img data-src="highschool/5.jpeg" alt><br><img data-src="highschool/6.jpeg" alt><br><img data-src="highschool/7.jpeg" alt></p>
+<h2 id="宁静的回忆"><a href="#宁静的回忆" class="headerlink" title="宁静的回忆"></a>宁静的回忆</h2><p><img data-src="highschool/8.jpeg" alt><br><img data-src="highschool/9.jpeg" alt><br><img data-src="highschool/10.jpeg" alt><br><img data-src="highschool/11.jpeg" alt><br><img data-src="highschool/12.jpeg" alt><br><img data-src="highschool/13.jpeg" alt><br><img data-src="highschool/14.jpeg" alt></p>
+<h2 id="最后的平静"><a href="#最后的平静" class="headerlink" title="最后的平静"></a>最后的平静</h2><p><img data-src="highschool/15.jpeg" alt><br><img data-src="highschool/16.jpeg" alt><br><img data-src="highschool/17.jpeg" alt><br><img data-src="highschool/18.jpeg" alt></p>
 <hr>
 <p>年少时光已成往，留下一句诗，作为日后的回忆吧。</p>
 <blockquote>
@@ -566,7 +566,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -589,17 +589,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -611,7 +671,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -645,6 +705,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -671,5 +732,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

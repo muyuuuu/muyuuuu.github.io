@@ -298,9 +298,9 @@
         <p>小学以为学莫高窟就是为了学说明文这种文体，这里有多少窟，每个窟多大，有多少佛像，每个佛像多高，有多少壁画，壁画是哪个朝代的，无聊得很，除了考试别无他用。</p>
 <p>但是，直到看见了莫高窟，被眼前的景象深深折服，工匠之心，精益求精，此间雕刻举世无双，不愧是世界奇迹，中华文化的瑰宝。中午吃了敦煌榆钱，太香了。</p>
 <p>因为文化保护，不能拍照，但绝不虚此行。虽然你会感觉看完了本文的相册毫无感觉，因为：洞窟里面才是世间奇迹，不过那里禁止拍照。</p>
-<p><img data-src="/2020/01/17/MoGaoGrottoes/61.jpg" alt></p>
+<p><img data-src="MoGaoGrottoes/61.jpg" alt></p>
 <a id="more"></a>
-<p><img data-src="/2020/01/17/MoGaoGrottoes/62.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/64.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/67.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/70.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/71.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/73.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/74.jpg" alt><br><img data-src="/2020/01/17/MoGaoGrottoes/75.jpg" alt></p>
+<p><img data-src="MoGaoGrottoes/62.jpg" alt><br><img data-src="MoGaoGrottoes/64.jpg" alt><br><img data-src="MoGaoGrottoes/67.jpg" alt><br><img data-src="MoGaoGrottoes/70.jpg" alt><br><img data-src="MoGaoGrottoes/71.jpg" alt><br><img data-src="MoGaoGrottoes/73.jpg" alt><br><img data-src="MoGaoGrottoes/74.jpg" alt><br><img data-src="MoGaoGrottoes/75.jpg" alt></p>
 
     </div>
 
@@ -556,7 +556,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -579,17 +579,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -601,7 +661,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -635,6 +695,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -661,5 +722,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

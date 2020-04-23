@@ -302,7 +302,7 @@
 <li>可以考虑在车的两侧添加超声波模块，用于反馈倒车时车身两侧的距离。但IO口不够，因此只添加车身后侧的超声波；</li>
 <li>PCB难以绘制，Altium Designer学到一半就放弃。实在搞不懂什么时候放电阻、电容、电感等。确切的说电路等相关知识并不是计算机专业必须要会和要求掌握的东西，所以选择面包板偷工减料。</li>
 </ol>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p><img data-src="/2020/04/18/reverse-radar-begin/1.jpg" alt></p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p><img data-src="reverse-radar-begin/1.jpg" alt></p>
 <p><a href="https://muyuuuu.github.io/2018/05/22/C51/">左图是两年前做的</a>，包括：蓝牙、电机、液晶、加速减速、避障、巡迹等常见功能；右图是今年的做的，只有雷达、电机和蓝牙，更多的是PC端的上位机。</p>
 <p>在这两周的开发中，也遇到了各种难以解决的bug，好在我<del>智勇双全</del>(文档丰富)。不过，也正因如此，我也选择了彻底放弃开发单片机的幻想。在三年前大一结束转专业的时候，我大概花了一个晚上去分析我到底是转专业去计算机呢，还是去电子信息呢，还是去自动化专业呢？毕竟以当时的成绩还是能想去哪里就去哪里的。</p>
 <p>想去计算机是因为发现代码很有趣，大一自学了C语言and看着别人的python，都挺好玩的样子；想去电子信息是因为在大一的时候自学了C51单片机，发现单片机做出来的诸如：四旋翼、飞思卡尔智能车等东西也很有趣。当时以极低的分数考上大学，大一的专业都是调剂的，好不容易有了能凭自己兴趣选专业的机会不能错过。</p>
@@ -332,10 +332,10 @@
       <div class="popular-posts-title"><a href="\2018\05\23\c511\" rel="bookmark">DIY智能小车——寻迹与马达</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\05\25\c513\" rel="bookmark">DIY智能小车——PWM调速与产品问世</a></div>
+      <div class="popular-posts-title"><a href="\2018\05\24\c512\" rel="bookmark">DIY智能小车——手机蓝牙</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\05\24\c512\" rel="bookmark">DIY智能小车——手机蓝牙</a></div>
+      <div class="popular-posts-title"><a href="\2018\05\25\c513\" rel="bookmark">DIY智能小车——PWM调速与产品问世</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\04\23\reverse-radar-hardware\" rel="bookmark">倒车雷达(二)：硬件搭建</a></div>
@@ -572,7 +572,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -595,17 +595,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -617,7 +677,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -651,6 +711,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -677,5 +738,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

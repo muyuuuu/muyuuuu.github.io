@@ -312,11 +312,11 @@
 <h2 id="建立联系"><a href="#建立联系" class="headerlink" title="建立联系"></a>建立联系</h2><h3 id="从多的一侧建立联系"><a href="#从多的一侧建立联系" class="headerlink" title="从多的一侧建立联系"></a>从多的一侧建立联系</h3><p>设立当前文章的作者的id是1：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test1.author_id = <span class="number">1</span></span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
 <p>查看数据库端的更改：</p>
-<p><img data-src="/2020/01/25/sqlalchemy-relation/1.png" alt></p>
+<p><img data-src="sqlalchemy-relation/1.png" alt></p>
 <h3 id="从少的一侧建立联系"><a href="#从少的一侧建立联系" class="headerlink" title="从少的一侧建立联系"></a>从少的一侧建立联系</h3><p>给lanling作者追加一篇文章：（lanling作者的id是1）</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling.to_articles.append(test2)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
 <p>再次查看数据库内是否修改：</p>
-<p><img data-src="/2020/01/25/sqlalchemy-relation/2.png" alt></p>
+<p><img data-src="sqlalchemy-relation/2.png" alt></p>
 <p>可以看到两篇文章的<code>author_id</code>表示作者都是lanling。</p>
 <h2 id="查看联系结果"><a href="#查看联系结果" class="headerlink" title="查看联系结果"></a>查看联系结果</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">a = session.query(Author).filter(Author.id == <span class="number">1</span>)</span><br><span class="line">print(a[<span class="number">0</span>].username)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.title)</span><br><span class="line">print(test1.author_id)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.body)</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
@@ -324,7 +324,7 @@
 <h2 id="移除关系"><a href="#移除关系" class="headerlink" title="移除关系"></a>移除关系</h2><p>在<code>一</code>这一侧直接remove即可。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">lanling.to_articles.remove(test2)</span><br><span class="line">session.commit()</span><br><span class="line"><span class="comment"># 查看结果</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> lanling.to_articles:</span><br><span class="line">    print(i.body)</span><br></pre></td></tr></table></figure>
 <p>数据库端情况：（之后的创建实例、设置关系的操作均会影响数据库端，所以不再重复展示）。</p>
-<p><img data-src="/2020/01/25/sqlalchemy-relation/3.png" alt></p>
+<p><img data-src="sqlalchemy-relation/3.png" alt></p>
 <p>输出：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">asdasdasd</span><br></pre></td></tr></table></figure>
 <h2 id="建立双向联系"><a href="#建立双向联系" class="headerlink" title="建立双向联系"></a>建立双向联系</h2><p>在两侧都添加关系属性，用于获取对方记录的关系称为双向关系。</p>
@@ -352,9 +352,9 @@
 <p>查看联系的结果：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(name1.wife.name) <span class="comment"># 输出 name3</span></span><br></pre></td></tr></table></figure>
 <p>此外，即使在表内建立了联系，而不执行<code>session.commit()</code>，联系的更改不会提交的数据库：</p>
-<p><img data-src="/2020/01/25/sqlalchemy-relation/4.png" alt></p>
+<p><img data-src="sqlalchemy-relation/4.png" alt></p>
 <p>而在最后执行<code>session.commit()</code>后，更改会提交到数据库：</p>
-<p><img data-src="/2020/01/25/sqlalchemy-relation/5.png" alt></p>
+<p><img data-src="sqlalchemy-relation/5.png" alt></p>
 <h1 id="多对多联系"><a href="#多对多联系" class="headerlink" title="多对多联系"></a>多对多联系</h1><p>一个学生有多个老师，一个老师有多个学生，以这个例子说明。</p>
 <p>在多对多关系中，每一个记录都可以与关系另一侧的多个记录建立关系，而不是一个。所以需要把多对多分拆成两个一对多关系。做法是：新创建一个表，专门存储映射关系。原本的两个表无需设置任何外键。</p>
 <p>关系表一定要写在数据表前面：</p>
@@ -611,7 +611,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -634,17 +634,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -656,7 +716,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -690,6 +750,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -716,5 +777,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>

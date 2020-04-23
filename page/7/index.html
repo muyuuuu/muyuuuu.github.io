@@ -537,7 +537,7 @@
       
           <p>关于上次说的失眠，又莫名其妙的好了，和失眠和解了。</p>
 <p>当初脑门一热报名了PAT的考试，现在是还债的时候了。大概这几天整理了常见的题型和操作，当然距离大佬还差的很远，都后悔报名了，就当去写代码玩一玩。毕竟算法还是计算机的看家本事。中途也问了问已经工作的算法工程师，得到了如下的回答，不过努力都不会白费的。不知何时能有柳神一半强。</p>
-<p><img src="/2019/09/04/PAT/1.png" alt></p>
+<p><img data-src="PAT/1.png" alt></p>
 <p>大量代码摘抄自这里：<a href="https://github.com/liuchuo/PAT/tree/master/AdvancedLevel_C%2B%2B" target="_blank" rel="noopener">https://github.com/liuchuo/PAT/tree/master/AdvancedLevel_C%2B%2B</a></p>
 <p>有的代码人家写出来了，不过我实在看不懂。</p>
           <!--noindex-->
@@ -709,7 +709,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="/2019/06/30/bye/bye.jpg" alt></p>
+          <p><img data-src="bye/bye.jpg" alt></p>
           <!--noindex-->
           <!--/noindex-->
         
@@ -975,7 +975,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -998,17 +998,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -1020,7 +1080,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -1054,6 +1114,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -1114,5 +1175,6 @@ show_date_time();
   
 
 
+    </div>
 </body>
 </html>

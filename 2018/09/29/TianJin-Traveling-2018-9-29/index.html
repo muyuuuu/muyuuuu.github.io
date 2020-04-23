@@ -301,7 +301,7 @@
 <p>大概是中午到达的车站，然后去了欧洲风情街(我享受不起的高端资本主义，一地的好看小姐姐随意的走，毕竟在偏远地区的理工院校待时间长了，真的好久没见过大规模的小姐姐)，曹禺故居，梁启超故居(不得不说梁前辈在教育孩子方面确实有一套)，天大南开(好想复读，说的我复读能考上似的)，晚上的分手之眼(一地的情侣，啊，可惜没对象)，第二天四点匆匆离开。</p>
 <p>来回车费加住宿费饮食费不过200money，当然旅游的这几天都是省吃俭用。</p>
 <p>不得不赞叹这个城市很美丽。</p>
-<p><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120325.jpg" alt><br><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120333.jpg" alt><br><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120340.jpg" alt><br><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120341.jpg" alt><br><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120342.jpg" alt><br><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120343.jpg" alt><br><img data-src="/2018/09/29/TianJin-Traveling-2018-9-29/IMG_20180929_120347.jpg" alt></p>
+<p><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120325.jpg" alt><br><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120333.jpg" alt><br><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120340.jpg" alt><br><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120341.jpg" alt><br><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120342.jpg" alt><br><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120343.jpg" alt><br><img data-src="TianJin-Traveling-2018-9-29/IMG_20180929_120347.jpg" alt></p>
 
     </div>
 
@@ -321,10 +321,10 @@
       <div class="popular-posts-title"><a href="\2020\01\15\FeiCuiHu\" rel="bookmark">云雾缭绕，人间仙境——翡翠湖</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
+      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
+      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
     </li>
   </ul>
 
@@ -558,7 +558,7 @@ show_date_time();
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
       <span class="site-uv" title="总访客量">
         我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
@@ -581,17 +581,77 @@ show_date_time();
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
 <script src="/js/schemes/pisces.js"></script>
 <script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
   
-  <script>
+  <script pjax>
     (function(){
       var bp = document.createElement('script');
       var curProtocol = window.location.protocol.split(':')[0];
@@ -603,7 +663,7 @@ show_date_time();
 
 
 
-  <script>
+  <script pjax>
   if (CONFIG.page.isPost) {
     wpac_init = window.wpac_init || [];
     wpac_init.push({
@@ -637,6 +697,7 @@ show_date_time();
 
 
 
+    <div id="pjax">
   
 
   
@@ -663,5 +724,6 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
 });
 </script>
 
+    </div>
 </body>
 </html>
