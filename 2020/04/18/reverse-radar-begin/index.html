@@ -21,14 +21,14 @@
   </script>
 
   <meta name="description" content="问题背景说来话长，在去年选毕设的时候，计算机的毕设95%都是游戏开发和后端开发(后端数据库配前端页面展示)，这些东西我实在不会，唯一会的就是其中为数不多的单片机开发。而唯一的深度学习项目难度过大当作研究生毕设也不为过，后期老师提供的一些python项目也没及时看到，阴差阳错的选了这个毕设。">
-<meta name="keywords" content="GUI">
+<meta name="keywords" content="microcomputer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="倒车雷达（一）：介绍">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/04/18/reverse-radar-begin/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="问题背景说来话长，在去年选毕设的时候，计算机的毕设95%都是游戏开发和后端开发(后端数据库配前端页面展示)，这些东西我实在不会，唯一会的就是其中为数不多的单片机开发。而唯一的深度学习项目难度过大当作研究生毕设也不为过，后期老师提供的一些python项目也没及时看到，阴差阳错的选了这个毕设。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-19T03:34:25.630Z">
+<meta property="og:updated_time" content="2020-04-23T10:34:58.112Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="倒车雷达（一）：介绍">
 <meta name="twitter:description" content="问题背景说来话长，在去年选毕设的时候，计算机的毕设95%都是游戏开发和后端开发(后端数据库配前端页面展示)，这些东西我实在不会，唯一会的就是其中为数不多的单片机开发。而唯一的深度学习项目难度过大当作研究生毕设也不为过，后期老师提供的一些python项目也没及时看到，阴差阳错的选了这个毕设。">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-19 11:34:25" itemprop="dateModified" datetime="2020-04-19T11:34:25+08:00">2020-04-19</time>
+                <time title="修改时间：2020-04-23 18:34:58" itemprop="dateModified" datetime="2020-04-23T18:34:58+08:00">2020-04-23</time>
               </span>
 
           
@@ -267,7 +267,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -308,6 +308,7 @@
 <p>想去计算机是因为发现代码很有趣，大一自学了C语言and看着别人的python，都挺好玩的样子；想去电子信息是因为在大一的时候自学了C51单片机，发现单片机做出来的诸如：四旋翼、飞思卡尔智能车等东西也很有趣。当时以极低的分数考上大学，大一的专业都是调剂的，好不容易有了能凭自己兴趣选专业的机会不能错过。</p>
 <p>大概在斟酌了专业的发展前景和研究方向后，还是选择了计算机专业，<del>当时单纯的以为自动化等专业还得去车间，像个电焊工一样带着护目镜作业</del>。事实证明，这个选择终究是正确的。经过这几天的开发，总结了我认为的电子方向的缺陷(仅仅是我片面的观点，电子专业的看管求放过)：</p>
 <ol>
+<li>程序执行不便，每次执行程序都是：修改ino、接线烧录、拔线、启动PC端、观察结果，某次执行不对还得重复这个流程。</li>
 <li>bug难以调试。当软件出问题时，可以很方便的查文档、debug去解决；但硬件层面的bug并不是能轻易解决的，如某个模块内部的一个电路被击穿了，供电电压不够导致模块不稳定而烧坏，或者是不小心把某个线路弄坏了。这种硬件问题对计算机专业的人来说很难准确定位和解决。如上次调试了好久的bug，以为是驱动问题，代码问题，库依赖问题，最后才发现只是那个蓝牙模块坏了。</li>
 <li>烧钱。承接第一个缺陷，蓝牙模块坏了是个大问题，根本不知道如何维修别人集成好的电路。因质量问题、电子元件寿命、错误操作等多个原因都可能导致模块损坏，甚至是快递的途中颠簸坏了，都会导致金钱白白的流失。而软件开发则不要钱(当然是选择免费工具)，且不会因误操作和寿命问题导致软件损坏，大不了更新嘛。</li>
 <li>也是最重要的一点，我没学过电路、模电、电磁场等专业课。所以我只适合开发软件，硬件对我来说到处都是知识盲区。</li>
@@ -325,19 +326,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\11\16\A-Beautiful-PyQt5-Interface\" rel="bookmark">一个好看通用的PyQt5界面</a></div>
+      <div class="popular-posts-title"><a href="\2018\05\22\C51\" rel="bookmark">DIY智能小车——超声波与液晶显示</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\01\NCSTModel\" rel="bookmark">华北理工大学数学建模协会竞赛信息管理软件</a></div>
+      <div class="popular-posts-title"><a href="\2018\05\23\c511\" rel="bookmark">DIY智能小车——寻迹与马达</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
+      <div class="popular-posts-title"><a href="\2018\05\25\c513\" rel="bookmark">DIY智能小车——PWM调速与产品问世</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\06\pyqt5-basic\" rel="bookmark">PyQt5的基本控件整理</a></div>
+      <div class="popular-posts-title"><a href="\2018\05\24\c512\" rel="bookmark">DIY智能小车——手机蓝牙</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
+      <div class="popular-posts-title"><a href="\2020\04\23\reverse-radar-hardware\" rel="bookmark">倒车雷达(二)：硬件搭建</a></div>
     </li>
   </ul>
 
@@ -383,7 +384,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/GUI/" rel="tag"># GUI</a>
+              <a href="/tags/microcomputer/" rel="tag"># microcomputer</a>
           </div>
 
         
@@ -400,7 +401,10 @@
     <a href="/2020/04/11/dynamic-programming/" rel="prev" title="动态规划问题系列">
       <i class="fa fa-chevron-left"></i> 动态规划问题系列
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/23/reverse-radar-hardware/" rel="next" title="倒车雷达(二)：硬件搭建">
+      倒车雷达(二)：硬件搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -477,7 +481,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">99</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -531,12 +535,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">378k</span>
+    <span title="站点总字数">385k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:44</span>
+    <span title="站点阅读时长">5:50</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
