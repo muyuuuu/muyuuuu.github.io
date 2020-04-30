@@ -2828,7 +2828,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p><code>git add .</code><br><code>git commit -m &#39;include some information&#39;</code> 增加修改信息，一定要修改，否则会失效<br><code>git push</code> 即可完成修改</p>
 <h2 id="最终结果"><a href="#最终结果" class="headerlink" title="最终结果"></a>最终结果</h2><p><a href="https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface" target="_blank" rel="noopener">https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface</a></p>
 <h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>可能这只是暂时的用法，至少目前我还分不清branch还有master的概念，也没有和其他人一起开发大项目的经验，日后可能会作出改变，甚至是一些观念，多走几步看看。就像昨天我还不会用git，但是今天来看，上述的命令我已经记住和熟练使用了。谁知道呢。</p>
-<h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>今日，仔细研读了一番<code>Git</code>的使用方法(<del>人傻就要多学习</del>)，又有了新的收获，遂整理如下(指令的速查手册)。当然，多动手实践才是硬道理。</p>
+<h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>今日，仔细研读了一番<code>Git</code>的使用方法(<del>人傻就要多学习</del>)，又有了新的收获，遂整理如下(指令的速查手册)。当然，多动手实践才是硬道理。<strong>纸上得来终觉浅，绝知此事要躬行。</strong></p>
 <p><code>Github</code>是<code>Git</code>托管的一种网页端的服务，<code>Git</code>是一种版本管理神器，即使不用<code>Github</code>，也可以考虑使用<code>Git</code>管理自己的代码和文件。管理的好处？太多了：</p>
 <ul>
 <li>是不是遇到过文件忽然丢失，想恢复但恢复不了？<code>Git</code>管理起来就没这个烦恼；</li>
@@ -2854,8 +2854,8 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <h2 id="更改提交"><a href="#更改提交" class="headerlink" title="更改提交"></a>更改提交</h2><ul>
 <li><code>git reset</code> 回溯历史版本。借助分散仓库(每个人都可以<code>fork</code>，修改自己的仓库不会影响他人的仓库)的优势，可以不影响其他仓库的前提下对历史版本进行操作。根据累计提交的历史记录，可根据目标时间点的哈希值回溯到指定状态，<code>git reset --hard hashvalue</code></li>
 <li><code>git reflog</code>推进历史。即发现回溯过头，可以用<code>git reflog</code>查看操作日志，找出历史时间点的哈希值，<code>git reset --hard hashvalue</code>即可。就像给定一个时间机器的各个时间点，可自由穿梭。这些时间点来源于每次的<code>git commit</code>。</li>
-<li><code>git commit --amend</code>，修改上次提交的内容。</li>
-<li><code>git rebase -i</code> 压缩历史，第一次<code>git commit</code>提交功能代码，第二次<code>git commit</code>修改了其中文件的错别字等小错误。将修改的提交和上次提交的两次提交合并为一次提交，此时<code>gir rebase -i HEAD-2</code>会选定当前分支最新提交和上次提交，删除第二次<code>commit</code>的哈希值，保存并退出。此时第二次提交从历史中抹去，第一次提交的哈希值也会更改。</li>
+<li><code>git commit --amend</code>，修改上次提交的内容。如第一次<code>commit</code>时<code>commen</code>填写错误，执行本命令即可。</li>
+<li><code>git rebase -i</code> 压缩历史，第一次<code>git commit</code>提交功能代码，第二次<code>git commit</code>修改了其中文件的错别字等小错误。将修改的提交和上次提交的两次提交合并为一次提交，此时<code>git rebase -i HEAD~2</code>会选定当前分支最新提交和上次提交，删除第二次<code>commit</code>的哈希值，保存并退出。此时第二次提交从历史中抹去，第一次提交的哈希值也会更改。（然后<code>git push -f origin master</code>，<code>origin</code>代表远程仓库标识名，<code>master</code>表示要推送的分支）</li>
 </ul>
 <h2 id="远程仓库使用"><a href="#远程仓库使用" class="headerlink" title="远程仓库使用"></a>远程仓库使用</h2><p><code>Github</code>是<code>Git</code>托管的一种服务，将本地的<code>Git</code>仓库在远程展示。</p>
 <h3 id="推送"><a href="#推送" class="headerlink" title="推送"></a>推送</h3><ol>
