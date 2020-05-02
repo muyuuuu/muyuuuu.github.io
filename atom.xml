@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2020-04-27T08:03:47.515Z</updated>
+  <updated>2020-05-02T08:25:25.382Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Github灵魂：pull-request</title>
+    <link href="https://muyuuuu.github.io/2020/05/02/pull-request/"/>
+    <id>https://muyuuuu.github.io/2020/05/02/pull-request/</id>
+    <published>2020-05-02T08:13:38.000Z</published>
+    <updated>2020-05-02T08:25:25.382Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p><a href="https://muyuuuu。github。io/2019/11/16/git-use/">承接上文</a>，人傻就要多学习系列，在记录完<code>git</code>的常用方法后，又学习了<code>github</code>的灵魂功能<code>pull request</code>，是团队开发和开源必不可少的工具。</p><p>同样，本文没有任何截图，都是文字阐述，更像是我的个人笔记。对纯小白不是很友好，若不喜欢这类形式可以选择性关闭。</p><a id="more"></a><h1 id="Pull-Request"><a href="#Pull-Request" class="headerlink" title="Pull Request"></a>Pull Request</h1><p><code>Pull Request</code>(以下简称<code>pr</code>)是自己修改源代码后，请求对方仓库采纳该修改方式时的一种行为，能更好的实现多人开发。</p><p>如发现了一个软件的<code>BUG</code>并修改后，在<code>github</code>上发送了<code>pr</code>，接收方的仓库会创建一个附带源代码的<code>issue</code>，在这个<code>issue</code>里详细记录内容。发送过去的<code>pr</code>是否被采纳，要由接收方的管理者进行判断。如果被接收，<code>pr</code>的发起者就会变成这个项目的<code>contributor</code>，也就变成了开源软件的贡献者。</p><h2 id="发送pr"><a href="#发送pr" class="headerlink" title="发送pr"></a>发送<code>pr</code></h2><h3 id="发送前的准备"><a href="#发送前的准备" class="headerlink" title="发送前的准备"></a>发送前的准备</h3><ul><li><code>fork</code>:在对方的仓库中点击<code>fork</code>按钮，然后会发现自己的仓库中也有了对应的仓库。(当然也可以不用进行<code>fork</code>，假设团队的成员对仓库都有编辑的权限时，可以免去<code>fork</code>这一步骤)</li><li><code>clone</code>:复制自己<code>fork</code>仓库的<code>URL</code>，建议以<code>SSH</code>协议将仓库克隆到本地仓库中。此时修改仓库内容并<code>push</code>，只会修改自己的仓库，不会修改他人的仓库，这也是<code>github</code>的一大优势。</li><li><code>branch</code>:创建特性分支然后在分支中修改代码，这是个好习惯。因为在给对方仓库<code>pr</code>时都是发送特性分支，这样对方仓库就能根据分支来更好的理解代码的意图。如修改错别字分支，那么就<code>git branch typo</code>。</li><li><code>git branch -a</code>查看分支，开头带有<code>remotes/origin/</code>的是<code>github</code>端仓库的分支。</li><li>在修改完代码后，提交修改。<code>git add filename</code> 还有<code>git commit -m &quot;comment&quot;</code>。</li><li>要从<code>github</code> 发送<code>pr</code>，<code>github</code>仓库端必须有一个包含了修改代码后的分支，所以就创建本地<code>typo</code>分支的远程分支，<code>git push origin typo</code>即可。</li></ul><h3 id="发送期间"><a href="#发送期间" class="headerlink" title="发送期间"></a>发送期间</h3><p>登录<code>github</code>并切换到<code>typo</code>分支，确认发送的内容准确无误后，点击<code>create pull request</code>，然后在表单中填写本次<code>pr</code>的理由和改进即可。</p><p>再次确认无误后，点击<code>send pull request</code>，这样，<code>pr</code>的目标仓库就会新建<code>pr</code>和<code>issue</code>，至于对方仓库接收与否，还得看仓库原作者的想法了。</p><h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>在程序的开发过程中，<code>pr</code>是对软件实现和功能探讨的好方法。当然更建议的是不要写完代码在<code>pr</code>，而是可以尽早的<code>pr</code>获得反馈，统一大家的开发思路，提高代码质量。否则一声不吭的写完并<code>pr</code>后，会导致一个功能开发完毕后才能得到修正，甚至要大幅度改变代码，很浪费经历。</p><p>所以，只想要发起讨论的时候<code>pr</code>即可，不必等代码有所实现。即使对某个正在开发的功能提供简短的伪代码让大家有个印象，也能获得不少反馈。如被他人指正自己没注意到的小错误，或功能的修改意见，或已经有他人实现的代码等，能让自己避免浪费不必要的精力。这种边审查边开发的过程，比开发完在审查高效的多。</p><p>但需要注意的是，在发送的一个<code>pr</code>或者<code>issue</code>中，不要讨论无关的东西，当需要讨论另外的内容时，重新开一个<code>pr</code>即可。</p><h3 id="仓库的维护"><a href="#仓库的维护" class="headerlink" title="仓库的维护"></a>仓库的维护</h3><p>当然在<code>fork</code>和<code>clone</code>后想修改代码，但因某些不可避免的原因搁置了。而远程仓库一直在开发，则此时本地的仓库和远程的最新仓库难免有很多不同之处，所以要让本地的仓库保持最新的状态:</p><ul><li>首先给目标仓库设置一个名称，这里叫上游<code>upstream</code>，<code>git remote add upstream git://github.com/user/repo.git</code>作为远程仓库。</li><li>然后<code>git fetch upstream</code>就能从远程仓库获取最新的代码，将<code>upstream/master</code>分支与当前分支合并，以此来获取远程仓库的最新状态。</li></ul><h2 id="接收pr"><a href="#接收pr" class="headerlink" title="接收pr"></a>接收<code>pr</code></h2><p>接收到他人发送的<code>pr</code>后，点击即可查看详细内容，在检测完他人发送<code>pr</code>的代码准确无误后，点击<code>merge pull request</code>按钮就会将内容自动合并到仓库的主分支。</p><h3 id="接收前的准备"><a href="#接收前的准备" class="headerlink" title="接收前的准备"></a>接收前的准备</h3><ul><li>审查代码，对代码作出必要的注释和评论，点击代码左侧的<code>+</code>号即可。</li><li>将<code>pr</code><strong>接收方</strong>的仓库<code>clone</code>到本地(不要操作原有的仓库)，如果已经克隆，可以<code>git pull</code>获取最新状态。</li><li>然后获取<code>pr</code><strong>发送方</strong>的仓库，设置为本地仓库的远程仓库:<code>git remote add pr-sender git@github.com:pr-sender/repo.git</code>，并<code>git fetch</code>合并。</li><li>创建用于检测的分支<code>test</code>，将<code>fetch</code>完的分支和<code>test</code>分支合并，这样<code>test</code>分支就捕获了他人发送<code>pr</code>的分支。</li><li>检查代码无误后<code>git branch -D test</code>删除此分支即可。</li><li>确认无误后，进入浏览器，点击<code>merge pull request</code>即可，自动合并仓库，仓库的<code>pr</code>会自动从<code>open</code>变为<code>close</code>。</li></ul><h3 id="注意事项-1"><a href="#注意事项-1" class="headerlink" title="注意事项"></a>注意事项</h3><ul><li>无法运行的代码不要合并到仓库;</li><li>不要发布错误的不能运行的代码;</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;a href=&quot;https://muyuuuu。github。io/2019/11/16/git-use/&quot;&gt;承接上文&lt;/a&gt;，人傻就要多学习系列，在记录完&lt;code&gt;git&lt;/code&gt;的常用方法后，又学习了&lt;code&gt;github&lt;/code&gt;的灵魂功能&lt;code&gt;pull request&lt;/code&gt;，是团队开发和开源必不可少的工具。&lt;/p&gt;
+&lt;p&gt;同样，本文没有任何截图，都是文字阐述，更像是我的个人笔记。对纯小白不是很友好，若不喜欢这类形式可以选择性关闭。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="Computer" scheme="https://muyuuuu.github.io/tags/Computer/"/>
+    
+  </entry>
   
   <entry>
     <title>倒车雷达(三)：动画制作</title>
@@ -467,30 +489,6 @@
     
     
       <category term="DataStructure" scheme="https://muyuuuu.github.io/tags/DataStructure/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>华北理工大学数学建模协会竞赛信息管理软件</title>
-    <link href="https://muyuuuu.github.io/2020/02/01/NCSTModel/"/>
-    <id>https://muyuuuu.github.io/2020/02/01/NCSTModel/</id>
-    <published>2020-01-31T16:00:58.000Z</published>
-    <updated>2020-02-06T04:34:51.876Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>耗时4个月<del>主要是我懒老拖着</del>，终于大概算写完了这款软件吧，也是我第一次写这么大的软件。从入门学习GUI，到自己写，到数据库，到部署，到处都是知识盲区，<del>主要是自己太垃圾了</del>。</p><p><img data-src="/2020/02/01/NCSTModel/1.jpg" alt></p><p>部署服务器，反向代理，防火墙开放端口，数据库操作，自动化测试，系统日志等等等等，一切对我来说都是茫然的，自己还很菜，要走的路还很长。事实证明，参加比赛之后，还是要回归工程，学以致用，大学专业课的知识还是有用的啊。如计算机网络，如数据库等，很遗憾我学的并不好，都是后期现学现查。</p><p>此项目的代码都在github上，是我的私人仓库，如果你想继续本软件的开发(<code>pyqt5+sqlalchemy+alembic</code>)，可以联系我，到时候在邀请你。</p><a id="more"></a><p>当然，如果你只是本博客的游客，只是单纯的想问下我这个软件的某些功能如何实现，留言或邮箱均可，我也可以告诉你。实在不便开源代码，望理解。</p><h1 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h1><p>同样，本软件也存在缺点，如下：</p><p><img data-src="/2020/02/01/NCSTModel/2.jpg" alt></p><p>可以集成<code>Matplotlib, pyqtgraph, pyecharts</code>等可视化工具在软件中进行简单的分析，奈何我太菜，写不出来。</p><h1 id="软件介绍"><a href="#软件介绍" class="headerlink" title="软件介绍"></a>软件介绍</h1><p>这里是华北理工大学数学建模协会制作的竞赛信息管理软件version 1.0。</p><h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><h2 id="确认身份界面"><a href="#确认身份界面" class="headerlink" title="确认身份界面"></a>确认身份界面</h2><p>选择自己是管理员还是游客，只能二选一，且选择管理员后，需要账号和密码登录。</p><p><img data-src="/2020/02/01/NCSTModel/3.jpg" alt></p><h2 id="登录界面"><a href="#登录界面" class="headerlink" title="登录界面"></a>登录界面</h2><p>输入账号和密码进行登录，超级管理员解锁信息管理和录入信息两个界面，普通管理员解锁录入信息界面，外来游客不可进行信息管理和信息录入。当然，胡乱的输入肯定不行：</p><p><img data-src="/2020/02/01/NCSTModel/4.jpg" alt></p><h2 id="信息管理界面"><a href="#信息管理界面" class="headerlink" title="信息管理界面"></a>信息管理界面</h2><p>由超级管理员负责管理，负责维护竞赛信息等。超级管理员的账号以<code>@admin</code>结尾，解锁所有权限，可删除除<code>wuyuhang@admin</code>外的所有账号。</p><p><img data-src="/2020/02/01/NCSTModel/5.jpg" alt></p><p>普通管理员只解锁录入信息界面，不解锁信息管理界面。</p><p><img data-src="/2020/02/01/NCSTModel/6.jpg" alt></p><p>所以在注册普通管理员时，不要以此结尾，进行普通注册即可，如账号：<code>201614420112</code>，密码：<code>123456</code>。</p><ul><li>账号管理：超级管理员的账号最长为20位，管理员帐号最长20位，密码最长20位，账号不能重复。</li><li>教师管理：工号唯一，不能重复。</li><li>学院专业管理：输入专业时，左侧一定要有学院名，否则会报错，因为不知道该专业是哪个学院的。</li><li>竞赛管理：竞赛名称唯一，不能重复。</li></ul><p><img data-src="/2020/02/01/NCSTModel/7.jpg" alt></p><h2 id="录入信息界面"><a href="#录入信息界面" class="headerlink" title="录入信息界面"></a>录入信息界面</h2><p>负责录入学生比赛记录、删除记录等。</p><ul><li>建模博客：录入后会展示在建模博客界面。</li><li>录入比赛：录入单条学生信息。</li><li>删除信息：输入学生的学号，得到要删除的记录号，输入要删除的记录号即可删除。（因一个学生会参加多个比赛，学号会重复，所以不能按学号进行删除）。</li><li>快速录入：待完成。</li></ul><p>删除比赛场景：</p><p><img data-src="/2020/02/01/NCSTModel/8.jpg" alt></p><p>录入单条比赛，你是谁，学号，专业，性别，教师，获奖名，获奖级别，何时参赛，何时获奖都会录入。</p><p><img data-src="/2020/02/01/NCSTModel/9.jpg" alt></p><h2 id="查询信息界面"><a href="#查询信息界面" class="headerlink" title="查询信息界面"></a>查询信息界面</h2><ul><li>导出数据：超级管理员可以按时间、比赛为索引，选择全部比赛或部分比赛，导出<code>csv</code>格式的文件。</li><li>其他所有人员可按教师查询和按学生查询。</li></ul><p>导出CSV文件：</p><p><img data-src="/2020/02/01/NCSTModel/10.jpg" alt></p><p>按教师查询：</p><p><img data-src="/2020/02/01/NCSTModel/11.jpg" alt></p><h2 id="建模博客界面"><a href="#建模博客界面" class="headerlink" title="建模博客界面"></a>建模博客界面</h2><p>收录建模学子自己手动搭建的博客，不收录CSDN、知乎、博客园、简书等依赖第三方平台搭建的博客，无技术门槛，不值得收录。</p><p>点击后调用系统浏览器打开，建议使用<code>chrome</code>或<code>firefox</code>。</p><p><img data-src="/2020/02/01/NCSTModel/12.jpg" alt></p><h2 id="个人空间界面"><a href="#个人空间界面" class="headerlink" title="个人空间界面"></a>个人空间界面</h2><p>预留的组队信息、个人展示接口，暂时未开放。</p><h2 id="退出界面"><a href="#退出界面" class="headerlink" title="退出界面"></a>退出界面</h2><p>退出软件。</p><h1 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h1><p>由<code>pyinstaller</code>打包，暂时只支持windows系统64位。</p><p><a href="https://github.com/muyuuuu/NCST-MMA-Contest-Management-System-Public/releases" target="_blank" rel="noopener">NCSTModel软件下载</a></p><p>先准备测试，第一次开发软件，没有人带也没有公司开发的经验。不知道怎么配置合适，也不知道如何妥善的收尾，不知道需要生成哪些配置文件，不知道需要记录哪些日志文件，也不知道怎么优化体验等等等等，有问题请及时提供有效的反馈，毕业之前有时间的话，我会修改的。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;耗时4个月&lt;del&gt;主要是我懒老拖着&lt;/del&gt;，终于大概算写完了这款软件吧，也是我第一次写这么大的软件。从入门学习GUI，到自己写，到数据库，到部署，到处都是知识盲区，&lt;del&gt;主要是自己太垃圾了&lt;/del&gt;。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/2020/02/01/NCSTModel/1.jpg&quot; alt&gt;&lt;/p&gt;
-&lt;p&gt;部署服务器，反向代理，防火墙开放端口，数据库操作，自动化测试，系统日志等等等等，一切对我来说都是茫然的，自己还很菜，要走的路还很长。事实证明，参加比赛之后，还是要回归工程，学以致用，大学专业课的知识还是有用的啊。如计算机网络，如数据库等，很遗憾我学的并不好，都是后期现学现查。&lt;/p&gt;
-&lt;p&gt;此项目的代码都在github上，是我的私人仓库，如果你想继续本软件的开发(&lt;code&gt;pyqt5+sqlalchemy+alembic&lt;/code&gt;)，可以联系我，到时候在邀请你。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="GUI" scheme="https://muyuuuu.github.io/tags/GUI/"/>
     
   </entry>
   
