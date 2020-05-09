@@ -20,31 +20,33 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Just for Life.">
-<meta property="og:url" content="https://muyuuuu.github.io/page/15/index.html">
+  <meta name="description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
+<meta name="keywords" content="Algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="更通俗的理解熵">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/05/09/entropy/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
+<meta property="og:description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-05-09T09:46:09.781Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Just for Life.">
-<meta name="twitter:description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
+<meta name="twitter:title" content="更通俗的理解熵">
+<meta name="twitter:description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/page/15/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/05/09/entropy/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Just for Life.</title>
+  <title>更通俗的理解熵 | Just for Life.</title>
   
 
 
@@ -217,11 +219,11 @@
             
 
   <div class="posts-expand">
-        
+      
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2018/05/22/C51/">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/05/09/entropy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -233,10 +235,9 @@
       <meta itemprop="name" content="Just for Life.">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/22/C51/" class="post-title-link" itemprop="url">DIY智能小车——超声波与液晶显示</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          更通俗的理解熵
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -244,24 +245,23 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2018-05-22 23:53:06" itemprop="dateCreated datePublished" datetime="2018-05-22T23:53:06+08:00">2018-05-22</time>
+              <time title="创建时间：2020-05-09 07:11:45 / 修改时间：17:46:09" itemprop="dateCreated datePublished" datetime="2020-05-09T07:11:45+08:00">2020-05-09</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-23 16:07:57" itemprop="dateModified" datetime="2020-04-23T16:07:57+08:00">2020-04-23</time>
-              </span>
 
-          <br>
+          
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.8k</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -280,324 +280,176 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这是我的第一篇小博客～本人正在参加电子设计竞赛的校赛，想起了多年前，啊呸，一年前学过的51单片机，自从学完后就放到了箱底被我冷落，今日重新拿起板子，既然学了，就要做点东西，学以致用嘛~（话说markdown写博客还真是爽~）</p>
-<p>主要实现了以下的功能：</p>
-<ul>
-<li>超声波HCSR-04实现避障功能 </li>
-<li>1602液晶显示与障碍物的距离 </li>
-<li>自动避障 </li>
-<li>寻迹（手机端控制是否进入寻迹模式） </li>
-<li>调速（没用中断，自己写的PWM波形函数） </li>
-<li>手机蓝牙控制（前进、后退、加速、减速等）</li>
-</ul>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
+        <p>时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：</p>
+<ol>
+<li>什么是熵</li>
+<li>条件熵</li>
+<li>KL散度</li>
+<li>交叉熵</li>
+</ol>
+<p>注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。</p>
+<a id="more"></a>
+<h1 id="什么是熵"><a href="#什么是熵" class="headerlink" title="什么是熵"></a>什么是熵</h1><p>首先，仅需要知道熵能够衡量信息的不确定性即可。一条信息的价值和他的不确定性有密切的关系，如：明天下雨的概率是1%和明天下雨的概率是99%这两条信息的价值是不一样的。不清楚事物的不确定性时，决策时出错的概率就越大；相反，通过自己逐步抽丝剥茧搞清了一个事物的本质，那么他的不确定性就为0，决策就不可能出错。那么如何衡量事物的不确定性呢？答案就是熵。</p>
+<p>假设此时有32个盒子，31个盒子里是白球，1个盒子里是黑球。假设让人<strong>用二分法</strong>来猜测黑球在哪个盒子里，猜一次1块钱，只需要5次就能猜中$(\log_232=5)$，那么这个信息值5块钱。当然信息的不确定性不能用钱来衡量，香农给出的定义是：<br>\begin{equation}<br>H = -(p_1\log p_1 + p_2\log p_2 + \cdots+p_n\log p_n), n=32<br>\end{equation}</p>
+<p>$p_i$为黑球在第$i$个盒子里的概率，$H$即为信息熵，且此时的熵恰好为5。在通俗一点，对于一个随机变量$X$，它的熵定义如下：</p>
+<p>\begin{equation}<br>H = \sum_{x\in X}P(x)\log P(x)<br>\end{equation}</p>
+<p><strong>变量的不确定性越大，熵也就越大</strong></p>
+<h1 id="条件熵"><a href="#条件熵" class="headerlink" title="条件熵"></a>条件熵</h1><p>信息的作用在于消除不确定性，根据相关的信息来减少另外信息的不确定性。如：A想明天邀请B来做客，但不知道B有没有时间，此时的信息由不确定性因素，但A此时得到了一条消息：B出门旅游了，那么A就不必在明天邀请B反而可以去做一些别的事情。</p>
+<p>这就是利用其他信息来减少不确定性，知道的相关信息越多，一件事的不确定性就越小。那么如何用数学语言描述呢？</p>
+<p>假设两个随机变量$X, Y$，$X$是我们了解的，可以根据$X$的分布来求出$X$的熵：</p>
+<p>\begin{equation}<br>H(X) = -\sum_{x\in X}P(x)\log P(x)<br>\end{equation}</p>
+<p>而此时恰好知道$X,Y$的联合分布$p(x,y)$和条件概率分布$p(x|y)$，定义$X$在$Y$下的熵为：</p>
+<p>\begin{equation}<br>H(X|Y) = -\sum_{x\in X, y \in Y}P(x, y)\log P(x|y)<br>\end{equation}</p>
+<p>此时便可以得到互信息$I(X;Y)$:</p>
+<p>\begin{equation}<br>H(X)-H(X|Y) = I(X;Y) = H(Y)-H(Y|X) = H(X)+H(Y)-H(X,Y)<br>\end{equation}</p>
+<p>\begin{equation}<br>I(X;Y) = \sum_{x\in X, y\in Y}P(x,y)\log{\frac{P(x,y)}{P(x)P(y)}}<br>\end{equation}</p>
+<p>互信息一定是大于等于0，当互信息为0时，表明$\frac{P(x,y)}{P(x)P(y)} = 1$，此时$P(x,y)=P(x)P(y)$，表明了随机变量$X,Y$相互独立。可见，只有两个信息相关时，才可以有效降低当前信息的不确定性。如明天是否下雨这个信息和小明今晚出去购物这两条信息是没有任何相关性的，他们的互信息为0。</p>
+<p>借鉴这个思路，在2019年美国大学生数学建模竞赛的C题中，成功分析了主要是哪些人群在吸毒，合理提出建议。即吸毒人口的熵减去各种身份吸毒人口的熵，单亲家庭、残疾人员等，得到互信息，互信息越大，说明相关性越高，互信息越小则说明两者完全无关。</p>
+<h1 id="KL散度"><a href="#KL散度" class="headerlink" title="KL散度"></a>KL散度</h1><p>KL 散度可以用来衡量两个分布的差异。在深度学习中，我们经常会将一个复杂的分布用一个简单的近似分布来代替。KL 散度可以帮助我们测量在选择一个近似分布时丢失的信息量。</p>
+<p>对于离散型随机变量$X$，假设原概率分布为$P(x)$，近似概率分布为$Q(x)$，则使用 KL 散度衡量这两个分布的差异：</p>
+<p>\begin{equation}<br>KL(P||Q)=\sum_{x\in X}P(x)\log (P(x)-Q(x))<br>\end{equation}</p>
+<p>对于$P(x)-Q(x)$这一项，可以理解为如果我们使用 $Q$ 的编码来表示 $P$ 额外所需的编码长度。当然，也许你一眼就看出来了，这不就是在求期望嘛，改写一下看起来更直观：</p>
+<p>\begin{equation}<br>KL(P||Q)=E_{x\sim P}[\log (P(x)-Q(x))]<br>\end{equation}</p>
+<p>对于连续型变量，我们对概率密度函数求积分即可(假设随机变量$X$的取值范围是$[-\infty, +\infty]$)：</p>
+<p>\begin{equation}<br>KL(P||Q)=\int_{-\infty}^{+\infty}p(x)\log{\frac{p(x)}{q(x)}}dx<br>\end{equation}</p>
+<h1 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h1><p>交叉熵(也有人叫相对熵)也可以用来衡量两个分布的差异。以离散型变量 $x$ 为例，交叉熵$H(P,Q)$的定义如下：</p>
+<p>\begin{equation}<br>H(P,Q)=-\sum_{x\in X} P(x)\log Q(x)<br>\end{equation}</p>
+<p>当然也可以写成期望的形式：$-E_{x\sim P}\log Q(x)$，也许你善于观察，肯快发现了交叉熵与KL散的联系(公式推导较为简单，不在展示)：</p>
+<p>\begin{equation}<br>H(P,Q) = H(P) + KL(P||Q)<br>\end{equation}</p>
+<p>在机器学习评价两个分布之间的差异时，由于分布 $P$ 会是给定的（如测试样本的标签值），所以此时 KL 散度和交叉熵的作用其实是一样的，而且因为交叉熵少算一项，更加简单，所以选择交叉熵会更好。交叉熵也有以下的性质：</p>
+<ol>
+<li>对于两个完全相同的函数，它们的交叉熵等于零。</li>
+<li>交叉熵越大，两个函数差异越大；反之，交叉熵越小，两个函数差异越小。</li>
+</ol>
+<h1 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h1><p>也许说了一大堆你还是不明白，那么在这里举例说明。</p>
+<h2 id="信息熵"><a href="#信息熵" class="headerlink" title="信息熵"></a>信息熵</h2><p>还是那个例子，32个箱子，31个箱子里是白球，1个箱子里是黑球，你用二分法去摸球，直到摸到黑球位置，此时摸球次数的随机变量$X$为：</p>
+<script type="math/tex; mode=display">H(X)=-32\times \frac{1}{32} \times \log_2(\frac{1}{32})=5</script><h2 id="条件熵-1"><a href="#条件熵-1" class="headerlink" title="条件熵"></a>条件熵</h2><p>根据以下的表格，对于第一列上班族，上班族的随机变量为$X$，且1表示上班，那么上班族的熵$H(X)=0.589$。对于第二列上班族的年龄，年龄在区间内$[0,20]$为0，年龄在区间$[20, 100]$内为1，那么年龄这列的熵$H(Y)$为0.589。互信息$I(X;Y)$(自行手动按照公式计算即可)为0.42，表明两者上班的人和上班的人的年龄之间有一定的相关性。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>上班族$X$</th>
+<th>上班族的年龄$Y$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="交叉熵-1"><a href="#交叉熵-1" class="headerlink" title="交叉熵"></a>交叉熵</h2><p>对于两个序列：$P(x)$为<code>0, 1, 0, 1, 0, 1</code>，$Q(x)$为<code>0, 1, 0, 1, 0, 0</code>，两者的交叉熵为</p>
+<script type="math/tex; mode=display">H(P,Q)=-(P(X=1)\log Q(X=1) + P(X=0) \log Q(X=0))=\frac{1}{2}\log \frac{9}{2}</script><p>而$Q(x)$为<code>1, 2, 2, 1, 2, 0</code>时的交叉熵为$H(P,Q)=\frac{1}{2}\log 18$，自然是前者较小，表明了$Q(x)$的第一个分布和原始分布$P(x)$较为接近。KL的计算同理，不再过多展示。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上。</p>
+<ol>
+<li>《数学之美(第二版)》第六章：信息的度量和作用</li>
+<li>互信息公式推导：<a href="https://www.cnblogs.com/gatherstars/p/6004075.html" target="_blank" rel="noopener">https://www.cnblogs.com/gatherstars/p/6004075.html</a></li>
+<li>KL散度与交叉熵：<a href="https://www.cnblogs.com/wuliytTaotao/p/9713038.html" target="_blank" rel="noopener">https://www.cnblogs.com/wuliytTaotao/p/9713038.html</a></li>
+</ol>
+
     </div>
 
     
     
     
       
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\03\30\KDE-cluster\" rel="bookmark">核密度聚类</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\04\02\adaboost\" rel="bookmark">提升方法（上）——基于AdaBoost：SAMME</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\02\14\autocell\" rel="bookmark">元胞自动机——万物皆可模拟</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\05\19\search-engine\" rel="bookmark">编程与数学的结晶：从数据结构到搜索引擎</a></div>
+    </li>
+  </ul>
 
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+        <div class="reward-container">
+  <div>明人不说暗话，如果你感觉我写的还可以对你有帮助的话，Could you buy me a yogurt？ ，文末也可评分。如果这样不行的话，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
 
         
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2016/12/09/bohai/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
-    </span>
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Just for Life.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/12/09/bohai/" class="post-title-link" itemprop="url">环渤海骑行</a>
-        </h2>
+    <div class="social-list">
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-12-09 22:52:12" itemprop="dateCreated datePublished" datetime="2016-12-09T22:52:12+08:00">2016-12-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-02 17:49:59" itemprop="dateModified" datetime="2020-02-02T17:49:59+08:00">2020-02-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/海/" itemprop="url" rel="index"><span itemprop="name">海</span></a>
-                </span>
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
             </span>
 
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>461</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
+            <span class="label">RSS</span>
+          </a>
         </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>经过大海时，眼望着海水与天相接的地方，天是那样低，水是那样蓝，蓝蓝的海水就荡漾在心里，心跳缓缓的，悠悠的，有一种说不出的舒畅与宁静，心中就像没有云彩的天空一片，宽了、静了，渐渐的觉得没有烦恼的世界是多么美妙，广阔海洋和蓝天下的肆无忌惮。</p>
-<p>以此记录那些年曾环渤海骑行40公里，路在脚下，风景在眼中。</p>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
     </div>
+  </div>
 
-    
-    
-    
-      
 
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
 
         
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2016/07/29/highschool/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Just for Life.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/29/highschool/" class="post-title-link" itemprop="url">残存的高中回忆</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-29 22:10:54" itemprop="dateCreated datePublished" datetime="2016-07-29T22:10:54+08:00">2016-07-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-02-17 22:40:55" itemprop="dateModified" datetime="2019-02-17T22:40:55+08:00">2019-02-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/残存的高中回忆/" itemprop="url" rel="index"><span itemprop="name">残存的高中回忆</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>293</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我应该是有过高中生活的，虽然很不愿意承认这一点。</p>
-<p>不知道当年为什么会如此的叛逆，会如此的浪费时间，也许我成了老师口中的反面教材吧。</p>
-<p>想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。</p>
-<p>一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。</p>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
     </div>
+  </div>
 
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
         
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2015/02/20/home/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活------爱读书------爱摄影   爱运动------爱睡觉------爱旅行">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Just for Life.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/02/20/home/" class="post-title-link" itemprop="url">故乡云水</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2015-02-20 23:10:07" itemprop="dateCreated datePublished" datetime="2015-02-20T23:10:07+08:00">2015-02-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-02 17:53:08" itemprop="dateModified" datetime="2020-02-02T17:53:08+08:00">2020-02-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/故乡云水/" itemprop="url" rel="index"><span itemprop="name">故乡云水</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>639</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>故乡位于太行山脉脚下，地区70%都是山区，我也在这个山城小镇里生活了足足18年。</p>
-<p>印象最深的只有了两次：</p>
-<ul>
-<li><p>一次是小时候，山间到处是花香，到处是鸟语，清澈的小溪随意的奔腾，那个时候天空很蓝，湖水很清。那个时候是小桥流水人家的生活，房子位于半山腰，山脚下就是小溪，溪水里有欢快的鱼儿，人们从山脚下饮水上山，水是能直接喝的，偶尔还能在水里发现几片花瓣，至少我小时候不知道什么是水垢，也不知道现代人喝水是要提前烧开的。</p>
-</li>
-<li><p>每当每月花儿盛开的时候，漫山遍野充满了赤橙黄蓝的颜色，鸟语生生伴随春雨阵阵，躲在屋檐下听雨的时光也一去不复回。还有花香，春风十里，十里都是沁人心脾的花香，空气也是甜的，后来闻惯了厚重的雾霾和都市气息，鼻子也不如以前。</p>
-</li>
-<li><p>每到夜晚就开始看星星，那是我见过最亮的星星，比现在看到的星星亮一百倍，小时候视力好，还能能看见惨淡的星河，飘来飘去的萤火虫，为宁静的夜色添加了动感的美丽。</p>
-</li>
-<li><p>另一次是冬季的大雪封山，雪花洋洋洒洒的落下，整个天地银装素裹，天地之间白茫茫一片，静的能听见自己的声音。</p>
-</li>
-</ul>
-<p>那个时候没有相机，没有手机，也没有拍下一张照片，只留下了回不去的回忆，在柏油路和旅游业的践踏下，故乡早已不是故乡。</p>
-<p>后来有了手机，拍下的也不是之前的故乡。故乡里的人们大多安分守己，无非种地与放羊，男人被认为是家里的支柱，女人被认为是传宗接代的工具，这的确是很早以前部分农村的真实写照。</p>
-<p>好在我足够幸运接受了教育，成为了当地为数不多的学生。至少要走出大山，去看看外面的世界也好，开阔眼界。</p>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/02/pull-request/" rel="prev" title="Github灵魂：pull-request">
+      <i class="fa fa-chevron-left"></i> Github灵魂：pull-request
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
@@ -605,15 +457,10 @@
 
   </div>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/14/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span>
-  </nav>
-
-
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -660,6 +507,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是熵"><span class="nav-number">1.</span> <span class="nav-text">什么是熵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件熵"><span class="nav-number">2.</span> <span class="nav-text">条件熵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#KL散度"><span class="nav-number">3.</span> <span class="nav-text">KL散度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#交叉熵"><span class="nav-number">4.</span> <span class="nav-text">交叉熵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#举例"><span class="nav-number">5.</span> <span class="nav-text">举例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#信息熵"><span class="nav-number">5.1.</span> <span class="nav-text">信息熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件熵-1"><span class="nav-number">5.2.</span> <span class="nav-text">条件熵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交叉熵-1"><span class="nav-number">5.3.</span> <span class="nav-text">交叉熵</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -965,6 +813,25 @@ window.addEventListener('pjax:success', () => {
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '4b369305c04082634e14354a3c0ef953',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
     </div>
 </body>
