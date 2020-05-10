@@ -317,7 +317,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 \begin{aligned} \Theta &=\underset{\Theta}{\arg \min } L_{1} \\ &=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right] \end{aligned}</script><h1 id="约束对抗"><a href="#约束对抗" class="headerlink" title="约束对抗"></a>约束对抗</h1><p>稍微思考一下，我们就发现，问题还没完。我们目前还没有对$D$做约束，不难发现，无约束的话Loss基本上会直接跑到负无穷去了～</p>
 <p>因此，有必要给$D$加点条件，一个比较容易想到的方案是约束$D$的范围，比如能不能给$D$最后的输出加个Sigmoid激活函数，让它取值在0到1之间？事实上这个方案在理论上是没有问题的，然而这会造成训练的困难。因为Sigmoid函数具有饱和区，一旦$D$进入了饱和区（很小的斜率导致梯度很小），就很难传回梯度来更新$G$了。</p>
 <p>最好加什么约束呢？我们应该尽可能从基本原理出发来找寻约束，尽量避免加入人工因素。我们回到距离的作用上来看：距离是为了表明两个对象的差距，而如果对象产生的微小的变化，那么距离的波动也不能太大，这应该是对距离基本的稳定性要求，“失之毫厘，谬以千里”是会产生浑沌的，数学模型不应该是这样。</p>
-<p>放到我们的D中，这个约束我们该怎么体现呢？假如某个样本不是$y<em>i$而是$y^1_i$，假设$∥y_i−y^1_i∥$（用两竖表示欧式距离，因为$y$可能是个多元向量）并不是十分大，那么会对分布造成一定的影响。这个影响有多大呢？显然不会大，因为分布是一批样本的统计特征，如果只是稍微改变了一个样本，那么分布的变化显然不能大的。而我们知道，分布的距离用$D$的均值$L$来描述，只改变一个$y_i$，所造成的分布差正比于:$\left|D\left(y</em>{i}, \theta\right)-D\left(y_{i}^{\prime}, \theta\right)\right|$，我们希望$y^1_i\to y_i$时，自然地就有$∥D(y_i,\Theta)−D(y^1_i,\Theta)∥\to 0$，怎么实现这一点呢？一个简单的方案是$D$满足以下约束：</p>
+<p>放到我们的D中，这个约束我们该怎么体现呢？假如某个样本不是$y_i$而是$y^1_i$，假设$∥y_i−y^1_i∥$（用两竖表示欧式距离，因为$y$可能是个多元向量）并不是十分大，那么会对分布造成一定的影响。这个影响有多大呢？显然不会大，因为分布是一批样本的统计特征，如果只是稍微改变了一个样本，那么分布的变化显然不能大的。而我们知道，分布的距离用$D$的均值$L$来描述，只改变一个$y_i$，所造成的分布差正比于:$\left|D\left(y_{i}, \theta\right)-D\left(y_{i}^{\prime}, \theta\right)\right|$，我们希望$y^1_i\to y_i$时，自然地就有$∥D(y_i,\Theta)−D(y^1_i,\Theta)∥\to 0$，怎么实现这一点呢？一个简单的方案是$D$满足以下约束：</p>
 <script type="math/tex; mode=display">
 \left\|D(y, \theta)-D\left(y^{\prime}, \theta\right)\right\| \leq C\left\|y-y^{\prime}\right\|</script><p>这就是数学中常见的Lipschitz约束。如果能够满足这个约束，那么距离就能满足稳定性要求。注意这是个充分条件，不是必要条件，也可以使用其他方案。但不得不说，这是个简单明了的方案。而使得函数$D$满足Lipschitz约束的一个充分条件就是：</p>
 <script type="math/tex; mode=display">
@@ -328,7 +328,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 \Theta=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right]+\frac{\lambda}{B} \sum_{i=1}^{B}\left(\left\|\frac{\partial D(y, \Theta)}{\partial y}\right\|_{y=\varepsilon_{i} y_{i}+\left(1-\varepsilon_{i}\right) z_{i}}-1\right)^{2}</script><p>这里的$\epsilon_i$是$U[0,1]$的随机数，这应该已经是我们“力所能及”的最优的方案了。</p>
 <p>最后，有人会反驳，梯度有上界，只不过是Lipschitz约束的充分条件，为啥不直接将Lipschitz约束以差分形式加入到惩罚中去呢？这时候惩罚是：</p>
 <script type="math/tex; mode=display">
-\Theta=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right]+\frac{\lambda}{B} \sum_{i=1}^{B}\left(\frac{\left|D\left(y_{i, 1}, \Theta\right)-D\left(y_{i, 2}, \Theta\right)\right|}{\left\|y_{i, 1}-y_{i, 2}\right\|}-1\right)^{2}</script><p>这里$y<em>{i,j}=\epsilon</em>{i,j}y<em>i+(1−\epsilon</em>{i,j})z_i$，也就是每步插值两次，然后用插值的结果算差分。</p>
+\Theta=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right]+\frac{\lambda}{B} \sum_{i=1}^{B}\left(\frac{\left|D\left(y_{i, 1}, \Theta\right)-D\left(y_{i, 2}, \Theta\right)\right|}{\left\|y_{i, 1}-y_{i, 2}\right\|}-1\right)^{2}</script><p>这里$y_{i,j}=\epsilon_{i,j}y_i+(1−\epsilon_{i,j})z_i$，也就是每步插值两次，然后用插值的结果算差分。</p>
 <p>通过本文，我们可以一气呵成地直达WGAN-GP，而不需要很多的历史知识和数学知识。有趣的是，我们的推导过程表明，WGAN-GP其实跟Wasserstein距离没有直接的联系，尽管当初WGAN的作者是从Wasserstein距离将它们推导出来的。</p>
 <h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><p>本来是想去<code>keras</code>官网找找代码的，可我实在是接受不了官网提供的又臭又长的破代码，就去<code>github</code>找了找看着舒服的。</p>
 <p>代码改天再说，似乎出了些问题，训练过程最后生成器全部都生成了0。我发誓这是我最后一次使用<code>Tensorflow</code>了，兼容性好差劲，官方文档改来改去。</p>
@@ -555,12 +555,12 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">401k</span>
+    <span title="站点总字数">403k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:05</span>
+    <span title="站点阅读时长">6:06</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

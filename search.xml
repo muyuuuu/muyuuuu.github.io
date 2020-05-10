@@ -6,9 +6,8 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>在之前的学习深度学习的过程中，以MLP为例，仅仅是知道了梯度下降和反向传播能很好的降低预测误差(本文暂且不谈论梯度消失和爆炸的问题)，使得训练出来的模型能够对未知的数据进行预测或者分类，以此来达到智能的目的。</p>
 <p>时至今日，意识到不求甚解释不好的行为，于是下决心搞懂梯度下降和反向传播的原理。结果上网一搜，呵，大部分tm的是各处偷来的截图，截图里还有三四个水印，最后胡乱的堆一些数学公式，讲解的并不够彻底，也不通俗易懂。于是本文决定图解反向传播和梯度下降，并配备必要的数学计算，使读者一目了然。</p>
 <a id="more"></a>
-<h1 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h1><p>我们先设一个简单的函数$y=3x^2+2x+1$，画出函数图像：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/1.png" alt></p>
-<p>假设此时$x=10$，那么$y=321$，我们想优化这个函数，即利用梯度下降的方式来求得$y$的最小值和对应的$x$的值。<del>为什么不求导直接算$y$的最小值？因为现实中的函数维度极度复杂，在复杂的函数空间内可能求不出来极小值点，这里只是用简单函数举例。</del>可以求出目标函数的导函数为：$y’=6x+2$。万事具备，再来回顾下导数的意义<del>非严谨数学定义，不要较真</del>：</p>
+<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>求偏导的概念得会一下(懂概念即可，不用自己求)，激活函数如何工作得会，网络的连接得会(搞明白参数在哪里工作就好了)。</p>
+<h1 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h1><p>我们先设一个简单的函数$y=3x^2+2x+1$。假设此时$x=10$，那么$y=321$，我们想优化这个函数，即利用梯度下降的方式来求得$y$的最小值和对应的$x$的值。<del>为什么不求导直接算$y$的最小值？因为现实中的函数维度极度复杂，在复杂的函数空间内可能求不出来极小值点，这里只是用简单函数举例。</del>可以求出目标函数的导函数为：$y’=6x+2$。万事具备，再来回顾下导数的意义<del>非严谨数学定义，不要较真</del>：</p>
 <p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/2.png" alt></p>
 <p>如上图所示，无限放大曲线的一小部分，在$y$轴方向截取一段$dy$，向$x$轴方向截取一段$dx$，则$f’(x)=dy/dx$即为这一小段曲线的斜率，也为导数值。当然，具体到实际问题，并不是取一段曲线而是以一个具体的点计算，这里只是距离。如$f(x)=2x^2$在$x=2$处的导数值为8。</p>
 <p>梯度的本意是一个向量（矢量），即函数在该点处沿着该方向（此梯度的方向）变化最快，变化率最大，显而易见，对一元函数而言就是求导(多元函数求偏导并含有方向)。继续推导，可以得到这样的式子：$f’(x)dx=dy$。在详细一点，当前$x=10$，我们取一个固定的$dx=0.2$，沿着导数的方向，让$x$逐渐的变化，此时的$y$也逐渐变小，是不是就能逐步得到目标函数的最小值呢？数学语言如下：</p>
@@ -28,10 +27,35 @@
 <li>$x_2-f’_2dx=x_3$，$f’_2$为$x_2$处的导数值</li>
 </ul>
 <p>当然，$dx$也可以换成$\alpha$表示，含义为学习率，即每次行走的步幅。直到行走到最低点结束，代码如下：</p>
-<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">dx = <span class="number">0.2</span></span><br><span class="line">n_eproch = <span class="number">1000</span></span><br><span class="line">x = <span class="number">-10</span> </span><br><span class="line">ls = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> range(n_eproch):  </span><br><span class="line">    y = <span class="number">3</span> * x ** <span class="number">2</span> + <span class="number">2</span> * x + <span class="number">1</span></span><br><span class="line">    ls.append(y)</span><br><span class="line">    x = x - (<span class="number">6</span> * x + <span class="number">2</span>) * dx</span><br><span class="line"></span><br><span class="line">print(ls[<span class="number">-1</span>])</span><br><span class="line"><span class="comment"># 0.67</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">dx = <span class="number">0.2</span></span><br><span class="line">n_eproch = <span class="number">1000</span></span><br><span class="line">x = <span class="number">-10</span> </span><br><span class="line">ls = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> range(n_eproch):  </span><br><span class="line">    y = <span class="number">3</span> * x ** <span class="number">2</span> + <span class="number">2</span> * x + <span class="number">1</span></span><br><span class="line">    ls.append(y)</span><br><span class="line">    x = x - (<span class="number">6</span> * x + <span class="number">2</span>) * dx</span><br><span class="line"></span><br><span class="line">print(ls[<span class="number">-1</span>])</span><br><span class="line"><span class="comment"># 0.67</span></span><br></pre></td></tr></table></figure>
 <p>可见在迭代1000次后，$y$的最终取值为0.67，和函数实际的最小值不谋而合<del>利用中学知识求一下即可</del>，这就是梯度下降的力量。当然，对于复杂的多元函数求偏导，或者求导的链式法则，还是借助<code>Tensorflow</code>这种专业工具更加省事。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">X = tf.constant([<span class="number">0.</span>, <span class="number">0.25</span>, <span class="number">0.5</span>, <span class="number">0.74</span>, <span class="number">1.</span>])</span><br><span class="line">y = tf.constant([<span class="number">0.</span>, <span class="number">0.36</span>, <span class="number">0.54</span>, <span class="number">0.82</span>, <span class="number">1.</span>])</span><br><span class="line"></span><br><span class="line">a = tf.Variable(initial_value=<span class="number">0.</span>)</span><br><span class="line">b = tf.Variable(initial_value=<span class="number">0.</span>)</span><br><span class="line">variables = [a, b]</span><br><span class="line"></span><br><span class="line">num_epoch = <span class="number">100</span></span><br><span class="line">optimizer = tf.keras.optimizers.SGD(learning_rate=<span class="number">5e-4</span>)</span><br><span class="line"><span class="keyword">for</span> e <span class="keyword">in</span> range(num_epoch):</span><br><span class="line">    <span class="comment"># 使用tf.GradientTape()记录损失函数的梯度信息</span></span><br><span class="line">    <span class="keyword">with</span> tf.GradientTape() <span class="keyword">as</span> tape:</span><br><span class="line">        y_pred = a * X + b</span><br><span class="line">        loss = tf.reduce_sum(tf.square(y_pred - y))</span><br><span class="line">    <span class="comment"># TensorFlow自动计算损失函数关于自变量（模型参数）的梯度</span></span><br><span class="line">    grads = tape.gradient(loss, variables)</span><br><span class="line">    <span class="comment"># TensorFlow自动根据梯度更新参数</span></span><br><span class="line">    optimizer.apply_gradients(grads_and_vars=zip(grads, variables))</span><br><span class="line"></span><br><span class="line">print(a, b)</span><br></pre></td></tr></table></figure>
-<h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><p>待续</p>
+<h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><p>反向传播是一种以梯度下降为基础，对误差进行反馈，并调节相关参数的方法，因网络文章普遍都是公式较为晦涩，因此这里以数学计算为主，给出反向传播的实例，供读者理解。(因此期待看数学公式的可以移步了)。以MLP为例，首先构建结构如下图所示的网络：</p>
+<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/4.png" alt></p>
+<p>然后完成参数的初始化，且激活函数均采用Sigmoid($f(x)=\frac{1}{1 + e ^{-x}}$)</p>
+<p>$x=2,w_{11}=1,w_{12}=-1,b_1=3,w_{21}=2,w{22}=1,b_2=0,y_{true}=1,\alpha=0.2$</p>
+<h2 id="前向计算"><a href="#前向计算" class="headerlink" title="前向计算"></a>前向计算</h2><ol>
+<li>隐藏层第一个神经元：$x\times w_{11} + b_1 = 5$，激活后的输出为0.99</li>
+<li>隐藏层第二个神经元：$x\times w_{12} + b_1 = 1$，激活后的输出为0.73</li>
+<li>输出层的预测输出为：$y_{temp}=0.99\times w_{21} + 0.73\times w_{22} + b_2=2.71$，激活后的输出为0.93</li>
+<li>计算Loss：$E=\frac{1}{2}(y_{true}-y_{pred})^2$ (选用这类型是是因为求导方便，绝对值函数不一定可导)</li>
+</ol>
+<h2 id="反向传播-1"><a href="#反向传播-1" class="headerlink" title="反向传播"></a>反向传播</h2><ol>
+<li>补充一下对$\text{Sigmoid}$函数求导的结果为：$\frac{1}{1+e^{-x}}’=\frac{e^x}{e^{2x}+2e^x+1}$</li>
+<li>$E$对输出层求导：$\frac{\partial E}{\partial y_{pred}}=y_{pred}-y_{true}=-0.07$</li>
+<li>而$y_{pred}=\text{Sigmoid}(y_{temp})$，$\frac{\partial y_{pred}}{\partial y_{temp}}=\frac{e^{2.71}}{e^{5.42}+2e^{2.71}+1}=0.058$</li>
+<li>而计算$y_{temp}$对$w_{21}$这个参数的偏导值：$\frac{y_{temp}}{w_{21}}=0.99$ (求偏导时无关变量视为常量)</li>
+<li>通过链式法则求误差$E$对参数$w_{21}$的梯度：$\frac{\partial E}{\partial w_{21}}=\frac{\partial E}{\partial y_{pred}}\times \frac{\partial y_{pred}}{\partial y_{temp}} \times \frac{\partial y_{temp}}{\partial w_{21}}=-0.004$</li>
+<li>$w_{21}$沿着梯度下降即可：$w_{21}=w_{21} + \alpha \times -0.004=2+0.2\times -0.004=1.9992$，这样，参数$w_{21}$就得到了更新。(同上文的梯度下降方法)</li>
+</ol>
+<p>以此类推，通过不断的迭代，参数会逐渐修改，最终的结果是模型能有效的对输入进行预测或者分类。其他参数的更新同理。对于经常变成的小伙伴，会发现训练过程经常使用batch，此时最终的误差为这个bacth的总误差，需要对总误差求均值或求和等操作：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">loss = tf.keras.losses.sparse_categorical_crossentropy(y_true=y, y_pred=y_pred)</span><br><span class="line">loss = tf.reduce_mean(loss)</span><br></pre></td></tr></table></figure>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><ol>
+<li>总算搞明白了梯度下降和反向传播的工作原理。其实，这么手推一下也就对梯度爆炸和梯度消失有了大概的了解。</li>
+<li>学习率$\alpha$不是一成不变的，可以根据学习状态进行更新，参考这里：<br><a href="https://muyuuuu.github.io/2019/02/20/gradient-function/">https://muyuuuu.github.io/2019/02/20/gradient-function/</a></li>
+<li>与大部分网文不同的是，本文尽力用通俗的语言讲解清楚了这两个东西，同时也会成为我的学习笔记。所以我没有给图片打水印的打算，只是受到网页浏览的限制，并没有上传高清图。如果你感觉本文还不错，且想分享，可以随意拷贝走本文的图片，嫌清晰度低可以在评论区找我要原图。</li>
+<li>如果你对本文的某些细节描述还是不懂，可以评论区见，我也尽力做一个用大白话讲明白<del>高深</del>原理的人。</li>
+</ol>
 ]]></content>
       <tags>
         <tag>DeepLearning</tag>
@@ -438,7 +462,7 @@
 </ol>
 <p>对于第一个问题：提高被前一轮分类器分类错误样本的权重，这样这些样本会在下一轮的弱分类器中受到更大的关注，于是分类问题将被一系列的弱分类器分而治之。</p>
 <p>对于第二个问题：AdaBoost采用了加权多数表决的方法，即：加大分类误差率小的分类器的权重，降低分类误差率大的分类器的权重。使正确率高的分类器在表决的过程中起到更加关键的作用。</p>
-<h1 id="算法推导"><a href="#算法推导" class="headerlink" title="算法推导"></a>算法推导</h1><p>输入：训练数据集$T{(x_1, y_1), (x_n, y_n), \cdots ,(x_n, y_n)}$，假设为二分类任务，标签为${-1, +1}$。输出：最终的分类器 $G(x)$。</p>
+<h1 id="算法推导"><a href="#算法推导" class="headerlink" title="算法推导"></a>算法推导</h1><p>输入：训练数据集$T\{(x_1, y_1), (x_n, y_n), \cdots ,(x_n, y_n)\}$，假设为二分类任务，标签为$\{-1, +1\}$。输出：最终的分类器 $G(x)$。</p>
 <ol>
 <li>初始换训练数据的权重，均匀分布权重。<script type="math/tex; mode=display">D=(w_{11}, w_{1i}, \cdots, w_{1n}), w_{1i}=1/N,i=1, 2, ..., N</script></li>
 <li>设有$M$个弱分类器，对于$m=1, 2, …, M$：</li>
@@ -1360,7 +1384,7 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 </ul>
 <p><strong>DDA算法</strong></p>
 <p>重要的思想为增量思想。设单位步长为一个像素。</p>
-<script type="math/tex; mode=display">y_i=kx_i+b \Longrightarrow y_{i+1}=kx_{i+1}+b</script><script type="math/tex; mode=display">y_{i+1}=k(x_i+1)+b = kx_i+b+k = y_i+k</script><p>即：$y<em>{i+1}=y_i+k$，$k$是增量。$y_i$加$k$得到$y</em>{i+1}$，取消了乘法。当$|k|\leq 1$时，一切正常。参考下列例题。</p>
+<script type="math/tex; mode=display">y_i=kx_i+b \Longrightarrow y_{i+1}=kx_{i+1}+b</script><script type="math/tex; mode=display">y_{i+1}=k(x_i+1)+b = kx_i+b+k = y_i+k</script><p>即：$y_{i+1}=y_i+k$，$k$是增量。$y_i$加$k$得到$y_{i+1}$，取消了乘法。当$|k|\leq 1$时，一切正常。参考下列例题。</p>
 <p><strong>例题</strong></p>
 <p>DDA算法扫描转换连接两点$P_0(0, 0)$，$P_1(5, 3)$的直线段。</p>
 <p>$k=\frac{3-0}{5-0}=0.6$</p>
@@ -1412,7 +1436,7 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 </ol>
 <p><img data-src="/2020/02/17/cg/midpoint2.png" alt></p>
 <ul>
-<li>在点$M<em>0$处，$d_0=F(x</em>{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
+<li>在点$M_0$处，$d_0=F(x_{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
 <li>在点$M_1$处，$d_1=A(x_i+2) + B(y_i+1.5) + C=d_0+A+B$</li>
 </ul>
 <ol>
@@ -1420,7 +1444,7 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 </ol>
 <p><img data-src="/2020/02/17/cg/midpoint3.png" alt></p>
 <ul>
-<li>在点$M<em>0$处，$d_0=F(x</em>{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
+<li>在点$M_0$处，$d_0=F(x_{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
 <li>在点$M_1$处，$d_1=A(x_i+2) + B(y_i+0.5) + C=d_0+A$</li>
 </ul>
 <p>于是得到$d$的递推公式：</p>
@@ -1459,7 +1483,7 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 <p>以数值扫描为例，按照扫描的顺序，求与多边形相交的区间，对区间内部的像素点进行颜色填充。同样，坐标点需要四舍五入为整数。</p>
 <p><img data-src="/2020/02/17/cg/scan-fill.png" alt></p>
 <p>需要以$x$递增的排列顺序得到$x$的坐标，也就是要在$[2,4],[7,9]$两个区间内填充。</p>
-<p>如果图形中，$y<em>{\mathrm{min}}$值为$1$，$y</em>{\mathrm{max}}$值为$12$，一共需要$12$条扫描线从下向上扫描，其他线不考虑。在$y\in [y<em>{\mathrm{min}},y</em>{\mathrm{max}}]$中，对每一条扫面线的扫描结果进行填充，步骤为：</p>
+<p>如果图形中，$y_{\mathrm{min}}$值为$1$，$y_{\mathrm{max}}$值为$12$，一共需要$12$条扫描线从下向上扫描，其他线不考虑。在$y\in [y_{\mathrm{min}},y_{\mathrm{max}}]$中，对每一条扫面线的扫描结果进行填充，步骤为：</p>
 <ul>
 <li>求交点</li>
 <li>升序对$x$的坐标进行排序</li>
@@ -1632,10 +1656,10 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 <ul>
 <li>$p_1,p_2$全部在窗口内，保留直线</li>
 <li>完全在窗口外，抛弃<ul>
-<li>$x<em>1\leq x</em>{\text{left}} \&amp; x<em>2\leq x</em>{\text{left}}$</li>
-<li>$x<em>1\geq x</em>{\text{right}} \&amp; x<em>2\geq x</em>{\text{right}}$</li>
-<li>$y<em>1\geq y</em>{\text{top}} \&amp; y<em>2\geq y</em>{\text{top}}$</li>
-<li>$y<em>1\geq y</em>{\text{bottom}} \&amp; y<em>2\geq y</em>{\text{bottom}}$</li>
+<li>$x_1\leq x_{\text{left}} \&amp; x_2\leq x_{\text{left}}$</li>
+<li>$x_1\geq x_{\text{right}} \&amp; x_2\geq x_{\text{right}}$</li>
+<li>$y_1\geq y_{\text{top}} \&amp; y_2\geq y_{\text{top}}$</li>
+<li>$y_1\geq y_{\text{bottom}} \&amp; y_2\geq y_{\text{bottom}}$</li>
 </ul>
 </li>
 <li>与窗口相交，则按照交点分段，抛弃一部分，保留窗口内的线段。</li>
@@ -3983,7 +4007,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p><code>后缀表达式的应用</code>：也称为逆波兰表达式，Reverse Polish Notation。无括号表达式。数字压栈，遇到操作符取出来，后者操作前者。</p>
 <p><code>中缀表达式转后缀</code>：是正常的小学算术的四则运算。1.数字直接输出。2.遇到<code>)</code>，输出遇到第一个<code>(</code>之间所有的符号。3.<code>(</code>直接压栈。4.后来者优先级高则压栈，优先级低，弹两个。完成转后缀表达式。</p>
 <h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><p>一端进，一端出，先进先出。如操作系统的任务序列，键盘输入到记事本的显示同样为队列。简单的顺序存储会造成存储资源的浪费，循环队列可以对空白位置利用。位置计算<code>(rear+1)%QueueSize==front</code>。链式结构同样，先进先出，包括了指针与值。</p>
-<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max{k|p<em>{k+1}=p</em>{j-k+1}}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
+<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max\{k|p_{k+1}=p_{j-k+1}\}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
 <h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>一对多的层次关系，有限集合，结点$n\geq 0$。根节点下的子树没有交集，不构成环。</p>
 <p><code>节点的度</code>：节点拥有孩子的数量称为节点的<code>度</code>。所有节点中最大的度为树的<code>度</code>。度为0是叶子节点或，度不为0的非根节点是分支节点。<br><code>树的深度</code>：根在第一层，根的孩子是第二层，依次类推到树中的最大层，得到树的深度。<br><code>森林</code>：多个不相交的树的结合。<br><code>节点的关系</code>：节点的子树称为节点的孩子，节点是子树的父亲。</p>
 <p>如果将树中结点的各子树看成从左至右是有次序的，不能互换的，则称该树为有序树，否则称为无序树。</p>
@@ -4220,7 +4244,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <a id="more"></a>
 <h1 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h1><p>&emsp;&emsp; 首先，对于一个句子：“燕山大学生”，是分为燕山大学-生呢还是燕山-大学生呢？显然有二义性。二义性的句子还是靠后来的统计模型加以解决。（猜想：是不是现实世界过于灵活的东西都不能加太多的限制规则）。假设有两种分词方法，第一种是$A$，第二种是其他的分词方法$B$。对于两种分词方式，计算其产生句子的概率：$P(A)&gt;P(B)$，那么就认为$A$的分词方法是最好的。</p>
 <p>&emsp;&emsp;如何计算出来生成句子的概率来比较大小呢？当然是统计模型和维特比算法。</p>
-<h2 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h2><p>&emsp;&emsp; 借助马尔可夫性（一个假设，此时刻状态只与上一时刻状态相关，即今天的天气只与昨天的天气有关）。假设一个词$w<em>i$出现的概率只与前一个词$w</em>{i-1}$相关。那么一个句子$S$出现的概率就是$P(S)=P(w<em>1)\cdot P(w_2|w_1)\cdot P(w_3|w_2)\cdots P(w_n|w</em>{n-1})$。现在来看这个联合概率分布$P(w<em>n|w</em>{n-1})$和边缘概率分布$P(w<em>n)$呢？开始统计。当数据量足够大的时候，我们可以认为出现的频率就是事件发生的概率。$P(w_i)$就是$w_i$这个词出现的频率，$P(w_n|w</em>{n-1})$就是这两个词一起出现的频率。既然得到了词出现的概率，在计算句子出现的概率就不难了。之后就能轻易的确定出最好的分词方法。</p>
+<h2 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h2><p>&emsp;&emsp; 借助马尔可夫性（一个假设，此时刻状态只与上一时刻状态相关，即今天的天气只与昨天的天气有关）。假设一个词$w_i$出现的概率只与前一个词$w_{i-1}$相关。那么一个句子$S$出现的概率就是$P(S)=P(w_1)\cdot P(w_2|w_1)\cdot P(w_3|w_2)\cdots P(w_n|w_{n-1})$。现在来看这个联合概率分布$P(w_n|w_{n-1})$和边缘概率分布$P(w_n)$呢？开始统计。当数据量足够大的时候，我们可以认为出现的频率就是事件发生的概率。$P(w_i)$就是$w_i$这个词出现的频率，$P(w_n|w_{n-1})$就是这两个词一起出现的频率。既然得到了词出现的概率，在计算句子出现的概率就不难了。之后就能轻易的确定出最好的分词方法。</p>
 <h2 id="维特比算法"><a href="#维特比算法" class="headerlink" title="维特比算法"></a>维特比算法</h2><p>&emsp; &emsp;但是，不能穷举所有分词情况下每个句子出现的概率，过于复杂。比如一次分词就判断一下，一次分词就判断一下还是很复杂的。这个时候就有维特比算法了，算法的核心思想是动态规划，不过这个算法最初是用来解决通信领域的问题，现在被用在了求最短路径、导航等领域。</p>
 <p>&emsp; &emsp; 算法的核心思想：可能会有多种分词，每次分词导致的结果还不同，就会得到下图的一个网络。每个分词的区域都是一个网络的岔路口。</p>
 <p><img data-src="/2019/05/19/basic-nlp/1.png" alt></p>
@@ -4235,7 +4259,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>&emsp;&emsp;这时候如果有个表就好了，在这个表里面每个单词都有自己的300维特征向量。apple有自己的特征向量，orange有自己的特征向量。这两个特征向量距离很近，但是与Iron这个词的特征向量又很远。总之是现实中相似物体词汇的特征向量接近，八杆子打不着的物体词汇的特征向量距离就远。那么就能很轻易的从apple candy推导出orange candy。那么这个表就叫做词嵌入（embedded）表，如何求这个词潜入表呢？目前有多种方案。</p>
 <p>&emsp;&emsp;为什么叫词嵌入呢，因为词嵌入表的作用就是把这个词赋予了一个多维的向量，比如300维，那么这个词就嵌入在一个300维的空间里。</p>
 <h2 id="传统方案"><a href="#传统方案" class="headerlink" title="传统方案"></a>传统方案</h2><p>&emsp;&emsp;首先，记词嵌入表为$E$，假设有1000个词和想生成300维特征，先随机生成$E$，维度是$300\times 1000$。则对于一个one-hot编码，$E\cdot O=e$，即嵌入表乘以一个词的one-hot得到这个词的特征向量，而所有词的特征向量组成嵌入词表。此时一个只能推断的任务：I want a glass orange <u>candy</u>，candy是需要推断的内容。</p>
-<p>&emsp;&emsp;那么我们先把 I， want， a， glass， orange的$e$给求出来（glass 的 $e$ 求法为：$E\cdot O<em>{\mathrm{glass}}$，$O</em>{glass}$是glass的one-hot编码）。把5个$e$扔给一个softmax单元，希望的输出为juice。反向传播，训练这个网络直到误差逐渐的减小，最后得到想要的$E$。</p>
+<p>&emsp;&emsp;那么我们先把 I， want， a， glass， orange的$e$给求出来（glass 的 $e$ 求法为：$E\cdot O_{\mathrm{glass}}$，$O_{glass}$是glass的one-hot编码）。把5个$e$扔给一个softmax单元，希望的输出为juice。反向传播，训练这个网络直到误差逐渐的减小，最后得到想要的$E$。</p>
 <p>&emsp;&emsp;这个时候把orange换成apple，因为apple和orange的$e$很接近，很容易从orange candy 推导出 apple candy了。</p>
 <h2 id="Skip-Gram"><a href="#Skip-Gram" class="headerlink" title="Skip Gram"></a>Skip Gram</h2><p>&emsp;&emsp; 给定一个句子：”<em>Black Widow</em> is a playable character in Lego Marvel’s Avengers, voiced by Scarlett Johansson.”从中选择一个单词作为上下文context，在正负五个单词内选择target， 建立一个监督学习的模型，建立从context到target的映射，这个网络的规模就会比上一个算法的规模小一点。</p>
 <script type="math/tex; mode=display">O\rightarrow E\rightarrow e\rightarrow \mathrm{softmax}\rightarrow \hat{y}</script><p>&emsp;&emsp;交叉熵计算误差时还是使用的one-hot编码。</p>
@@ -4247,7 +4271,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>&emsp;&emsp;只要还有类似的评论，就很快的能从评分数量的角度来数字量化好坏程度。</p>
 <h1 id="类比推理"><a href="#类比推理" class="headerlink" title="类比推理"></a>类比推理</h1><p>&emsp;&emsp;继续，man相对与doctor， 等于woman相当于什么。我们只需要在选择一个向量$e_x$，使下式成立：</p>
 <script type="math/tex; mode=display">e_{man}-e_{doctor}=e_{woman}-e_x</script><p>&emsp;&emsp;然后把这个$x$向量求出来即可。但是，为了消除性别歧视，doctor相对于man，那么woman的结果也应该是doctor。所以在训练结束后，形如性别类、种族类的词汇还需要进一步处理。比如对于性别而言，需要消除在性别方向上的差异。</p>
-<p>&emsp;&emsp;形如，我们知道了男人的特征向量$e<em>{man}$和女人的特征向量$e</em>{woman}$，将这两个向量相减，可以认为差异最大的那一维有性别的成分。然后平均一下那个温度上的差异就可以啦。</p>
+<p>&emsp;&emsp;形如，我们知道了男人的特征向量$e_{man}$和女人的特征向量$e_{woman}$，将这两个向量相减，可以认为差异最大的那一维有性别的成分。然后平均一下那个温度上的差异就可以啦。</p>
 <p><img data-src="/2019/05/19/basic-nlp/3.jpg" alt></p>
 <hr>
 ]]></content>
@@ -4302,7 +4326,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>如果有 100 个网页都出现了Captain，那么又如何确定网页的排名，即推荐网页的顺序呢？这就是接下来的内容，pagerank算法和基于信息熵的TF-IDF算法。</p>
 <h1 id="提取高质量网页——pagerank"><a href="#提取高质量网页——pagerank" class="headerlink" title="提取高质量网页——pagerank"></a>提取高质量网页——pagerank</h1><h2 id="引言-1"><a href="#引言-1" class="headerlink" title="引言"></a>引言</h2><p>这曾经是谷歌搜索引擎确定网页排名的算法，不过现在被抛弃了。但是这个算法的确在曾经发挥了不可替代的作用，至少使得当初弱小的谷歌能够发展起来。</p>
 <p>既然在倒排索引后能得到一些网页，假设得到了10000个网页甚至更多。那么得确定这10000个网页的排名吧，哪个作为第一个推荐，哪个作为第二个。还有一些卖假药的网站，比如给的链接题目是：我是Iron Man， 但是点击打开之后却是卖假药的，这种网页显然不能推荐。</p>
-<p>那么pagerank做了一件事情(虽然我感觉这个事情和马尔可夫模型好像)。暂时忽略查询内容和网页的相关性，先考虑网页之间的相关性。一个不需任何人工干预的算法诞生了，思想：在某次历史课中，老师问谁是刘邦，如果99%的人都指着那个人说他是刘邦，那么他就是刘邦。在网页中，$a<em>{mn}$ 表示第 $m$ 个网页指向第 $n$ 个网页的连接数，将 $a</em>{mn}$ 理解为投票数，如果第$N$个网页获得的支持最多，就认为它的质量越好。</p>
+<p>那么pagerank做了一件事情(虽然我感觉这个事情和马尔可夫模型好像)。暂时忽略查询内容和网页的相关性，先考虑网页之间的相关性。一个不需任何人工干预的算法诞生了，思想：在某次历史课中，老师问谁是刘邦，如果99%的人都指着那个人说他是刘邦，那么他就是刘邦。在网页中，$a_{mn}$ 表示第 $m$ 个网页指向第 $n$ 个网页的连接数，将 $a_{mn}$ 理解为投票数，如果第$N$个网页获得的支持最多，就认为它的质量越好。</p>
 <h2 id="算法："><a href="#算法：" class="headerlink" title="算法："></a>算法：</h2><p>Step1：假设倒排索引后得到$N$个网页，所有的网站的初始排名是$B_0=(\frac{1}{N},\frac{1}{N},…,\frac{1}{N})^T$。</p>
 <p>Step2：矩阵$A$是网页之间的链接数目，得到这个矩阵并不难，只要有个爬虫机器人就好了。</p>
 <p><img data-src="/2019/05/19/search-engine/4.png" alt></p>
@@ -4765,7 +4789,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 \begin{aligned} \Theta &=\underset{\Theta}{\arg \min } L_{1} \\ &=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right] \end{aligned}</script><h1 id="约束对抗"><a href="#约束对抗" class="headerlink" title="约束对抗"></a>约束对抗</h1><p>稍微思考一下，我们就发现，问题还没完。我们目前还没有对$D$做约束，不难发现，无约束的话Loss基本上会直接跑到负无穷去了～</p>
 <p>因此，有必要给$D$加点条件，一个比较容易想到的方案是约束$D$的范围，比如能不能给$D$最后的输出加个Sigmoid激活函数，让它取值在0到1之间？事实上这个方案在理论上是没有问题的，然而这会造成训练的困难。因为Sigmoid函数具有饱和区，一旦$D$进入了饱和区（很小的斜率导致梯度很小），就很难传回梯度来更新$G$了。</p>
 <p>最好加什么约束呢？我们应该尽可能从基本原理出发来找寻约束，尽量避免加入人工因素。我们回到距离的作用上来看：距离是为了表明两个对象的差距，而如果对象产生的微小的变化，那么距离的波动也不能太大，这应该是对距离基本的稳定性要求，“失之毫厘，谬以千里”是会产生浑沌的，数学模型不应该是这样。</p>
-<p>放到我们的D中，这个约束我们该怎么体现呢？假如某个样本不是$y<em>i$而是$y^1_i$，假设$∥y_i−y^1_i∥$（用两竖表示欧式距离，因为$y$可能是个多元向量）并不是十分大，那么会对分布造成一定的影响。这个影响有多大呢？显然不会大，因为分布是一批样本的统计特征，如果只是稍微改变了一个样本，那么分布的变化显然不能大的。而我们知道，分布的距离用$D$的均值$L$来描述，只改变一个$y_i$，所造成的分布差正比于:$\left|D\left(y</em>{i}, \theta\right)-D\left(y_{i}^{\prime}, \theta\right)\right|$，我们希望$y^1_i\to y_i$时，自然地就有$∥D(y_i,\Theta)−D(y^1_i,\Theta)∥\to 0$，怎么实现这一点呢？一个简单的方案是$D$满足以下约束：</p>
+<p>放到我们的D中，这个约束我们该怎么体现呢？假如某个样本不是$y_i$而是$y^1_i$，假设$∥y_i−y^1_i∥$（用两竖表示欧式距离，因为$y$可能是个多元向量）并不是十分大，那么会对分布造成一定的影响。这个影响有多大呢？显然不会大，因为分布是一批样本的统计特征，如果只是稍微改变了一个样本，那么分布的变化显然不能大的。而我们知道，分布的距离用$D$的均值$L$来描述，只改变一个$y_i$，所造成的分布差正比于:$\left|D\left(y_{i}, \theta\right)-D\left(y_{i}^{\prime}, \theta\right)\right|$，我们希望$y^1_i\to y_i$时，自然地就有$∥D(y_i,\Theta)−D(y^1_i,\Theta)∥\to 0$，怎么实现这一点呢？一个简单的方案是$D$满足以下约束：</p>
 <script type="math/tex; mode=display">
 \left\|D(y, \theta)-D\left(y^{\prime}, \theta\right)\right\| \leq C\left\|y-y^{\prime}\right\|</script><p>这就是数学中常见的Lipschitz约束。如果能够满足这个约束，那么距离就能满足稳定性要求。注意这是个充分条件，不是必要条件，也可以使用其他方案。但不得不说，这是个简单明了的方案。而使得函数$D$满足Lipschitz约束的一个充分条件就是：</p>
 <script type="math/tex; mode=display">
@@ -4776,7 +4800,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 \Theta=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right]+\frac{\lambda}{B} \sum_{i=1}^{B}\left(\left\|\frac{\partial D(y, \Theta)}{\partial y}\right\|_{y=\varepsilon_{i} y_{i}+\left(1-\varepsilon_{i}\right) z_{i}}-1\right)^{2}</script><p>这里的$\epsilon_i$是$U[0,1]$的随机数，这应该已经是我们“力所能及”的最优的方案了。</p>
 <p>最后，有人会反驳，梯度有上界，只不过是Lipschitz约束的充分条件，为啥不直接将Lipschitz约束以差分形式加入到惩罚中去呢？这时候惩罚是：</p>
 <script type="math/tex; mode=display">
-\Theta=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right]+\frac{\lambda}{B} \sum_{i=1}^{B}\left(\frac{\left|D\left(y_{i, 1}, \Theta\right)-D\left(y_{i, 2}, \Theta\right)\right|}{\left\|y_{i, 1}-y_{i, 2}\right\|}-1\right)^{2}</script><p>这里$y<em>{i,j}=\epsilon</em>{i,j}y<em>i+(1−\epsilon</em>{i,j})z_i$，也就是每步插值两次，然后用插值的结果算差分。</p>
+\Theta=\underset{\Theta}{\arg \min } \frac{1}{B} \sum_{i=1}^{B}\left[D\left(z_{i}, \Theta\right)-D\left(y_{i}, \Theta\right)\right]+\frac{\lambda}{B} \sum_{i=1}^{B}\left(\frac{\left|D\left(y_{i, 1}, \Theta\right)-D\left(y_{i, 2}, \Theta\right)\right|}{\left\|y_{i, 1}-y_{i, 2}\right\|}-1\right)^{2}</script><p>这里$y_{i,j}=\epsilon_{i,j}y_i+(1−\epsilon_{i,j})z_i$，也就是每步插值两次，然后用插值的结果算差分。</p>
 <p>通过本文，我们可以一气呵成地直达WGAN-GP，而不需要很多的历史知识和数学知识。有趣的是，我们的推导过程表明，WGAN-GP其实跟Wasserstein距离没有直接的联系，尽管当初WGAN的作者是从Wasserstein距离将它们推导出来的。</p>
 <h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><p>本来是想去<code>keras</code>官网找找代码的，可我实在是接受不了官网提供的又臭又长的破代码，就去<code>github</code>找了找看着舒服的。</p>
 <p>代码改天再说，似乎出了些问题，训练过程最后生成器全部都生成了0。我发誓这是我最后一次使用<code>Tensorflow</code>了，兼容性好差劲，官方文档改来改去。</p>
@@ -5236,7 +5260,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <p>然后来解释下网络是如何运行的，参数的含义：</p>
 <p>首先，$T_x$表示一个样本中单词的数量，$\hat{y}^{<1>}$表示对样本中第一个单词的预测，$a$就是个中间变量，图上画得一个方框加四个圈表示计算过程。$X^{<1>}$会经过one-hot编码处理，假设样本数据库共有10000个单词，$X^{<1>}$为第一个单词，假设在词典排序中的位置为7893，那么$X^{<1>}$就是一个长度为10000，只有第7893个位置是1的零向量，其余单词也是经过one-hot处理数值化。Keras中使用序列模型进行分类时，通常都会对类别进行one-hot编码：</1></1></1></1></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> keras</span><br><span class="line">y_labels = keras.utils.to_categorical(y_label, num_classes=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<p>$a^{<0>}$是个初始化的零向量，推算$a^{<1>}$和$\hat{y}^{<1>}$的方式为：<br>\begin{equation}<br>a^{<1>}=g(W<em>{aa}a^{<0>}+W</0></em>{ax}X^{<1>}+b<em>a)<br>\end{equation}<br>$g$表示某种激活函数如RELU，$W</em>{aa}$为和$a$相乘的参数，$W<em>{ax}$表示和样本输入相乘的参数。输出的$a^{<1>}$为下一层的输入。<br>\begin{equation}<br>\hat{y}^{<1>}=f(W</1></1></em>{ya}a^{<1>}+b<em>y)<br>\end{equation}<br>$f$表示某种激活函数如RELU，$W</em>{ya}$为另外的和$a$相乘的参数。此外，在循环神经网络中参数是共享的以减少计算复杂度，对于之后每个输入的单词，$W<em>{ya},W</em>{ax},W_{aa}$都是一样的。</1></1></1></1></1></0></p>
+<p>$a^{<0>}$是个初始化的零向量，推算$a^{<1>}$和$\hat{y}^{<1>}$的方式为：<br>\begin{equation}<br>a^{<1>}=g(W_{aa}a^{<0>}+W_{ax}X^{<1>}+b_a)<br>\end{equation}<br>$g$表示某种激活函数如RELU，$W_{aa}$为和$a$相乘的参数，$W_{ax}$表示和样本输入相乘的参数。输出的$a^{<1>}$为下一层的输入。<br>\begin{equation}<br>\hat{y}^{<1>}=f(W_{ya}a^{<1>}+b_y)<br>\end{equation}<br>$f$表示某种激活函数如RELU，$W_{ya}$为另外的和$a$相乘的参数。此外，在循环神经网络中参数是共享的以减少计算复杂度，对于之后每个输入的单词，$W_{ya},W_{ax},W_{aa}$都是一样的。</1></1></1></1></0></1></1></1></0></p>
 <p>推广到一般形式，第$t$个输入的单词(第$t$个时间步)的计算为：</p>
 <p><img data-src="/2019/02/18/rnn/3.png" alt></p>
 <p>这样，有几个单词就有几个$X$，这个网络就走几次，输入结束的话也就停止。在训练时，方向传播成本函数$y$与$\hat{y}$的交叉熵来梯度下降，最终达到预测的目标。</p>
@@ -5308,7 +5332,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
 <h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
 <p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha<em>{11}$到$\alpha</em>{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
 <script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
 <script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
 <script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
@@ -5412,7 +5436,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <hr>
 <h2 id="人脸识别"><a href="#人脸识别" class="headerlink" title="人脸识别"></a>人脸识别</h2><p>比如面临传闻的亚洲四大邪术P图，数据库里可能只有你的一个图片，怎么判断新的图片是不是一个人呢？把新的图片导入神经网络重新训练？醒醒，这么浪费money的操作，你会被开除的。</p>
 <p>首先呢，还是需要一批数据集合，数据集里面有一个人的多个图片，同时也有好多人。怎么办呢？</p>
-<p>对于一个人$A$，我们假设$A$的其余照片为$A<em>1,A_2,…,A</em>{10}$，即只有同一个人的10张图片，那么就想尽办法使得这几个元素：$A_1,A_2,…,A_10$的卷积神经网络的softmax单元输出很接近，而$A$和$B，C,…,Z$(其他人)的输出很远，那么这个网络就会提取特征，使得同一个人的输出接近，而不同人的输出增加。</p>
+<p>对于一个人$A$，我们假设$A$的其余照片为$A_1,A_2,…,A_{10}$，即只有同一个人的10张图片，那么就想尽办法使得这几个元素：$A_1,A_2,…,A_10$的卷积神经网络的softmax单元输出很接近，而$A$和$B，C,…,Z$(其他人)的输出很远，那么这个网络就会提取特征，使得同一个人的输出接近，而不同人的输出增加。</p>
 <p>当需要识别的时候，记待识别的人为：$X$，如果$X$和数据库里面的任何人输出都很远，那么判断这个人是外人，不是公司里面的人，不能让他进来；反之和某个人的输出误差很小时，认为他是内人，让他进来。</p>
 <p>这个优化函数称为三元组优化(triple)，$\mathrm{dis}=d(A,A_n)-d(A,B,…,Z)+\alpha$，$\alpha$是修正参数，一般取0.2，然后$\mathrm{max}(\mathrm{dis}, 0)$，当达到理想目标时，损失函数就是0，如果识别的很烂，那么损失值就会很大，所以不断的使损失值减小，就达到了目标。</p>
 <p>此外，还可以把同一个人所有照片的激活输出放到一个二分类里面，让分类器输出0或1来判断也不是不可以，只是近似的问题转化。</p>
@@ -5899,7 +5923,7 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <li>多个空格为一个空格，一行开头的空格忽略不计，一个回车视为一个空格，多个回车视为分段。</li>
 <li>\par命令也为分段，{}表示不要忽略后面的一个空格。</li>
 <li>%表示注释，Ctrl+T多行注释，Ctrl+U取消多行注释。（仅限texstudio编辑器，matlab也是这个快捷键）</li>
-<li>特殊字符用反斜杠\转义反斜杠为：`\textbackslash’。</li>
+<li>特殊字符用反斜杠\\转义反斜杠为：`\textbackslash’。</li>
 </ul>
 <figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">documentclass</span><span class="string">&#123;ctexart&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line">	中文<span class="tag">\<span class="name">par</span></span>  <span class="comment">%此处分段</span></span><br><span class="line">	测试</span><br><span class="line">  <span class="tag">\<span class="name">TeX</span><span class="string">&#123;&#125;</span></span> users <span class="comment">% 取消花括号也会取消空格</span></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure>
 <p>连字处理，引号，破折号，省略号，波浪号，文字强调，间距。talk is cheap,show me your code。看下效果，这个图片里的内容是“文档”，代码提供参考。</p>
