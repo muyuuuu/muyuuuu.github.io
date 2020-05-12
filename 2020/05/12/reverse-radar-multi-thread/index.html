@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="记录塞上西北的旅行，彻底颠覆了我对大西北的认知：不见祁连山上雪，错把甘州作江南。  羌笛何须怨杨柳，春风不度玉门关。 秦时明月汉时关，万里长征人未还。 青海长云暗雪山，孤城遥望玉门关。 劝君更尽一杯酒，西出阳关无故人。  不缺这么美的景，不缺这么美的诗词。">
-<meta name="keywords" content="Travel">
+  <meta name="description" content="这可能也是我毕业设计的最终章了，由PyQt5创建两个线程，数据读取的线程负责读取Arduino发送的距离信息，主线程负责倒车雷达动画的实时显示。还是要认真一点，也算是给大学毕业一个交代。然而还不开学">
+<meta name="keywords" content="GUI,microcomputer">
 <meta property="og:type" content="article">
-<meta property="og:title" content="大漠西北，塞上江南">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/01/21/northwest/index.html">
+<meta property="og:title" content="倒车雷达(四)：PyQt5的多线程">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/05/12/reverse-radar-multi-thread/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="记录塞上西北的旅行，彻底颠覆了我对大西北的认知：不见祁连山上雪，错把甘州作江南。  羌笛何须怨杨柳，春风不度玉门关。 秦时明月汉时关，万里长征人未还。 青海长云暗雪山，孤城遥望玉门关。 劝君更尽一杯酒，西出阳关无故人。  不缺这么美的景，不缺这么美的诗词。">
+<meta property="og:description" content="这可能也是我毕业设计的最终章了，由PyQt5创建两个线程，数据读取的线程负责读取Arduino发送的距离信息，主线程负责倒车雷达动画的实时显示。还是要认真一点，也算是给大学毕业一个交代。然而还不开学">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-02T10:16:39.396Z">
+<meta property="og:updated_time" content="2020-05-12T15:45:33.828Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="大漠西北，塞上江南">
-<meta name="twitter:description" content="记录塞上西北的旅行，彻底颠覆了我对大西北的认知：不见祁连山上雪，错把甘州作江南。  羌笛何须怨杨柳，春风不度玉门关。 秦时明月汉时关，万里长征人未还。 青海长云暗雪山，孤城遥望玉门关。 劝君更尽一杯酒，西出阳关无故人。  不缺这么美的景，不缺这么美的诗词。">
+<meta name="twitter:title" content="倒车雷达(四)：PyQt5的多线程">
+<meta name="twitter:description" content="这可能也是我毕业设计的最终章了，由PyQt5创建两个线程，数据读取的线程负责读取Arduino发送的距离信息，主线程负责倒车雷达动画的实时显示。还是要认真一点，也算是给大学毕业一个交代。然而还不开学">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/01/21/northwest/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/05/12/reverse-radar-multi-thread/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>大漠西北，塞上江南 | Just for Life.</title>
+  <title>倒车雷达(四)：PyQt5的多线程 | Just for Life.</title>
   
 
 
@@ -223,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/01/21/northwest/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/05/12/reverse-radar-multi-thread/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          大漠西北，塞上江南
+          倒车雷达(四)：PyQt5的多线程
         </h1>
 
         <div class="post-meta">
@@ -245,24 +245,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-01-21 18:38:31" itemprop="dateCreated datePublished" datetime="2020-01-21T18:38:31+08:00">2020-01-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-02 18:16:39" itemprop="dateModified" datetime="2020-02-02T18:16:39+08:00">2020-02-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/塞上西北行/" itemprop="url" rel="index"><span itemprop="name">塞上西北行</span></a>
-                </span>
+              <time title="创建时间：2020-05-12 23:00:42 / 修改时间：23:45:33" itemprop="dateCreated datePublished" datetime="2020-05-12T23:00:42+08:00">2020-05-12</time>
             </span>
 
           
@@ -276,14 +261,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -295,59 +280,20 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>记录塞上西北的旅行，彻底颠覆了我对大西北的认知：不见祁连山上雪，错把甘州作江南。</p>
-<ul>
-<li>羌笛何须怨杨柳，春风不度玉门关。</li>
-<li>秦时明月汉时关，万里长征人未还。</li>
-<li>青海长云暗雪山，孤城遥望玉门关。</li>
-<li>劝君更尽一杯酒，西出阳关无故人。</li>
-</ul>
-<p>不缺这么美的景，不缺这么美的诗词。</p>
-<p><img data-src="/2020/01/21/northwest/1.jpg" alt></p>
+        <p>这可能也是我毕业设计的最终章了，由PyQt5创建两个线程，数据读取的线程负责读取Arduino发送的距离信息，主线程负责倒车雷达动画的实时显示。还是要认真一点，也算是给大学毕业一个交代。<del>然而还不开学</del></p>
 <a id="more"></a>
-<h1 id="路线"><a href="#路线" class="headerlink" title="路线"></a>路线</h1><ul>
-<li>1月14日 西宁——塔尔寺——拉脊山——青海湖——茶卡镇（住宿）</li>
-<li>1月15日 茶卡日出——茶卡盐湖——翡翠湖——大柴旦（住宿）</li>
-<li>1月16日 大柴旦——南八仙雅丹——当金山——阿克塞——阳关——敦煌（住宿）</li>
-<li>1月17日 敦煌——莫高窟——鸣沙山月牙泉——敦煌市（住宿）</li>
-<li>1月18日 敦煌市——嘉峪关——张掖七彩丹霞（住宿）</li>
-<li>1月19日 张掖七彩丹霞——祁连山——祁连山草原——岗什卡雪峰（远观）——西宁（不负责住宿）</li>
-</ul>
-<p>放几组综合照片欣赏下大西北的风光：</p>
-<p>有秀丽壮阔的水景：</p>
-<p><img data-src="/2020/01/21/northwest/2.jpg" alt></p>
-<p>也有壮阔隔壁的荒凉：</p>
-<p><img data-src="/2020/01/21/northwest/3.jpg" alt></p>
-<p>西出阳关，大漠飞沙：</p>
-<p><img data-src="/2020/01/21/northwest/4.jpg" alt></p>
-<p>天气寒冷，在行往当金山（青海、西藏、新疆三省交界）的路上眼镜冻出霜花。过了当金山，也差不多进入了沙漠。</p>
-<p><img data-src="/2020/01/21/northwest/100.jpg" alt><br><img data-src="/2020/01/21/northwest/22.jpg" alt></p>
-<hr>
-<p>分界线，以下多图，注意流量，大致的美景都概括在上方了，以下只是细节（一个景区的多个美景图，对于美景较多的景区，图片过多，单独成文，给出链接地址）。</p>
-<h1 id="第一天"><a href="#第一天" class="headerlink" title="第一天"></a>第一天</h1><p>参观了塔尔寺，闻到了暗香盈袖的酥油茶，看到了信徒的虔诚，原来书上说的朝圣是真的。原以为电影电视剧里面的佛像都是电脑合成的，都是假的，直到看到寺内的壁画和雕像，真大开眼界，金碧辉煌，雄武壮阔，蔚为壮观，不输任何玄幻电影。</p>
-<p><img data-src="/2020/01/21/northwest/9.jpg" alt><br><img data-src="/2020/01/21/northwest/6.jpg" alt><br><img data-src="/2020/01/21/northwest/7.jpg" alt><br><img data-src="/2020/01/21/northwest/8.jpg" alt></p>
-<p>之后在海拔四千多米的拉脊山疯跑到呼吸困难（不太困难，宛如一块石头压着胸口喘不上气），后来发现是自己高原反应了（不太严重），同行的略微肥胖的人的反应很严重。路上一望无际的关山万里，还有高原地带的天然牧场，一马平川的一望无际；天苍苍，野茫茫，心旷神怡。</p>
-<p><img data-src="/2020/01/21/northwest/12.jpg" alt><br><img data-src="/2020/01/21/northwest/11.jpg" alt><br><img data-src="/2020/01/21/northwest/13.jpg" alt><br><img data-src="/2020/01/21/northwest/10.jpg" alt></p>
-<p>后来又到了四处无人的青海湖，因为是旅游淡季，四下无人，冰天一色，不愧是最大的内陆湖，也看到了标志性动物牦牛，还有天空飞翔的斑头雁。</p>
-<p><img data-src="/2020/01/21/northwest/20.jpg" alt></p>
-<p>晚上到了茶卡镇住宿，吃了牦牛火锅。老板很好，送了一壶枣茶，牦牛肉质鲜美，切的也很大块，大概每块肉有2-3毫米厚吧，估计也只有大西北可以这么豪爽的吃肉了，价格还很便宜。</p>
-<p><img data-src="/2020/01/21/northwest/16.jpg" alt><br><img data-src="/2020/01/21/northwest/17.jpg" alt><br><img data-src="/2020/01/21/northwest/15.jpg" alt><br><img data-src="/2020/01/21/northwest/14.jpg" alt></p>
-<h1 id="第二天"><a href="#第二天" class="headerlink" title="第二天"></a>第二天</h1><p>茶卡地区阴天，没看到传闻的天空之镜，遗憾。中午就近吃的羊肉汤，景区门口这个价格，那么多羊肉，真的实惠。</p>
-<p><img data-src="/2020/01/21/northwest/18.jpg" alt></p>
-<h1 id="翡翠湖"><a href="#翡翠湖" class="headerlink" title="翡翠湖"></a>翡翠湖</h1><p>当体特产 炕锅羊肉 是真的香。</p>
-<p><img data-src="/2020/01/21/northwest/19.jpg" alt></p>
-<h1 id="石油小镇"><a href="#石油小镇" class="headerlink" title="石油小镇"></a>石油小镇</h1><p>以下风景过于美丽，故单独成文。</p>
-<p><a href="https://muyuuuu.github.io/2020/01/16/oiltown/">https://muyuuuu.github.io/2020/01/16/oiltown/</a></p>
-<h1 id="西出阳关"><a href="#西出阳关" class="headerlink" title="西出阳关"></a>西出阳关</h1><p><a href="https://muyuuuu.github.io/2020/01/16/yangguan/">https://muyuuuu.github.io/2020/01/16/yangguan/</a></p>
-<h1 id="莫高窟"><a href="#莫高窟" class="headerlink" title="莫高窟"></a>莫高窟</h1><p><a href="https://muyuuuu.github.io/2020/01/17/MoGaoGrottoes/">https://muyuuuu.github.io/2020/01/17/MoGaoGrottoes/</a></p>
-<h1 id="大漠飞沙"><a href="#大漠飞沙" class="headerlink" title="大漠飞沙"></a>大漠飞沙</h1><p><a href="https://muyuuuu.github.io/2020/01/17/DunHuangDesert/">https://muyuuuu.github.io/2020/01/17/DunHuangDesert/</a></p>
-<h1 id="七彩丹霞"><a href="#七彩丹霞" class="headerlink" title="七彩丹霞"></a>七彩丹霞</h1><p><a href="https://muyuuuu.github.io/2020/01/18/colorful-danxia/">https://muyuuuu.github.io/2020/01/18/colorful-danxia/</a></p>
-<h1 id="第六天"><a href="#第六天" class="headerlink" title="第六天"></a>第六天</h1><p><img data-src="/2020/01/21/northwest/23.jpg" alt></p>
-<p>哈尔滨的两位和河南的一位没来，准备去兰州，杭州的两位从张掖西坐车回家，剩下我俩穿过祁连山回到西宁，看到了祁连山内马儿和羊群在山上自由散漫的吃草，看到了远处可远观不可亵玩焉的雪山。</p>
-<p>晚上在西宁吃了梦寐以求的烤羊腿，两人吃的四人餐，买了牦牛干和火车上的零食，回家火车上听着对铺的小姐姐弹着琵琶。</p>
-<p><img data-src="/2020/01/21/northwest/30.jpg" alt></p>
-<p>流水帐记录完毕，改天补照片。</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>如果人间有什么值得期待的美景的话，那么西北算一个。</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>根据前几章内容，我们已经实现了倒车雷达的：硬件搭建与编程、PC端上位机的动画制作两部分。结合前两篇文章的基础，在PC端的动画部分添加<strong>指令发送</strong>的界面，将Arduino硬件层的测量距离返回PC端上位机，并用距离和发送的指令来调节动画的移动，就大功告成了。</p>
+<h1 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h1><p>举一个最通俗的例子，我们想实现以下的功能：在一个界面中，有一个按钮和一个计数器，点击按钮后，计数器每秒加一。就是这么简单的功能，却必须要使用多线程来实现。因为PyQt5运行后，界面所处的线程是显示线程，显示线程不断循环带保证界面的正常显示，但点击按钮后显示线程进入了每秒加一的循环且没有退出条件，所以显示线程会因长时间没响应而导致界面的卡死。</p>
+<p>因此，必须要新建一个线程，即现在有两个线程。使得显示线程来显示界面，计算线程进入每秒加一的循环，互不干扰，互不卡死。至于为何不用进程，<a href="https://muyuuuu.github.io/2020/03/16/multi-process-thread/">是因为多进程之间不共享变量，不便操作</a>。</p>
+<p>而倒车雷达也是如上的道理，需要两个线程，第一个显示线程来维护界面的显示，第二个串口线程来不断的读取距离数据和发送控制指令。因此，创建和串口进行交互的类（基于pyserial这个库）。因为需要将读取的距离信息返回主程序，所以在这个类内将读取的距离数据通过<strong>pyqt信号</strong>的形式发送。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 读取串口数据的类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Com</span><span class="params">(QThread)</span>:</span></span><br><span class="line">    <span class="comment"># 信号的返回</span></span><br><span class="line">    my_signal = pyqtSignal(str)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(Com, self).__init__()</span><br><span class="line">        self.data = <span class="string">""</span></span><br><span class="line">        self.is_on = <span class="literal">True</span> </span><br><span class="line">        <span class="comment"># 创建连接实例</span></span><br><span class="line">        self.s = serial.Serial(port=<span class="string">'COM6'</span>,</span><br><span class="line">                                baudrate=<span class="number">9600</span>,</span><br><span class="line">                                stopbits=serial.STOPBITS_ONE)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 接收数据</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">recv</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            self.sleep(<span class="number">1</span>)</span><br><span class="line">            data = self.s.readline()</span><br><span class="line">            <span class="keyword">if</span> data == <span class="string">''</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 是否打开成功</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">while</span> self.is_on:</span><br><span class="line">            <span class="keyword">if</span> self.s.isOpen():</span><br><span class="line">                print(<span class="string">"open success"</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">"open failed"</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">                self.data = self.recv()</span><br><span class="line">                <span class="comment"># 将读取的数据返回</span></span><br><span class="line">                self.my_signal.emit(str(self.data))    </span><br><span class="line"></span><br><span class="line">    <span class="comment"># 发送各种指令</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">stop</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"2"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"0"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">back</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"1"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">left</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"3"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">right</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"4"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">begin</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"5"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">lift</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.s.write(<span class="string">b"6"</span>)</span><br></pre></td></tr></table></figure>
+<p>在主程序中实例化这个线程的类，并通过start方法来启动。因为这个类会不断的将距离信息作为信号通过emit方法进行反馈。因此我们需要将这个信号连接至一个函数，那么这个函数就可以读取返回的距离信息。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">self.com = Com()</span><br><span class="line">self.com.my_signal.connect(self.run)</span><br><span class="line"><span class="comment"># 启动线程</span></span><br><span class="line">self.com.start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># distance 就是 my_signal emit 返回的距离信息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self, distance)</span>:</span></span><br><span class="line">    self.dis = distance</span><br></pre></td></tr></table></figure>
+<h1 id="指令发送"><a href="#指令发送" class="headerlink" title="指令发送"></a>指令发送</h1><p>指令的发送主要负责控制车辆的前进、后退等移动。其实嘛，指令的发送很简单，我们只需要做几个按钮，点击按钮发送对应的指令就好了。在上一章节已经实现了接收Arduino发来的数据的功能，且预留了形如<code>def lift()</code>等发送指令的接口，此时仅需要将发送指令的按钮和那些接口相对应即可，代码如下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">btn_start = QPushButton(<span class="string">"倒车"</span>)</span><br><span class="line">btn_start.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">btn_forward = QPushButton(<span class="string">"前进"</span>)</span><br><span class="line">btn_forward.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">btn_left = QPushButton(<span class="string">"左转"</span>)</span><br><span class="line">btn_left.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">btn_stop = QPushButton(<span class="string">"停车"</span>)</span><br><span class="line">btn_stop.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">btn_right = QPushButton(<span class="string">"右转"</span>)</span><br><span class="line">btn_right.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">exit_btn = QPushButton(<span class="string">"退出"</span>)</span><br><span class="line">exit_btn.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line">btn_back = QPushButton(<span class="string">"后退"</span>)</span><br><span class="line">btn_back.setFixedSize(<span class="number">100</span>, <span class="number">80</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将按钮与发送数据相关联</span></span><br><span class="line">btn_start.clicked.connect(self.run)</span><br><span class="line">exit_btn.clicked.connect(self.lift)</span><br><span class="line">btn_stop.clicked.connect(self.stop)</span><br><span class="line">btn_left.clicked.connect(self.left)</span><br><span class="line">btn_right.clicked.connect(self.right)</span><br><span class="line">btn_forward.clicked.connect(self.forward)</span><br><span class="line">btn_back.clicked.connect(self.back)</span><br><span class="line"></span><br><span class="line">self.com = Com()</span><br><span class="line">self.com.my_signal.connect(self.run)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lift</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.com.lift()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">back</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.com.back()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">left</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.com.left()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">right</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.com.right()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">stop</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.com.stop()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self)</span>:</span></span><br><span class="line">    self.com.forward()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self, distance)</span>:</span></span><br><span class="line">    self.com.start()</span><br><span class="line">    self.com.begin()</span><br></pre></td></tr></table></figure>
+<h1 id="实时影像"><a href="#实时影像" class="headerlink" title="实时影像"></a>实时影像</h1><p>其实，将以上两部分的内容整合起来并与前几章的内容(如车身的旋转)在结合一下，就是全部的倒车雷达的代码了。</p>
+<p>完整代码如下：</p>
+<p><a href="https://github.com/muyuuuu/Reversing-radar-on-Arduino/blob/master/code/Reverse-radar/view.py" target="_blank" rel="noopener">https://github.com/muyuuuu/Reversing-radar-on-Arduino/blob/master/code/Reverse-radar/view.py</a></p>
 
     </div>
 
@@ -358,19 +304,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\10\02\Chang-Bai-Mountain-2018-10-2\" rel="bookmark">长白山之旅</a></div>
+      <div class="popular-posts-title"><a href="\2020\04\27\reverse-radar-software-animation\" rel="bookmark">倒车雷达(三)：动画制作</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\DunHuangDesert\" rel="bookmark">大漠飞沙</a></div>
+      <div class="popular-posts-title"><a href="\2019\11\16\A-Beautiful-PyQt5-Interface\" rel="bookmark">一个好看通用的PyQt5界面</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\15\FeiCuiHu\" rel="bookmark">云雾缭绕，人间仙境——翡翠湖</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\01\NCSTModel\" rel="bookmark">华北理工大学数学建模协会竞赛信息管理软件</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
+      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
+      <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
     </li>
   </ul>
 
@@ -416,7 +362,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Travel/" rel="tag"># Travel</a>
+              <a href="/tags/GUI/" rel="tag"># GUI</a>
+              <a href="/tags/microcomputer/" rel="tag"># microcomputer</a>
           </div>
 
         
@@ -430,13 +377,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/01/18/colorful-danxia/" rel="prev" title="张掖七彩丹霞">
-      <i class="fa fa-chevron-left"></i> 张掖七彩丹霞
+    <a href="/2020/05/09/back-propagation-and-gradient-descent/" rel="prev" title="图解反向传播与梯度下降">
+      <i class="fa fa-chevron-left"></i> 图解反向传播与梯度下降
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/24/sqlalchemy/" rel="next" title="数据库系列（一）——SQLAlchemy的使用(CRUD)">
-      数据库系列（一）——SQLAlchemy的使用(CRUD) <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -497,7 +441,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#路线"><span class="nav-number">1.</span> <span class="nav-text">路线</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第一天"><span class="nav-number">2.</span> <span class="nav-text">第一天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二天"><span class="nav-number">3.</span> <span class="nav-text">第二天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#翡翠湖"><span class="nav-number">4.</span> <span class="nav-text">翡翠湖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#石油小镇"><span class="nav-number">5.</span> <span class="nav-text">石油小镇</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#西出阳关"><span class="nav-number">6.</span> <span class="nav-text">西出阳关</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#莫高窟"><span class="nav-number">7.</span> <span class="nav-text">莫高窟</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#大漠飞沙"><span class="nav-number">8.</span> <span class="nav-text">大漠飞沙</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七彩丹霞"><span class="nav-number">9.</span> <span class="nav-text">七彩丹霞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第六天"><span class="nav-number">10.</span> <span class="nav-text">第六天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">11.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程"><span class="nav-number">2.</span> <span class="nav-text">多线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指令发送"><span class="nav-number">3.</span> <span class="nav-text">指令发送</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实时影像"><span class="nav-number">4.</span> <span class="nav-text">实时影像</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -761,7 +705,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'cf9912d0c140a1fddcbc8281543914b7',
+      id          : '9095bffc5e82fc32917b3f83c4a7d822',
         language: 'zh-CN',
       distractionFreeMode: true
     });
