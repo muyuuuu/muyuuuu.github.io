@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="在研究 Life Long Learning 的过程中，普遍要解决三个问题：(1)知识的保留问题，不能忘记之前学过的知识，但也要接收新的知识；(2)知识的迁移，与迁移学习不同的是，持续学习要做到学习新知识的同时能巩固旧知识，而不是单纯的从旧知识迁移到新知识；(3)模型的扩展，当模型超过一定容量，模型的结构应付不了更复杂的结构，这个时候就要对模型做出一定的扩展。 在最近读论文的过程中，有一种思路是：">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-16T14:42:03.247Z">
+<meta property="og:updated_time" content="2020-05-17T09:24:28.617Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从AutoEncoder到VAE">
 <meta name="twitter:description" content="在研究 Life Long Learning 的过程中，普遍要解决三个问题：(1)知识的保留问题，不能忘记之前学过的知识，但也要接收新的知识；(2)知识的迁移，与迁移学习不同的是，持续学习要做到学习新知识的同时能巩固旧知识，而不是单纯的从旧知识迁移到新知识；(3)模型的扩展，当模型超过一定容量，模型的结构应付不了更复杂的结构，这个时候就要对模型做出一定的扩展。 在最近读论文的过程中，有一种思路是：">
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-05-16 21:10:37 / 修改时间：22:42:03" itemprop="dateCreated datePublished" datetime="2020-05-16T21:10:37+08:00">2020-05-16</time>
+              <time title="创建时间：2020-05-16 21:10:37" itemprop="dateCreated datePublished" datetime="2020-05-16T21:10:37+08:00">2020-05-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-17 17:24:28" itemprop="dateModified" datetime="2020-05-17T17:24:28+08:00">2020-05-17</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -261,14 +267,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>3.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -295,16 +301,32 @@
 <p><img data-src="/2020/05/16/AutoEncoder/3.png" alt></p>
 <p>由编码器产生数据的均值$\mu$和方差$\sigma^2$，然后在从一个标准正态分布$N(0,1)$中采样一个向量$e$，融合一下得到noise vector，其中融合的方法为：$\mu + \exp(\sigma)\times e$。因为Encoder根据激活函数的不同可能会产生负数，所以要$\exp$一下。</p>
 <p>当然，在训练的过程中，如果误差函数只是真实图片与生成图片（仍然以MNIST为例）的MSE。最终模型为了重构得更好，肯定会想尽办法让方差（噪音）为0。那么Encoder生成的$\sigma$为0时，生成的 noise 向量就只有$\mu+e$，所以不管怎么采样其实都只是得到确定的结果（也就是均值），也就没有随机性了，模型会慢慢退化成普通的AutoEncoder，噪声不再起作用。而为了防止这种现象的发生，我们要<strong>给误差函数增加额外的一项</strong>，这里先留个伏笔。</p>
-<p>对于训练数据$x$，其分布$p(x)$为高斯混合分布(多个类混合在一起，如MNIST数据集的数字包括0到9共10个类)，那么我们可以写成：$p(x)=\sum_{m}p(m)p(x|m)$，$m$为其中全部的类。此时我们在换一个描述：训练数据中的一个样本点$x$不属于一个具体的类，而是用一个分布来表示$x$。如训练数据数字1的分布，数字2的分布一直到数字9的分布叠加起来，那么这个分布就能表示$x$属于哪个类的几率更大。</p>
-<p>我们设立一个隐变量$z$，变量$z$可以服从任何分布，这里我们假设为标准正太分布，也就是上图中的<code>Normal Distribution</code>，我们从$z$中采样一个点来生成$x$，所以：</p>
+<p>对于训练数据$x$，其分布$p(x)$为高斯混合分布(多个类混合在一起，如MNIST数据集的数字包括0到9共10个类)，那么我们可以写成：$p(x)=\sum_{m}p(m)p(x|m)$，$m$为其中全部的类。此时我们在换一个描述：训练数据中的一个样本点$x$不属于一个具体的类，而是用一个分布来表示$x$。如数字1的分布，数字2的分布一直到数字9的分布叠加起来，那么这个分布就能表示$x$属于哪个类的几率更大。</p>
+<p>我们设立一个隐变量$z$，变量$z$可以服从任何分布，这里我们假设为标准正太分布，也就是上图中的<code>Normal Distribution</code>。我们可以从$z$中采样一个点来生成$x$，对于所有的$z$，生成$x$的分布为：</p>
 <p>\begin{equation}<br>p(x)=\int_z p(z)p(x|z)dz, \text{z 是连续的}<br>\end{equation}</p>
-<p>而采样$z$来生成$x$时要达到的目标为：采样的结果使得$p(x)$最大。此时假设另一种分布$q(z|x)$（任意分布），这是由$x$生成$z$的分布，开始推导：</p>
+<p>而通过采样$z$来生成$x$的过程中，我们可以建立一个神经网络，这个神经网络的输入是$z$，输出是一组均值和方差，从对应的均值和方差分布中采样得到$x$。而我们已经有训练数据$x$，所以这个网络要达到的目标为：采样的结果使得手中已经有的训练数据$\log p(x)$最大。此时假设另一种分布$q(z|x)$（任意分布，但最好是正态分布，本质是一个神经网络），这是一种由$x$生成$z$的分布，开始推导：</p>
 <script type="math/tex; mode=display">\begin{align}
 \log p(x) &=\int_zq(z|x)\log p(x)dz \\
 &= \int_z q(z|x)\log \frac{p(x,z)}{q(z|x)}dz + \int_z q(z|x)\log \frac{q(z|x)}{p(z|x)}dz\\
 &= \int_z q(z|x)\log \frac{p(x,z)}{q(z|x)}dz + KL(q(z|x)||p(z|x)) \\
-&\geq \int_z q(z|x)\log \frac{p(x,z)}{q(z|x)}dz \label{lowerb}
-\end{align}</script><p>而公式$\eqref{lowerb}$也就是$\log p(x)$的一个下限。解释下引入分布$q(z|x)$的原因：防止下限逐步增加而整体却开始减小。未完待续，还有好多细节的坑没有填完，暂时请不要看。</p>
+&\geq \int_z q(z|x)\log \frac{p(x|z)p(z)}{q(z|x)}dz \label{lowerb}
+\end{align}</script><p>而公式$\eqref{lowerb}$也就是$\log p(x)$的一个下限，暂且将其称为$\text{lowerb}$。那么$\text{lowerb}$由两项组成，分别为$p(x|z)$和$q(z|x)$，所以我们要调整这两项，使得$\text{lowerb}$越大越好。</p>
+<p>但需要注意的是，增加$\text{lowerb}$时$\log p(x)$却不一定变大，所以解释引入$q(z|x)$的原因：$q(z|x)$和$\log p(x)$没有关系，如果我们固定$p(x|z)$，单独调整$q(z|x)$来放大$\text{lowerb}$，那么$\log p(x)$就不会受到影响，此时$KL(q(z|x)||p(z|x))$会逐渐减小，此时$q(z|x)$的分布就会逐渐接近$p(z|x)$这一分布，而随着$\text{lowerb}$的逐渐增大，$\log p(x)$也会逐渐变大。</p>
+<p>继续推导$\text{lowerb}$这一项：</p>
+<script type="math/tex; mode=display">\begin{align}
+\int_z q(z|x)\log \frac{p(x|z)p(z)}{q(z|x)}dz &= \int_z q(z|x)\log (\frac{p(z)}{q(z|x)})dz + \int_z q(z|x)\log p(x|z)dz \\
+&= -KL(q(z|x)||p(z)) + \int_z q(z|x)\log p(x|z)dz
+\end{align}</script><p>如果我们最小化$KL(q(z|x)||p(z))$，我们会调整$q(z|x)$这个神经网络和$p(z)$这个分布越来越近，<strong>我们假设$q(z|x)$服从正态分布，这也是VAE实现的关键</strong>，（其他分布不是很容易计算），这一项的误差函数为：</p>
+<p>\begin{equation}<br>\mathcal{L_1} = KL(N(\mu,\sigma^2)||N(0,1)) =\frac{1}{2} (-\log \sigma^2 +\mu^2+\sigma^2-1)<br>\end{equation}</p>
+<p>公式推导参考：<a href="https://spaces.ac.cn/archives/5253" target="_blank" rel="noopener">https://spaces.ac.cn/archives/5253</a></p>
+<p>对于$\text{lowerb}$的另外一项$\int_z q(z|x)\log p(x|z)dz$，我们希望他越大越好，可以化简为$\mathbb{E}_{q(z|x)}[\log p(x|z)]$。再来分析一下这一项，大概含义就是：给定一个$x$，根据$q(z|x)$来生成一个$z$，然后让$\log p(x|z)$的几率越接近真实的$x$越好，这也就是AutoEncoder的基本工作：</p>
+<p><img data-src="/2020/05/16/AutoEncoder/4.png" alt></p>
+<p>在真正的生成任务中，我们不会考虑方差$\sigma$这一项，所以$p(x|z)$根据$z$来采样$x$，让最后生成的均值和原来的$x$对比就好，所以误差函数有两项。最终的误差函数为：</p>
+<p>\begin{equation}<br>\mathcal{L}=\mathcal{L_1} + \text{MSE}(\mu(x)-x)<br>\end{equation}</p>
+<p>注：从$N(\mu,\sigma^2)$中采样一个$Z$，相当于从$N(0,1)$中采样一个$\epsilon$，然后让$Z=\mu+\epsilon×\sigma$，防止采样过程不可导无法梯度下降。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>因为把输出的均值和方差的维度设为了2，所以还是很容易观察结果的。在5个eproch的后的运行结果如下：（代码：<a href="https://github.com/muyuuuu/tensorflow-learn/blob/master/VAE/demo.py）" target="_blank" rel="noopener">https://github.com/muyuuuu/tensorflow-learn/blob/master/VAE/demo.py）</a></p>
+<p><img data-src="/2020/05/16/AutoEncoder/5.png" alt><br><img data-src="/2020/05/16/AutoEncoder/6.png" alt></p>
+<p>总的来说，VAE的想法虽然是通过添加噪音的形式来模仿已有的数据，但思路还是很漂亮的。毕竟在Life Long Learning 的过程中，对过去的任务丝毫不想生成全新的数据，但是不知道自己讲清楚了没，希望大家多提点意见～</p>
 
     </div>
 
@@ -451,7 +473,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#从简单的AutoEncoder开始"><span class="nav-number">1.</span> <span class="nav-text">从简单的AutoEncoder开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VAE"><span class="nav-number">2.</span> <span class="nav-text">VAE</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#从简单的AutoEncoder开始"><span class="nav-number">1.</span> <span class="nav-text">从简单的AutoEncoder开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VAE"><span class="nav-number">2.</span> <span class="nav-text">VAE</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -521,12 +543,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">408k</span>
+    <span title="站点总字数">410k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:11</span>
+    <span title="站点阅读时长">6:12</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
