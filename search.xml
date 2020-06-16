@@ -1,7 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>高一下学期</title>
+    <title>GCN的通俗理解，无复杂公式</title>
+    <url>/2020/06/16/GCN/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。</p>
+<a id="more"></a>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>图表示为$G=(V,E)$，将图的节点表示和邻接矩阵作为网络的输入：</p>
+<ul>
+<li>对于每一个节点$i$的特征描述$x_i$，组成一个$N\times D$的矩阵$X$，$N$是节点的数量，$D$是特征的维度；</li>
+<li>图的邻接矩阵为$A$；</li>
+<li>网络的输出是$Z$，维度是$N\times F$，$F$是输出维度的特征。</li>
+</ul>
+<p>每一层神经网络可以定义为非线性函数：</p>
+<p>\begin{equation}H^{l+1}=f(H^l, A)\end{equation}</p>
+<p>其中，$H^0=X,H^l=Z$，$l$是网络的层数，$f$是选择的网络模型，就这样一层一层的输出。</p>
+<h1 id="简单实例"><a href="#简单实例" class="headerlink" title="简单实例"></a>简单实例</h1><p>首先定义逐层之间的传播规则：</p>
+<p>\begin{equation}f(H^l,A)=\sigma (AH^lW^l)\end{equation}</p>
+<p>其中，$W^l$是第$l$层的网络权重，$\sigma$是非线性的激活函数，这是最简单的定义。对这个最简单的定义添加两个限制：</p>
+<ul>
+<li>$A\times H^l$意味着对于图中的每一个节点，将它所有的邻居节点的全部特征向量求和，但没有考虑自己（除非有链接到自己的环），所以要对矩阵$A$增加单位矩阵$I$；</li>
+<li>考虑到邻接矩阵$A$的同时，也要考虑到节点的度，度越大，表明该节点和其他节点的关系越大，如果直接提取度数很大节点和周围节点的联系，势必会导致数据分布的不均衡。此时标准化的方式为：要取该节点的周围节点特征值的平均值。通俗点说，就是一个节点和四个节点挨着，那么对这四个节点，取每个节点特征值的$1/4$就行了在求和就行了。而实现这种方式只需要一个矩阵变换：方式为$D^{-1}A$/其中，$D$是节点度的对角矩阵。论文中使用了对称标准化$D^{-\frac{1}{2}}AD^{-\frac{1}{2}}$的方式，这不再严格等于相邻节点的平均。（只是这么一种处理方式，不必太在意）</li>
+</ul>
+<p>此时，传播规则为：</p>
+<p>\begin{equation}f(H^l,A)=\sigma (\hat{D}^{-\frac{1}{2}}\hat{A}\hat{D}^{-\frac{1}{2}}H^lW^l)\end{equation}</p>
+<p>其中，$\hat{A}=A+I$，$\hat{D}$是$\hat{A}$的节点度的矩阵。</p>
+<p>未完待续。</p>
+<h1 id="模型操作"><a href="#模型操作" class="headerlink" title="模型操作"></a>模型操作</h1><p>值得注意的是，模型产生了这些节点的嵌入，它们非常类似于图的社区结构。</p>
+<h2 id="半监督学习"><a href="#半监督学习" class="headerlink" title="半监督学习"></a>半监督学习</h2><p>只对又有标签的数据训练。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>恕我直言，上古时期的<code>tensorflow</code>代码没有看懂，<code>keras</code>的代码没有调通，看源代码的众多<code>issue</code>就知道了。</p>
+<ol>
+<li>第一步加载数据，<code>X, A, y = load_data(dataset=DATASET)</code>，其中X是特征矩阵，即节点的向量表示，A是临界矩阵，y是标签；</li>
+<li>然后得到训练数据<code>graph</code>，由<code>X</code>和<code>A_</code>（处理后的矩阵）组成；</li>
+<li>最重要的是<code>GraphConvolution</code>层</li>
+</ol>
+<h2 id="GraphConvolution-解析"><a href="#GraphConvolution-解析" class="headerlink" title="GraphConvolution 解析"></a><code>GraphConvolution</code> 解析</h2><p>重要的一点是，和卷积无关。</p>
+<p>而是直接矩阵相乘。在得到节点的嵌入表示后，再去划分就很容易了。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
+<ol>
+<li>参考论文: <a href="https://arxiv.org/pdf/1609.02907.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1609.02907.pdf</a></li>
+<li>参考博客(原文讲的很好): <a href="http://tkipf.github.io/graph-convolutional-networks/" target="_blank" rel="noopener">http://tkipf.github.io/graph-convolutional-networks/</a></li>
+<li>数据集(cora): <a href="http://www.cs.umd.edu/~sen/lbc-proj/LBC.html" target="_blank" rel="noopener">http://www.cs.umd.edu/~sen/lbc-proj/LBC.html</a></li>
+<li>代码参考(tensorflow): <a href="https://github.com/tkipf/gcn" target="_blank" rel="noopener">https://github.com/tkipf/gcn</a></li>
+<li>代码参考(keras): <a href="https://github.com/tkipf/keras-gcn" target="_blank" rel="noopener">https://github.com/tkipf/keras-gcn</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一盆绿植</title>
     <url>/2020/06/13/green-plants/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p><img data-src="/2020/06/13/green-plants/1.jpg" width="60%" height="60%"></p>
 <a id="more"></a>

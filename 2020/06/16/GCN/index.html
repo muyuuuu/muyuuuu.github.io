@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="&amp;emsp;&amp;emsp;怀念的，也许只是怀念本身。一年前，不是2016年，而是2018年。高考对我来说是3年前的事情了。">
-<meta name="keywords" content="Life">
+  <meta name="description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="端午&amp;高考乱弹">
-<meta property="og:url" content="https://muyuuuu.github.io/2019/06/08/DuanWu/index.html">
+<meta property="og:title" content="GCN的通俗理解，无复杂公式">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/06/16/GCN/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;怀念的，也许只是怀念本身。一年前，不是2016年，而是2018年。高考对我来说是3年前的事情了。">
+<meta property="og:description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-17T09:27:42.063Z">
+<meta property="og:updated_time" content="2020-06-16T16:56:00.393Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="端午&amp;高考乱弹">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;怀念的，也许只是怀念本身。一年前，不是2016年，而是2018年。高考对我来说是3年前的事情了。">
+<meta name="twitter:title" content="GCN的通俗理解，无复杂公式">
+<meta name="twitter:description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2019/06/08/DuanWu/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/06/16/GCN/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>端午&高考乱弹 | Just for Life.</title>
+  <title>GCN的通俗理解，无复杂公式 | Just for Life.</title>
   
 
 
@@ -223,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/06/08/DuanWu/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/06/16/GCN/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          端午&高考乱弹
+          GCN的通俗理解，无复杂公式
         </h1>
 
         <div class="post-meta">
@@ -246,14 +246,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-06-08 19:43:14" itemprop="dateCreated datePublished" datetime="2019-06-08T19:43:14+08:00">2019-06-08</time>
+              <time title="创建时间：2020-06-16 23:57:28" itemprop="dateCreated datePublished" datetime="2020-06-16T23:57:28+08:00">2020-06-16</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-09-17 17:27:42" itemprop="dateModified" datetime="2019-09-17T17:27:42+08:00">2019-09-17</time>
+                <time title="修改时间：2020-06-17 00:56:00" itemprop="dateModified" datetime="2020-06-17T00:56:00+08:00">2020-06-17</time>
               </span>
 
           
@@ -267,7 +267,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -286,38 +286,46 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>&emsp;&emsp;怀念的，也许只是怀念本身。一年前，不是2016年，而是2018年。高考对我来说是3年前的事情了。</p>
+        <p>近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。</p>
 <a id="more"></a>
-<h1 id="乱弹1-计算机"><a href="#乱弹1-计算机" class="headerlink" title="乱弹1-计算机"></a>乱弹1-计算机</h1><p>&emsp;&emsp;谁能想到3年后来了计算机专业呢？大一调剂到了测绘工程，对此专业无感，对专业的人也无感。隔壁几个宿舍和本宿舍大概是打游戏的那种吧，打起来没完没了的。凌晨两点还在大吼大叫or声音不断，所以大一在实验室睡了一年。</p>
-<p>&emsp;&emsp;我爱写代码，尽管写的不是很好。于是有了这样的写代码界面。不知所云。也许每一个coder都有一个geek的心吧。</p>
-<p><img data-src="/2019/06/08/DuanWu/1.jpg" alt></p>
-<h1 id="乱弹2-三年前"><a href="#乱弹2-三年前" class="headerlink" title="乱弹2-三年前"></a>乱弹2-三年前</h1><p>&emsp;&emsp;我记得三年前的现在，考完了很平静吧，把书搬了把宿舍搬了，然后回家整理了下，安心的玩着游戏。第二天五点自然醒还真不习惯，又翻身睡了下去。</p>
-<p>&emsp;&emsp;第二天约了自己喜欢的女孩出去玩，始终没有成功，总是在找各种借口拒绝我。后来自己安静的打游戏，聊天，吹嘘，怀念。</p>
-<p>&emsp;&emsp;2016-6-23，出了成绩倒在了床上。在她怀里撕心裂肺的大哭了一个下午。后来也没调节好自己情绪，每天醒来枕巾都是湿的。</p>
-<p>&emsp;&emsp;2016-7-12，性格不合安静的吵了一架，做了极度的各种的挽留，各种丧，各种想不开还是各奔东西。朋友说我做的不对。一度连续的失败后，不应该那样失落，也不应该精神涣散到丢了魂。目光游离，想死又不敢。</p>
-<p>&emsp;&emsp;2016-7-15，写了封情书。可惜删了也找不到原稿。我这辈子也写不出那种富含个人感情的八千多字的情书了。也不会在没有暖气的北国冬天，把身上唯一的袄脱下来给你。</p>
-<p>&emsp;&emsp;2016-8月，差三分就能去她的学校。也许当初手抖一下一个选择题的事。3分，几百公里，一生的遗憾。一个月也没怎么吃饭，整天靠吃水果度日。一个月瘦了15斤，哭到不受控制。我爸说你读书有什么用，我妈不说话，感觉被世界抛弃。</p>
-<p>&emsp;&emsp;2016-9-03，她要去大学，想见最后一次也没成功。在她家门外做了两个小时的傻瓜，反正我知道这辈子也见不到了。后来我就想，不再对任何要走的人做任何形式的挽留。删好友or屏蔽，我不会做挽留，不想理我，我自己走。</p>
-<p>​        想起了当初传的纸条，借过的衣服，赌过的气，砸过的墙。想当年，其实我们都一样，没啥可说的，还与历史，归于天地就好。</p>
-<p>&emsp;&emsp;2019-6-07，我还活着，一切正常。许多事情实在想不起来了。</p>
-<p><img data-src="/2019/06/08/DuanWu/2.jpg" alt></p>
-<p><img data-src="/2019/06/08/DuanWu/3.jpg" alt></p>
-<p>&emsp;&emsp;午后的过道，漏雨的屋顶，没空调的40度暑期加课，风吹扬起的长发，夜晚的星空。</p>
-<p>​        不在怀念，没意思。</p>
-<p>​        也许当初纯洁没有杂质的感情，没有一丝的油腻感。一身简单的白校服素衣，一个简单的学生头，一举一动一颦一笑，周身散发出的青春气息，符合所有的初恋幻想。</p>
-<p>​        不像狗血电影里，那么炫美的服装，那么放松的环境，没有怀孕没有多角恋，没有打架也没有癌症，就简单的卷子、纸条、见面打个招呼，下课开个玩笑。就这么简单。</p>
-<p>​        情窦初开时的情绪、举动，搭讪被识破后的转移话题，想看对方却又不敢有眼神直视的交流，那种心理状态，符合了所有人读书时的青春吧。喜欢又不好意思明说捅破的纯真feel，没有捅破却又看你和别人聊得很来的feel。如果你真的动过心，就应该知道我在说啥，不可思议与甜蜜。</p>
-<p>​        当初最美的场景，不就是阳光下，走廊里，你的侧脸吗。微风拂过，刘海微微飞扬，头发没有染色没有拉直，就一个简单的马尾辫，多美。</p>
-<h1 id="乱弹3-现在"><a href="#乱弹3-现在" class="headerlink" title="乱弹3-现在"></a>乱弹3-现在</h1><p>&emsp;&emsp;大学一切OK，我在刷题我就是智障。有那时间真的不如搞搞技术和看看知识，多看多想少刷题。纸上得来终觉浅，觉知此事要躬行。</p>
-<p>&emsp;&emsp;建模面试的时候，我总要问：线性代数中特征向量和特征值的物理含义。他们都会做题，可是学的都是不懂背景的死知识。</p>
-<p>&emsp;&emsp;也看上了几个顺眼的姑娘，可惜大概不想理我吧。就那么聊着聊着就没人了，我发完最后一条消息，她没回，我也就礼貌的不再打扰。</p>
-<p>&emsp;&emsp;前几天他们举办了桌游，三国杀、象棋、扑克、斗地主、五子棋、狼人杀。就在教室玩了起来，放下了手中的电路板和代码我们都一样。</p>
-<p>&emsp;&emsp;好久不玩，想起了小时候，在我家的丝瓜架下，点上蚊香，也是玩象棋、扑克、三国杀到快要日落，快日落就趁天气凉快去打球。那是我最快乐的时光。</p>
-<p>&emsp;&emsp;一切正常，只是不在怀念。</p>
-<p><img data-src="/2019/06/08/DuanWu/4.jpg" alt></p>
-<h1 id="乱弹4-童话"><a href="#乱弹4-童话" class="headerlink" title="乱弹4-童话"></a>乱弹4-童话</h1><p>&emsp;&emsp;hold不住《童话》的前奏钢琴曲了。</p>
-<p>&emsp;&emsp;也许是时代进步了，是我们这一代自己落后了吧。诸多感叹和怀念，时不时来个“想当年”，也证明我们逐渐老了，过时了～</p>
-<p>&emsp;&emsp;在特殊的日子里，我们会发现，总喜欢回忆一些人、一些事、一些物，也许是那一首歌，也许是那一道风景。有时候我们会陶醉于这种怀念之中，却不知道，可能我们怀念的并不是那些人和事物，而是怀念本身。</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>图表示为$G=(V,E)$，将图的节点表示和邻接矩阵作为网络的输入：</p>
+<ul>
+<li>对于每一个节点$i$的特征描述$x_i$，组成一个$N\times D$的矩阵$X$，$N$是节点的数量，$D$是特征的维度；</li>
+<li>图的邻接矩阵为$A$；</li>
+<li>网络的输出是$Z$，维度是$N\times F$，$F$是输出维度的特征。</li>
+</ul>
+<p>每一层神经网络可以定义为非线性函数：</p>
+<p>\begin{equation}H^{l+1}=f(H^l, A)\end{equation}</p>
+<p>其中，$H^0=X,H^l=Z$，$l$是网络的层数，$f$是选择的网络模型，就这样一层一层的输出。</p>
+<h1 id="简单实例"><a href="#简单实例" class="headerlink" title="简单实例"></a>简单实例</h1><p>首先定义逐层之间的传播规则：</p>
+<p>\begin{equation}f(H^l,A)=\sigma (AH^lW^l)\end{equation}</p>
+<p>其中，$W^l$是第$l$层的网络权重，$\sigma$是非线性的激活函数，这是最简单的定义。对这个最简单的定义添加两个限制：</p>
+<ul>
+<li>$A\times H^l$意味着对于图中的每一个节点，将它所有的邻居节点的全部特征向量求和，但没有考虑自己（除非有链接到自己的环），所以要对矩阵$A$增加单位矩阵$I$；</li>
+<li>考虑到邻接矩阵$A$的同时，也要考虑到节点的度，度越大，表明该节点和其他节点的关系越大，如果直接提取度数很大节点和周围节点的联系，势必会导致数据分布的不均衡。此时标准化的方式为：要取该节点的周围节点特征值的平均值。通俗点说，就是一个节点和四个节点挨着，那么对这四个节点，取每个节点特征值的$1/4$就行了在求和就行了。而实现这种方式只需要一个矩阵变换：方式为$D^{-1}A$/其中，$D$是节点度的对角矩阵。论文中使用了对称标准化$D^{-\frac{1}{2}}AD^{-\frac{1}{2}}$的方式，这不再严格等于相邻节点的平均。（只是这么一种处理方式，不必太在意）</li>
+</ul>
+<p>此时，传播规则为：</p>
+<p>\begin{equation}f(H^l,A)=\sigma (\hat{D}^{-\frac{1}{2}}\hat{A}\hat{D}^{-\frac{1}{2}}H^lW^l)\end{equation}</p>
+<p>其中，$\hat{A}=A+I$，$\hat{D}$是$\hat{A}$的节点度的矩阵。</p>
+<p>未完待续。</p>
+<h1 id="模型操作"><a href="#模型操作" class="headerlink" title="模型操作"></a>模型操作</h1><p>值得注意的是，模型产生了这些节点的嵌入，它们非常类似于图的社区结构。</p>
+<h2 id="半监督学习"><a href="#半监督学习" class="headerlink" title="半监督学习"></a>半监督学习</h2><p>只对又有标签的数据训练。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>恕我直言，上古时期的<code>tensorflow</code>代码没有看懂，<code>keras</code>的代码没有调通，看源代码的众多<code>issue</code>就知道了。</p>
+<ol>
+<li>第一步加载数据，<code>X, A, y = load_data(dataset=DATASET)</code>，其中X是特征矩阵，即节点的向量表示，A是临界矩阵，y是标签；</li>
+<li>然后得到训练数据<code>graph</code>，由<code>X</code>和<code>A_</code>（处理后的矩阵）组成；</li>
+<li>最重要的是<code>GraphConvolution</code>层</li>
+</ol>
+<h2 id="GraphConvolution-解析"><a href="#GraphConvolution-解析" class="headerlink" title="GraphConvolution 解析"></a><code>GraphConvolution</code> 解析</h2><p>重要的一点是，和卷积无关。</p>
+<p>而是直接矩阵相乘。在得到节点的嵌入表示后，再去划分就很容易了。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
+<ol>
+<li>参考论文: <a href="https://arxiv.org/pdf/1609.02907.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1609.02907.pdf</a></li>
+<li>参考博客(原文讲的很好): <a href="http://tkipf.github.io/graph-convolutional-networks/" target="_blank" rel="noopener">http://tkipf.github.io/graph-convolutional-networks/</a></li>
+<li>数据集(cora): <a href="http://www.cs.umd.edu/~sen/lbc-proj/LBC.html" target="_blank" rel="noopener">http://www.cs.umd.edu/~sen/lbc-proj/LBC.html</a></li>
+<li>代码参考(tensorflow): <a href="https://github.com/tkipf/gcn" target="_blank" rel="noopener">https://github.com/tkipf/gcn</a></li>
+<li>代码参考(keras): <a href="https://github.com/tkipf/keras-gcn" target="_blank" rel="noopener">https://github.com/tkipf/keras-gcn</a></li>
+</ol>
 
     </div>
 
@@ -328,19 +336,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\10\13\MMA-Party-2018\" rel="bookmark">聚会的说～</a></div>
+      <div class="popular-posts-title"><a href="\2020\05\16\AutoEncoder\" rel="bookmark">从AutoEncoder到VAE</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\03\28\Prime-minister-music\" rel="bookmark">迟暮的丞相：遂许先帝以驱驰，尔来二十又一年</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\06\06\about-graduate-or-work\" rel="bookmark">关于读研还是工作</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\30\bye\" rel="bookmark">归尘</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\09\Start-deep-learning\" rel="bookmark">DeepLearning准备进坑</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\03\20\college-graduation\" rel="bookmark">大学毕业的前夕</a></div>
+      <div class="popular-posts-title"><a href="\2020\05\09\back-propagation-and-gradient-descent\" rel="bookmark">图解反向传播与梯度下降</a></div>
     </li>
   </ul>
 
@@ -386,7 +394,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Life/" rel="tag"># Life</a>
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
           </div>
 
         
@@ -400,13 +408,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/06/02/OJ-Cpp-cumulative/" rel="prev" title="C++常用数据结构">
-      <i class="fa fa-chevron-left"></i> C++常用数据结构
+    <a href="/2020/06/13/green-plants/" rel="prev" title="一盆绿植">
+      <i class="fa fa-chevron-left"></i> 一盆绿植
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/06/12/Computer-network/" rel="next" title="计算机网络原理">
-      计算机网络原理 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -467,7 +472,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#乱弹1-计算机"><span class="nav-number">1.</span> <span class="nav-text">乱弹1-计算机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#乱弹2-三年前"><span class="nav-number">2.</span> <span class="nav-text">乱弹2-三年前</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#乱弹3-现在"><span class="nav-number">3.</span> <span class="nav-text">乱弹3-现在</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#乱弹4-童话"><span class="nav-number">4.</span> <span class="nav-text">乱弹4-童话</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单实例"><span class="nav-number">2.</span> <span class="nav-text">简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型操作"><span class="nav-number">3.</span> <span class="nav-text">模型操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#半监督学习"><span class="nav-number">3.1.</span> <span class="nav-text">半监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">3.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GraphConvolution-解析"><span class="nav-number">3.3.</span> <span class="nav-text">GraphConvolution 解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -784,7 +789,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'e70b2dd7b3e5b315ee9c013dc9090541',
+      id          : 'e82e0bc5eade4f513c4c9e2f85e9d652',
         language: 'zh-CN',
       distractionFreeMode: true
     });
