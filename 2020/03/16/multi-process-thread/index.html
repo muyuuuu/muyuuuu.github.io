@@ -291,13 +291,13 @@
 <h1 id="从物理机开始"><a href="#从物理机开始" class="headerlink" title="从物理机开始"></a>从物理机开始</h1><p>本文以Linux操作为主，Windows操作不太了解。首先先从物理机出发，了解物理CPU，CPU的核，线程是什么概念。物理CPU指实际存在的CPU处理器，安装在PC主板或服务器上。首先查看物理CPU个数，查看电脑有几个CPU：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">grep &apos;physical id&apos; /proc/CPUinfo | sort -u</span><br></pre></td></tr></table></figure>
 <p>执行结果反馈如下：（后期解释为什么是12个id为0的记录）</p>
-<p><img data-src="/2020/03/16/multi-process-thread/1.png" alt></p>
+<p><img data-src="multi-process-thread/1.png" alt></p>
 <p>其id均为0，表示我电脑有一个CPU（从0开始编号）。CPU中包含物理内核，比如多核CPU，单核CPU。这个多核或者单核已经集成在CPU内部了，那么来查看一下核心数量，就是买电脑的时候常听商家常说的4核CPU或者8核CPU：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">grep &apos;core id&apos; /proc/CPUinfo | sort -u | wc -l</span><br></pre></td></tr></table></figure>
 <p>我这里输出的结果为6,表示我的是6核CPU。同时，你在买电脑的时候听说过，6核12线程，4核8线程的CPU，那么，再看一下自己的电脑支持几个线程：（说了半天终于到线程了）。</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">grep &apos;processor&apos; /proc/CPUinfo | sort -u | wc -l</span><br></pre></td></tr></table></figure>
 <p>输出的结果是12，表示我的电脑的处理器是一个CPU，且是6核心12线程的。所谓的6核12线程，6核指的是物理核心。用Intel的超线程技术(HT， Hyper-threading)将物理核虚拟而成的逻辑处理单元，现在大部分的主机的CPU都在使用HT技术，用一个物理核模拟两个虚拟核，即每个核两个线程，总数为12线程。所以在操作系统看来是12个核，但实际是一个物理CPU中的6个物理内核虚拟出来的12个线程：</p>
-<p><img data-src="/2020/03/16/multi-process-thread/1.png" alt></p>
+<p><img data-src="multi-process-thread/1.png" alt></p>
 <p>此时我们需要知道：<strong>一个核心只能同时执行一个线程</strong>。</p>
 <h1 id="进程与线程的概念"><a href="#进程与线程的概念" class="headerlink" title="进程与线程的概念"></a>进程与线程的概念</h1><h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><p>当写完一份程序，编译为二进制的可执行文件并执行时：可执行的.exe文件可以理解为一种程序，程序本身也是指令的集合，而进程才是程序(那些指令)的真正运行。进程本身不会运行，运行的程序叫进程。进程会标记程序要访问的地址、要执行的操作等，执行完毕后进程会被销毁。（如有兴趣请参考《操作系统》的进程控制块，我快忘光了）</p>
 <p>若干进程有可能与同一个程序有关系，如<strong>循序和平行</strong>。进程<code>A</code>需要得到进程<code>B</code>的处理结果才能继续运行，所以进程<code>A</code>要等待进程<code>B</code>执行完，这叫<strong>循序</strong>；进程<code>C</code>和进程<code>D</code>没有关系，这俩可以同时进行，这叫<strong>平行</strong>。</p>
@@ -356,7 +356,7 @@
 <p>为了体现进程的<strong>并发</strong>，我特意在12个核的CPU内创建了13个进程。意思是：会有一个进程要等待其他进程释放一个CPU资源才能执行。进程池的close()方法会阻止其他进程在进入进程池，join()方法会等待进程池全部的进程执行完毕。</p>
 <p>创建13个进程，并使每个进程等待2秒观看执行效果：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> os, time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_time_task</span><span class="params">(name)</span>:</span></span><br><span class="line">    print(<span class="string">'Run task %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    start = time.time()</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Task %s runs %0.2f seconds.'</span> % (name, (end - start)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Pool(<span class="number">13</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">14</span>):</span><br><span class="line">        p.apply_async(long_time_task, args=(i,))</span><br><span class="line">    print(<span class="string">'Waiting for all subprocesses done...'</span>)</span><br><span class="line">    <span class="comment"># 不能在增加其他进程</span></span><br><span class="line">    p.close()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'All subprocesses done.'</span>)</span><br></pre></td></tr></table></figure>
-<p><img data-src="/2020/03/16/multi-process-thread/2.png" alt></p>
+<p><img data-src="multi-process-thread/2.png" alt></p>
 <p>可以看到，第13个进程很晚才创建，在3, 2, 1, 12, 0, 10, 4, 7, 11, 8这几个进程执行完毕后，第13个进程才刚刚创建。</p>
 <p>在这13个进程中，每个进程都有一个主线程。CPU给线程分配时间片(也就是分配给线程的时间)，执行完时间片后会切换都另一个线程。从保存线程A的状态到准备切换为线程B时，加载线程B的状态的这个过程就叫上下文切换，而上下切换时会消耗大量的CPU时间。因此，只有在特定的条件下开启多线程才会更合适。不可避免的线程开销包括：</p>
 <ul>
@@ -640,12 +640,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">418k</span>
+    <span title="站点总字数">420k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:20</span>
+    <span title="站点阅读时长">6:22</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-06-16T16:56:00.393Z">
+<meta property="og:updated_time" content="2020-06-17T08:13:55.403Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GCN的通俗理解，无复杂公式">
 <meta name="twitter:description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-17 00:56:00" itemprop="dateModified" datetime="2020-06-17T00:56:00+08:00">2020-06-17</time>
+                <time title="修改时间：2020-06-17 16:13:55" itemprop="dateModified" datetime="2020-06-17T16:13:55+08:00">2020-06-17</time>
               </span>
 
           
@@ -267,14 +267,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>4.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -288,36 +288,45 @@
       
         <p>近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。</p>
 <a id="more"></a>
-<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>图表示为$G=(V,E)$，将图的节点表示和邻接矩阵作为网络的输入：</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>图的表示为$G=(V,E)$，将图的节点表示和邻接矩阵作为网络的输入：</p>
 <ul>
 <li>对于每一个节点$i$的特征描述$x_i$，组成一个$N\times D$的矩阵$X$，$N$是节点的数量，$D$是特征的维度；</li>
 <li>图的邻接矩阵为$A$；</li>
 <li>网络的输出是$Z$，维度是$N\times F$，$F$是输出维度的特征。</li>
 </ul>
 <p>每一层神经网络可以定义为非线性函数：</p>
-<p>\begin{equation}H^{l+1}=f(H^l, A)\end{equation}</p>
+<p>\begin{equation}<br>H^{l+1}=f(H^l, A)<br>\end{equation}</p>
 <p>其中，$H^0=X,H^l=Z$，$l$是网络的层数，$f$是选择的网络模型，就这样一层一层的输出。</p>
 <h1 id="简单实例"><a href="#简单实例" class="headerlink" title="简单实例"></a>简单实例</h1><p>首先定义逐层之间的传播规则：</p>
 <p>\begin{equation}f(H^l,A)=\sigma (AH^lW^l)\end{equation}</p>
 <p>其中，$W^l$是第$l$层的网络权重，$\sigma$是非线性的激活函数，这是最简单的定义。对这个最简单的定义添加两个限制：</p>
 <ul>
-<li>$A\times H^l$意味着对于图中的每一个节点，将它所有的邻居节点的全部特征向量求和，但没有考虑自己（除非有链接到自己的环），所以要对矩阵$A$增加单位矩阵$I$；</li>
-<li>考虑到邻接矩阵$A$的同时，也要考虑到节点的度，度越大，表明该节点和其他节点的关系越大，如果直接提取度数很大节点和周围节点的联系，势必会导致数据分布的不均衡。此时标准化的方式为：要取该节点的周围节点特征值的平均值。通俗点说，就是一个节点和四个节点挨着，那么对这四个节点，取每个节点特征值的$1/4$就行了在求和就行了。而实现这种方式只需要一个矩阵变换：方式为$D^{-1}A$/其中，$D$是节点度的对角矩阵。论文中使用了对称标准化$D^{-\frac{1}{2}}AD^{-\frac{1}{2}}$的方式，这不再严格等于相邻节点的平均。（只是这么一种处理方式，不必太在意）</li>
+<li>$A\times H^l$意味着对于图中的每一个节点，将它所有的邻居节点的全部特征向量求和，但没有考虑自己（除非有链接到自己的环），所以要对矩阵$A$增加单位矩阵$I$，这样矩阵的每一个节点就具有链接到自己的回路；</li>
+<li>考虑到邻接矩阵$A$的同时，也要考虑到节点的度，度越大，表明该节点和其他节点的关系越大，如果直接提取度数很大节点和周围节点的联系，即将邻居节点的全部特征向量求和，势必会导致数据分布的不均衡。此时标准化的方式为：要取该节点的周围节点特征值的平均值。通俗点说，就是一个节点和四个节点挨着，那么对这四个节点，取每个节点特征值的$1/4$在求和就行了。而实现这种方式只需要一个矩阵变换：方式为$D^{-1}A$/其中，$D$是对角矩阵，矩阵元素是节点的度。论文中使用了对称标准化$D^{-\frac{1}{2}}AD^{-\frac{1}{2}}$的方式，这不再严格等于相邻节点的平均。（只是这么一种处理方式，不必太在意）</li>
 </ul>
 <p>此时，传播规则为：</p>
 <p>\begin{equation}f(H^l,A)=\sigma (\hat{D}^{-\frac{1}{2}}\hat{A}\hat{D}^{-\frac{1}{2}}H^lW^l)\end{equation}</p>
 <p>其中，$\hat{A}=A+I$，$\hat{D}$是$\hat{A}$的节点度的矩阵。</p>
-<p>未完待续。</p>
-<h1 id="模型操作"><a href="#模型操作" class="headerlink" title="模型操作"></a>模型操作</h1><p>值得注意的是，模型产生了这些节点的嵌入，它们非常类似于图的社区结构。</p>
-<h2 id="半监督学习"><a href="#半监督学习" class="headerlink" title="半监督学习"></a>半监督学习</h2><p>只对又有标签的数据训练。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>恕我直言，上古时期的<code>tensorflow</code>代码没有看懂，<code>keras</code>的代码没有调通，看源代码的众多<code>issue</code>就知道了。</p>
+<h1 id="模型操作"><a href="#模型操作" class="headerlink" title="模型操作"></a>模型操作</h1><p>如果你看到这里还不是很懂，那我很建议去看它的代码，一目了然。值得注意的是，模型产生了这些节点的嵌入，它们非常类似于图的社区结构。</p>
+<h2 id="半监督学习"><a href="#半监督学习" class="headerlink" title="半监督学习"></a>半监督学习</h2><p>只对有标签的数据训练，没有标签的数据在损失函数中不考虑。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>恕我直言，上古时期的<code>tensorflow</code>代码没有看懂，<code>keras</code>的代码还能看懂，但没有调通，看源代码的众多<code>issue</code>就知道了。</p>
 <ol>
 <li>第一步加载数据，<code>X, A, y = load_data(dataset=DATASET)</code>，其中X是特征矩阵，即节点的向量表示，A是临界矩阵，y是标签；</li>
-<li>然后得到训练数据<code>graph</code>，由<code>X</code>和<code>A_</code>（处理后的矩阵）组成；</li>
-<li>最重要的是<code>GraphConvolution</code>层</li>
+<li>然后得到训练数据<code>graph</code>，由<code>X</code>和<code>A_</code>（处理后的矩阵，包括增加单位矩阵和对称标准化）组成；</li>
+<li>之后数据经过<code>doupout</code>，传入<code>GraphConvolution</code>层；</li>
 </ol>
-<h2 id="GraphConvolution-解析"><a href="#GraphConvolution-解析" class="headerlink" title="GraphConvolution 解析"></a><code>GraphConvolution</code> 解析</h2><p>重要的一点是，和卷积无关。</p>
-<p>而是直接矩阵相乘。在得到节点的嵌入表示后，再去划分就很容易了。</p>
+<h2 id="GraphConvolution-解析"><a href="#GraphConvolution-解析" class="headerlink" title="GraphConvolution 解析"></a><code>GraphConvolution</code> 解析</h2><p>重要的一点是，图卷积网络和卷积核无关。而是直接矩阵相乘，在得到节点的嵌入表示后，再去划分就很容易了。可以参看原文的代码：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GraphConvolution</span><span class="params">(Layer)</span>:</span></span><br><span class="line">    <span class="string">"""Basic graph convolution layer as in https://arxiv.org/abs/1609.02907"""</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, support=<span class="number">1</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                 activation=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 use_bias=True,</span></span></span><br><span class="line"><span class="function"><span class="params">                 kernel_initializer=<span class="string">'glorot_uniform'</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                 bias_initializer=<span class="string">'zeros'</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                 kernel_regularizer=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 bias_regularizer=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 activity_regularizer=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 kernel_constraint=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 bias_constraint=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">'input_shape'</span> <span class="keyword">not</span> <span class="keyword">in</span> kwargs <span class="keyword">and</span> <span class="string">'input_dim'</span> <span class="keyword">in</span> kwargs:</span><br><span class="line">            kwargs[<span class="string">'input_shape'</span>] = (kwargs.pop(<span class="string">'input_dim'</span>),)</span><br><span class="line">        super(GraphConvolution, self).__init__(**kwargs)</span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activations.get(activation)</span><br><span class="line">        self.use_bias = use_bias</span><br><span class="line">        self.kernel_initializer = initializers.get(kernel_initializer)</span><br><span class="line">        self.bias_initializer = initializers.get(bias_initializer)</span><br><span class="line">        self.kernel_regularizer = regularizers.get(kernel_regularizer)</span><br><span class="line">        self.bias_regularizer = regularizers.get(bias_regularizer)</span><br><span class="line">        self.activity_regularizer = regularizers.get(activity_regularizer)</span><br><span class="line">        self.kernel_constraint = constraints.get(kernel_constraint)</span><br><span class="line">        self.bias_constraint = constraints.get(bias_constraint)</span><br><span class="line">        self.supports_masking = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">        self.support = support</span><br><span class="line">        <span class="keyword">assert</span> support &gt;= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compute_output_shape</span><span class="params">(self, input_shapes)</span>:</span></span><br><span class="line">        features_shape = input_shapes[<span class="number">0</span>]</span><br><span class="line">        output_shape = (features_shape[<span class="number">0</span>], self.units)</span><br><span class="line">        <span class="keyword">return</span> output_shape  <span class="comment"># (batch_size, output_dim)</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shapes)</span>:</span></span><br><span class="line">        features_shape = input_shapes[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">assert</span> len(features_shape) == <span class="number">2</span></span><br><span class="line">        input_dim = features_shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        self.kernel = self.add_weight(shape=(input_dim * self.support,</span><br><span class="line">                                             self.units),</span><br><span class="line">                                      initializer=self.kernel_initializer,</span><br><span class="line">                                      name=<span class="string">'kernel'</span>,</span><br><span class="line">                                      regularizer=self.kernel_regularizer,</span><br><span class="line">                                      constraint=self.kernel_constraint)</span><br><span class="line"></span><br><span class="line">        self.bias = self.add_weight(shape=(self.units,),</span><br><span class="line">                                        initializer=self.bias_initializer,</span><br><span class="line">                                        name=<span class="string">'bias'</span>,</span><br><span class="line">                                        regularizer=self.bias_regularizer,</span><br><span class="line">                                        constraint=self.bias_constraint)</span><br><span class="line"></span><br><span class="line">        self.built = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">call</span><span class="params">(self, inputs, mask=None)</span>:</span></span><br><span class="line">        features = inputs[<span class="number">0</span>]</span><br><span class="line">        basis = inputs[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">        supports = list()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.support):</span><br><span class="line">            supports.append(K.dot(basis[i], features))</span><br><span class="line">        supports = K.concatenate(supports, axis=<span class="number">1</span>)</span><br><span class="line">        output = K.dot(supports, self.kernel)</span><br><span class="line"></span><br><span class="line">        output += self.bias</span><br><span class="line">        <span class="keyword">return</span> self.activation(output)</span><br></pre></td></tr></table></figure>
+<p>如上，我么很容易看出GCN的工作就是矩阵相乘，将输出的维度不断的压缩，得到节点的嵌入表示。也许你会很疑惑？众多科普文章中的拉普拉斯算子什么的呢？关于这一点，原作者也做出了解释：</p>
+<p><code>spectral graph convolution</code>（我不知道该怎么翻译了）：定义为信号与图的傅立叶空间中的滤波器相乘。说人话的意思是：矩阵$X$要和矩阵$U$相乘，矩阵$U$是图灵拉普拉斯矩阵$L$的特征向量矩阵，$L$的计算方式是：$L=I-\hat{A}$，但是具有高昂的计算代价。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>也许你会疑问，图网络是用来干什么的？正如作者所说，GCN仅仅是一个开始。据我个人的粗俗分析，可以用来：</p>
+<ol>
+<li>借助GCN学习得到的节点表示，来进行大规模图划分；</li>
+<li>如果GCN的标签是自己本身，那是不是可以用类似 autoencoder 的形式来进行链接预测？</li>
+<li>能否学习节点之间的隐藏联系，推断序列数据的结构？</li>
+<li>能否与周围环境交互，对已有的模型进行调整，主动构建关系、对象等？</li>
+</ol>
+<p>当然，距离实现以上这些还有很长的路要走。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
 <ol>
 <li>参考论文: <a href="https://arxiv.org/pdf/1609.02907.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1609.02907.pdf</a></li>
@@ -472,7 +481,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单实例"><span class="nav-number">2.</span> <span class="nav-text">简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型操作"><span class="nav-number">3.</span> <span class="nav-text">模型操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#半监督学习"><span class="nav-number">3.1.</span> <span class="nav-text">半监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">3.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GraphConvolution-解析"><span class="nav-number">3.3.</span> <span class="nav-text">GraphConvolution 解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单实例"><span class="nav-number">2.</span> <span class="nav-text">简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型操作"><span class="nav-number">3.</span> <span class="nav-text">模型操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#半监督学习"><span class="nav-number">3.1.</span> <span class="nav-text">半监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">3.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GraphConvolution-解析"><span class="nav-number">3.3.</span> <span class="nav-text">GraphConvolution 解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -542,12 +551,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">418k</span>
+    <span title="站点总字数">420k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:20</span>
+    <span title="站点阅读时长">6:22</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
