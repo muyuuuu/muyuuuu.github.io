@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="设置代码字体listings 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」lstlisting 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。 很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一">
-<meta name="keywords" content="LaTeX">
+  <meta name="description" content="在解决大规模图划分时，读过了很多论文，无非是在目标方程中做出一些策略上的改动，并没有什么创新的地方，最严肃的问题是，可能收敛不了。而深度学习发展的今天，获取可以考虑用DeepLearning的形式来改善大规模图划分。读了些许的论文，只有这篇是沾点边的，遂精读并做笔记，这篇论文八成是日后的对比对象了。 在论文中，最重要的一点是如何使用网络定义损失函数，即如何将图划分问题迁移到NN中。">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LaTeX补充:如何设置代码字体">
-<meta property="og:url" content="https://muyuuuu.github.io/2019/02/04/latex-supplement2/index.html">
+<meta property="og:title" content="论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/07/08/GAP/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="设置代码字体listings 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」lstlisting 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。 很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一">
+<meta property="og:description" content="在解决大规模图划分时，读过了很多论文，无非是在目标方程中做出一些策略上的改动，并没有什么创新的地方，最严肃的问题是，可能收敛不了。而深度学习发展的今天，获取可以考虑用DeepLearning的形式来改善大规模图划分。读了些许的论文，只有这篇是沾点边的，遂精读并做笔记，这篇论文八成是日后的对比对象了。 在论文中，最重要的一点是如何使用网络定义损失函数，即如何将图划分问题迁移到NN中。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-03T03:35:51.747Z">
+<meta property="og:updated_time" content="2020-07-08T10:31:11.787Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LaTeX补充:如何设置代码字体">
-<meta name="twitter:description" content="设置代码字体listings 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」lstlisting 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。 很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一">
+<meta name="twitter:title" content="论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》">
+<meta name="twitter:description" content="在解决大规模图划分时，读过了很多论文，无非是在目标方程中做出一些策略上的改动，并没有什么创新的地方，最严肃的问题是，可能收敛不了。而深度学习发展的今天，获取可以考虑用DeepLearning的形式来改善大规模图划分。读了些许的论文，只有这篇是沾点边的，遂精读并做笔记，这篇论文八成是日后的对比对象了。 在论文中，最重要的一点是如何使用网络定义损失函数，即如何将图划分问题迁移到NN中。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2019/02/04/latex-supplement2/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/07/08/GAP/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>LaTeX补充:如何设置代码字体 | Just for Life.</title>
+  <title>论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》 | Just for Life.</title>
   
 
 
@@ -223,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/04/latex-supplement2/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/07/08/GAP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          LaTeX补充:如何设置代码字体
+          论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》
         </h1>
 
         <div class="post-meta">
@@ -245,16 +245,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-02-04 13:47:18" itemprop="dateCreated datePublished" datetime="2019-02-04T13:47:18+08:00">2019-02-04</time>
+              <time title="创建时间：2020-07-08 17:38:33 / 修改时间：18:31:11" itemprop="dateCreated datePublished" datetime="2020-07-08T17:38:33+08:00">2020-07-08</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-03-03 11:35:51" itemprop="dateModified" datetime="2019-03-03T11:35:51+08:00">2019-03-03</time>
-              </span>
 
           
               <span class="post-meta-item-icon">
@@ -267,14 +261,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -286,18 +280,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="设置代码字体"><a href="#设置代码字体" class="headerlink" title="设置代码字体"></a>设置代码字体</h1><p><code>listings</code> 宏包的原作者觉得，不应该把字体的审美强加于用户，所以「裸用」<code>lstlisting</code> 环境列出代码，结果就是源代码会使用「正文字体」被显示出来。</p>
-<p>很明显地，源代码使用了「正文字体」（看起来很像 Times New Roman Computer Modern Roman），虽然说是按字母对齐，但是极丑无比。这个「正文字体」本身是「比例字体」，也就是说每个字母宽度本来就是不一样的，例如 <code>m</code> 就会比较宽、<code>i</code> 就会比较窄。「比例字体」不适合用于源代码的抄录，所以强调了要设置「等宽字体」。</p>
+        <p>在解决大规模图划分时，读过了很多论文，无非是在目标方程中做出一些策略上的改动，并没有什么创新的地方，最严肃的问题是，可能收敛不了。而深度学习发展的今天，获取可以考虑用DeepLearning的形式来改善大规模图划分。读了些许的论文，只有这篇是沾点边的，遂精读并做笔记，这篇论文八成是日后的对比对象了。</p>
+<p>在论文中，最重要的一点是如何使用网络定义损失函数，即如何将图划分问题迁移到NN中。</p>
 <a id="more"></a>
-<p>实话说，什么字体都不设置，直接在导言区写一句：<code>\lstset{basicstyle=\ttfamily}</code> 就是可以的。在这里面的 <code>\ttfamily</code> 就是在告诉 <code>lstlisting</code> 环境「给我用等宽字体来显示源代码」。</p>
-<p>再次强调，<code>\setmainfont</code> 设置的是「正文字体」，<code>main</code> 对应「正文」，您都指定正文字体为 Courier 了，页眉页脚作为正文的一部分当然会变成 Courier 啊。想用 Courier，就要通过 <code>\setmonofont</code> 来声明，<code>mono</code> 对应「等宽」。<strong>注意两个命令的拼写是不一样的！</strong></p>
-<p>我在这里给出一个同时设置正文字体与等宽字体的例子。重要的事情重复三遍：用了 <code>fontspec</code> 之后，<strong>不要再用传统字体包！不要再用传统字体包！不要再用传统字体包！</strong></p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="comment">% 用 XeLaTeX 或 LuaLaTeX 编译</span></span><br><span class="line"><span class="tag">\<span class="name">documentclass</span><span class="string">&#123;article&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">usepackage</span><span class="string">&#123;fontspec&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 以下设置正文字体为 Palatino 的克隆体</span></span><br><span class="line"><span class="tag">\<span class="name">setmainfont</span><span class="string">&#123;TeX Gyre Pagella&#125;</span></span></span><br><span class="line"><span class="comment">% 以下设置等宽字体为 Courier 的克隆体</span></span><br><span class="line"><span class="tag">\<span class="name">setmonofont</span><span class="string">&#123;TeX Gyre Cursor&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">usepackage</span><span class="string">&#123;listings&#125;</span></span></span><br><span class="line"><span class="comment">% 以下告诉 lstlisting 环境：我要用等宽字体列代码！</span></span><br><span class="line"><span class="tag">\<span class="name">lstset</span><span class="string">&#123;basicstyle=\ttfamily&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">section</span><span class="string">&#123;Hello, world!&#125;</span></span></span><br><span class="line"></span><br><span class="line">Hello, world! Would you like to see some code?</span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;lstlisting&#125;</span></span></span><br><span class="line">Happy <span class="tag">\<span class="name">LaTeX</span><span class="string">&#123;&#125;</span></span>ing!</span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;lstlisting&#125;</span></span></span><br><span class="line">See? Mono-spaced font for code and proportional font for body text.</span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure>
-<p>结果如下所示：</p>
-<p><img data-src="/2019/02/04/latex-supplement2/2.png" alt></p>
-<p>此处参考与鸣谢：</p>
-<p><a href="https://github.com/CTeX-org/forum/issues/7" target="_blank" rel="noopener">https://github.com/CTeX-org/forum/issues/7</a></p>
-<hr>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><ol>
+<li>大规模图划分，显然要划分的图的规模是很大的，节点在百万、千万、亿级别，并不是 <code>cora</code> 数据集这样只有两千多个节点。将大规模的图划分为多个子图；</li>
+<li>此外，大规模图图划分涉及生物、化学和社交网络等多个领域，在图划分结束后，将划分结果提交到分布式平台用于计算，因此图划分仅仅是数据处理阶段，仅给使用者提供划分服务，但也是很重要的一环；</li>
+<li>边割率：将大规模划分为多个子图后，子图之间的联系应该尽可能的少，因为子图之间的边是沟通信息的桥梁，为方便计算，子图间的通信应尽可能少；</li>
+<li>负载均衡：多个子图的规模应该尽可能相似，不然一个子图的规模很大，其他子图的规模很小，在分布式计算平台会严重影响计算速度，即常见的短板效应。</li>
+</ol>
+<h1 id="边割率损失定义"><a href="#边割率损失定义" class="headerlink" title="边割率损失定义"></a>边割率损失定义</h1><p>假设此时要切割$k$个子图，以$S_k$表示子图的集合，那么$cut(S_k,\bar{S_k})$表示切割出子图$S_k$时要切割的边数，为了防止节点度过大和过小导致的不平衡切割，所以提出了标准化切割$Ncut$：</p>
+<p>\begin{equation}<br>Ncut(S_1,S_2,\cdots,S_k)=\sum_{i=1}^k\frac{cut(S_k,\bar{S_k})}{vol(S_k,V)}<br>\label{Ncut}<br>\end{equation}</p>
+<p>其中，$vol(S_k,V)$是子图$k$内的节点度数。</p>
+<h2 id="使用网络学习边割率"><a href="#使用网络学习边割率" class="headerlink" title="使用网络学习边割率"></a>使用网络学习边割率</h2><p>之后的任务就简单了，用神经网络学习出公式 \eqref{Ncut} 的分子和分母即可。假设网络的最后一层的输出是计算当前节点属于子图的概率，那么当划分子图数量为$k$时，输出维度也应该是$k$。$Y\in \mathbb{R}^{n\times k}$，图数据中有$n$个节点，最后的矩阵$Y$的维度就是$n \times g$了，$Y_{ik}$表示第$i$个图节点属于第$k$个子图的概率。</p>
+<p>此时计算切分子图$k$的期望：</p>
+<p>\begin{equation}<br>\mathbb{E}[cut(S_k,\bar{S_k})]=\sum _{v_i \in S_k, v_j\in N(v_i)} \sum_{z=1}^k Y_{iz}(1-Y_{jz})<br>\end{equation}</p>
+<p>其中，$N(v_i)$是节点$v_i$的邻居节点，$1-Y_{jz}$表示节点$v_j$不属于子图$z$的概率。两者相乘，表示切割出子图$S_z(z=1,2,\cdots,k)$的期望，而邻接节点很容易通过邻接矩阵$A$获取，至此，分子计算完毕。</p>
+<p>之后考虑分母的计算，假设矩阵$D\in \mathbb{R}^{n\times 1}$表示节点的度的矩阵，那么计算一个子图内节点的度的期望就很容易了：</p>
+<p>\begin{equation}<br>\Gamma = Y^T D，\mathbb{E}[vol(S_k,V)]=\Gamma_k<br>\end{equation}</p>
+<p>此时，便很容易得到边割率的损失$\mathcal{L}_1$。</p>
+<h1 id="负载均衡损失定义"><a href="#负载均衡损失定义" class="headerlink" title="负载均衡损失定义"></a>负载均衡损失定义</h1><p>考虑边割率的同时，也要考虑到子图之间的负载均衡，即各个子图的规模大小应尽可能的相似。当图节点为$n$，切分为$k$个子图时，每个子图内的节点的数量应该和$n/g$相近。所以负载均衡的损失$\mathcal{L}_2$计算方式为：</p>
+<p>\begin{equation}<br>\sum_{i=1}^k\Big( \sum_{i=1}^nY_{ik}-\frac{n}{g}\Big)^2<br>\end{equation}</p>
+<p>综上，损失函数为$\mathcal{L}_1+\mathcal{L}_2$。</p>
+<h1 id="节点的嵌入学习"><a href="#节点的嵌入学习" class="headerlink" title="节点的嵌入学习"></a>节点的嵌入学习</h1><p>在论文中，最重要的一点是如何使用网络定义损失函数，即如何将图划分问题迁移到NN中，所以对图嵌入模块，只想忽略的介绍。</p>
+<p>在图划分模块之前还有图嵌入模块，即使用 GNN 来学习节点的嵌入表示，随着层数的加深不断的更新节点的表示。文中使用的网络为 GraphSAGE 和 maxpool 策略，在图划分的过程中不断的学习节点的嵌入表示，两者同时进行。本文并不想在这里展开 GNN 的介绍，如果想简单理解可以参考 bilibili 李宏毅最新的机器学习课程，里面讲的很详细。</p>
+<p>在图规模不断扩大时，基于谱方法的 GNN 之类不再适用，如 <a href="https://muyuuuu.github.io/2020/06/16/GCN/">GCN</a>，因为这种网络需要传入邻接矩阵这样大规模的参数。</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>有人用 pytorch 复现了一份 ：<a href="https://github.com/saurabhdash/GCN_Partitioning" target="_blank" rel="noopener">https://github.com/saurabhdash/GCN_Partitioning</a></p>
 
     </div>
 
@@ -308,19 +316,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\11\07\Brief-introduction-to-LaTex\" rel="bookmark">一份不太简短的LaTeX简介</a></div>
+      <div class="popular-posts-title"><a href="\2020\05\16\AutoEncoder\" rel="bookmark">从AutoEncoder到VAE</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\11\17\LaTeX-supplement\" rel="bookmark">LaTeX补充:矩阵外加描述元素</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\01\15\MCM-template\" rel="bookmark">美赛论文LaTeX模板</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\06\latex-feel-stonezeng\" rel="bookmark">正确打开LaTeX的姿势</a></div>
+      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\03\latex-supplement1\" rel="bookmark">LaTeX补充:有关参考文献大小写问题</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\09\Start-deep-learning\" rel="bookmark">DeepLearning准备进坑</a></div>
     </li>
   </ul>
 
@@ -366,7 +374,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/LaTeX/" rel="tag"># LaTeX</a>
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
           </div>
 
         
@@ -380,13 +388,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/02/03/latex-supplement1/" rel="prev" title="LaTeX补充:有关参考文献大小写问题">
-      <i class="fa fa-chevron-left"></i> LaTeX补充:有关参考文献大小写问题
+    <a href="/2020/07/07/wuthering-heights/" rel="prev" title="《呼啸山庄》读书笔记">
+      <i class="fa fa-chevron-left"></i> 《呼啸山庄》读书笔记
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/02/04/latex-supplement4/" rel="next" title="LaTeX补充:常用实惠小工具">
-      LaTeX补充:常用实惠小工具 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -447,7 +452,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设置代码字体"><span class="nav-number">1.</span> <span class="nav-text">设置代码字体</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#边割率损失定义"><span class="nav-number">2.</span> <span class="nav-text">边割率损失定义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用网络学习边割率"><span class="nav-number">2.1.</span> <span class="nav-text">使用网络学习边割率</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#负载均衡损失定义"><span class="nav-number">3.</span> <span class="nav-text">负载均衡损失定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#节点的嵌入学习"><span class="nav-number">4.</span> <span class="nav-text">节点的嵌入学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -764,7 +769,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '6ed12a7862cb9ddeab720650e38bbbdd',
+      id          : '4aa3dee8e52c945e8f4fa97b1fd2a834',
         language: 'zh-CN',
       distractionFreeMode: true
     });
