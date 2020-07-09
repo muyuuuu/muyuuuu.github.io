@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-09T15:30:28.097Z">
+<meta property="og:updated_time" content="2020-07-09T14:34:54.154Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="更通俗的理解熵">
 <meta name="twitter:description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-05-09 07:11:45 / 修改时间：23:30:28" itemprop="dateCreated datePublished" datetime="2020-05-09T07:11:45+08:00">2020-05-09</time>
+              <time title="创建时间：2020-05-09 07:11:45" itemprop="dateCreated datePublished" datetime="2020-05-09T07:11:45+08:00">2020-05-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-09 22:34:54" itemprop="dateModified" datetime="2020-07-09T22:34:54+08:00">2020-07-09</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -307,9 +313,9 @@
 <p>借鉴这个思路，在2019年美国大学生数学建模竞赛的C题中，成功分析了主要是哪些人群在吸毒，合理提出建议。即吸毒人口的熵减去各种身份吸毒人口的熵，单亲家庭、残疾人员等，得到互信息，互信息越大，说明相关性越高，互信息越小则说明两者完全无关。</p>
 <h1 id="KL散度"><a href="#KL散度" class="headerlink" title="KL散度"></a>KL散度</h1><p>KL 散度可以用来衡量两个分布的差异。在深度学习中，我们经常会将一个复杂的分布用一个简单的近似分布来代替。KL 散度可以帮助我们测量在选择一个近似分布时丢失的信息量。</p>
 <p>对于离散型随机变量$X$，假设原概率分布为$P(x)$，近似概率分布为$Q(x)$，则使用 KL 散度衡量这两个分布的差异：</p>
-<p>\begin{equation}<br>KL(P||Q)=\sum_{x\in X}P(x)\log (P(x)-Q(x))<br>\end{equation}</p>
-<p>对于$P(x)-Q(x)$这一项，可以理解为如果我们使用 $Q$ 的编码来表示 $P$ 额外所需的编码长度。当然，也许你一眼就看出来了，这不就是在求期望嘛，改写一下看起来更直观：</p>
-<p>\begin{equation}<br>KL(P||Q)=E_{x\sim P}[\log (P(x)-Q(x))]<br>\end{equation}</p>
+<p>\begin{equation}<br>KL(P||Q)=\sum_{x\in X}P(x)\log \Big( \frac{P(x)}{Q(x)}\Big)<br>\end{equation}</p>
+<p>对于$P(x)/Q(x)$这一项，可以理解为如果我们使用 $Q$ 的编码来表示 $P$ 额外所需的编码长度。当然，也许你一眼就看出来了，这不就是在求期望嘛，改写一下看起来更直观：</p>
+<p>\begin{equation}<br>KL(P||Q)=E_{x\sim P}\Big[ \log (P(x)/Q(x)) \Big]<br>\end{equation}</p>
 <p>对于连续型变量，我们对概率密度函数求积分即可(假设随机变量$X$的取值范围是$[-\infty, +\infty]$)：</p>
 <p>\begin{equation}<br>KL(P||Q)=\int_{-\infty}^{+\infty}p(x)\log{\frac{p(x)}{q(x)}}dx<br>\end{equation}</p>
 <h1 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h1><p>交叉熵(也有人叫相对熵)也可以用来衡量两个分布的差异。以离散型变量 $x$ 为例，交叉熵$H(P,Q)$的定义如下：</p>
