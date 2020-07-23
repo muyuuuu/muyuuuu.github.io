@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="故乡位于太行山脉脚下，地区70%都是山区，我也在这个山城小镇里生活了足足18年。 印象最深的只有了两次：  一次是小时候，山间到处是花香，到处是鸟语，清澈的小溪随意的奔腾，那个时候天空很蓝，湖水很清。那个时候是小桥流水人家的生活，房子位于半山腰，山脚下就是小溪，溪水里有欢快的鱼儿，人们从山脚下饮水上山，水是能直接喝的，偶尔还能在水里发现几片花瓣，至少我小时候不知道什么是水垢，也不知道现代人喝水是要">
-<meta name="keywords" content="Life">
+  <meta name="description" content="大约第三次看迭代器和生成器了，之前一直看得云里雾里，今天还是来彻底了断下。">
+<meta name="keywords" content="Python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="故乡云水">
-<meta property="og:url" content="https://muyuuuu.github.io/2015/02/20/home/index.html">
+<meta property="og:title" content="迭代器与生成器">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/07/23/generator-and-iterator/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="故乡位于太行山脉脚下，地区70%都是山区，我也在这个山城小镇里生活了足足18年。 印象最深的只有了两次：  一次是小时候，山间到处是花香，到处是鸟语，清澈的小溪随意的奔腾，那个时候天空很蓝，湖水很清。那个时候是小桥流水人家的生活，房子位于半山腰，山脚下就是小溪，溪水里有欢快的鱼儿，人们从山脚下饮水上山，水是能直接喝的，偶尔还能在水里发现几片花瓣，至少我小时候不知道什么是水垢，也不知道现代人喝水是要">
+<meta property="og:description" content="大约第三次看迭代器和生成器了，之前一直看得云里雾里，今天还是来彻底了断下。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-02T09:53:08.328Z">
+<meta property="og:updated_time" content="2020-07-23T15:42:36.487Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="故乡云水">
-<meta name="twitter:description" content="故乡位于太行山脉脚下，地区70%都是山区，我也在这个山城小镇里生活了足足18年。 印象最深的只有了两次：  一次是小时候，山间到处是花香，到处是鸟语，清澈的小溪随意的奔腾，那个时候天空很蓝，湖水很清。那个时候是小桥流水人家的生活，房子位于半山腰，山脚下就是小溪，溪水里有欢快的鱼儿，人们从山脚下饮水上山，水是能直接喝的，偶尔还能在水里发现几片花瓣，至少我小时候不知道什么是水垢，也不知道现代人喝水是要">
+<meta name="twitter:title" content="迭代器与生成器">
+<meta name="twitter:description" content="大约第三次看迭代器和生成器了，之前一直看得云里雾里，今天还是来彻底了断下。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2015/02/20/home/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/07/23/generator-and-iterator/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>故乡云水 | Just for Life.</title>
+  <title>迭代器与生成器 | Just for Life.</title>
   
 
 
@@ -223,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2015/02/20/home/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/07/23/generator-and-iterator/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          故乡云水
+          迭代器与生成器
         </h1>
 
         <div class="post-meta">
@@ -245,24 +245,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2015-02-20 23:10:07" itemprop="dateCreated datePublished" datetime="2015-02-20T23:10:07+08:00">2015-02-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-02 17:53:08" itemprop="dateModified" datetime="2020-02-02T17:53:08+08:00">2020-02-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/故乡云水/" itemprop="url" rel="index"><span itemprop="name">故乡云水</span></a>
-                </span>
+              <time title="创建时间：2020-07-23 22:58:06 / 修改时间：23:42:36" itemprop="dateCreated datePublished" datetime="2020-07-23T22:58:06+08:00">2020-07-23</time>
             </span>
 
           
@@ -276,14 +261,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>639</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -295,31 +280,49 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>故乡位于太行山脉脚下，地区70%都是山区，我也在这个山城小镇里生活了足足18年。</p>
-<p>印象最深的只有了两次：</p>
-<ul>
-<li><p>一次是小时候，山间到处是花香，到处是鸟语，清澈的小溪随意的奔腾，那个时候天空很蓝，湖水很清。那个时候是小桥流水人家的生活，房子位于半山腰，山脚下就是小溪，溪水里有欢快的鱼儿，人们从山脚下饮水上山，水是能直接喝的，偶尔还能在水里发现几片花瓣，至少我小时候不知道什么是水垢，也不知道现代人喝水是要提前烧开的。</p>
-</li>
-<li><p>每当每月花儿盛开的时候，漫山遍野充满了赤橙黄蓝的颜色，鸟语生生伴随春雨阵阵，躲在屋檐下听雨的时光也一去不复回。还有花香，春风十里，十里都是沁人心脾的花香，空气也是甜的，后来闻惯了厚重的雾霾和都市气息，鼻子也不如以前。</p>
-</li>
-<li><p>每到夜晚就开始看星星，那是我见过最亮的星星，比现在看到的星星亮一百倍，小时候视力好，还能能看见惨淡的星河，飘来飘去的萤火虫，为宁静的夜色添加了动感的美丽。</p>
-</li>
-<li><p>另一次是冬季的大雪封山，雪花洋洋洒洒的落下，整个天地银装素裹，天地之间白茫茫一片，静的能听见自己的声音。</p>
-</li>
-</ul>
-<p>那个时候没有相机，没有手机，也没有拍下一张照片，只留下了回不去的回忆，在柏油路和旅游业的践踏下，故乡早已不是故乡。</p>
-<p>后来有了手机，拍下的也不是之前的故乡。故乡里的人们大多安分守己，无非种地与放羊，男人被认为是家里的支柱，女人被认为是传宗接代的工具，这的确是很早以前部分农村的真实写照。</p>
-<p>好在我足够幸运接受了教育，成为了当地为数不多的学生。至少要走出大山，去看看外面的世界也好，开阔眼界。</p>
+        <p>大约第三次看迭代器和生成器了，之前一直看得云里雾里，今天还是来彻底了断下。</p>
 <a id="more"></a>
-<hr>
-<h2 id="雪景"><a href="#雪景" class="headerlink" title="雪景"></a>雪景</h2><p><img data-src="/2015/02/20/home/3.jpeg" alt><br><img data-src="/2015/02/20/home/4.jpeg" alt><br><img data-src="/2015/02/20/home/6.jpeg" alt><br><img data-src="/2015/02/20/home/7.jpeg" alt></p>
-<hr>
-<h2 id="清水"><a href="#清水" class="headerlink" title="清水"></a>清水</h2><p><img data-src="/2015/02/20/home/8.jpeg" alt><br><img data-src="/2015/02/20/home/9.jpeg" alt><br><img data-src="/2015/02/20/home/10.jpeg" alt></p>
-<hr>
-<h2 id="傲松"><a href="#傲松" class="headerlink" title="傲松"></a>傲松</h2><p><img data-src="/2015/02/20/home/13.jpeg" alt><br><img data-src="/2015/02/20/home/14.jpeg" alt><br><img data-src="/2015/02/20/home/15.jpeg" alt><br><img data-src="/2015/02/20/home/16.jpeg" alt><br><img data-src="/2015/02/20/home/17.jpeg" alt></p>
-<hr>
-<h2 id="深山"><a href="#深山" class="headerlink" title="深山"></a>深山</h2><p><img data-src="/2015/02/20/home/20.jpeg" alt><br><img data-src="/2015/02/20/home/21.jpeg" alt><br><img data-src="/2015/02/20/home/22.jpeg" alt><br><img data-src="/2015/02/20/home/23.jpeg" alt><br><img data-src="/2015/02/20/home/24.jpeg" alt><br><img data-src="/2015/02/20/home/26.jpeg" alt></p>
-<hr>
+<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><p>先区分下容易搞混的一些概念：</p>
+<ul>
+<li>迭代器是一种对象，如<code>iter(f)</code>后，可以<code>next()</code>来读取下一个元素；</li>
+<li>迭代是一种操作，如<code>for</code>循环访问列表元素；操作存储数据的容器，获取其中的元素，可以理解为迭代；</li>
+<li>可迭代是对象的一种特性，如字典、列表和字符串等；</li>
+<li>迭代器协议指的是类需要包含一个特殊方法，该方法能返回一个能够逐个访问容器内所有元素的迭代器，则该容器类实现了迭代器协议。</li>
+</ul>
+<p>来看一段简单的代码，一个类提供了<code>__iter()__</code>方法，该方法能返回一个能逐步访问类中所有元素的迭代器，实现了迭代器协议。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># __iter__ 方法支持迭代</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self._value = value</span><br><span class="line">        self._children = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Node(&#123;!r&#125;)'</span>.format(self._value)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add_child</span><span class="params">(self, node)</span>:</span></span><br><span class="line">        self._children.append(node)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将迭代请求传递给内部的 _children 属性。</span></span><br><span class="line">    <span class="comment"># 调用 _childrem.__iter__() 方法来返回对应的迭代器对象</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> iter(self._children)</span><br><span class="line"></span><br><span class="line">root = Node(<span class="number">0</span>)</span><br><span class="line">child1 = Node(<span class="number">1</span>)</span><br><span class="line">child2 = Node(<span class="number">2</span>)</span><br><span class="line">root.add_child(child1)</span><br><span class="line">root.add_child(child2)</span><br><span class="line"><span class="comment"># Outputs Node(1), Node(2)</span></span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> root:</span><br><span class="line">    print(ch)</span><br></pre></td></tr></table></figure>
+<p>此外，我们还可以反向迭代，但要求对象的大小预先可以确定或者对象实现了 <code>__reversed__()</code> 的特殊方法（<code>__reversed__()</code>方法的实现见下文的生成器）。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 对象的大小可预先确定或者对象实现了 __reversed__() 的特殊方法</span></span><br><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> reversed(a):</span><br><span class="line">    print(x)</span><br></pre></td></tr></table></figure>
+<p>如果两者都不符合，那必须先将对象转换为一个列表。要注意的是如果可迭代对象元素很多的话，将其预先转换为一个列表要消耗大量的内存。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">f = open(<span class="string">'somefile'</span>)</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> reversed(list(f)):</span><br><span class="line">    print(line, end=<span class="string">''</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="生成器"><a href="#生成器" class="headerlink" title="生成器"></a>生成器</h1><ul>
+<li>生成器函数是一种特殊的函数；</li>
+<li>如果一个函数包含 <code>yield</code> 表达式，那么它是一个生成器函数；调用它会返回一个特殊的迭代器，称为生成器。</li>
+<li>即将普通函数的<code>return</code>换成了<code>yield</code>，仅在访问时有返回值，节省空间。</li>
+</ul>
+<p>但与普通函数不同的是，生成器函数返回的生成器只能用于迭代操作。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">countdown</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> n &gt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">yield</span> n</span><br><span class="line">        n -= <span class="number">1</span></span><br><span class="line">    print(<span class="string">'Done'</span>)</span><br><span class="line"></span><br><span class="line">a = countdown(<span class="number">6</span>)</span><br><span class="line"><span class="comment"># 一旦生成器函数返回退出，迭代终止</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    print(i)</span><br></pre></td></tr></table></figure>
+<p>现在假设，我们建立一个函数，这个函数会返回一个巨大的列表，而我们需要逐个访问。那么，如果函数生产列表中的每一个元素都需要耗费非常多的时间，或者生成所有元素需要等待很长时间，且，操作列表时会浪费巨大的内存。但使用 <code>yield</code> 把函数变成一个生成器函数，每次只产生一个元素，就能节省很多时间和空间的开销了。</p>
+<p>通过<code>yield</code>关键字实现一个支持反向迭代的类：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Countdown</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, start)</span>:</span></span><br><span class="line">        self.start = start</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Forward iterator</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        n = self.start</span><br><span class="line">        <span class="keyword">while</span> n &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">yield</span> n</span><br><span class="line">            n -= <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Reverse iterator</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reversed__</span><span class="params">(self)</span>:</span></span><br><span class="line">        n = <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> n &lt;= self.start:</span><br><span class="line">            <span class="keyword">yield</span> n</span><br><span class="line">            n += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 反向迭代</span></span><br><span class="line"><span class="keyword">for</span> rr <span class="keyword">in</span> reversed(Countdown(<span class="number">3</span>)):</span><br><span class="line">    print(rr)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 正向迭代</span></span><br><span class="line"><span class="keyword">for</span> rr <span class="keyword">in</span> Countdown(<span class="number">3</span>):</span><br><span class="line">    print(rr)</span><br></pre></td></tr></table></figure>
+<p>如果说，需要在生成器函数中访问其他属性时，可以将它实现为一个类，将生成器函数放到<code>__iter()__</code>方法中：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成器暴露外部状态给用户</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">linehistory</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, text, histlen=<span class="number">3</span>)</span>:</span></span><br><span class="line">        self.text = text</span><br><span class="line">        self.history = deque(maxlen=histlen)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 索引从 1 开始</span></span><br><span class="line">        <span class="keyword">for</span> lineno, line <span class="keyword">in</span> enumerate(self.text, <span class="number">1</span>):</span><br><span class="line">            self.history.append((lineno, line))</span><br><span class="line">            <span class="keyword">yield</span> line</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clear</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.history.clear()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'demo.py'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 创建一个实例对象，可以访问内部属性值</span></span><br><span class="line">    lines = linehistory(f)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">        <span class="comment"># 创建实例对象后，于可以访问内部属性值， 比如 history 属性或者是 clear() 方法。</span></span><br><span class="line">        <span class="keyword">for</span> lineno, hline <span class="keyword">in</span> lines.history:</span><br><span class="line">            print(<span class="string">'&#123;&#125;:&#123;&#125;'</span>.format(lineno, hline), end=<span class="string">''</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果在迭代操作时不使用for循环语句，那么你得先调用 iter() 函数</span></span><br><span class="line">f = open(<span class="string">'demo.py'</span>)</span><br><span class="line">lines = linehistory(f)</span><br><span class="line">t = iter(lines)</span><br><span class="line">print(next(t))</span><br></pre></td></tr></table></figure>
+<p>常见的还有<code>yield from</code>关键字，关键字后的参数是一个可迭代对象，可以简单理解为如下的替换：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">yield</span> <span class="keyword">from</span> x</span><br><span class="line"><span class="comment"># 等价</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">    <span class="comment"># process</span></span><br></pre></td></tr></table></figure>
+<h1 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h1><p>迭代器的访问是一个重点，但偏向程序设计的技巧，与本文的主要内容有所偏离，所以不过多概述。但其中的一些方法如<code>zip, enumerate</code>等是真的常用，当面临复杂的迭代问题时，如：</p>
+<ul>
+<li>想快速的迭代不同类型的容器；</li>
+<li>迭代器的切片访问；</li>
+<li>想输出所有迭代结果的排列组合；</li>
+<li>将一个嵌套的序列展开为单个序列，如<code>[1, 2, [3, 4, [5, 6], 7], 8]</code>到<code>[1, 2, 3, 4, 5, 6, 7, 8]</code>；</li>
+<li>想同时迭代多个容器。</li>
+</ul>
+<p>可以参考<code>python</code>的<code>itertools</code>库，真的实用。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行。</p>
+<ol>
+<li><a href="https://python3-cookbook.readthedocs.io/zh_CN/latest/chapters/p04_iterators_and_generators.html" target="_blank" rel="noopener">https://python3-cookbook.readthedocs.io/zh_CN/latest/chapters/p04_iterators_and_generators.html</a></li>
+<li><a href="https://liam.page/2017/06/30/understanding-yield-in-python/" target="_blank" rel="noopener">https://liam.page/2017/06/30/understanding-yield-in-python/</a></li>
+</ol>
 
     </div>
 
@@ -330,19 +333,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\08\DuanWu\" rel="bookmark">端午&高考乱弹</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\10\13\MMA-Party-2018\" rel="bookmark">聚会的说～</a></div>
+      <div class="popular-posts-title"><a href="\2019\05\19\basic-nlp\" rel="bookmark">从分词到自然语言的世界</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\03\28\Prime-minister-music\" rel="bookmark">迟暮的丞相：遂许先帝以驱驰，尔来二十又一年</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\20\gradient-function\" rel="bookmark">优化梯度函数</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\06\06\about-graduate-or-work\" rel="bookmark">关于读研还是工作</a></div>
+      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">多线程与多进程, 基于Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\30\bye\" rel="bookmark">归尘</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\19\optimizeDL\" rel="bookmark">正则化调教神经网络</a></div>
     </li>
   </ul>
 
@@ -388,7 +391,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Life/" rel="tag"># Life</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
           </div>
 
         
@@ -401,11 +404,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2016/07/29/highschool/" rel="next" title="残存的高中回忆">
-      残存的高中回忆 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/07/08/GAP/" rel="prev" title="论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》">
+      <i class="fa fa-chevron-left"></i> 论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -466,7 +469,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#雪景"><span class="nav-number">1.</span> <span class="nav-text">雪景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#清水"><span class="nav-number">2.</span> <span class="nav-text">清水</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#傲松"><span class="nav-number">3.</span> <span class="nav-text">傲松</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深山"><span class="nav-number">4.</span> <span class="nav-text">深山</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#迭代器"><span class="nav-number">1.</span> <span class="nav-text">迭代器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生成器"><span class="nav-number">2.</span> <span class="nav-text">生成器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#访问"><span class="nav-number">3.</span> <span class="nav-text">访问</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -730,7 +733,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'dbcbec68b2d2ca0c5c3c3f6d44600e75',
+      id          : '2fd2fa9e11f00359c4ca63dd97fff456',
         language: 'zh-CN',
       distractionFreeMode: true
     });
