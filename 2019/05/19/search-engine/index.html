@@ -332,7 +332,7 @@
 <p>那么pagerank做了一件事情(虽然我感觉这个事情和马尔可夫模型好像)。暂时忽略查询内容和网页的相关性，先考虑网页之间的相关性。一个不需任何人工干预的算法诞生了，思想：在某次历史课中，老师问谁是刘邦，如果99%的人都指着那个人说他是刘邦，那么他就是刘邦。在网页中，$a_{mn}$ 表示第 $m$ 个网页指向第 $n$ 个网页的连接数，将 $a_{mn}$ 理解为投票数，如果第$N$个网页获得的支持最多，就认为它的质量越好。</p>
 <h2 id="算法："><a href="#算法：" class="headerlink" title="算法："></a>算法：</h2><p>Step1：假设倒排索引后得到$N$个网页，所有的网站的初始排名是$B_0=(\frac{1}{N},\frac{1}{N},…,\frac{1}{N})^T$。</p>
 <p>Step2：矩阵$A$是网页之间的链接数目，得到这个矩阵并不难，只要有个爬虫机器人就好了。</p>
-<p><img data-src="/2019/05/19/search-engine/4.png" alt></p>
+<p><img data-src="search-engine/4.png" alt></p>
 <p>Step3：终止点问题：互联网上的网页不满足强连通的特性，因为有一些网页不指向任何网页，如果按照上面的计算，上网者到达这样的网页后便走投无路、四顾茫然。导致前面累计得到的转移概率被清零，这样下去，最终的得到的概率分布向量所有元素几乎都为0。陷阱问题：另外一个问题就是陷阱问题，即有些网页不存在指向其他网页的链接，但存在指向自己的链接。</p>
 <p>Step4：完善。假定上网者在每一步，都可能不想看当前网页了。假设上网者每一步查看当前网页的概率是$\alpha$，从地址栏跳转的概率是$1−\alpha$。$\alpha$一般取0.85,迭代公式如下:</p>
 <script type="math/tex; mode=display">B_{i+1}=\alpha A B_i + (1−\alpha)B_0</script><p>迭代计算直至$|B_{i+1}−B_i|&lt;\epsilon$，可以得到最终结果。（选排名前几的就可以了）</p>
@@ -377,9 +377,9 @@
 <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>没有找到合适的数据，就自己创造的没有link的数据，所以本次代码因缺数据而没有加入pagerank算法的代码。</p>
 <p><a href="https://github.com/muyuuuu/Search-Engine" target="_blank" rel="noopener">点我过去</a></p>
 <p>倒排数据结构展示：</p>
-<p><img data-src="/2019/05/19/search-engine/1.jpg" alt></p>
+<p><img data-src="search-engine/1.jpg" alt></p>
 <p>查询结果输出展示，对输入的内容进行查询。</p>
-<p><img data-src="/2019/05/19/search-engine/2.jpg" alt></p>
+<p><img data-src="search-engine/2.jpg" alt></p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>至此，从开始的倒排索引寻找出所有满足需求的网页，再用pagerank从满足需求的网页中求出高质量网页，在用TF-IDF算法在高质量网页中求出和查询最相关的网页。一步步完善，将自然语言以恰当的方式转为数字进行处理。当然还需要更详细的处理步骤，比如网页的反作弊技术，比如点击量，如何屏蔽相似性很高的广告等等。</p>
 <p>计算机和数学的应用层出不穷，即使也存在过时的技术，比如pagerank已经被谷歌淘汰，但背后的数学思维值得我们借鉴。比如2019年的美国大学生数学建模竞赛的C题，如何确定毒品的传播源头，不就是pagerank可以应用的场景吗。</p>
 <p>其实还有坑的，比如使用中文查询：“什么是汇编语言的中断”，那么新的问题又来了。英文单词之间有分割，自动提取关键词。中文的是句子呀，怎么让计算机认识句子并从里面抠出关键词呢？下次再写吧，这就涉及到了一些中文的自然语言处理的知识了。</p>
@@ -406,7 +406,7 @@
       <div class="popular-posts-title"><a href="\2019\02\20\gradient-function\" rel="bookmark">优化梯度函数</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">多线程与多进程, 基于Python实现</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\19\optimizeDL\" rel="bookmark">正则化调教神经网络</a></div>
     </li>
   </ul>
 
@@ -604,12 +604,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">429k</span>
+    <span title="站点总字数">430k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:30</span>
+    <span title="站点阅读时长">6:31</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
