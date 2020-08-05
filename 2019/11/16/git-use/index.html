@@ -459,10 +459,10 @@
       <div class="popular-posts-title"><a href="\2020\02\17\cg\" rel="bookmark">计算机图形学笔记</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\07\03\linux-windows-files-exchange\" rel="bookmark">双系统之间快速访问对方文件</a></div>
+      <div class="popular-posts-title"><a href="\2020\08\05\digital-foundation\" rel="bookmark">大学计算机：数字化基础</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">多线程与多进程, 基于Python实现</a></div>
+      <div class="popular-posts-title"><a href="\2020\07\03\linux-windows-files-exchange\" rel="bookmark">双系统之间快速访问对方文件</a></div>
     </li>
   </ul>
 
@@ -605,7 +605,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">113</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -831,6 +831,26 @@ window.addEventListener('pjax:success', () => {
 
 
 
+<script pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
 
 
 

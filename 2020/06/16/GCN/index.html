@@ -352,10 +352,10 @@
       <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\07\08\GAP\" rel="bookmark">论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
+      <div class="popular-posts-title"><a href="\2020\07\08\GAP\" rel="bookmark">论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2019\02\09\Start-deep-learning\" rel="bookmark">DeepLearning准备进坑</a></div>
@@ -501,7 +501,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">113</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -727,6 +727,26 @@ window.addEventListener('pjax:success', () => {
 
 
 
+<script pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
 
 
 

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2020-07-31T15:09:49.589Z</updated>
+  <updated>2020-08-05T13:12:27.947Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>大学计算机：数字化基础</title>
+    <link href="https://muyuuuu.github.io/2020/08/05/digital-foundation/"/>
+    <id>https://muyuuuu.github.io/2020/08/05/digital-foundation/</id>
+    <published>2020-08-05T12:42:37.000Z</published>
+    <updated>2020-08-05T13:12:27.947Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>测试。</p><a id="more"></a><div class="pdfobject-container" data-target="./数字化基础.pdf" data-height="500px"></div>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;测试。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="Computer" scheme="https://muyuuuu.github.io/tags/Computer/"/>
+    
+  </entry>
   
   <entry>
     <title>一场梦</title>
@@ -444,28 +465,6 @@
     
     
       <category term="Algorithm" scheme="https://muyuuuu.github.io/tags/Algorithm/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>栈的应用——判断pop序列是否合理</title>
-    <link href="https://muyuuuu.github.io/2020/03/28/stack-pop-sequence/"/>
-    <id>https://muyuuuu.github.io/2020/03/28/stack-pop-sequence/</id>
-    <published>2020-03-28T09:26:55.000Z</published>
-    <updated>2020-03-28T10:26:36.626Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>栈有着广泛的应用，比如逆波兰表达式，表达式求值，迷宫问题求解，程序调用等，不过这些问题今天都不涉及哈哈哈哈。关于程序执行期间，各个函数的相互调用使用的调用栈，可以<a href="https://muyuuuu.github.io/2019/09/22/stack/">参考这里</a>。</p><p>也许在上数据结构这门课的时候，经常遇到一个问题，一个栈压入一个序列，随缘pop，判断哪个是合理的pop，哪个是不合理的pop，之前都是脑内演算。很巧的今天我在刷题期间也遇到了，记录一下如何用代码判断pop序列是否合理。</p><a id="more"></a><h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>Given a stack which can keep $M$ numbers at most. Push $N$ numbers in the order of 1, 2, 3, …, $N$ and pop randomly. You are supposed to tell if a given sequence of numbers is a possible pop sequence of the stack. </p><p>Each input file contains one test case. For each case, the first line contains 3 numbers (all no more than 1000): $M$ (the maximum capacity of the stack), $N$ (the length of push sequence), and $K$ (the number of pop sequences to be checked). Then $K$ lines follow, each contains a pop sequence of $N$ numbers. All the numbers in a line are separated by a space.</p><p>For each pop sequence, print in one line “YES” if it is indeed a possible pop sequence of the stack, or “NO” if not.</p><h2 id="示例输入"><a href="#示例输入" class="headerlink" title="示例输入"></a>示例输入</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">5 7 5</span><br><span class="line">1 2 3 4 5 6 7</span><br><span class="line">3 2 1 7 5 6 4</span><br><span class="line">7 6 5 4 3 2 1</span><br><span class="line">5 6 4 3 7 2 1</span><br><span class="line">1 7 6 5 4 3 2</span><br></pre></td></tr></table></figure><h2 id="示例输出"><a href="#示例输出" class="headerlink" title="示例输出"></a>示例输出</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">YES</span><br><span class="line">NO</span><br><span class="line">NO</span><br><span class="line">YES</span><br><span class="line">NO</span><br></pre></td></tr></table></figure><p>众所周知，栈是先进先出的一种数据结构，进栈为push，出栈为pop。题目的大概意思就是给定栈的最大空间，压入的序列和待检查的pop序列，因为栈是随缘pop的，判断哪个pop序列是正确的，哪个pop序列是错误的。</p><h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><h2 id="脑内演算"><a href="#脑内演算" class="headerlink" title="脑内演算"></a>脑内演算</h2><ul><li>对于序列 1, 2, 3, 4, 5, 6, 7， 很容易得到栈是如何工作的，即压入一个元素立刻弹出即可。push 1，pop 1，push 2，pop 2，一直到push 7，pop 7。</li><li>对于序列 5, 6, 4, 3, 7, 2, 1，也可以得到栈的工作顺序为：push 1, 2, 3, 4, 5，而后pop 5，而后push 6 pop 6，pop 4，pop 3，push 7 pop 7，pop 2，pop 1。</li><li>对于序列 3, 2, 1, 7, 5, 6, 4，如果pop 7后，后面的顺序必然是 6，5，4而不可能是5，6，4。因此这个序列是错误的。</li><li>对于序列 7, 6, 5, 4, 3, 2, 1，在栈空间为5的情况下，不可能第一次就pop 7，因此这个序列是错误的。</li></ul><h2 id="一般化"><a href="#一般化" class="headerlink" title="一般化"></a>一般化</h2><p>在脑内演算后，也很容易发现题的难点在于不确定性的pop，可能在第一次pop，也可能在第三次pop，且每次pop几个元素也是不确定的。</p><p>我们实现知道了元素的进栈顺序，是1，2，3，4，…，$N$这样的顺序序列，所以，如果想办法<strong>按着它给出的序列模拟压栈和弹栈</strong>，如果能模拟出来，说明序列正确，模拟不出来说明序列错误。</p><ul><li><p>第一步，创建一个序列，读取题目示例输入的序列：</p><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;arr[i]);</span><br></pre></td></tr></table></figure></li><li><p>第二步，创建一个栈，并按元素的输入顺序组织元素进栈，开始按读取序列元素的顺序进行压栈和弹栈。</p></li><li><p>对输入序列设立标志位，并初始化标志位为1。当刚进栈的元素和输入序列标志位的元素相等时，说明此时元素要弹栈，则执行弹栈操作，且标志位自增向后移动；若不相等，则继续组织进栈，直到进栈元素和输入序列中标志位的元素相等。若一直不相等，则表明此序列错误。因此核心算法程序如下：</p><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 设立标志位</span></span><br><span class="line"><span class="keyword">int</span> pos = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= n; j++) &#123;</span><br><span class="line">    <span class="comment">// 按元素顺序组织进栈</span></span><br><span class="line">    s.push(j);</span><br><span class="line">    <span class="comment">// 超过栈允许的最大空间</span></span><br><span class="line">    <span class="keyword">if</span>(s.<span class="built_in">size</span>() &gt; m) <span class="keyword">break</span>;</span><br><span class="line">    <span class="comment">// 按序列元素的弹栈顺序开始模拟</span></span><br><span class="line">    <span class="comment">// 栈非空且栈顶元素和当前标志位的元素相等</span></span><br><span class="line">    <span class="keyword">while</span>(!s.empty() &amp;&amp; s.top() == arr[pos]) &#123;</span><br><span class="line">        <span class="comment">// 弹栈</span></span><br><span class="line">        s.pop();</span><br><span class="line">        <span class="comment">// 标志位自增</span></span><br><span class="line">        pos++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li></ul><h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>得到最终的程序如下：</p><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> arr[<span class="number">1002</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m, n, k;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; m &gt;&gt; n &gt;&gt; k;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;arr[i]);</span><br><span class="line">        <span class="keyword">int</span> flag = <span class="number">0</span>, pos = <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">stack</span> &lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            s.push(i);</span><br><span class="line">            <span class="keyword">if</span> (s.<span class="built_in">size</span>() &gt; m) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">while</span> (!s.empty() &amp;&amp; s.top() == arr[pos])</span><br><span class="line">            &#123;</span><br><span class="line">                s.pop();</span><br><span class="line">                pos += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pos == n + <span class="number">1</span>) flag = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) <span class="built_in">printf</span>(<span class="string">"YES\n"</span>);</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">"NO\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img data-src="/2020/03/28/stack-pop-sequence/1.png" alt></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;栈有着广泛的应用，比如逆波兰表达式，表达式求值，迷宫问题求解，程序调用等，不过这些问题今天都不涉及哈哈哈哈。关于程序执行期间，各个函数的相互调用使用的调用栈，可以&lt;a href=&quot;https://muyuuuu.github.io/2019/09/22/stack/&quot;&gt;参考这里&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;也许在上数据结构这门课的时候，经常遇到一个问题，一个栈压入一个序列，随缘pop，判断哪个是合理的pop，哪个是不合理的pop，之前都是脑内演算。很巧的今天我在刷题期间也遇到了，记录一下如何用代码判断pop序列是否合理。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="DataStructure" scheme="https://muyuuuu.github.io/tags/DataStructure/"/>
     
   </entry>
   
