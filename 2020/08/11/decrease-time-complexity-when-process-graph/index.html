@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="我应该是有过高中生活的，虽然很不愿意承认这一点。 不知道当年为什么会如此的叛逆，会如此的浪费时间，也许我成了老师口中的反面教材吧。 想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。 一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。">
-<meta name="keywords" content="Life">
+  <meta name="description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
+<meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
-<meta property="og:title" content="残存的高中回忆">
-<meta property="og:url" content="https://muyuuuu.github.io/2016/07/29/highschool/index.html">
+<meta property="og:title" content="降低算法时间复杂度，以图数据处理为例">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="我应该是有过高中生活的，虽然很不愿意承认这一点。 不知道当年为什么会如此的叛逆，会如此的浪费时间，也许我成了老师口中的反面教材吧。 想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。 一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。">
+<meta property="og:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-17T14:40:55.865Z">
+<meta property="og:updated_time" content="2020-08-11T14:56:44.017Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="残存的高中回忆">
-<meta name="twitter:description" content="我应该是有过高中生活的，虽然很不愿意承认这一点。 不知道当年为什么会如此的叛逆，会如此的浪费时间，也许我成了老师口中的反面教材吧。 想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。 一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。">
+<meta name="twitter:title" content="降低算法时间复杂度，以图数据处理为例">
+<meta name="twitter:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2016/07/29/highschool/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>残存的高中回忆 | Just for Life.</title>
+  <title>降低算法时间复杂度，以图数据处理为例 | Just for Life.</title>
   
 
 
@@ -223,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2016/07/29/highschool/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          残存的高中回忆
+          降低算法时间复杂度，以图数据处理为例
         </h1>
 
         <div class="post-meta">
@@ -245,24 +245,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2016-07-29 22:10:54" itemprop="dateCreated datePublished" datetime="2016-07-29T22:10:54+08:00">2016-07-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-02-17 22:40:55" itemprop="dateModified" datetime="2019-02-17T22:40:55+08:00">2019-02-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/残存的高中回忆/" itemprop="url" rel="index"><span itemprop="name">残存的高中回忆</span></a>
-                </span>
+              <time title="创建时间：2020-08-11 21:33:34 / 修改时间：22:56:44" itemprop="dateCreated datePublished" datetime="2020-08-11T21:33:34+08:00">2020-08-11</time>
             </span>
 
           
@@ -276,14 +261,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>293</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -295,21 +280,28 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>我应该是有过高中生活的，虽然很不愿意承认这一点。</p>
-<p>不知道当年为什么会如此的叛逆，会如此的浪费时间，也许我成了老师口中的反面教材吧。</p>
-<p>想想也是，我的高中就是特别标准的反面教材，的确我没有认真学习。记得高二整天的盯着外面的天空发呆，高三自己去了最后一排的角落，还莫名其妙的，呵，当时年轻。后来老师不喜欢我，同学也不喜欢我，学习不好也不招人待见。</p>
-<p>一颗浮躁的心，也没有一件成功的事，无非整日的吹牛与妄想。</p>
+        <p>鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。</p>
+<p>在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译<code>pytorch</code>的文档写一下<code>pytorch</code>快速入门的文章，的确很吸引流量，但我不喜欢，更喜欢整理自己的经验。</p>
 <a id="more"></a>
-<h2 id="随便走走"><a href="#随便走走" class="headerlink" title="随便走走"></a>随便走走</h2><p>当初的操场和远方的山丘。<br><img data-src="/2016/07/29/highschool/1.jpeg" alt><br><img data-src="/2016/07/29/highschool/2.jpeg" alt><br><img data-src="/2016/07/29/highschool/3.jpeg" alt><br><img data-src="/2016/07/29/highschool/4.jpeg" alt><br><img data-src="/2016/07/29/highschool/5.jpeg" alt><br><img data-src="/2016/07/29/highschool/6.jpeg" alt><br><img data-src="/2016/07/29/highschool/7.jpeg" alt></p>
-<h2 id="宁静的回忆"><a href="#宁静的回忆" class="headerlink" title="宁静的回忆"></a>宁静的回忆</h2><p><img data-src="/2016/07/29/highschool/8.jpeg" alt><br><img data-src="/2016/07/29/highschool/9.jpeg" alt><br><img data-src="/2016/07/29/highschool/10.jpeg" alt><br><img data-src="/2016/07/29/highschool/11.jpeg" alt><br><img data-src="/2016/07/29/highschool/12.jpeg" alt><br><img data-src="/2016/07/29/highschool/13.jpeg" alt><br><img data-src="/2016/07/29/highschool/14.jpeg" alt></p>
-<h2 id="最后的平静"><a href="#最后的平静" class="headerlink" title="最后的平静"></a>最后的平静</h2><p><img data-src="/2016/07/29/highschool/15.jpeg" alt><br><img data-src="/2016/07/29/highschool/16.jpeg" alt><br><img data-src="/2016/07/29/highschool/17.jpeg" alt><br><img data-src="/2016/07/29/highschool/18.jpeg" alt></p>
-<hr>
-<p>年少时光已成往，留下一句诗，作为日后的回忆吧。</p>
-<blockquote>
-<p>昔日龌龊不足夸，今日放荡思无涯。</p>
-</blockquote>
-<p>对不起，对我当初的无知和莽撞感到十分的歉意，也许道歉已经来不及。</p>
-<hr>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><ol>
+<li>以处理图数据为例，尤其是需要不断遍历边和点的场景；</li>
+<li>没有真实的代码，全部是伪代码；（直接放工程代码会很大，从工程里摘出对应代码来仍然是伪代码）</li>
+<li>虽然是处理图数据，但依然能适应其他场景。如果你想借鉴思想，不妨看一下，如果不想看，现在退出即可。</li>
+</ol>
+<h1 id="借助数据结构"><a href="#借助数据结构" class="headerlink" title="借助数据结构"></a>借助数据结构</h1><p>众所周知，图的节点是有度的，这里我们以无向图为例。假设，此时在做图数据的融合，将邻接链表相同的节点视为双胞胎节点融合在一起。此时最明显的哦优化就是借助桶排序，因为邻接链表相同，则节点的度必然相同。按照节点度进行分类，能有效降低复杂度。</p>
+<p>假设只融合度数在$[2, 64]$之间的节点。首先，创建基数为 2 到 64 的桶。并按照节点的度，将节点放到对应桶中，即节点度为2就放到基数为2的桶，节点度为16就放到基数为16的桶。这里一切正常：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创造节点度的桶</span></span><br><span class="line">radix = [[] <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">67</span>)]</span><br><span class="line"><span class="comment"># 按照是否被访问选取节点, 并按照度数放入桶</span></span><br><span class="line"><span class="keyword">for</span> ver <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="comment"># 取节点索引</span></span><br><span class="line">    ver_idx = graph.vertex_index[ver]</span><br><span class="line">    <span class="comment"># 按照是否被访问和节点的度进行筛选</span></span><br><span class="line">    degree = len(graph.get_all_neighbors(ver_idx))</span><br><span class="line">    <span class="keyword">if</span> visited[ver_idx] == <span class="literal">False</span> <span class="keyword">and</span> degree &gt;= <span class="number">2</span> <span class="keyword">and</span> degree &lt;= <span class="number">64</span>:</span><br><span class="line">        <span class="comment"># 添加节点的索引</span></span><br><span class="line">        radix[degree].append(ver_idx)</span><br></pre></td></tr></table></figure>
+<p>一般思路，在每个桶内，节点的度是相同的。这时候只需要遍历桶，计算桶内每个节点的邻接链表，若邻接链表相同，则融合。此时便是创建一个字典，以节点的索引为 key，以邻接链表为 value。之后遍历桶生成字典，在遍历字典的 value ，相同则融合。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_list[i].append(set(graph.get_out_neighbors(i)))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 邻接列表相同的进行融合</span></span><br><span class="line">        <span class="comment"># （这里我实在不知道怎么写了，于是暴力循环了）</span></span><br><span class="line">        <span class="comment"># 复杂度太高，大图测试直接卡死</span></span><br><span class="line">        <span class="keyword">for</span> key1 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">            <span class="keyword">for</span> key2 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">                <span class="keyword">if</span> key1 != key2 <span class="keyword">and</span> adj_list[key1] == adj_list[key2]:</span><br><span class="line">                    <span class="keyword">if</span> visited[key1] == <span class="literal">False</span> <span class="keyword">and</span> visited[key2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[key1] = visited[key2] = <span class="literal">True</span></span><br><span class="line">                        M[key1], M[key2] = key2, key1</span><br></pre></td></tr></table></figure>
+<p>如上代码，直接遍历一个桶内部的邻接列表并判断是否相等，复杂度为$O(n^2+n)$。思路很正常，但这种写法实在愚蠢。如果我们换种思路，在字典中，以邻接列表为 key，以节点的索引为 value 呢？那么当两个节点的邻接列表相同时，节点的索引会自动放到字典对应 key 的 value 中，这样就省去了比较的过程。此时时间复杂度为$O(n^2)$。（radix代表基数是 2 到 64 的桶，取值是常数，故计算复杂度时忽略最外层循环）。由此可见，不用额外的数据结构，仅需要简单的变换，就能将时间复杂度从$O(n^2+n)$降低到$O(n^2)$。但实际中这样的点很少，即融合的<code>for</code>循环可以视为$O(1)$，所以算法的执行时间和$O(n)$复杂度的算法相似。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        adj_reverse = defaultdict(list)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_reverse[str(set(graph.get_out_neighbors(i)))].append(i)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 以邻接列表为键，节点索引为 values</span></span><br><span class="line">        <span class="keyword">for</span> values <span class="keyword">in</span> adj_reverse.values():</span><br><span class="line">            <span class="keyword">if</span> len(values) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(values) - <span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">                    ver1, ver2 = values[i], values[i+<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">if</span> visited[ver1] == <span class="literal">False</span> <span class="keyword">and</span> visited[ver2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[ver1] = visited[ver2] = <span class="literal">True</span></span><br><span class="line">                        M[ver1], M[ver2] = ver2, ver1</span><br></pre></td></tr></table></figure>
+<h1 id="好的逻辑"><a href="#好的逻辑" class="headerlink" title="好的逻辑"></a>好的逻辑</h1><p>问题描述：此时我们要生成一个图的 k 跳邻接信息，即常见的邻接矩阵是一跳信息。二跳信息就是隔着一个节点还能相邻，那么邻接矩阵中，这两个节点对应的索引取值为 1。可以直接看图，节点 1 和节点 5 就是二跳连接，<code>adj[1][5] = 1</code>，这个意思。假设我们要找三跳信息。</p>
+<p><img data-src="/2020/08/11/decrease-time-complexity-when-process-graph/graph.png" alt></p>
+<p>在 <code>networkx</code> 这个包中，判断两个节点是否有路径的方式是使用最短路径，如没有最短路径，这两个节点当然不存在路径，最短路径的复杂度为$O(V+E)$，$V$是节点的数量，$E$是边的数量。伪代码就是<code>has_path(node1, node2)</code>。那么，此时最粗暴的算法来了，遍历节点，若两个节点之间的最短路径等于 3 ，就在邻接矩阵中置为 1。时间复杂度$O(V^2(V+E))$的伪代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> node1 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="keyword">for</span> node2 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">        <span class="keyword">if</span> has_path(node1, node2) == <span class="number">3</span>:</span><br><span class="line">            adj[node1, node2] = adj[node2, node1] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>上述代码的想法是最简单的，也是新手最容易写的，也是最浪费时间的写法。既然我们是正经出身的大学生，是学过知识的大学生，那么就用所学知识来改进一下。<a href="https://zh.wikipedia.org/zh-sg/%E7%BB%B4%E7%89%B9%E6%AF%94%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">维特比</a>算法有云，<strong>如果点A到点C的最短路径经过了B，那么在这条路径中，B到C也是最短路径。</strong>这个算法常用于动态规划算法问题与求解，这里不进行展开。</p>
+<p>那么，如果我们以上图中顶点 0 为起点，计算顶点 0 到其他顶点的距离，那么在计算其他节点。</p>
+<p>草，想法错了，明天再改吧。</p>
 
     </div>
 
@@ -320,19 +312,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\08\DuanWu\" rel="bookmark">端午&高考乱弹</a></div>
+      <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\10\13\MMA-Party-2018\" rel="bookmark">聚会的说～</a></div>
+      <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++常用数据结构</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\03\28\Prime-minister-music\" rel="bookmark">迟暮的丞相：遂许先帝以驱驰，尔来二十又一年</a></div>
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\06\06\about-graduate-or-work\" rel="bookmark">关于读研还是工作</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\30\bye\" rel="bookmark">归尘</a></div>
+      <div class="popular-posts-title"><a href="\2020\03\02\algorithm-time-complexity\" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
     </li>
   </ul>
 <div class="post-body-end-inner">
@@ -390,7 +382,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Life/" rel="tag"># Life</a>
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
           </div>
 
         
@@ -404,13 +396,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2015/02/20/home/" rel="prev" title="故乡云水">
-      <i class="fa fa-chevron-left"></i> 故乡云水
+    <a href="/2020/08/05/digital-foundation/" rel="prev" title="大学计算机：数字化基础">
+      <i class="fa fa-chevron-left"></i> 大学计算机：数字化基础
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2016/12/09/bohai/" rel="next" title="环渤海骑行">
-      环渤海骑行 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -471,7 +460,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#随便走走"><span class="nav-number">1.</span> <span class="nav-text">随便走走</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#宁静的回忆"><span class="nav-number">2.</span> <span class="nav-text">宁静的回忆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后的平静"><span class="nav-number">3.</span> <span class="nav-text">最后的平静</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借助数据结构"><span class="nav-number">2.</span> <span class="nav-text">借助数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#好的逻辑"><span class="nav-number">3.</span> <span class="nav-text">好的逻辑</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -753,6 +742,59 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
@@ -767,7 +809,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'feae90d1e91bf84ba1874a57436016be',
+      id          : '4b35e7ded32f3ec333e7e696315be632',
         language: 'zh-CN',
       distractionFreeMode: true
     });
