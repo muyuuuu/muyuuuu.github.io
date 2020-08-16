@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-08-11T14:56:44.017Z">
+<meta property="og:updated_time" content="2020-08-16T09:51:23.992Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="降低算法时间复杂度，以图数据处理为例">
 <meta name="twitter:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-08-11 21:33:34 / 修改时间：22:56:44" itemprop="dateCreated datePublished" datetime="2020-08-11T21:33:34+08:00">2020-08-11</time>
+              <time title="创建时间：2020-08-11 21:33:34" itemprop="dateCreated datePublished" datetime="2020-08-11T21:33:34+08:00">2020-08-11</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-16 17:51:23" itemprop="dateModified" datetime="2020-08-16T17:51:23+08:00">2020-08-16</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -261,7 +267,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.8k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -295,13 +301,18 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_list[i].append(set(graph.get_out_neighbors(i)))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 邻接列表相同的进行融合</span></span><br><span class="line">        <span class="comment"># （这里我实在不知道怎么写了，于是暴力循环了）</span></span><br><span class="line">        <span class="comment"># 复杂度太高，大图测试直接卡死</span></span><br><span class="line">        <span class="keyword">for</span> key1 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">            <span class="keyword">for</span> key2 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">                <span class="keyword">if</span> key1 != key2 <span class="keyword">and</span> adj_list[key1] == adj_list[key2]:</span><br><span class="line">                    <span class="keyword">if</span> visited[key1] == <span class="literal">False</span> <span class="keyword">and</span> visited[key2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[key1] = visited[key2] = <span class="literal">True</span></span><br><span class="line">                        M[key1], M[key2] = key2, key1</span><br></pre></td></tr></table></figure>
 <p>如上代码，直接遍历一个桶内部的邻接列表并判断是否相等，复杂度为$O(n^2+n)$。思路很正常，但这种写法实在愚蠢。如果我们换种思路，在字典中，以邻接列表为 key，以节点的索引为 value 呢？那么当两个节点的邻接列表相同时，节点的索引会自动放到字典对应 key 的 value 中，这样就省去了比较的过程。此时时间复杂度为$O(n^2)$。（radix代表基数是 2 到 64 的桶，取值是常数，故计算复杂度时忽略最外层循环）。由此可见，不用额外的数据结构，仅需要简单的变换，就能将时间复杂度从$O(n^2+n)$降低到$O(n^2)$。但实际中这样的点很少，即融合的<code>for</code>循环可以视为$O(1)$，所以算法的执行时间和$O(n)$复杂度的算法相似。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        adj_reverse = defaultdict(list)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_reverse[str(set(graph.get_out_neighbors(i)))].append(i)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 以邻接列表为键，节点索引为 values</span></span><br><span class="line">        <span class="keyword">for</span> values <span class="keyword">in</span> adj_reverse.values():</span><br><span class="line">            <span class="keyword">if</span> len(values) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(values) - <span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">                    ver1, ver2 = values[i], values[i+<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">if</span> visited[ver1] == <span class="literal">False</span> <span class="keyword">and</span> visited[ver2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[ver1] = visited[ver2] = <span class="literal">True</span></span><br><span class="line">                        M[ver1], M[ver2] = ver2, ver1</span><br></pre></td></tr></table></figure>
+<p>其实这个优化的并不所最好的，另一个是，但涉及的问题背景太深了，直接拿出来怕读者看不懂，就用这个例子凑合了。</p>
 <h1 id="好的逻辑"><a href="#好的逻辑" class="headerlink" title="好的逻辑"></a>好的逻辑</h1><p>问题描述：此时我们要生成一个图的 k 跳邻接信息，即常见的邻接矩阵是一跳信息。二跳信息就是隔着一个节点还能相邻，那么邻接矩阵中，这两个节点对应的索引取值为 1。可以直接看图，节点 1 和节点 5 就是二跳连接，<code>adj[1][5] = 1</code>，这个意思。假设我们要找三跳信息。</p>
 <p><img data-src="/2020/08/11/decrease-time-complexity-when-process-graph/graph.png" alt></p>
 <p>在 <code>networkx</code> 这个包中，判断两个节点是否有路径的方式是使用最短路径，如没有最短路径，这两个节点当然不存在路径，最短路径的复杂度为$O(V+E)$，$V$是节点的数量，$E$是边的数量。伪代码就是<code>has_path(node1, node2)</code>。那么，此时最粗暴的算法来了，遍历节点，若两个节点之间的最短路径等于 3 ，就在邻接矩阵中置为 1。时间复杂度$O(V^2(V+E))$的伪代码：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> node1 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="keyword">for</span> node2 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">        <span class="keyword">if</span> has_path(node1, node2) == <span class="number">3</span>:</span><br><span class="line">            adj[node1, node2] = adj[node2, node1] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>上述代码的想法是最简单的，也是新手最容易写的，也是最浪费时间的写法。既然我们是正经出身的大学生，是学过知识的大学生，那么就用所学知识来改进一下。<a href="https://zh.wikipedia.org/zh-sg/%E7%BB%B4%E7%89%B9%E6%AF%94%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">维特比</a>算法有云，<strong>如果点A到点C的最短路径经过了B，那么在这条路径中，B到C也是最短路径。</strong>这个算法常用于动态规划算法问题与求解，这里不进行展开。</p>
-<p>那么，如果我们以上图中顶点 0 为起点，计算顶点 0 到其他顶点的距离，那么在计算其他节点。</p>
-<p>草，想法错了，明天再改吧。</p>
+<p>真实数据测试：运行时间 19.098s，图节点数是94，边数是1554。</p>
+<p>只要我们稍微打开 <code>API</code> 查询一下，就能知道有 <code>shortes_distance</code> 这种函数，即在时间复杂度$O(V+E)$内求出一个节点到其他所有节点的最短路径，在借助 <code>np.where</code> 或 <code>np.isin</code> 就很容易降低复杂度了，一份$O(V(V+E))$的伪代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> node <span class="keyword">in</span> graph.nodes():</span><br><span class="line">    arr = shortest_distance(node)</span><br><span class="line">    mask = np.where(arr == target)</span><br><span class="line">    <span class="keyword">for</span> row, col <span class="keyword">in</span> mask:</span><br><span class="line">        adj[row][col] = adj[col][row] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>真实数据测试：运行时间 0.139s，图节点数是94，边数是1554。</p>
+<p>那么在冷静分析一下，很多孤立节点并不是我们所需要的，取度数大的节点进行融合，几乎能覆盖图中全部的数据，因为图中大部分点会和度数大的点有联系。那么，我们对图节点按度数排序（堆排的复杂度为 $\log n$），取出前 $\log v$ 个节点，计算他们和图中节点的 $k$ 跳信息。伪代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">node = sort_by(graph.nodes.degree)[:logv]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> node:</span><br><span class="line">    arr = shortest_distance(node)</span><br><span class="line">    mask = np.where(arr == target)</span><br><span class="line">    <span class="keyword">for</span> row, col <span class="keyword">in</span> mask:</span><br><span class="line">        adj[row][col] = adj[col][row] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>此时算法的时间复杂度是 $O(\log V(V+E))$。一般而言，$E$比$V$大，算法计算时间更取决于 $E$ 的大小。实际数据：运行时间 0.039s，图节点数是94，边数是1554。</p>
 
     </div>
 
@@ -547,7 +558,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:33</span>
+    <span title="站点阅读时长">6:34</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
