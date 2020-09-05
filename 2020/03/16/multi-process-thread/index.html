@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，大多东西为网上搜刮而来后整理，可能不严谨。本文收录：  引入线程、进程的基本概念； 多进程编程：变量引用、性能分析、进程池和进程通信； 多线程编程：线程锁、线程的局部变量； 实际">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-16T13:52:08.129Z">
+<meta property="og:updated_time" content="2020-09-05T13:56:34.225Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程与多进程, 基于Python实现">
 <meta name="twitter:description" content="作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，大多东西为网上搜刮而来后整理，可能不严谨。本文收录：  引入线程、进程的基本概念； 多进程编程：变量引用、性能分析、进程池和进程通信； 多线程编程：线程锁、线程的局部变量； 实际">
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-03-16 20:53:42 / 修改时间：21:52:08" itemprop="dateCreated datePublished" datetime="2020-03-16T20:53:42+08:00">2020-03-16</time>
+              <time title="创建时间：2020-03-16 20:53:42" itemprop="dateCreated datePublished" datetime="2020-03-16T20:53:42+08:00">2020-03-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-05 21:56:34" itemprop="dateModified" datetime="2020-09-05T21:56:34+08:00">2020-09-05</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -369,7 +375,7 @@
 </ul>
 <p>对于计算密集型的程序，程序主要为复杂的逻辑判断和复杂的运算，此时CPU的利用率高，不用开太多的线程，开太多线程反而会因为线程切换时切换上下文而浪费资源。计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。</p>
 <p>对于IO密集型的程序，比如磁盘IO(读取文件)和网络IO(网络请求)。因为IO操作会阻塞线程，CPU利用率不高，可以开多点线程，一个线程阻塞时(网络延迟等)可以切换到其他就绪线程，提高CPU的利用率。这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。</p>
-<h2 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h2><p>举个通俗但不严谨的例子：在输入法开启英文模式并向记事本中打字时，一边打字一边显示，这就涉及了打字进程和记事本的显示进程。记事本的显示进程一直读取打字进程的打字结果，讲打字结果读取并显示在屏幕上，这就设计了两个进程之间的通信。那么实现一个边写边读的例子：</p>
+<h2 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h2><p>举个通俗但不严谨的例子：在输入法开启英文模式并向记事本中打字时，一边打字一边显示，这就涉及了打字进程和记事本的显示进程。记事本的显示进程一直读取打字进程的打字结果，将打字结果读取并显示在屏幕上，这就设计了两个进程之间的通信。那么实现一个边写边读的例子：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Queue</span><br><span class="line"><span class="keyword">import</span> os, time, random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写数据进程执行的代码:</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write</span><span class="params">(q)</span>:</span></span><br><span class="line">    print(<span class="string">'Process to write: %s'</span> % os.getpid())</span><br><span class="line">    <span class="keyword">for</span> value <span class="keyword">in</span> [<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>]:</span><br><span class="line">        print(<span class="string">'Put %s to queue...'</span> % value)</span><br><span class="line">        q.put(value)</span><br><span class="line">        time.sleep(random.random())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读数据进程执行的代码:</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read</span><span class="params">(q)</span>:</span></span><br><span class="line">    print(<span class="string">'Process to read: %s'</span> % os.getpid())</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        value = q.get(<span class="literal">True</span>)</span><br><span class="line">        print(<span class="string">'Get %s from queue.'</span> % value)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment"># 父进程创建Queue，并传给各个子进程：</span></span><br><span class="line">    q = Queue()</span><br><span class="line">    pw = Process(target=write, args=(q,))</span><br><span class="line">    pr = Process(target=read, args=(q,))</span><br><span class="line">    <span class="comment"># 启动子进程pw，写入:</span></span><br><span class="line">    pw.start()</span><br><span class="line">    <span class="comment"># 启动子进程pr，读取:</span></span><br><span class="line">    pr.start()</span><br><span class="line">    <span class="comment"># 等待pw结束:</span></span><br><span class="line">    pw.join()</span><br><span class="line">    <span class="comment"># pr进程里是死循环，无法等待其结束，只能强行终止:</span></span><br><span class="line">    pr.terminate()</span><br></pre></td></tr></table></figure>
 <h1 id="多线程编程"><a href="#多线程编程" class="headerlink" title="多线程编程"></a>多线程编程</h1><p>假如机器本身安装了多个处理器，那么程序会运行得更快，毋需作出任何特殊的调校。多任务可以由多进程完成，也可以由一个进程内的多线程完成。</p>
 <h2 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time, threading</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新线程执行的代码:</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loop</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br><span class="line"></span><br><span class="line">print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">t = threading.Thread(target=loop, name=<span class="string">'Thread-1'</span>)</span><br><span class="line">t.start()</span><br><span class="line">t.join()</span><br><span class="line">print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br></pre></td></tr></table></figure>
@@ -664,12 +670,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">462k</span>
+    <span title="站点总字数">465k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:01</span>
+    <span title="站点阅读时长">7:03</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
