@@ -20,7 +20,8 @@
 <p>可以详细的参考里面的注释，写的很详细了。</p>
 <p>画成图就是这样的：右图的 <code>union</code> 表示两个集合合并后，更改一个节点的父节点(且左子树的父节点都要更改)；左图中的 <code>find</code> 表示绿色节点在找根节点是谁，并修改这条路上所有节点的根节点。</p>
 <p><img data-src="/2020/09/07/union-find-datastructure/dsu1.png" alt></p>
-<p>也许你会感觉抽象，但看几个题就明白什么意思了。</p>
+<p>也许你会感觉抽象，但看几个题就明白什么意思了。或者，如果你的脑子和我的脑子一样的不好使，那就多动动手吧，手动模拟几次流程就知道并查集的工作流程是什么意思了。靠他人的讲解总是理解的不够到位。或者说，我从来也没企图靠他人的讲解去学会什么，找到好教材的背后，自己一定要多下功夫，多自学。</p>
+<p><img data-src="/2020/09/07/union-find-datastructure/2.jpg" alt></p>
 <h1 id="社区聚类-基础应用"><a href="#社区聚类-基础应用" class="headerlink" title="社区聚类(基础应用)"></a>社区聚类(基础应用)</h1><p>When register on a social network, you are always asked to specify your hobbies in order to find some potential friends with the same hobbies. A social cluster is a set of people who have some of their hobbies in common. You are supposed to find all the clusters.</p>
 <h2 id="Input-Specification"><a href="#Input-Specification" class="headerlink" title="Input Specification:"></a>Input Specification:</h2><p>Each input file contains one test case. For each test case, the first line contains a positive integer $N (≤1000)$, the total number of people in a social network. Hence the people are numbered from $1$ to $N$. Then $N$ lines follow, each gives the hobby list of a person in the format:$K_i:h_i[1],h_i[2]…h_i[K_i]$, where $K_i (&gt;0)$ is the number of hobbies, and $h_i[j]$ is the index of the $j$-th hobby, which is an integer in $[1, 1000]$.</p>
 <h2 id="Output-Specification"><a href="#Output-Specification" class="headerlink" title="Output Specification:"></a>Output Specification:</h2><p>For each case, print in one line the total number of clusters in the network. Then in the second line, print the numbers of people in the clusters in non-increasing order. The numbers must be separated by exactly one space, and there must be no extra space at the end of the line.</p>
