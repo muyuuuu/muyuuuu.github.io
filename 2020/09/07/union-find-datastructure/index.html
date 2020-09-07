@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="继续啃算法，今天来看并查集。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-07T14:06:00.945Z">
+<meta property="og:updated_time" content="2020-09-07T14:14:49.320Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="并查集">
 <meta name="twitter:description" content="继续啃算法，今天来看并查集。">
@@ -247,7 +247,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-09-07 18:33:57 / 修改时间：22:06:00" itemprop="dateCreated datePublished" datetime="2020-09-07T18:33:57+08:00">2020-09-07</time>
+              <time title="创建时间：2020-09-07 18:33:57 / 修改时间：22:14:49" itemprop="dateCreated datePublished" datetime="2020-09-07T18:33:57+08:00">2020-09-07</time>
             </span>
 
           
@@ -297,8 +297,8 @@
 <p>可以详细的参考里面的注释，写的很详细了。</p>
 <p>画成图就是这样的：右图的 <code>union</code> 表示两个集合合并后，更改一个节点的父节点(且左子树的父节点都要更改)；左图中的 <code>find</code> 表示绿色节点在找根节点是谁，并修改这条路上所有节点的根节点。</p>
 <p><img data-src="/2020/09/07/union-find-datastructure/dsu1.png" alt></p>
-<p>也许你会感觉抽象，但看几个题就明白什么意思了。或者，如果你的脑子和我的脑子一样的不好使，那就多动动手吧，手动模拟几次流程就知道并查集的工作流程是什么意思了。靠他人的讲解总是理解的不够到位。或者说，我从来也没企图靠他人的讲解去学会什么，找到好教材的背后，自己一定要多下功夫，多自学。</p>
-<p><img data-src="/2020/09/07/union-find-datastructure/2.jpg" alt></p>
+<p>也许你会感觉抽象，但看几个题就明白什么意思了。或者，如果你的脑子和我的脑子一样的不好使，那就多动动手，手动模拟几次就知道并查集的工作流程是什么意思了。靠他人的讲解总是理解的不够到位。或者说，我从来也没企图靠他人的讲解去学会什么，找到好教材的背后，自己一定要多下功夫，多自学。</p>
+<p><img data-src="https://static01.imgkr.com/temp/9519b94d9adb4b0197f4aabf8f7f288d.jpg" alt></p>
 <h1 id="社区聚类-基础应用"><a href="#社区聚类-基础应用" class="headerlink" title="社区聚类(基础应用)"></a>社区聚类(基础应用)</h1><p>When register on a social network, you are always asked to specify your hobbies in order to find some potential friends with the same hobbies. A social cluster is a set of people who have some of their hobbies in common. You are supposed to find all the clusters.</p>
 <h2 id="Input-Specification"><a href="#Input-Specification" class="headerlink" title="Input Specification:"></a>Input Specification:</h2><p>Each input file contains one test case. For each test case, the first line contains a positive integer $N (≤1000)$, the total number of people in a social network. Hence the people are numbered from $1$ to $N$. Then $N$ lines follow, each gives the hobby list of a person in the format:$K_i:h_i[1],h_i[2]…h_i[K_i]$, where $K_i (&gt;0)$ is the number of hobbies, and $h_i[j]$ is the index of the $j$-th hobby, which is an integer in $[1, 1000]$.</p>
 <h2 id="Output-Specification"><a href="#Output-Specification" class="headerlink" title="Output Specification:"></a>Output Specification:</h2><p>For each case, print in one line the total number of clusters in the network. Then in the second line, print the numbers of people in the clusters in non-increasing order. The numbers must be separated by exactly one space, and there must be no extra space at the end of the line.</p>
@@ -312,7 +312,7 @@
 <p>where <code>ID</code> is a unique 4-digit identification number for each person; <code>Father</code> and <code>Mother</code> are the ID’s of this person’s parents (if a parent has passed away, -1 will be given instead); $k(0≤k≤5)$ is the number of children of this person; $Child_i$’s are the <code>ID</code>‘s of his/her children; $M_\text{estate}$ is the total number of sets of the real estate under his/her name; and <code>Area</code> is the total area of his/her estate.</p>
 <h2 id="Output-Specification-1"><a href="#Output-Specification-1" class="headerlink" title="Output Specification:"></a>Output Specification:</h2><p>For each case, first print in a line the number of families (all the people that are related directly or indirectly are considered in the same family). Then output the family info in the format:</p>
 <p><code>ID</code> <code>M</code> $\text{AVG}_\text{sets}$  $\text{AVG}_\text{area}$</p>
-<p>​​where <code>ID</code> is the smallest <code>ID</code> in the family; <code>M</code> is the total number of family members; $\text{AVG}_\text{sets}$ is the average number of sets of their real estate; and $\text{AVG}_\text{area}$ is the average area. The average numbers must be accurate up to 3 decimal places. The families must be given in descending order of their average areas, and in ascending order of the ID’s if there is a tie.</p>
+<p>​where <code>ID</code> is the smallest <code>ID</code> in the family; <code>M</code> is the total number of family members; $\text{AVG}_\text{sets}$ is the average number of sets of their real estate; and $\text{AVG}_\text{area}$ is the average area. The average numbers must be accurate up to 3 decimal places. The families must be given in descending order of their average areas, and in ascending order of the ID’s if there is a tie.</p>
 <h2 id="Sample-Input-1"><a href="#Sample-Input-1" class="headerlink" title="Sample Input:"></a>Sample Input:</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">10</span><br><span class="line">6666 5551 5552 1 7777 1 100</span><br><span class="line">1234 5678 9012 1 0002 2 300</span><br><span class="line">8888 -1 -1 0 1 1000</span><br><span class="line">2468 0001 0004 1 2222 1 500</span><br><span class="line">7777 6666 -1 0 2 300</span><br><span class="line">3721 -1 -1 1 2333 2 150</span><br><span class="line">9012 -1 -1 3 1236 1235 1234 1 100</span><br><span class="line">1235 5678 9012 0 1 50</span><br><span class="line">2222 1236 2468 2 6661 6662 1 300</span><br><span class="line">2333 -1 3721 3 6661 6662 6663 1 100</span><br></pre></td></tr></table></figure>
 <h2 id="Sample-Output-1"><a href="#Sample-Output-1" class="headerlink" title="Sample Output:"></a>Sample Output:</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">3</span><br><span class="line">8888 1 1.000 1000.000</span><br><span class="line">0001 15 0.600 100.000</span><br><span class="line">5551 4 0.750 100.000</span><br></pre></td></tr></table></figure>
 <p>道理还是一样的，就是数据操作上复杂了一点，代码如下：</p>
@@ -340,7 +340,7 @@
       <div class="popular-posts-title"><a href="\2020\09\07\PAT-advanced\" rel="bookmark">PAT甲级整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
     </li>
   </ul>
 <div class="post-body-end-inner">
