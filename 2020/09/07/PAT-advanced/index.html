@@ -20,18 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Just for Life.">
-<meta property="og:url" content="https://muyuuuu.github.io/tags/Resptile/index.html">
+  <meta name="description" content="对我会做的甲级题目进行了分类整理，仅代表我个人的分类，不是很严谨。如有的题可以哈希，也可以 map；有的题是字符串的处理，但也涉及到了素数什么的。 此外，甲级以字符串处理、数组使用、数据精度为简单题目；借助结构体实现多条件排序，通常难度适中，就是排序规则有点复杂；而树、图涉及到的数据结构为中等难度的题，这类题目建议按类型刷，能够举一反三；30分的题为难度大的题目，涉及到动态规划和一些算法等，以我目">
+<meta name="keywords" content="DataStructure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PAT甲级整理">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/09/07/PAT-advanced/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+<meta property="og:description" content="对我会做的甲级题目进行了分类整理，仅代表我个人的分类，不是很严谨。如有的题可以哈希，也可以 map；有的题是字符串的处理，但也涉及到了素数什么的。 此外，甲级以字符串处理、数组使用、数据精度为简单题目；借助结构体实现多条件排序，通常难度适中，就是排序规则有点复杂；而树、图涉及到的数据结构为中等难度的题，这类题目建议按类型刷，能够举一反三；30分的题为难度大的题目，涉及到动态规划和一些算法等，以我目">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-07T09:54:52.062Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Just for Life.">
-<meta name="twitter:description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+<meta name="twitter:title" content="PAT甲级整理">
+<meta name="twitter:description" content="对我会做的甲级题目进行了分类整理，仅代表我个人的分类，不是很严谨。如有的题可以哈希，也可以 map；有的题是字符串的处理，但也涉及到了素数什么的。 此外，甲级以字符串处理、数组使用、数据精度为简单题目；借助结构体实现多条件排序，通常难度适中，就是排序规则有点复杂；而树、图涉及到的数据结构为中等难度的题，这类题目建议按类型刷，能够举一反三；30分的题为难度大的题目，涉及到动态规划和一些算法等，以我目">
 
-<link rel="canonical" href="https://muyuuuu.github.io/tags/Resptile/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/09/07/PAT-advanced/">
 
 
 <script id="page-configurations">
@@ -39,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签云: Resptile | Just for Life.</title>
+  <title>PAT甲级整理 | Just for Life.</title>
   
 
 
@@ -216,97 +218,307 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">Resptile
-          <small>标签云</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/09/07/PAT-advanced/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PAT甲级整理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-07 17:37:00 / 修改时间：17:54:52" itemprop="dateCreated datePublished" datetime="2020-09-07T17:37:00+08:00">2020-09-07</time>
+            </span>
+
+          
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+        <p>对我会做的甲级题目进行了分类整理，仅代表我个人的分类，不是很严谨。如有的题可以哈希，也可以 <code>map</code>；有的题是字符串的处理，但也涉及到了素数什么的。</p>
+<p>此外，甲级以字符串处理、数组使用、数据精度为简单题目；借助结构体实现多条件排序，通常难度适中，就是排序规则有点复杂；而树、图涉及到的数据结构为中等难度的题，这类题目建议按类型刷，能够举一反三；30分的题为难度大的题目，涉及到动态规划和一些算法等，以我目前对算法的接触而言，我不太会那些。</p>
+<ul>
+<li>20分：稍微复杂的编程应用，逻辑复杂，但不涉及数据结构；</li>
+<li>25分：常见数据结构的应用，如树、图、链表等；</li>
+<li>30分：有的会，大部分我不会，就放过了。</li>
+</ul>
+<p>整体而言，不适合刚入门 OJ 的同学进行练手，用来熟练编程和掌握基本数据结构还是可以的。</p>
+<a id="more"></a>
+<h1 id="整理"><a href="#整理" class="headerlink" title="整理"></a>整理</h1><p>整理的题目是我会的，没整理在内的是我不会的。能力一般，智商有限，有的题目看答案并仔细钻研是能看懂的，剩下的是看答案都看不懂的。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>题目类型</th>
+<th>题目</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>素数</td>
+<td>1015</td>
+</tr>
+<tr>
+<td>数据精度</td>
+<td>1058，1065，1081</td>
+</tr>
+<tr>
+<td>数组应用</td>
+<td>1046，1042，1029(选择中位数)，1117，1067，1113，1128(N皇后判断)，1125，1082(极度繁琐，我抄的)，1002，1008，1009(与1002类似)，1011，1019，1041，1045，1046，1048，1054，1085，1109，1148</td>
+</tr>
+<tr>
+<td>字符串处理</td>
+<td>1035(<code>vector</code>应用)，1073，1069(字符串转数字)，1077(最大公共后缀子串)，1140，1136，1108，1120，1001，1005，1006，1023，1024，1027，1031，1035，1042，1061，1069，1073，1084，1092，1093(子串匹配)，1100，1108，1112，1116，1120，1132</td>
+</tr>
+<tr>
+<td>数学计算</td>
+<td>1096，1104，1113，1117</td>
+</tr>
+<tr>
+<td><code>map</code>应用</td>
+<td>1041(可哈希)，1144(不可哈希)，1124，1112，1121，1149，1022，1071</td>
+</tr>
+<tr>
+<td>哈希算法</td>
+<td>1041(可<code>map</code>)，1121，1145(正宗哈希)，1050，1078(正宗哈希)</td>
+</tr>
+<tr>
+<td>数据精度</td>
+<td>1088，1136(写字符串加法)</td>
+</tr>
+<tr>
+<td><code>vector</code>应用</td>
+<td>1048</td>
+</tr>
+<tr>
+<td>借助结构体的多条件排序</td>
+<td>1025，1012，1028，1047，1055，1062，1075，1083，1070，1036，1141，1137，1153，1070</td>
+</tr>
+<tr>
+<td>排序算法</td>
+<td>1089(插入与归并)，1101(快速排序)</td>
+</tr>
+<tr>
+<td>栈的应用</td>
+<td>1051</td>
+</tr>
+<tr>
+<td>树状数组</td>
+<td>1057(无序数据的中位数)</td>
+</tr>
+<tr>
+<td><code>set</code>应用</td>
+<td>1129(操作符重载)，1063</td>
+</tr>
+<tr>
+<td>动态规划</td>
+<td>1040(最长对称子串)，1044，1045，1007(子序列和最大)</td>
+</tr>
+<tr>
+<td>队列应用</td>
+<td>1017</td>
+</tr>
+<tr>
+<td>链表处理</td>
+<td>1028，1032，1133，1052，1074，1097</td>
+</tr>
+<tr>
+<td>树的应用</td>
+<td>1004(层次遍历二叉树，输出叶子节点)，1102(层次、右根左遍历，反转二叉树)，1043(查找树、镜像查找树、先序、后序)，1064(完全查找树)，1099(按指定结构建立二叉查找树)，1110(判断完全二叉树，第六个测试点测评机器有问题)，1123(AVL树的层序遍历与判断是否是完全二叉树)，1066(寻找AVL树的根)，1130(中缀表达式)，1020(前序后序转层序)，1053(遍历树，求权重相等的路径)，1076(宽度优先遍历)，1079(深优遍历叶子节点)，1090(叶子节点数量)，1094(树中最长路径)，1106(树中最长路径与叶子数量)，1115(建立二叉查找树)</td>
+</tr>
+<tr>
+<td>图的应用</td>
+<td>1154(相邻顶点颜色是否相同)，1146(有向图的拓扑序列)，1122(哈密顿图的判断)，1134(无向图的顶点覆盖)，1142(极大团问题)，1126(欧拉回路)，1013(连通分量计数)，1021(计数图内最长路径，连通子图计数)</td>
+</tr>
+<tr>
+<td>最短路径</td>
+<td>1030(借助遍历)，1003(最短路径数量与点权求和)，</td>
+</tr>
+<tr>
+<td>进制转换</td>
+<td>1010</td>
+</tr>
+<tr>
+<td>三维遍历</td>
+<td>1091(dfs算法遍历三维数据)</td>
+</tr>
+<tr>
+<td>旋转矩阵</td>
+<td>1105</td>
+</tr>
+<tr>
+<td>并查集</td>
+<td>1107，1114，1118</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="记录"><a href="#记录" class="headerlink" title="记录"></a>记录</h1><ol>
+<li><code>vector&lt;int&gt; a(10, 1)</code>的含义为声明一个长度为10的不定长数组且全部初始化为 1 。</li>
+<li>当借助结构体的多条件排序需要比较的条件比较多时，可以考虑结构体中放数组。甲级1012。</li>
+<li>求两个递增序列的中位数，直接<code>sort</code>会超时，且有更好的算法，提前计算中位数的位置即可。甲级1029。</li>
+<li>运算的括号可能会加长运算时间而超时，也可考虑更换<code>cin</code>为<code>scanf</code>，<code>cout</code>为<code>printf</code>。甲级1055。</li>
+<li>在使用<code>map</code>时，查找无效表示为0，所以在设立映射时的初始值应该为1而不是0。甲级1137。</li>
+<li>简易判断完全二叉树的方法。甲级<code>1110-1.cpp</code>。</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这是<a href="https://muyuuuu.github.io/2020/08/21/PAT-basic/">乙级</a>整理的结果，可能接下来要去整理归纳一些算法题目了，刷完就忘还是相当于不会。或者说，<strong>追求做题数量是没有意义的。</strong></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-18T11:53:38+08:00"
-              content="2020-03-18">
-          03-18
-        </time>
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++常用数据结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\08\21\PAT-basic\" rel="bookmark">PAT乙级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+    </li>
+  </ul>
+<div class="post-body-end-inner">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ads-horizontal -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9444436918565205"
+     data-ad-slot="2997254382"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+        <div class="reward-container">
+  <div>明人不说暗话，读研期间学费昂贵，补助和奖学金实在少得可怜，两项加起来和学费差的很远。父母背景都是普通农民，且即将退休。 但凡生活过得去我也不想卖惨和接广告，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 至于为什么不兼职，学业繁忙跑不开，更多的是想趁学生时代好好学技术；乐于分享，也实在不想去咸鱼或淘宝卖代码；假期的时候我也去看看实习，自己想想办法。 且，三年后我找到工作能自食其力，一定会删除此打赏信息，君子言而有信。生活所迫被逼无奈，感谢各位的支持与捧场。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
       </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/03/18/multi-process/" itemprop="url">
-            <span itemprop="name">爬虫系列（三）——多进程爬虫</span>
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
           </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-01-11T14:52:42+08:00"
-              content="2020-01-11">
-          01-11
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/01/11/resptile/" itemprop="url">
-            <span itemprop="name">爬虫系列（二）——操控浏览器模拟访问、点击与设置等待</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2019</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2019-02-24T19:17:38+08:00"
-              content="2019-02-24">
-          02-24
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2019/02/24/school-start1/" itemprop="url">
-            <span itemprop="name">爬虫系列（一）——简单的爬取与页面解析</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+        </div>
     </div>
   </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/01/binary-indexed-tree/" rel="prev" title="树状数组">
+      <i class="fa fa-chevron-left"></i> 树状数组
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-
+  </div>
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -353,6 +565,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#整理"><span class="nav-number">1.</span> <span class="nav-text">整理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#记录"><span class="nav-number">2.</span> <span class="nav-text">记录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -637,6 +850,25 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '6d8b551bea54feaa71e0bdce14b92adc',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
     </div>
 </body>
