@@ -10,7 +10,7 @@
 <p>传统方法是先计算映射后的向量 $\phi(x)$和 $\phi(y)$，然后再计算它俩的内积。但是这样做计算很复杂，因为映射到高维空间后的数据维度很高。一旦达到一万多维计算起来简直浪费时间。</p>
 <p>于是，能不能在原始空间找到一个函数 $K(x,y)$ 使得 $K(x,y)=\langle \phi(x),\phi(y)\rangle $ 呢？如果这个函数存在，那么我们只需要在低维空间里计算函数的值即可，而不需要先把数据映射到高维空间，再通过复杂的计算求解映射后的内积了。</p>
 <p>庆幸的是，这样的函数是存在的。这样一来计算的复杂度就大大降低了，这种简化计算的方法被称为核技巧（The Kernel Trick），而函数 $K(x,y)$ 就是核函数（Kernel Function）。这里我们选用高斯核函数，可以将原始维度映射到无穷维。</p>
-<p>\begin{equation}<br>K(x,y)=\exp\Bigl(\frac{||x-y||^2}{2\sigma^2}\Bigr)<br>\end{equation}</p>
+<p>\begin{equation}<br>K(x,y)=\exp\Bigl(-\frac{||x-y||^2}{2\sigma^2}\Bigr)<br>\end{equation}</p>
 <p>这种东西最好是去看官方文档，有人把高斯核函数中的范数写成了$|x-y|^2$，第三方博客一点都不注重细节，我半天没看懂还以为取绝对值，艹。</p>
 <h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mapping</span><span class="params">(x, y, sigma=<span class="number">1</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> math.exp(-np.linalg.norm((x-y), ord = <span class="number">2</span>) / <span class="number">2</span> / sigma ** <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">x_1 = np.random.random_sample((<span class="number">10</span>, <span class="number">1</span>))</span><br><span class="line">x_2 = np.random.random_sample((<span class="number">10</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">a = mapping(x_1, x_2)</span><br><span class="line"></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>核函数是个好东西，之前还写过用核函数去聚类的文章，欢迎观看：<a href="https://muyuuuu.github.io/2020/03/30/KDE-cluster/">https://muyuuuu.github.io/2020/03/30/KDE-cluster/</a></p>
@@ -2636,8 +2636,8 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 <p><a href="https://www.liaoxuefeng.com/wiki/1016959663602400/1017629247922688" target="_blank" rel="noopener">https://www.liaoxuefeng.com/wiki/1016959663602400/1017629247922688</a></p>
 ]]></content>
       <tags>
-        <tag>Python</tag>
         <tag>Computer</tag>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
