@@ -289,11 +289,11 @@
         <p>又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分。很多东西没做两天就说你做的不行然后就换方向，我甚至感觉一个月之后我还得换方向，在这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）</p>
 <a id="more"></a>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Machine learning 中，我们的目标是定义一个神经网络，训练数据并获取输出，且希望输出的准确率很高，这可以简化为 $f(\text{data})=\hat{y}$，如下图所示：</p>
-<p><img data-src="meta-learning/1.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/1.png" alt></p>
 <p>而在 meta learning 中，则是让机器学会如何学习。假设现在有多个任务，第一个任务是猫狗分类，第二个任务是数字识别，以此类推就不一一举例了。meta learning 的目标就是让网络基于过去的任务获取学习技巧，并能快速应用到其他任务中。比如：分类中，知道猫和狗纹理不一样后，能快速学习出数字 1 和数字 3 不一样。（每一个任务都有一个模型，希望未来基于已有经验能学的更快更好）。在通俗一点，你学过 C++，那么再去学 java 就很快，有经验在那。画个图来描述：</p>
-<p><img data-src="meta-learning/2.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/2.png" alt></p>
 <p>meta learning 的目标就是寻找一个 $F$，使得$F(\text{data})=f$，生成的 $f$ 是完成任务，$F$ 就表示其学习能力。</p>
-<h1 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h1><p><img data-src="meta-learning/3.png" alt></p>
+<h1 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h1><p><img data-src="/2020/09/20/meta-learning/3.png" alt></p>
 <p>如上图所示，灰白背景为整个 $F$，其中：参数初始化、网络结构设计和参数的更新方法是 $F$ 可以学习的。最后得到每个任务的参数 $\theta$。比如 $\theta^1$ 用于第一个任务，$\theta^2$ 用于第二个任务。</p>
 <h2 id="评价"><a href="#评价" class="headerlink" title="评价"></a>评价</h2><p>那么如何评价 $F$ 的好坏呢？或者说，$F$ 的损失函数该如何写？这里采用简单的任务损失求和的形式来表示：</p>
 <p>\begin{equation}<br>    L(F)=\sum_{i=1}^n l^n<br>\end{equation}</p>
@@ -331,14 +331,14 @@
 <li>meta learning 的多任务学习常用于小样本，防止过拟合。</li>
 </ul>
 <p>来看一下 $\phi$ 的更新趋势：</p>
-<p><img data-src="meta-learning/4.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/4.png" alt></p>
 <p>采样 $m$ 个任务，第一次训练完毕得到参数 $\theta_1$，计算 $\theta_1$ 的梯度方向，将 $\phi_0$ 按照梯度方向更新至 $\phi_1$，之后的训练以此类推。</p>
 <h3 id="Reptile-方法"><a href="#Reptile-方法" class="headerlink" title="Reptile 方法"></a>Reptile 方法</h3><p>和 MAML 方法类似，但有以下几个点不同：</p>
 <ul>
 <li>训练任务的网络可以更新多次，以 $k$ 次为例；</li>
 <li>reptile 不再像 MAML 一样计算梯度（因此带来了工程性能的提升），而是直接用一个参数乘以meta网络与训练任务的网络参数的差来更新meta网络参数；（向最终的参数方向去更新）</li>
 </ul>
-<p><img data-src="meta-learning/5.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/5.png" alt></p>
 <h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><p>等以后了，或者说，只有看到代码，才能更好的理解meta-learning，我尝试整理一些简短的代码。</p>
 <h1 id="参考与推荐课程"><a href="#参考与推荐课程" class="headerlink" title="参考与推荐课程"></a>参考与推荐课程</h1><p>我也不知道我整理的好不好，能不能看懂。不过没关系，我可以推荐一些不错的课程。但恕我直言，看完课程后觉得自己学会了，但自己整理的时候还是发现啥都不会。『一学就会，一练就废』系列。</p>
 <p>不错的讲解博客：<br><a href="https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner" target="_blank" rel="noopener">https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner</a></p>
@@ -361,10 +361,10 @@
       <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\07\08\GAP\" rel="bookmark">论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
+      <div class="popular-posts-title"><a href="\2020\07\08\GAP\" rel="bookmark">论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
