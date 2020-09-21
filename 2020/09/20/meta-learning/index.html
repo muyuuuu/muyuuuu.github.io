@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分，很多东西没做两天就换，我甚至感觉一个月之后我还得换方向。这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）">
+  <meta name="description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分。很多东西没做两天就说你做的不行然后就换方向，我甚至感觉一个月之后我还得换方向，在这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）">
 <meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="meta-learning 通俗入门">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/09/20/meta-learning/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分，很多东西没做两天就换，我甚至感觉一个月之后我还得换方向。这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）">
+<meta property="og:description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分。很多东西没做两天就说你做的不行然后就换方向，我甚至感觉一个月之后我还得换方向，在这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-20T08:43:59.395Z">
+<meta property="og:updated_time" content="2020-09-21T03:01:29.940Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="meta-learning 通俗入门">
-<meta name="twitter:description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分，很多东西没做两天就换，我甚至感觉一个月之后我还得换方向。这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）">
+<meta name="twitter:description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分。很多东西没做两天就说你做的不行然后就换方向，我甚至感觉一个月之后我还得换方向，在这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/09/20/meta-learning/">
 
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-09-20 09:39:56 / 修改时间：16:43:59" itemprop="dateCreated datePublished" datetime="2020-09-20T09:39:56+08:00">2020-09-20</time>
+              <time title="创建时间：2020-09-20 09:39:56" itemprop="dateCreated datePublished" datetime="2020-09-20T09:39:56+08:00">2020-09-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-21 11:01:29" itemprop="dateModified" datetime="2020-09-21T11:01:29+08:00">2020-09-21</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -261,7 +267,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -280,25 +286,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分，很多东西没做两天就换，我甚至感觉一个月之后我还得换方向。这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）</p>
+        <p>又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分。很多东西没做两天就说你做的不行然后就换方向，我甚至感觉一个月之后我还得换方向，在这么下去感觉自己迟早出路渺茫。（如果各位研究生有好出路可以给我指条明路，在此表示感谢）</p>
 <a id="more"></a>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Machine learning 中，我们的目标是定义一个神经网络，训练数据并获取输出，且希望输出的准确率很高，这可以简化为 $f(\text{data})=\hat{y}$，如下图所示：</p>
 <p><img data-src="meta-learning/1.png" alt></p>
-<p>而在 meta learning 中，则是让机器学会如何学习。假设现在有多个任务，第一个任务是猫狗分类，第二个任务是数字识别，以此类推就不一一举例了。meta learning 的目标就是让网络基于过去的任务获取学习技巧，并能快速应用到其他任务中。比如：分类中，知道猫和狗纹理不一样后，能快速学习出数字 1 和数字 3 不一样。（每一个任务都有一个模型，希望未来基于已有经验能学的更快更好）。在通俗一点，你学过 C++，那么再去学 java就很快，有经验在那。画个图来描述：</p>
+<p>而在 meta learning 中，则是让机器学会如何学习。假设现在有多个任务，第一个任务是猫狗分类，第二个任务是数字识别，以此类推就不一一举例了。meta learning 的目标就是让网络基于过去的任务获取学习技巧，并能快速应用到其他任务中。比如：分类中，知道猫和狗纹理不一样后，能快速学习出数字 1 和数字 3 不一样。（每一个任务都有一个模型，希望未来基于已有经验能学的更快更好）。在通俗一点，你学过 C++，那么再去学 java 就很快，有经验在那。画个图来描述：</p>
 <p><img data-src="meta-learning/2.png" alt></p>
-<p>meta learning 的目标就是寻找一个 $F$，使得$F(\text{data})=f$，每一个任务有一个单独的 $f$，$F$ 就表示其学习能力。</p>
+<p>meta learning 的目标就是寻找一个 $F$，使得$F(\text{data})=f$，生成的 $f$ 是完成任务，$F$ 就表示其学习能力。</p>
 <h1 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h1><p><img data-src="meta-learning/3.png" alt></p>
 <p>如上图所示，灰白背景为整个 $F$，其中：参数初始化、网络结构设计和参数的更新方法是 $F$ 可以学习的。最后得到每个任务的参数 $\theta$。比如 $\theta^1$ 用于第一个任务，$\theta^2$ 用于第二个任务。</p>
 <h2 id="评价"><a href="#评价" class="headerlink" title="评价"></a>评价</h2><p>那么如何评价 $F$ 的好坏呢？或者说，$F$ 的损失函数该如何写？这里采用简单的任务损失求和的形式来表示：</p>
 <p>\begin{equation}<br>    L(F)=\sum_{i=1}^n l^n<br>\end{equation}</p>
 <p>其中 $l^n$ 为第 $n$ 个任务的损失。（你可以自由发挥加点正则什么的），找到一个最好的 $F^{*}$，使得 $F^*=\arg\min_FL(F)$。</p>
 <h2 id="训练与测试数据"><a href="#训练与测试数据" class="headerlink" title="训练与测试数据"></a>训练与测试数据</h2><ul>
-<li>训练期间：在每个训练任务中，也就是上图的 Task 1, Task 2，每个任务都需要准备训练数据和测试数据。训练数据一般称为 Support set, 测试数据为 Test set。</li>
+<li>训练期间：在每个训练任务中，也就是上图的 Task 1, Task 2，每个任务都需要准备训练数据和测试数据。训练数据一般称为 Support set, 测试数据为 Query set。</li>
 <li>测试期间：因为要考察的是 $F$ 的学习能力如何，所以测试的任务和训练的任务不同。</li>
 </ul>
 <h2 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h2><h3 id="MAML-方法"><a href="#MAML-方法" class="headerlink" title="MAML 方法"></a>MAML 方法</h3><p>这里仅仅以初始化参数为例，不介绍梯度下降的方法或机器自动调 NN 的结构。为避免混乱，先说明一些符号：</p>
 <ul>
-<li>$l^n$，第 $l$ 个任务的损失；</li>
+<li>$l^n$，第 $n$ 个任务的损失；</li>
 <li>$\theta^n$，第 $n$ 个任务的参数；</li>
 <li>$\phi$ 初始化参数；</li>
 <li>$\hat{\theta}$ 所有任务的参数。</li>
@@ -309,12 +315,12 @@
 <p>\begin{equation}<br>\phi_t = \phi_{t-1}-\eta \nabla_\phi L(\phi), \; \nabla_\phi L(\phi)=\sum_{i=1}^n\nabla_\phi l^n(\theta^n)<br>\end{equation}</p>
 <p>其中，$\nabla_\phi l^n(\theta^n)$的展开式为：</p>
 <p>\begin{bmatrix}<br>\partial l_1/\partial\phi_1 &amp; \partial l_2/\partial\phi_1 &amp; \ldots &amp; \partial l_n/\partial\phi_1\\<br>\partial l_1/\partial\phi_2 &amp; \partial l_2/\partial\phi_2 &amp; \ldots &amp; \partial l_n/\partial\phi_2\\<br>\partial l_1/\partial\phi_3 &amp; \partial l_2/\partial\phi_3 &amp; \ddots &amp; \partial l_n/\partial\phi_3\\<br>\partial l_1/\partial\phi_n &amp; \partial l_2/\partial\phi_n &amp; \ldots &amp; \partial l_n/\partial\phi_n\\<br>\end{bmatrix}</p>
-<p>因为一个 $\phi$ 对应很多 $\theta$，所以由链式求偏导法则我们可以知道下图的关系式（以单个元素为例，所以 $l$ 就不带任何角标了）：</p>
+<p>因为一个 $\phi$ 对应很多 $\theta$，所以由链式求偏导法则我们可以知道下图的关系式（以上面矩阵中单个元素为例，所以 $l$ 就不带任何角标了）：</p>
 <p>\begin{equation}<br>\frac{\partial l}{\partial \phi_i} = \sum_{j}\frac{\partial l \partial \theta_j}{\partial \theta_j \partial \phi_i}<br>\end{equation}</p>
 <p>而在每一个任务中，参数 $\theta$ 的更新方式为（单个任务）：</p>
-<p>\begin{equation}<br>\theta_j=\phi_i-\epsilon\nabla_\phi l^n(\phi_i)=\phi_i-\epsilon\frac{\partial l(\phi_i)}{\partial \phi}<br>\end{equation}</p>
+<p>\begin{equation}<br>\theta_j=\phi_j-\epsilon\nabla_\phi l(\phi_j)=\phi_j-\epsilon\frac{\partial l(\phi_j)}{\partial \phi}<br>\end{equation}</p>
 <p>所以：</p>
-<p>\begin{cases}<br>\frac{\partial \theta_j}{\partial \phi_i}=-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 0 &amp; i \neq j \\<br>\frac{\partial \theta_j}{\partial \phi_i}=1-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 1 &amp; i \neq j<br>\end{cases}</p>
+<p>\begin{cases}<br>\frac{\partial \theta_j}{\partial \phi_i}=-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 0 &amp; i \neq j \\<br>\frac{\partial \theta_j}{\partial \phi_i}=1-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 1 &amp; i = j<br>\end{cases}</p>
 <p>取消第二项的二次微分时：</p>
 <p>\begin{equation}<br>\frac{\partial l}{\partial \phi_i} \approx \frac{\partial l}{\partial \theta_i}<br>\end{equation}</p>
 <p>以上公式是我看懂and抄下来，真佩服能手推公式的。这样，参数如何更新的就讲完了。MAML的主要目标也是更新参数。</p>
@@ -327,16 +333,18 @@
 <p>来看一下 $\phi$ 的更新趋势：</p>
 <p><img data-src="meta-learning/4.png" alt></p>
 <p>采样 $m$ 个任务，第一次训练完毕得到参数 $\theta_1$，计算 $\theta_1$ 的梯度方向，将 $\phi_0$ 按照梯度方向更新至 $\phi_1$，之后的训练以此类推。</p>
-<h3 id="Reptile-方法"><a href="#Reptile-方法" class="headerlink" title="Reptile 方法"></a>Reptile 方法</h3><p>和 MAML 方法类似，但只有以下几个点不同：</p>
+<h3 id="Reptile-方法"><a href="#Reptile-方法" class="headerlink" title="Reptile 方法"></a>Reptile 方法</h3><p>和 MAML 方法类似，但有以下几个点不同：</p>
 <ul>
 <li>训练任务的网络可以更新多次，以 $k$ 次为例；</li>
 <li>reptile 不再像 MAML 一样计算梯度（因此带来了工程性能的提升），而是直接用一个参数乘以meta网络与训练任务的网络参数的差来更新meta网络参数；（向最终的参数方向去更新）</li>
 </ul>
 <p><img data-src="meta-learning/5.png" alt></p>
-<h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><p>等以后了，还有些许没有完成的事项。</p>
-<h1 id="参考与推荐课程"><a href="#参考与推荐课程" class="headerlink" title="参考与推荐课程"></a>参考与推荐课程</h1><p>我也不知道我整理的好不好，能不能看懂。不过没关系，我可以推荐</p>
-<p><a href="https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner" target="_blank" rel="noopener">https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner</a></p>
-<p><a href="http://www.gwylab.com/pdf/note_meta-learning.pdf" target="_blank" rel="noopener">http://www.gwylab.com/pdf/note_meta-learning.pdf</a></p>
+<h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><p>等以后了，或者说，只有看到代码，才能更好的理解meta-learning，我尝试整理一些简短的代码。</p>
+<h1 id="参考与推荐课程"><a href="#参考与推荐课程" class="headerlink" title="参考与推荐课程"></a>参考与推荐课程</h1><p>我也不知道我整理的好不好，能不能看懂。不过没关系，我可以推荐一些不错的课程。但恕我直言，看完课程后觉得自己学会了，但自己整理的时候还是发现啥都不会。『一学就会，一练就废』系列。</p>
+<p>不错的讲解博客：<br><a href="https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner" target="_blank" rel="noopener">https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner</a></p>
+<p>有人整理的李宏毅课程的pdf版，MAML后直接讲强化学习调网络结构：<br><a href="http://www.gwylab.com/pdf/note_meta-learning.pdf" target="_blank" rel="noopener">http://www.gwylab.com/pdf/note_meta-learning.pdf</a></p>
+<p>不错的讲解博客：<br><a href="https://www.tensorinfinity.com/paper_191.html" target="_blank" rel="noopener">https://www.tensorinfinity.com/paper_191.html</a></p>
+<p>李宏毅讲解 meta-learning 的课程：<br><a href="https://www.youtube.com/watch?v=EkAqYbpCYAc&amp;list=PLJV_el3uVTsOK_ZK5L0Iv_EQoL1JefRL4&amp;index=32" target="_blank" rel="noopener">https://www.youtube.com/watch?v=EkAqYbpCYAc&amp;list=PLJV_el3uVTsOK_ZK5L0Iv_EQoL1JefRL4&amp;index=32</a></p>
 
     </div>
 
@@ -356,10 +364,10 @@
       <div class="popular-posts-title"><a href="\2020\07\08\GAP\" rel="bookmark">论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
+      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
   </ul>
 <div class="post-body-end-inner">
@@ -577,7 +585,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">480k</span>
+    <span title="站点总字数">481k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
