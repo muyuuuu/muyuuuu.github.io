@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
-<meta name="keywords" content="DataStructure">
+  <meta name="description" content="一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。  Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019 Adaptive Cross-Modal Few-shot Learning, NIPS, 2020 Meta-Learning o">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="降低算法时间复杂度，以图数据处理为例">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/index.html">
+<meta property="og:title" content="2020年左右小样本问题顶会论文笔记">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/10/09/few-shot-paper-notes/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
+<meta property="og:description" content="一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。  Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019 Adaptive Cross-Modal Few-shot Learning, NIPS, 2020 Meta-Learning o">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-08-16T09:51:23.992Z">
+<meta property="og:updated_time" content="2020-10-09T14:19:12.611Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="降低算法时间复杂度，以图数据处理为例">
-<meta name="twitter:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
+<meta name="twitter:title" content="2020年左右小样本问题顶会论文笔记">
+<meta name="twitter:description" content="一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。  Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019 Adaptive Cross-Modal Few-shot Learning, NIPS, 2020 Meta-Learning o">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/">
+<link rel="canonical" href="https://muyuuuu.github.io/2020/10/09/few-shot-paper-notes/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>降低算法时间复杂度，以图数据处理为例 | Just for Life.</title>
+  <title>2020年左右小样本问题顶会论文笔记 | Just for Life.</title>
   
 
 
@@ -223,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/10/09/few-shot-paper-notes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          降低算法时间复杂度，以图数据处理为例
+          2020年左右小样本问题顶会论文笔记
         </h1>
 
         <div class="post-meta">
@@ -245,16 +245,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-08-11 21:33:34" itemprop="dateCreated datePublished" datetime="2020-08-11T21:33:34+08:00">2020-08-11</time>
+              <time title="创建时间：2020-10-09 16:45:37 / 修改时间：22:19:12" itemprop="dateCreated datePublished" datetime="2020-10-09T16:45:37+08:00">2020-10-09</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-16 17:51:23" itemprop="dateModified" datetime="2020-08-16T17:51:23+08:00">2020-08-16</time>
-              </span>
 
           
               <span class="post-meta-item-icon">
@@ -286,33 +280,73 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。</p>
-<p>在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译<code>pytorch</code>的文档写一下<code>pytorch</code>快速入门的文章，的确很吸引流量，但我不喜欢，更喜欢整理自己的经验。</p>
-<a id="more"></a>
-<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><ol>
-<li>以处理图数据为例，尤其是需要不断遍历边和点的场景；</li>
-<li>没有真实的代码，全部是伪代码；（直接放工程代码会很大，从工程里摘出对应代码来仍然是伪代码）</li>
-<li>虽然是处理图数据，但依然能适应其他场景。如果你想借鉴思想，不妨看一下，如果不想看，现在退出即可。</li>
+        <p>一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。</p>
+<ol>
+<li>Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019</li>
+<li>Adaptive Cross-Modal Few-shot Learning, NIPS, 2020</li>
+<li>Meta-Learning of Neural Architectures for Few-Shot Learning, CVPR, 2020</li>
+<li>Charting the Right Manifold: Manifold Mixup for Few-shot Learning, IEEE(WACV), 2020</li>
+<li>A BASELINE FOR FEW-SHOT IMAGE CLASSIFICATION, ICL, 2020</li>
+<li>Zero and Few Shot Learning with Semantic Feature Synthesis and Competitive Learning, IEEE transactions on pattern analysis and machine intelligence, 2020</li>
 </ol>
-<h1 id="借助数据结构"><a href="#借助数据结构" class="headerlink" title="借助数据结构"></a>借助数据结构</h1><p>众所周知，图的节点是有度的，这里我们以无向图为例。假设，此时在做图数据的融合，将邻接链表相同的节点视为双胞胎节点融合在一起。此时最明显的哦优化就是借助桶排序，因为邻接链表相同，则节点的度必然相同。按照节点度进行分类，能有效降低复杂度。</p>
-<p>假设只融合度数在$[2, 64]$之间的节点。首先，创建基数为 2 到 64 的桶。并按照节点的度，将节点放到对应桶中，即节点度为2就放到基数为2的桶，节点度为16就放到基数为16的桶。这里一切正常：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创造节点度的桶</span></span><br><span class="line">radix = [[] <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">67</span>)]</span><br><span class="line"><span class="comment"># 按照是否被访问选取节点, 并按照度数放入桶</span></span><br><span class="line"><span class="keyword">for</span> ver <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="comment"># 取节点索引</span></span><br><span class="line">    ver_idx = graph.vertex_index[ver]</span><br><span class="line">    <span class="comment"># 按照是否被访问和节点的度进行筛选</span></span><br><span class="line">    degree = len(graph.get_all_neighbors(ver_idx))</span><br><span class="line">    <span class="keyword">if</span> visited[ver_idx] == <span class="literal">False</span> <span class="keyword">and</span> degree &gt;= <span class="number">2</span> <span class="keyword">and</span> degree &lt;= <span class="number">64</span>:</span><br><span class="line">        <span class="comment"># 添加节点的索引</span></span><br><span class="line">        radix[degree].append(ver_idx)</span><br></pre></td></tr></table></figure>
-<p>一般思路，在每个桶内，节点的度是相同的。这时候只需要遍历桶，计算桶内每个节点的邻接链表，若邻接链表相同，则融合。此时便是创建一个字典，以节点的索引为 key，以邻接链表为 value。之后遍历桶生成字典，在遍历字典的 value ，相同则融合。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_list[i].append(set(graph.get_out_neighbors(i)))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 邻接列表相同的进行融合</span></span><br><span class="line">        <span class="comment"># （这里我实在不知道怎么写了，于是暴力循环了）</span></span><br><span class="line">        <span class="comment"># 复杂度太高，大图测试直接卡死</span></span><br><span class="line">        <span class="keyword">for</span> key1 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">            <span class="keyword">for</span> key2 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">                <span class="keyword">if</span> key1 != key2 <span class="keyword">and</span> adj_list[key1] == adj_list[key2]:</span><br><span class="line">                    <span class="keyword">if</span> visited[key1] == <span class="literal">False</span> <span class="keyword">and</span> visited[key2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[key1] = visited[key2] = <span class="literal">True</span></span><br><span class="line">                        M[key1], M[key2] = key2, key1</span><br></pre></td></tr></table></figure>
-<p>如上代码，直接遍历一个桶内部的邻接列表并判断是否相等，复杂度为$O(n^2+n)$。思路很正常，但这种写法实在愚蠢。如果我们换种思路，在字典中，以邻接列表为 key，以节点的索引为 value 呢？那么当两个节点的邻接列表相同时，节点的索引会自动放到字典对应 key 的 value 中，这样就省去了比较的过程。此时时间复杂度为$O(n^2)$。（radix代表基数是 2 到 64 的桶，取值是常数，故计算复杂度时忽略最外层循环）。由此可见，不用额外的数据结构，仅需要简单的变换，就能将时间复杂度从$O(n^2+n)$降低到$O(n^2)$。但实际中这样的点很少，即融合的<code>for</code>循环可以视为$O(1)$，所以算法的执行时间和$O(n)$复杂度的算法相似。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        adj_reverse = defaultdict(list)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_reverse[str(set(graph.get_out_neighbors(i)))].append(i)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 以邻接列表为键，节点索引为 values</span></span><br><span class="line">        <span class="keyword">for</span> values <span class="keyword">in</span> adj_reverse.values():</span><br><span class="line">            <span class="keyword">if</span> len(values) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(values) - <span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">                    ver1, ver2 = values[i], values[i+<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">if</span> visited[ver1] == <span class="literal">False</span> <span class="keyword">and</span> visited[ver2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[ver1] = visited[ver2] = <span class="literal">True</span></span><br><span class="line">                        M[ver1], M[ver2] = ver2, ver1</span><br></pre></td></tr></table></figure>
-<p>其实这个优化的并不所最好的，另一个是，但涉及的问题背景太深了，直接拿出来怕读者看不懂，就用这个例子凑合了。</p>
-<h1 id="好的逻辑"><a href="#好的逻辑" class="headerlink" title="好的逻辑"></a>好的逻辑</h1><p>问题描述：此时我们要生成一个图的 k 跳邻接信息，即常见的邻接矩阵是一跳信息。二跳信息就是隔着一个节点还能相邻，那么邻接矩阵中，这两个节点对应的索引取值为 1。可以直接看图，节点 1 和节点 5 就是二跳连接，<code>adj[1][5] = 1</code>，这个意思。假设我们要找三跳信息。</p>
-<p><img data-src="/2020/08/11/decrease-time-complexity-when-process-graph/graph.png" alt></p>
-<p>在 <code>networkx</code> 这个包中，判断两个节点是否有路径的方式是使用最短路径，如没有最短路径，这两个节点当然不存在路径，最短路径的复杂度为$O(V+E)$，$V$是节点的数量，$E$是边的数量。伪代码就是<code>has_path(node1, node2)</code>。那么，此时最粗暴的算法来了，遍历节点，若两个节点之间的最短路径等于 3 ，就在邻接矩阵中置为 1。时间复杂度$O(V^2(V+E))$的伪代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> node1 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="keyword">for</span> node2 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">        <span class="keyword">if</span> has_path(node1, node2) == <span class="number">3</span>:</span><br><span class="line">            adj[node1, node2] = adj[node2, node1] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>真实数据测试：运行时间 19.098s，图节点数是94，边数是1554。</p>
-<p>只要我们稍微打开 <code>API</code> 查询一下，就能知道有 <code>shortes_distance</code> 这种函数，即在时间复杂度$O(V+E)$内求出一个节点到其他所有节点的最短路径，在借助 <code>np.where</code> 或 <code>np.isin</code> 就很容易降低复杂度了，一份$O(V(V+E))$的伪代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> node <span class="keyword">in</span> graph.nodes():</span><br><span class="line">    arr = shortest_distance(node)</span><br><span class="line">    mask = np.where(arr == target)</span><br><span class="line">    <span class="keyword">for</span> row, col <span class="keyword">in</span> mask:</span><br><span class="line">        adj[row][col] = adj[col][row] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>真实数据测试：运行时间 0.139s，图节点数是94，边数是1554。</p>
-<p>那么在冷静分析一下，很多孤立节点并不是我们所需要的，取度数大的节点进行融合，几乎能覆盖图中全部的数据，因为图中大部分点会和度数大的点有联系。那么，我们对图节点按度数排序（堆排的复杂度为 $\log n$），取出前 $\log v$ 个节点，计算他们和图中节点的 $k$ 跳信息。伪代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">node = sort_by(graph.nodes.degree)[:logv]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> node:</span><br><span class="line">    arr = shortest_distance(node)</span><br><span class="line">    mask = np.where(arr == target)</span><br><span class="line">    <span class="keyword">for</span> row, col <span class="keyword">in</span> mask:</span><br><span class="line">        adj[row][col] = adj[col][row] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>此时算法的时间复杂度是 $O(\log V(V+E))$。一般而言，$E$比$V$大，算法计算时间更取决于 $E$ 的大小。实际数据：运行时间 0.039s，图节点数是94，边数是1554。</p>
+<p><strong>Warning：</strong>优缺点仅代表个人意见。</p>
+<a id="more"></a>
+<h1 id="第一篇"><a href="#第一篇" class="headerlink" title="第一篇"></a>第一篇</h1><blockquote>
+<p>Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019</p>
+</blockquote>
+<h2 id="准确率"><a href="#准确率" class="headerlink" title="准确率"></a>准确率</h2><p>$61.2\pm1.8\%$。</p>
+<h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><ol>
+<li>迁移学习获取预先的知识，将已有的知识用到小样本中；</li>
+<li>对于表现很差的查询数据，进行反复训练。就像高中那会儿，整理错题本并反复做错题一个道理。</li>
+</ol>
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>类似错题本的想法，通过错误和困难来学习到更好的网络。</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>引用论文原话：</p>
+<blockquote>
+<p>Specifically, for a particular few-shot dataset, we merge all-class data $D$ for pretraining. There are totally 64 classes in the training split of $D$ and each class contains 600 samples used to pre-train a 64-class classifier.</p>
+<p>“pre”means pre-trained for a single classificationtask using all training datapoints.</p>
+</blockquote>
+<p>意思是，对于一个具体任务。提前把任务中的所有样本都训练了一遍获取了知识，然后又用训练好的经验去做同一个任务的小样本问题。</p>
+<p>个人感觉这并不是很好的处理小样本的方式。利用迁移学习无可厚非，但，知识应该来源于其他领域，而非目标领域。对目标领域预训练获取知识后，就不叫小样本了。所以我感觉论文里提到的$SS$操作并没有什么用处，完全是前期经验好，也没继续去做实验来验证我的想法。</p>
+<h1 id="第二篇"><a href="#第二篇" class="headerlink" title="第二篇"></a>第二篇</h1><blockquote>
+<p>Adaptive Cross-Modal Few-shot Learning, 2019, NIPS</p>
+</blockquote>
+<h2 id="准确率-1"><a href="#准确率-1" class="headerlink" title="准确率"></a>准确率</h2><p>$65.3\pm0.49\%$。</p>
+<h2 id="核心思想-1"><a href="#核心思想-1" class="headerlink" title="核心思想"></a>核心思想</h2><p>在图像分类问题中，图像本身带有视觉信息。当视觉模态的信息很少时，可以尝试利用语义模态的信息。利用 GloVe 获得词嵌入矩阵，这样就能得到标签的语义表示。于模态对齐相反的是，将数据的视觉信息和语义表示同时扔进两个网络，语义的网络学习得到一个参数$\lambda$，将语义空间的表示和视觉空间的表示进行线性加权，得到最后的结果：</p>
+<p>\begin{equation}<br>    \lambda \textbf{p}_c + (1-\lambda) \textbf{w}_c<br>\end{equation}</p>
+<h2 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h2><h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>这是一种通用的方法，并不涉及网络结构的设计，因此这种方法可以扩展到任何基于度量的小样本学习方法中。</li>
+<li>通过参数$\lambda$的学习，能自适应的结合视觉模态和语义模态。当图片样本多时，语义模态的权重就少，当图片样本少时，语义模态的权重就大。</li>
+</ol>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><p>暂时想不到，个人认为是这些论文里思想最好的。</p>
+<h1 id="第三篇"><a href="#第三篇" class="headerlink" title="第三篇"></a>第三篇</h1><blockquote>
+<p>Meta-Learning of Neural Architectures for Few-Shot Learning, CVPR, 2020</p>
+</blockquote>
+<h2 id="准确率-2"><a href="#准确率-2" class="headerlink" title="准确率"></a>准确率</h2><p>$61.7\pm0.3\%$</p>
+<h2 id="核心思想-2"><a href="#核心思想-2" class="headerlink" title="核心思想"></a>核心思想</h2><p>个人对 NAS(neural architecture search) 不太熟，但愿我没理解错。NAS 的方法中有一类是基于梯度下降来调整网络结构的，而 meta-learning 中也有基于梯度下降来调整网络参数的。那么以 meta-learning 为框架，在训练数据的时候同时对这两者进行梯度下降，学到最后的网络结构和参数。</p>
+<p>然后如果没看错：后面的章节应该是调节 softmax 的方式，使得网络中节点边之间的权重（DARTS算法）快速的向 0 或 1靠近，避免网络结构难以训练时需要重新训练 meta-learning 的参数。实在对 NAS 不太熟，但愿没理解错。</p>
+<h2 id="优缺点-2"><a href="#优缺点-2" class="headerlink" title="优缺点"></a>优缺点</h2><p>和 NAS 结合了起来，但，总感觉偏应用。</p>
+<h1 id="第四篇"><a href="#第四篇" class="headerlink" title="第四篇"></a>第四篇</h1><blockquote>
+<p>Charting the Right Manifold: Manifold Mixup for Few-shot Learning, IEEE, MACV, 2020</p>
+</blockquote>
+<h2 id="准确率-3"><a href="#准确率-3" class="headerlink" title="准确率"></a>准确率</h2><p>$64.93\pm0.18\%$</p>
+<h2 id="核心思想-3"><a href="#核心思想-3" class="headerlink" title="核心思想"></a>核心思想</h2><p>该论文设计的算法的目标就是在迁移学习的第一个阶段(即训练模型$f$的参数), 能够学习到一个模型, 该模型能够学习到丰富的, 通用的, 有意义的特征表示, 对数据分布的微小变化具有鲁棒性.</p>
+<p>使用了自监督学习的方法, 来首先学习到一个丰富, 通用, 有意义的特征表示(特征流形). 使用了两个辅助任务(可以任选其一): rotation和exemplar. (表现为损失函数)。我的理解: 特征流形就是一个特征空间, 这个特征空间中的特征向量是低维的, 没有冗余, 丰富的, 表示强。使用正则化技术(流形混合(manifold mixup)), 通过插值法实现的, 原理: 使决策边界更加光滑, 每个类的数据表示在一个更低的维度空间, 可以泛化到新任务中.</p>
+<h1 id="第五篇"><a href="#第五篇" class="headerlink" title="第五篇"></a>第五篇</h1><blockquote>
+<p>A BASELINE FOR FEW-SHOT IMAGE CLASSIFICATION, ICL, 2020</p>
+</blockquote>
+<h2 id="准确率-4"><a href="#准确率-4" class="headerlink" title="准确率"></a>准确率</h2><p>$68.11\%$</p>
+<h2 id="核心思想-4"><a href="#核心思想-4" class="headerlink" title="核心思想"></a>核心思想</h2><p>对经过标准交叉熵损失训练的深度网络进行微调，是进行少量学习的坚实基础。如果对它们进行超导地微调，它的性能将优于标准数据集中具有相同超参数的最新技术。传统交叉熵：</p>
+<p>\begin{equation}<br>    \theta^*(D_s)=\arg\min_\theta\frac{1}{N_s}\sum_{(s,y)\in D_s} -\log p_\theta(y|x)<br>\end{equation}</p>
+<p>其中$D_s$代表训练集，$N_s$表示训练集中数据量。传导式微调：假设有一个查询样本$(x,y)$属于$D_q$，<br>\begin{equation}<br>    \theta^*=\arg\min_\theta\frac{1}{N_s}\sum_{(s,y)\in D_s} -\log p_\theta(y|x)+\frac{1}{N_q}\sum_{(x,y)\in D_q} H(p_\theta(\cdot|x))<br>\end{equation}<br>其中，$H$代表香农熵，作为损失函数的正则化项。</p>
+<h1 id="第六篇"><a href="#第六篇" class="headerlink" title="第六篇"></a>第六篇</h1><blockquote>
+<p>Zero and Few Shot Learning with Semantic Feature Synthesis and Competitive Learning, IEEE transactions on pattern analysis and machine intelligence, 2020</p>
+</blockquote>
+<h2 id="准确率-5"><a href="#准确率-5" class="headerlink" title="准确率"></a>准确率</h2><p>$62.28\pm0.13\%$</p>
+<h2 id="核心思想-5"><a href="#核心思想-5" class="headerlink" title="核心思想"></a>核心思想</h2><p>通过两个方法来进行零样本学习，即: unseen classes 数据合成和健壮的投影函数学习。通过一定的策略从seen classes 数据生成 unseen classes 数据， 然后通过投影函数模型来最好的利用合成的unseen classes数据。</p>
+<ol>
+<li>合成的特征向量不能被认为属于第 $j$ 个unseen class. 也就是说, 生成的样本比较混乱. 不能正确归类。</li>
+<li>BPL(竞争双向投影学习): 进行label correction. 所谓的竞争就是每个合成的样本应该更接近更可能的 unseen class centre, 同时原理次好的(候选的)unseen class centre。 所谓双向是指loss既有正向的(从语义空间投影到特征空间)又有反向(从特征空间投影到语义空间)的投影误差。</li>
+</ol>
 
     </div>
 
@@ -323,19 +357,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
+      <div class="popular-posts-title"><a href="\2020\05\16\AutoEncoder\" rel="bookmark">从AutoEncoder到VAE</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++常用数据结构</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\09\07\PAT-advanced\" rel="bookmark">PAT甲级整理</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\21\GAN\" rel="bookmark">互怼的魅力——GAN(generated adversarial network)</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\08\21\PAT-basic\" rel="bookmark">PAT乙级整理</a></div>
+      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="\2020\07\08\GAP\" rel="bookmark">论文笔记 《GAP:Generalizable Approximate Graph Partitioning Framework》</a></div>
     </li>
   </ul>
 <div class="post-body-end-inner">
@@ -393,7 +427,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
           </div>
 
         
@@ -407,13 +441,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/08/05/digital-foundation/" rel="prev" title="大学计算机：数字化基础">
-      <i class="fa fa-chevron-left"></i> 大学计算机：数字化基础
+    <a href="/2020/10/05/reparametrization-tricks/" rel="prev" title="重参数技巧">
+      <i class="fa fa-chevron-left"></i> 重参数技巧
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/08/21/PAT-basic/" rel="next" title="PAT乙级整理">
-      PAT乙级整理 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -474,7 +505,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借助数据结构"><span class="nav-number">2.</span> <span class="nav-text">借助数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#好的逻辑"><span class="nav-number">3.</span> <span class="nav-text">好的逻辑</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一篇"><span class="nav-number">1.</span> <span class="nav-text">第一篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率"><span class="nav-number">1.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想"><span class="nav-number">1.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点"><span class="nav-number">1.3.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">1.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">1.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二篇"><span class="nav-number">2.</span> <span class="nav-text">第二篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-1"><span class="nav-number">2.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-1"><span class="nav-number">2.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点-1"><span class="nav-number">2.3.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三篇"><span class="nav-number">3.</span> <span class="nav-text">第三篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-2"><span class="nav-number">3.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-2"><span class="nav-number">3.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点-2"><span class="nav-number">3.3.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四篇"><span class="nav-number">4.</span> <span class="nav-text">第四篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-3"><span class="nav-number">4.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-3"><span class="nav-number">4.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五篇"><span class="nav-number">5.</span> <span class="nav-text">第五篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-4"><span class="nav-number">5.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-4"><span class="nav-number">5.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第六篇"><span class="nav-number">6.</span> <span class="nav-text">第六篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-5"><span class="nav-number">6.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-5"><span class="nav-number">6.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -823,7 +854,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '4b35e7ded32f3ec333e7e696315be632',
+      id          : '7ea2f5ada0e6bbd40b60888e4ccec6d7',
         language: 'zh-CN',
       distractionFreeMode: true
     });
