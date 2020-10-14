@@ -3,13 +3,12 @@
   <entry>
     <title>博客两年了</title>
     <url>/2020/10/13/blog-two-years/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>之前都没注意到博客建立已经两周年了，没想到一路坚持下来了，当时建立博客也就是想着玩一玩，没想到越玩越深，这之间也认识了很多很厉害的朋友。折腾过很多主题和样式，以至于我都稍微懂点前端设计了。</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>湿云如梦雨如尘。之前都没注意到博客建立已经两周年了，当时建立博客也就是想着玩一玩，没想到一路坚持下来了，也越玩越深，这之间也认识了很多很厉害的朋友。折腾过很多主题和样式，以至于我都稍微懂点前端设计了。</p>
 <a id="more"></a>
 <p>立一个 flag ，到博客周年纪念日的时候，写下近期感受，用于日后看看。</p>
-<h1 id="补上去年的"><a href="#补上去年的" class="headerlink" title="补上去年的"></a>补上去年的</h1><p>去年这个时候我在写代码，学 Python 的 GUI 设计给学校写软件，然后约几个朋友去了海边，感觉未来可期。</p>
-<h1 id="今年"><a href="#今年" class="headerlink" title="今年"></a>今年</h1><p>雨落长安，雨淅淅沥沥的下了一个月了，没怎么见到太阳，到处都阴沉沉灰蒙蒙的，感觉环境污染好严重。一如消沉的心情，读研体验感并不是很好，集中在生活和补助两个方面吧，我还没有调整好状态。甚至都不敢去打扰自己喜欢的女孩，她知道我喜欢她，关系也还好，但我自己状态不好，说的话也很不好，给她带来压力和极差的体验就不好了。</p>
-<p>有一种悲伤，是夜色再深也无法逼出眼泪，是即便你拥有非常真诚的朋友和良师依然感到很孤独，是任何光亮再也没法刺痛你，你在太阳底下认真地学习，工作，生活，看着一个又一个的生命和我一起努力工作认真学习，像你自己和所有人期待的那样，安分守己地做自己的事情。可是只有你最清楚，你成为了深渊本身。</p>
-<p>湿云如梦雨如尘。</p>
+<h1 id="补上去年的"><a href="#补上去年的" class="headerlink" title="补上去年的"></a>补上去年的</h1><p>去年这个时候我在写代码，学 Python 的 GUI 设计，给学校写软件。然后约了朋友去了海边，感觉未来可期。<del>我当初就该跟她一起去北京师范</del>。</p>
+<h1 id="今年"><a href="#今年" class="headerlink" title="今年"></a>今年</h1><p>雨落长安，雨淅淅沥沥的下了一个月了，没怎么见到太阳，到处都阴沉沉灰蒙蒙的，感觉环境污染好严重。一如消沉的心情，读研体验感并不是很好，集中在生活和补助两个方面吧，我还没有调整好状态。甚至都不敢去打扰自己喜欢的女孩，她知道我喜欢她，关系也还好。但我自己状态不好，说出来的话也不好，给她带来压力和极差的体验就不好了。</p>
+<p>有一种悲伤，是夜色再深也无法逼出眼泪，是即便你拥有非常真诚的朋友和良师依然感到很孤独，是任何光亮再也没法刺痛你。你在太阳底下认真地学习，工作，生活，看着一个又一个的生命和我一起努力工作认真学习，像你自己和所有人期待的那样，安分守己地做自己的事情。可是只有你最清楚，你成为了深渊本身。</p>
 ]]></content>
       <tags>
         <tag>Life</tag>
@@ -215,29 +214,9 @@
 <p>当然，这里是可以引入 Triplet loss 的，只需要在训练时加入额外的数据即可。此时训练的数据为：Train data, Untrain data, Test data。其中，Untrain data 就像训练 Word2Vec 时使用的无关词汇一样。这里轻描淡写了，Triplet loss 如何应用到 Siamese 中还请查询具体文章，比如<a href="https://zhuanlan.zhihu.com/p/68200241" target="_blank" rel="noopener">这里</a>。</p>
 <h2 id="Relation-Network"><a href="#Relation-Network" class="headerlink" title="Relation Network"></a>Relation Network</h2><p>之前的网络在计算相似度时可能都是使用 $\cos$ 等函数，而 Relation Network 中则使用一个网络来计算相似度。将测试数据的嵌入拼接到训练数据后面，一起进入计算相似性的网络，之后的操作就都一样了。</p>
 <p><img data-src="/2020/09/20/meta-learning/9.png" alt></p>
-<h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><p>参考<a href="https://github.com/vmikulik/maml-pytorch/blob/master/MAML-Sines.ipynb" target="_blank" rel="noopener">Vladimir Mikulik</a>的代码简单改了改，改后的<a href="https://github.com/muyuuuu/Algorithm/tree/master/meta" target="_blank" rel="noopener">代码</a>，因为原代码的逻辑和 MAML 的论文是不符的。</p>
-<p>代码很简单，只是简单的 MAML 更新参数的方法，通过小样本采样来学习一个 $y=a\sin(x+b)$ 的函数。强烈建议看代码，看完代码后就知道meta learning 的工作原理了。结果如下（代码很慢，我组服务器跑不动，偷的别人的图）：</p>
-<p><img data-src="/2020/09/20/meta-learning/6.png" alt></p>
-<h1 id="一些论文笔记"><a href="#一些论文笔记" class="headerlink" title="一些论文笔记"></a>一些论文笔记</h1><p>这里附上两篇论文吧，我读了这两篇论文，但总感觉他们的 idea 不太值得单独去做笔记。</p>
-<p><a href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Sun_Meta-Transfer_Learning_for_Few-Shot_Learning_CVPR_2019_paper.pdf" target="_blank" rel="noopener">meta-transfer learning for few-shot learning</a></p>
-<p>简单分析下优缺点（仅代表个人意见）：</p>
-<p>优点：</p>
-<ol>
-<li>利用了迁移学习预先获取知识，并将权重冻结。之后的 $SS$ 操作只是用小规模参数对冻结的权重进行微调；</li>
-<li>在测试中，记录得分很差的数据，下次训练网络时就使用这些数据。</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>原文中：Specifically, for a particular few-shot dataset, we merge all-class data $D$ for pretraining. There are totally 64 classes in the training split of $D$ and each class contains 600 samples used to pre-train a 64-class classifier. 也就是，在做小样本问题之前，对所有的数据集进行了训练。在对训练过的数据集中采样小样本，再用训练的经验去做小样本。学习预先的知识无可厚非，但这种做法已经完全偏移了小样本问题。相当于：MNIST数据集，我训练到 98% 的准确率，再用训练好的经验训练小规模 MNIST 样本，很没意义。</li>
-<li>MAML 每次只更新一次参数，可以考虑 Reptile。（两者的梯度下降方向也不同）</li>
-</ol>
-<p><a href="https://papers.nips.cc/paper/8731-adaptive-cross-modal-few-shot-learning.pdf" target="_blank" rel="noopener">Adaptive Cross-Modal Few-shot Learning</a></p>
-<p>简单分析下优缺点（仅代表个人意见）：</p>
-<p>优点：</p>
-<ol>
-<li>meta learning 选用的网络为基于测量的网络，容易拉开Support set 和 Query Set 的距离，学习『学习的能力』；</li>
-<li>除了图片信息外，增加了文本信息，综合决策。两者结合的方式为简单的线性加权。这可以理解为一种简单数据增强的形式。在图片的文本信息中，利用了预训练的经验参数，如 word2vec。这种提前获取经验的预训练还是可以接受的，比上面那篇文章要好一些。</li>
-</ol>
+<h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><h2 id="基于梯度"><a href="#基于梯度" class="headerlink" title="基于梯度"></a>基于梯度</h2><p>代码实现了 <a href="https://github.com/muyuuuu/Algorithm/tree/master/meta-learning/Gradient-based" target="_blank" rel="noopener">Reptileh和MAML</a>。很简单，只是简单的更新参数的方法，通过小样本采样来学习一个 $y=a\sin(x+b)$ 的函数。强烈建议看代码，看完代码后就知道meta learning 的工作原理了。结果如下（我就训练了几次，次数很少）：</p>
+<p><img data-src="https://static01.imgkr.com/temp/f9c142375b0d4a46a32039144825a6e9.png" alt></p>
+<h2 id="基于度量"><a href="#基于度量" class="headerlink" title="基于度量"></a>基于度量</h2><p>还没写好，最近课多。</p>
 <h1 id="参考与推荐课程"><a href="#参考与推荐课程" class="headerlink" title="参考与推荐课程"></a>参考与推荐课程</h1><p>我也不知道我整理的好不好，能不能看懂。不过没关系，我可以推荐一些不错的课程。但恕我直言，看完课程后觉得自己学会了，但自己整理的时候还是发现啥都不会。『一学就会，一练就废』系列。</p>
 <p>不错的讲解博客：<br><a href="https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner" target="_blank" rel="noopener">https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner</a></p>
 <p>有人整理的李宏毅课程的pdf版，MAML后直接讲强化学习调网络结构：<br><a href="http://www.gwylab.com/pdf/note_meta-learning.pdf" target="_blank" rel="noopener">http://www.gwylab.com/pdf/note_meta-learning.pdf</a></p>
@@ -7188,46 +7167,6 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
       </tags>
   </entry>
   <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -7291,6 +7230,46 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
