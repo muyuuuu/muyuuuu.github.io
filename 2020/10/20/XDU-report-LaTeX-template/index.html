@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，非官方，非官方，非官方。如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-10-20T10:49:15.238Z">
+<meta property="og:updated_time" content="2020-11-06T05:48:27.804Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="西安电子科技大学实验报告LaTeX模板">
 <meta name="twitter:description" content="我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，非官方，非官方，非官方。如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。">
@@ -245,10 +245,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-10-20 18:23:02 / 修改时间：18:49:15" itemprop="dateCreated datePublished" datetime="2020-10-20T18:23:02+08:00">2020-10-20</time>
+              <time title="创建时间：2020-10-20 18:23:02" itemprop="dateCreated datePublished" datetime="2020-10-20T18:23:02+08:00">2020-10-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-06 13:48:27" itemprop="dateModified" datetime="2020-11-06T13:48:27+08:00">2020-11-06</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -293,7 +299,7 @@
 <li>也可以来这里下载，下载一次我能挣一毛钱，顺便帮这个网站引流：<a href="https://latexstudio.net/index/details/index/mid/870.html" target="_blank" rel="noopener">https://latexstudio.net/index/details/index/mid/870.html</a></li>
 </ul>
 <h1 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h1><p>第一步就是导入文档类：<code>\documentclass{xdureport}</code>，而后写入基本信息：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">major</span><span class="string">&#123;电子信息&#125;</span></span>                   <span class="comment">% 专业</span></span><br><span class="line"><span class="tag">\<span class="name">title</span><span class="string">&#123;高性能智能计算实验&#125;</span></span>           <span class="comment">% 课程</span></span><br><span class="line"><span class="tag">\<span class="name">stuid</span><span class="string">&#123;201614420112&#125;</span></span>             <span class="comment">% 学号</span></span><br><span class="line"><span class="tag">\<span class="name">college</span><span class="string">&#123;计算机科学与技术学院&#125;</span></span>       <span class="comment">% 学院</span></span><br><span class="line"><span class="tag">\<span class="name">date</span><span class="string">&#123;\zhtoday&#125;</span></span>                  <span class="comment">% 日期</span></span><br><span class="line"><span class="tag">\<span class="name">expname</span><span class="string">&#123;小样本实验&#125;</span></span>               <span class="comment">% 实验名称</span></span><br><span class="line"><span class="tag">\<span class="name">course</span><span class="string">&#123;高性能智能计算实验&#125;</span></span>         <span class="comment">% 课程</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">major</span><span class="string">&#123;电子信息&#125;</span></span>                   <span class="comment">% 专业</span></span><br><span class="line"><span class="tag">\<span class="name">stuid</span><span class="string">&#123;201614420112&#125;</span></span>             <span class="comment">% 学号</span></span><br><span class="line"><span class="tag">\<span class="name">college</span><span class="string">&#123;计算机科学与技术学院&#125;</span></span>       <span class="comment">% 学院</span></span><br><span class="line"><span class="tag">\<span class="name">date</span><span class="string">&#123;\zhtoday&#125;</span></span>                  <span class="comment">% 日期</span></span><br><span class="line"><span class="tag">\<span class="name">expname</span><span class="string">&#123;小样本实验&#125;</span></span>               <span class="comment">% 实验名称</span></span><br><span class="line"><span class="tag">\<span class="name">course</span><span class="string">&#123;高性能智能计算实验&#125;</span></span>         <span class="comment">% 课程</span></span><br></pre></td></tr></table></figure>
 <p>文档的目录结构如下所示：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">XDU-exp</span><br><span class="line">├─ chapter                                  <span class="comment"># 各个章节</span></span><br><span class="line">│    ├─ abstract.tex                            <span class="comment"># 摘要页</span></span><br><span class="line">│    ├─ appendix.tex                            <span class="comment"># 附录</span></span><br><span class="line">│    ├─ conclusion.tex                          <span class="comment"># 实验结果分析</span></span><br><span class="line">│    ├─ experiment.tex                          <span class="comment"># 实验步骤</span></span><br><span class="line">│    └─ reference.tex                           <span class="comment"># 参考文献</span></span><br><span class="line">├─ figure                                   <span class="comment"># 图片文件</span></span><br><span class="line">│    ├─ xdubadge.eps                            <span class="comment"># 西电文字</span></span><br><span class="line">│    └─ xdulogo.eps                             <span class="comment"># 西电校徽 logo</span></span><br><span class="line">├─ code                                     <span class="comment"># 代码文件</span></span><br><span class="line">│    └─ demo.c                                  <span class="comment"># 一个C语言样例代码</span></span><br><span class="line">├─ books.bib                                <span class="comment"># 参考文献的 bib 文件</span></span><br><span class="line">├─ main.bbl                                 <span class="comment"># 编译生成的 bbl 文件，不用管</span></span><br><span class="line">├─ main.pdf                                 <span class="comment"># 结果 pdf 文件</span></span><br><span class="line">├─ main.tex                                 <span class="comment"># 要编译的主文件</span></span><br><span class="line">└─ xdureport.cls                            <span class="comment"># 要导入的文档类</span></span><br></pre></td></tr></table></figure>
 <p>理解文档目录结构后，就很容易知道代码中指定的相对路径是什么意思，现在就可以开始写正文了：</p>
