@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="这是我第一次开发如此大规模的程序，论文的作者也提供了算法的C语言还是C++版本的软件来？我记不清了。但对于我们来说，Metis只是上游任务，下游任务需要用python来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用python来复现Metis算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。  考虑到看官体验，没有结合代码一起写，但建议结合">
+<meta name="keywords" content="Algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Metis算法的python实现——图融合">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/11/20/Metis/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="这是我第一次开发如此大规模的程序，论文的作者也提供了算法的C语言还是C++版本的软件来？我记不清了。但对于我们来说，Metis只是上游任务，下游任务需要用python来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用python来复现Metis算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。  考虑到看官体验，没有结合代码一起写，但建议结合">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-11-20T15:11:10.993Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Metis算法的python实现——图融合">
+<meta name="twitter:description" content="这是我第一次开发如此大规模的程序，论文的作者也提供了算法的C语言还是C++版本的软件来？我记不清了。但对于我们来说，Metis只是上游任务，下游任务需要用python来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用python来复现Metis算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。  考虑到看官体验，没有结合代码一起写，但建议结合">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2020/11/20/Metis/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Metis算法的python实现——图融合 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-image"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-fw fa-share"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-fw fa-list"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-fw fa-link"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-fw fa-history"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fw fa-fire"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-fw fa-sticky-note"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<script data-ad-client="ca-pub-9444436918565205" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/11/20/Metis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Metis算法的python实现——图融合
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-20 22:54:42 / 修改时间：23:11:10" itemprop="dateCreated datePublished" datetime="2020-11-20T22:54:42+08:00">2020-11-20</time>
+            </span>
+
+          
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是上游任务，下游任务需要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
+<ul>
+<li>考虑到看官体验，没有结合代码一起写，但建议结合代码一起看，不然绝对云里雾里。</li>
+<li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，如桶排序、哈系、队列、列表、字典的花式操作来降低算法时间和空间复杂度。如果不是非要用<code>Metis</code>算法和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
+<li>一定要结合代码看文章！！！不然各种数据结构用来用去，调来调去很容易眩晕。</li>
+<li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
+</ul>
+<p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a></p>
+<a id="more"></a>
+<h1 id="第一次协作开发"><a href="#第一次协作开发" class="headerlink" title="第一次协作开发"></a>第一次协作开发</h1><p><img data-src="https://static01.imgkr.com/temp/8a98d8ea24b243f1bf8d1ecfbecb27ad.png" alt></p>
+<h1 id="图融合思想"><a href="#图融合思想" class="headerlink" title="图融合思想"></a>图融合思想</h1><p>原始的图记为$G_0$，融合一次得到一个规模相对较小的图$G_1$，一直融合到$G_n$为止。停止融合的条件由自己设定，比如我设置的是，当图节点的数量少于$\sqrt{n}$时停止迭代，$n$为$G_0$中节点的数量。一个两万节点的图，融合结果如下：</p>
+<p>99个节点：<img data-src="https://static01.imgkr.com/temp/8d753700aee54a61939d2051ac7050c2.jpg" alt><br>7个节点：<img data-src="https://static01.imgkr.com/temp/773434f99e384f57aac8cb4ba1c35650.jpg" alt></p>
+<h1 id="参数约定与注意事项"><a href="#参数约定与注意事项" class="headerlink" title="参数约定与注意事项"></a>参数约定与注意事项</h1><ul>
+<li>在原图中，每个节点的权重$\eta$为1，此处不考虑赋权图。</li>
+<li>$m$表示图中边的数量，$n$表示图中节点的数量。</li>
+<li>注意：本次处理大规模图数据，切勿使用复杂度很高的程序，千万不要暴力破解。合理使用数据结构降低复杂度，以及善用迭代器和生成器，写出来的程序也要防止炸内存。</li>
+</ul>
+<h1 id="边处理"><a href="#边处理" class="headerlink" title="边处理"></a>边处理</h1><p>边融合：如果两个节点只通过一条边相邻，那么将这两个节点融合在一起，时间复杂度为$O(m)$。</p>
+<p>实现思路：此时创建一个向量<code>M</code>和<code>visited</code>（python用列表实现），如果两个节点$u$和$v$相互匹配，则<code>M[u]=v, M[v]=u</code>，如果没有匹配的节点，则$M(u)=u$。融合后的每一个点赋予权重$\eta$，如$u,v$权重为1，融合成了$a$，那么$a$的权重就是2。防止所有节点融合到一个节点，导致后期的图中某个节点的权重过大，划分不均衡。</p>
+<p><code>visited</code>长度为$n$，全部初始化为<code>False</code>，如果一个节点被访问，那么值为<code>True</code>。</p>
+<p>返回参数为向量<code>M</code>和<code>visited</code>，用于表示节点的映射关系和被访问的关系。使用向量的原因是：字典浪费内存，且本次任务中，没有节点的插入、删除和查找，列表性能更高一些。</p>
+<h1 id="防止划分不均"><a href="#防止划分不均" class="headerlink" title="防止划分不均"></a>防止划分不均</h1><p>为防止融合后的图出现节点分布不均匀的现象，即幂律图（有的节点权重$\eta$很大，有的节点权重$\eta$很小），所以放宽了融合的约束条件。并不是只有相邻节点才能融合，考虑使用二跳融合来融合两个节点，尽管他们并没有直接相连。</p>
+<h1 id="叶子节点处理"><a href="#叶子节点处理" class="headerlink" title="叶子节点处理"></a>叶子节点处理</h1><p>将度为1的节点视为叶子节点，融合叶子节点，时间复杂度为$O(n)$。根据边融合返回的<code>visited</code>参数，遍历节点，只访问度为1且没有被匹配的节点，将他们放到一个列表中，并将每个节点的父节点添加到字典中，字典的<code>key</code>为父节点，<code>value</code>为孩子节点。</p>
+<p>之后遍历字典，如果字典某个<code>key</code>对应的值的数量大于2，那么对这个<code>key</code>中对应的节点进行两两融合，将融合关系记录到<code>M</code>中。</p>
+<h1 id="双胞胎节点处理"><a href="#双胞胎节点处理" class="headerlink" title="双胞胎节点处理"></a>双胞胎节点处理</h1><p>双胞胎节点的定义是：如果节点的度相同，且节点的邻接列表相同则为双胞胎节点。融合双胞胎节点，是最难实现的一个功能，结果看到论文中提示用<code>hash</code>来简化计算，简直神来之笔，实现的时间复杂度为$O(n)$。</p>
+<p>为降低复杂度，按照度进行桶排序，即将不同度的节点放到对应的桶中，桶的取值范围是$[2,64]$。创建一个字典，<code>key</code>为邻接列表（转为字符串，可哈系），值为这个邻接列表对应的节点，<strong>这种结构会大大降低复杂度</strong>；相反，<code>key</code>为节点，值为邻接列表的数据结构，程序复杂度会达到$O(n^2)$。在每个桶内，遍历节点，并填充到上述字典中。填充完毕后，遍历字典的值，进行两两融合，将融合关系记录到<code>M</code>中。</p>
+<p>如果考虑加速执行，可以考虑多进程（python多线程不适合密集计算）来遍历每个桶，毕竟桶里面的处理都一样。这个函数仍然需要读入<code>visited</code>参数，只处理还没有被融合的节点。<del>利用到字典、哈系、桶排序来降低复杂度，能想出来的一定有很深的程序设计功底。</del></p>
+<h1 id="亲戚节点处理"><a href="#亲戚节点处理" class="headerlink" title="亲戚节点处理"></a>亲戚节点处理</h1><p>亲戚节点的定义与双胞胎节点类似，如果节点的度相同，则视为亲戚节点，进行融合。实现的时间复杂度为$O(n)$。</p>
+<p>这个函数也需要读入<code>visited</code>参数，只处理还没有被融合的节点。遍历<code>visited</code>列表，记录没有被访问的节点的度，将节点的度作为<code>key</code>，值为节点。融合方法和上面的就一样了，将融合关系记录到<code>M</code>中。</p>
+<h1 id="图收缩"><a href="#图收缩" class="headerlink" title="图收缩"></a>图收缩</h1><p>在得到融合关系的列表<code>M</code>后，则开始收缩图的规模，实现的时间复杂度为$O(n)$。创建辅助列表<code>C</code>，如果两个节点$u$和$v$融合到一起，那么<code>C[u]=C[v]</code>，且，在列表<code>C</code>中，只有融合到一起的节点的值相等，不融合到一起的值不相等。</p>
+<p>生成<code>C</code>后，按照<code>C</code>中数值的关系，获取图的邻接列表，因为值相等表示融合到一起，所以很容易得到融合的邻接列表<code>adj</code>。比如<code>a,b,c,d,e,f</code>邻接到一起，那么<code>adj[key]={a,b,c,d,e,f}</code>，<code>key</code>是一个自增的变量，表示新图的节点编号。至此，得到了新图和旧图之间的点的对应关系。这个字典可以保存为<code>json</code>，方便后续处理。</p>
+<h1 id="图融合"><a href="#图融合" class="headerlink" title="图融合"></a>图融合</h1><p>遍历图收缩返回的数据结构<code>adj</code>，<code>adj</code>中的值对应的所有节点都将视为新图中的一个点，<code>len(adj)</code>就表示新图中节点的数量。</p>
+<p>创建一个字典，字典的<code>key</code>是一个元组类型。元组包含两个元素，为新图中的两个节点，表示新图中这两个节点之间有边。遍历原始图的边，判断当前边两个点是否进行融合：</p>
+<ul>
+<li>如果两个点进行融合，那么这两个顶点在新图上的映射节点相同，则对应边不用考虑，即这两个节点在新图中没有连接边；</li>
+<li>若当前边的两个顶点没有进行融合，则按照新旧图的映射关系，将旧图中边上的顶点换成映射中新图上顶点，以此作为<code>key</code>，并将边加入新图边的字典。这里太绕了，添加部分伪代码进行说明：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 根据原始图和融合后的图节点的映射关系，求出原始图每一个点与新图的映射关系</span></span><br><span class="line"><span class="comment"># index表示原始图节点索引，old_mapping_new[index]表示原图中index节点在新图的索引</span></span><br><span class="line"><span class="keyword">for</span> new_ver, old_vers <span class="keyword">in</span> adj.items():</span><br><span class="line">    <span class="keyword">for</span> old_ver <span class="keyword">in</span> old_vers:</span><br><span class="line">        old_mapping_new[old_ver] = new_ver</span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> edges:</span><br><span class="line">    source, target = edge</span><br><span class="line">    <span class="comment"># 取节点的索引</span></span><br><span class="line">    s_index = graph.vertex_index[source]</span><br><span class="line">    t_index = graph.vertex_index[target]</span><br><span class="line">    <span class="comment"># 若当前边的两个顶点没有进行融合</span></span><br><span class="line">    <span class="keyword">if</span> old_mapping_new[s_index] != old_mapping_new[t_index]:</span><br><span class="line">        <span class="keyword">if</span> old_mapping_new[s_index] &lt; old_mapping_new[t_index]:</span><br><span class="line">            new_edges[(old_mapping_new[s_index], old_mapping_new[t_index])] += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            new_edges[(old_mapping_new[t_index], old_mapping_new[s_index])] += <span class="number">1</span></span><br><span class="line"><span class="comment"># 按照字典中的`key`，将边添加到节点中。</span></span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> new_edges.keys():</span><br><span class="line">    new_graph.add_edge(edge[<span class="number">0</span>], edge[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p>之后创建新图的节点，按照字典中的<code>key</code>，将边添加到节点中，就完成了所有工作。</p>
+<p>所以整体流程如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 边融合</span></span><br><span class="line">M, visited = aggregate.edge_merge(graph, constrain, loop, ver_q)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 叶子融合</span></span><br><span class="line">M, visited = aggregate.leaf_merge(graph, M, visited)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 双胞胎融合</span></span><br><span class="line">M, visited = aggregate.twin_merge(graph, M, visited)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 亲戚节点融合</span></span><br><span class="line">M, visited = aggregate.relative_merge(graph, M, visited)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始收缩</span></span><br><span class="line">graph, adj = contraction.contract(graph, M)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存旧图与新图之间的映射关系</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'map/real_data_'</span> + str(loop) + <span class="string">'.json'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> outfile:</span><br><span class="line">    json.dump(adj, outfile, indent=<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始产生新图</span></span><br><span class="line">graph = contraction.get_new_graph(graph, adj, M)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取新图的规模</span></span><br><span class="line">ver_size = utils.get_graph_vertex_num(graph)</span><br><span class="line">edge_size = utils.get_graph_edge_num(graph)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"当前图节点数是&#123;&#125;，边数是&#123;&#125;"</span>.format(ver_size, edge_size), end=<span class="string">', '</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 小到一定规模就可视化</span></span><br><span class="line"><span class="keyword">if</span> ver_size &lt; <span class="number">200</span>:</span><br><span class="line">    gt.graph_draw(graph, vertex_text=graph.vertex_index, output=<span class="string">"output/real_graph_"</span>+str(loop)+<span class="string">".png"</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="后期处理"><a href="#后期处理" class="headerlink" title="后期处理"></a>后期处理</h1><p>别急着走，还没完。在<code>utils.py</code>中写了一个装饰器和<code>log</code>函数，记录每种处理所消耗的时间，以此来检查哪里的程序写的不好；此外，<code>M</code>中<code>True</code>元素的个数除以<code>M</code>的长度，就会得当当前方法的融合率：<code>visited.count(True) / len(visited)</code>。</p>
+<p>图融合的重点是：节点是否分不均衡（即一个节点的权重是不是太大，而其他节点权重很小），边割率是不是太高（相邻节点没融合到一起，反而切割了大量的边）。</p>
+<ul>
+<li>点平衡率计算：分区中节点最大值 × 分区数 / 原图节点数</li>
+<li>边平衡率计算：切割边 / 总边数</li>
+</ul>
+<p>本次代码中也进行了相关处理和计算。伪代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 获取新图的一个节点代表旧图的几个节点，是数量</span></span><br><span class="line">ver_q = performance.get_vertex_map_number(ver_q, adj)</span><br><span class="line"><span class="comment"># 获取新图的一个结点代表旧图的哪些节点，是列表</span></span><br><span class="line">edge_q = performance.get_vertex_map_relation(edge_q, adj)</span><br><span class="line"><span class="comment"># 节点平衡率</span></span><br><span class="line">performance.print_vertex_balance(ver_q, ver_size_list)</span><br><span class="line"><span class="comment"># 边割率</span></span><br><span class="line">performance.print_edge_cut(edge_q, edge_size_list, origin_graph)</span><br></pre></td></tr></table></figure>
+<p>我尽力了，但本处的描述过于模糊，建议对照代码进行观看。</p>
+<p>在点平衡率的计算中，为降低空间复杂度，使用了队列。设置队列的长度为1，队列中的元素为字典，<code>key</code>为图节点的索引，<code>value</code>为节点权重。含义是：上次图和原图之间节点的对应关系。当本次图融合完成时，传入的<code>adj</code>表示本次图和上次图的对应关系。取出队列元素值，即上次图和原始图的节点对应关系，按照本次图和上次图节点的关系，<strong>进行一次套娃</strong>，完成处理，<strong>得到本次图中每个节点的权重</strong>，并压入队列并<code>return</code>，这样就可以计算点平衡率。</p>
+<p>而边平衡率的计算同理，仍然使用队列。<strong>每次融合进行一次套娃</strong>，得到新图的一个结点(<code>key</code>)代表旧图的哪些节点(<code>value</code>)，(<code>value</code>)是一个列表。然后反转一下这个字典，以原始图节点的索引为<code>key</code>，如果这些点在新图中是一个节点，那么他们的<code>value</code>相同。之后按着边遍历原始图，相邻节点的<code>value</code>不同，则边割率++。</p>
+<p><del>所以我当时是怎么想出来各种结构和算法来实现这些的，感觉好难。</del></p>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>经过测试，能发现<code>Metis</code>算法的优缺点：</p>
+<ul>
+<li>优势：能保留节点的中心性。</li>
+<li>劣势：节点权重不平衡，边割率太高。</li>
+</ul>
+<p>可以看到到处是缺点，这里只给出一种解决方案，毕竟这只是上游任务，没必要太精细。</p>
+<p>在融合的时候，点和边的选择顺序是随机的。所以，我们可以限制融合顺序，先融合节点度小的点，在融合度大的点。目前，此方案仅增加在<strong>边处理</strong>中，其他合并没有增加，但是一个道理。</p>
+<p>结论：节点平衡率能下降，比之前好多了，如果还觉得高，其他融合函数也进行融合限制即可。边割率一如既往的高，毕竟初试划分很随机，不能纵观全局，这是导致边割率过高的原因。但降低边割率并不是粗划分的重点。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>个人还是比较喜欢这类论文的，将程序设计和理论分析完美融合。<del>不会写程序只会发论文的计算机人我通常认为是在耍流氓，不去写代码而只是高高在上的提所谓的idea，其实根本不知道底层发生了什么。</del></p>
+<p>最后感谢我的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>，在双胞胎处理、亲戚节点处理、图融合上提出了关键性想法，使得程序圆满开发成功。（她在写代码这方面真的很聪明的！！！）</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\03\30\KDE-cluster\" rel="bookmark">核密度聚类</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\04\02\adaboost\" rel="bookmark">提升方法（上）——基于AdaBoost：SAMME</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\02\14\autocell\" rel="bookmark">元胞自动机——万物皆可模拟</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\05\09\entropy\" rel="bookmark">更通俗的理解熵</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\09\18\kernel-trick\" rel="bookmark">核函数</a></div>
+    </li>
+  </ul>
+<div class="post-body-end-inner">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ads-horizontal -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9444436918565205"
+     data-ad-slot="2997254382"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/15/Arch/" rel="prev" title="我和我的操作系统们">
+      <i class="fa fa-chevron-left"></i> 我和我的操作系统们
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一次协作开发"><span class="nav-number">1.</span> <span class="nav-text">第一次协作开发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图融合思想"><span class="nav-number">2.</span> <span class="nav-text">图融合思想</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数约定与注意事项"><span class="nav-number">3.</span> <span class="nav-text">参数约定与注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#边处理"><span class="nav-number">4.</span> <span class="nav-text">边处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防止划分不均"><span class="nav-number">5.</span> <span class="nav-text">防止划分不均</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#叶子节点处理"><span class="nav-number">6.</span> <span class="nav-text">叶子节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#双胞胎节点处理"><span class="nav-number">7.</span> <span class="nav-text">双胞胎节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#亲戚节点处理"><span class="nav-number">8.</span> <span class="nav-text">亲戚节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图收缩"><span class="nav-number">9.</span> <span class="nav-text">图收缩</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图融合"><span class="nav-number">10.</span> <span class="nav-text">图融合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后期处理"><span class="nav-number">11.</span> <span class="nav-text">后期处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化"><span class="nav-number">12.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">13.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      <!-- ads-square -->
+      <ins class="adsbygoogle"
+          style="display:block"
+          data-ad-client="ca-pub-9444436918565205"
+          data-ad-slot="3319961667"
+          data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">500k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:34</span>
+</div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.getAttribute('pjax') !== null) {
+      script.setAttribute('pjax', '');
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+  <script pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '6a6252542bba74c99669a6dada225fd7',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

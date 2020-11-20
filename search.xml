@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Metis算法的python实现——图融合</title>
+    <url>/2020/11/20/Metis/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是上游任务，下游任务需要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
+<ul>
+<li>考虑到看官体验，没有结合代码一起写，但建议结合代码一起看，不然绝对云里雾里。</li>
+<li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，如桶排序、哈系、队列、列表、字典的花式操作来降低算法时间和空间复杂度。如果不是非要用<code>Metis</code>算法和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
+<li>一定要结合代码看文章！！！不然各种数据结构用来用去，调来调去很容易眩晕。</li>
+<li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
+</ul>
+<p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a></p>
+<a id="more"></a>
+<h1 id="第一次协作开发"><a href="#第一次协作开发" class="headerlink" title="第一次协作开发"></a>第一次协作开发</h1><p><img data-src="https://static01.imgkr.com/temp/8a98d8ea24b243f1bf8d1ecfbecb27ad.png" alt></p>
+<h1 id="图融合思想"><a href="#图融合思想" class="headerlink" title="图融合思想"></a>图融合思想</h1><p>原始的图记为$G_0$，融合一次得到一个规模相对较小的图$G_1$，一直融合到$G_n$为止。停止融合的条件由自己设定，比如我设置的是，当图节点的数量少于$\sqrt{n}$时停止迭代，$n$为$G_0$中节点的数量。一个两万节点的图，融合结果如下：</p>
+<p>99个节点：<img data-src="https://static01.imgkr.com/temp/8d753700aee54a61939d2051ac7050c2.jpg" alt><br>7个节点：<img data-src="https://static01.imgkr.com/temp/773434f99e384f57aac8cb4ba1c35650.jpg" alt></p>
+<h1 id="参数约定与注意事项"><a href="#参数约定与注意事项" class="headerlink" title="参数约定与注意事项"></a>参数约定与注意事项</h1><ul>
+<li>在原图中，每个节点的权重$\eta$为1，此处不考虑赋权图。</li>
+<li>$m$表示图中边的数量，$n$表示图中节点的数量。</li>
+<li>注意：本次处理大规模图数据，切勿使用复杂度很高的程序，千万不要暴力破解。合理使用数据结构降低复杂度，以及善用迭代器和生成器，写出来的程序也要防止炸内存。</li>
+</ul>
+<h1 id="边处理"><a href="#边处理" class="headerlink" title="边处理"></a>边处理</h1><p>边融合：如果两个节点只通过一条边相邻，那么将这两个节点融合在一起，时间复杂度为$O(m)$。</p>
+<p>实现思路：此时创建一个向量<code>M</code>和<code>visited</code>（python用列表实现），如果两个节点$u$和$v$相互匹配，则<code>M[u]=v, M[v]=u</code>，如果没有匹配的节点，则$M(u)=u$。融合后的每一个点赋予权重$\eta$，如$u,v$权重为1，融合成了$a$，那么$a$的权重就是2。防止所有节点融合到一个节点，导致后期的图中某个节点的权重过大，划分不均衡。</p>
+<p><code>visited</code>长度为$n$，全部初始化为<code>False</code>，如果一个节点被访问，那么值为<code>True</code>。</p>
+<p>返回参数为向量<code>M</code>和<code>visited</code>，用于表示节点的映射关系和被访问的关系。使用向量的原因是：字典浪费内存，且本次任务中，没有节点的插入、删除和查找，列表性能更高一些。</p>
+<h1 id="防止划分不均"><a href="#防止划分不均" class="headerlink" title="防止划分不均"></a>防止划分不均</h1><p>为防止融合后的图出现节点分布不均匀的现象，即幂律图（有的节点权重$\eta$很大，有的节点权重$\eta$很小），所以放宽了融合的约束条件。并不是只有相邻节点才能融合，考虑使用二跳融合来融合两个节点，尽管他们并没有直接相连。</p>
+<h1 id="叶子节点处理"><a href="#叶子节点处理" class="headerlink" title="叶子节点处理"></a>叶子节点处理</h1><p>将度为1的节点视为叶子节点，融合叶子节点，时间复杂度为$O(n)$。根据边融合返回的<code>visited</code>参数，遍历节点，只访问度为1且没有被匹配的节点，将他们放到一个列表中，并将每个节点的父节点添加到字典中，字典的<code>key</code>为父节点，<code>value</code>为孩子节点。</p>
+<p>之后遍历字典，如果字典某个<code>key</code>对应的值的数量大于2，那么对这个<code>key</code>中对应的节点进行两两融合，将融合关系记录到<code>M</code>中。</p>
+<h1 id="双胞胎节点处理"><a href="#双胞胎节点处理" class="headerlink" title="双胞胎节点处理"></a>双胞胎节点处理</h1><p>双胞胎节点的定义是：如果节点的度相同，且节点的邻接列表相同则为双胞胎节点。融合双胞胎节点，是最难实现的一个功能，结果看到论文中提示用<code>hash</code>来简化计算，简直神来之笔，实现的时间复杂度为$O(n)$。</p>
+<p>为降低复杂度，按照度进行桶排序，即将不同度的节点放到对应的桶中，桶的取值范围是$[2,64]$。创建一个字典，<code>key</code>为邻接列表（转为字符串，可哈系），值为这个邻接列表对应的节点，<strong>这种结构会大大降低复杂度</strong>；相反，<code>key</code>为节点，值为邻接列表的数据结构，程序复杂度会达到$O(n^2)$。在每个桶内，遍历节点，并填充到上述字典中。填充完毕后，遍历字典的值，进行两两融合，将融合关系记录到<code>M</code>中。</p>
+<p>如果考虑加速执行，可以考虑多进程（python多线程不适合密集计算）来遍历每个桶，毕竟桶里面的处理都一样。这个函数仍然需要读入<code>visited</code>参数，只处理还没有被融合的节点。<del>利用到字典、哈系、桶排序来降低复杂度，能想出来的一定有很深的程序设计功底。</del></p>
+<h1 id="亲戚节点处理"><a href="#亲戚节点处理" class="headerlink" title="亲戚节点处理"></a>亲戚节点处理</h1><p>亲戚节点的定义与双胞胎节点类似，如果节点的度相同，则视为亲戚节点，进行融合。实现的时间复杂度为$O(n)$。</p>
+<p>这个函数也需要读入<code>visited</code>参数，只处理还没有被融合的节点。遍历<code>visited</code>列表，记录没有被访问的节点的度，将节点的度作为<code>key</code>，值为节点。融合方法和上面的就一样了，将融合关系记录到<code>M</code>中。</p>
+<h1 id="图收缩"><a href="#图收缩" class="headerlink" title="图收缩"></a>图收缩</h1><p>在得到融合关系的列表<code>M</code>后，则开始收缩图的规模，实现的时间复杂度为$O(n)$。创建辅助列表<code>C</code>，如果两个节点$u$和$v$融合到一起，那么<code>C[u]=C[v]</code>，且，在列表<code>C</code>中，只有融合到一起的节点的值相等，不融合到一起的值不相等。</p>
+<p>生成<code>C</code>后，按照<code>C</code>中数值的关系，获取图的邻接列表，因为值相等表示融合到一起，所以很容易得到融合的邻接列表<code>adj</code>。比如<code>a,b,c,d,e,f</code>邻接到一起，那么<code>adj[key]={a,b,c,d,e,f}</code>，<code>key</code>是一个自增的变量，表示新图的节点编号。至此，得到了新图和旧图之间的点的对应关系。这个字典可以保存为<code>json</code>，方便后续处理。</p>
+<h1 id="图融合"><a href="#图融合" class="headerlink" title="图融合"></a>图融合</h1><p>遍历图收缩返回的数据结构<code>adj</code>，<code>adj</code>中的值对应的所有节点都将视为新图中的一个点，<code>len(adj)</code>就表示新图中节点的数量。</p>
+<p>创建一个字典，字典的<code>key</code>是一个元组类型。元组包含两个元素，为新图中的两个节点，表示新图中这两个节点之间有边。遍历原始图的边，判断当前边两个点是否进行融合：</p>
+<ul>
+<li>如果两个点进行融合，那么这两个顶点在新图上的映射节点相同，则对应边不用考虑，即这两个节点在新图中没有连接边；</li>
+<li>若当前边的两个顶点没有进行融合，则按照新旧图的映射关系，将旧图中边上的顶点换成映射中新图上顶点，以此作为<code>key</code>，并将边加入新图边的字典。这里太绕了，添加部分伪代码进行说明：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 根据原始图和融合后的图节点的映射关系，求出原始图每一个点与新图的映射关系</span></span><br><span class="line"><span class="comment"># index表示原始图节点索引，old_mapping_new[index]表示原图中index节点在新图的索引</span></span><br><span class="line"><span class="keyword">for</span> new_ver, old_vers <span class="keyword">in</span> adj.items():</span><br><span class="line">    <span class="keyword">for</span> old_ver <span class="keyword">in</span> old_vers:</span><br><span class="line">        old_mapping_new[old_ver] = new_ver</span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> edges:</span><br><span class="line">    source, target = edge</span><br><span class="line">    <span class="comment"># 取节点的索引</span></span><br><span class="line">    s_index = graph.vertex_index[source]</span><br><span class="line">    t_index = graph.vertex_index[target]</span><br><span class="line">    <span class="comment"># 若当前边的两个顶点没有进行融合</span></span><br><span class="line">    <span class="keyword">if</span> old_mapping_new[s_index] != old_mapping_new[t_index]:</span><br><span class="line">        <span class="keyword">if</span> old_mapping_new[s_index] &lt; old_mapping_new[t_index]:</span><br><span class="line">            new_edges[(old_mapping_new[s_index], old_mapping_new[t_index])] += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            new_edges[(old_mapping_new[t_index], old_mapping_new[s_index])] += <span class="number">1</span></span><br><span class="line"><span class="comment"># 按照字典中的`key`，将边添加到节点中。</span></span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> new_edges.keys():</span><br><span class="line">    new_graph.add_edge(edge[<span class="number">0</span>], edge[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p>之后创建新图的节点，按照字典中的<code>key</code>，将边添加到节点中，就完成了所有工作。</p>
+<p>所以整体流程如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 边融合</span></span><br><span class="line">M, visited = aggregate.edge_merge(graph, constrain, loop, ver_q)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 叶子融合</span></span><br><span class="line">M, visited = aggregate.leaf_merge(graph, M, visited)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 双胞胎融合</span></span><br><span class="line">M, visited = aggregate.twin_merge(graph, M, visited)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 亲戚节点融合</span></span><br><span class="line">M, visited = aggregate.relative_merge(graph, M, visited)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始收缩</span></span><br><span class="line">graph, adj = contraction.contract(graph, M)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存旧图与新图之间的映射关系</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'map/real_data_'</span> + str(loop) + <span class="string">'.json'</span>, <span class="string">'w'</span>) <span class="keyword">as</span> outfile:</span><br><span class="line">    json.dump(adj, outfile, indent=<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始产生新图</span></span><br><span class="line">graph = contraction.get_new_graph(graph, adj, M)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取新图的规模</span></span><br><span class="line">ver_size = utils.get_graph_vertex_num(graph)</span><br><span class="line">edge_size = utils.get_graph_edge_num(graph)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"当前图节点数是&#123;&#125;，边数是&#123;&#125;"</span>.format(ver_size, edge_size), end=<span class="string">', '</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 小到一定规模就可视化</span></span><br><span class="line"><span class="keyword">if</span> ver_size &lt; <span class="number">200</span>:</span><br><span class="line">    gt.graph_draw(graph, vertex_text=graph.vertex_index, output=<span class="string">"output/real_graph_"</span>+str(loop)+<span class="string">".png"</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="后期处理"><a href="#后期处理" class="headerlink" title="后期处理"></a>后期处理</h1><p>别急着走，还没完。在<code>utils.py</code>中写了一个装饰器和<code>log</code>函数，记录每种处理所消耗的时间，以此来检查哪里的程序写的不好；此外，<code>M</code>中<code>True</code>元素的个数除以<code>M</code>的长度，就会得当当前方法的融合率：<code>visited.count(True) / len(visited)</code>。</p>
+<p>图融合的重点是：节点是否分不均衡（即一个节点的权重是不是太大，而其他节点权重很小），边割率是不是太高（相邻节点没融合到一起，反而切割了大量的边）。</p>
+<ul>
+<li>点平衡率计算：分区中节点最大值 × 分区数 / 原图节点数</li>
+<li>边平衡率计算：切割边 / 总边数</li>
+</ul>
+<p>本次代码中也进行了相关处理和计算。伪代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 获取新图的一个节点代表旧图的几个节点，是数量</span></span><br><span class="line">ver_q = performance.get_vertex_map_number(ver_q, adj)</span><br><span class="line"><span class="comment"># 获取新图的一个结点代表旧图的哪些节点，是列表</span></span><br><span class="line">edge_q = performance.get_vertex_map_relation(edge_q, adj)</span><br><span class="line"><span class="comment"># 节点平衡率</span></span><br><span class="line">performance.print_vertex_balance(ver_q, ver_size_list)</span><br><span class="line"><span class="comment"># 边割率</span></span><br><span class="line">performance.print_edge_cut(edge_q, edge_size_list, origin_graph)</span><br></pre></td></tr></table></figure>
+<p>我尽力了，但本处的描述过于模糊，建议对照代码进行观看。</p>
+<p>在点平衡率的计算中，为降低空间复杂度，使用了队列。设置队列的长度为1，队列中的元素为字典，<code>key</code>为图节点的索引，<code>value</code>为节点权重。含义是：上次图和原图之间节点的对应关系。当本次图融合完成时，传入的<code>adj</code>表示本次图和上次图的对应关系。取出队列元素值，即上次图和原始图的节点对应关系，按照本次图和上次图节点的关系，<strong>进行一次套娃</strong>，完成处理，<strong>得到本次图中每个节点的权重</strong>，并压入队列并<code>return</code>，这样就可以计算点平衡率。</p>
+<p>而边平衡率的计算同理，仍然使用队列。<strong>每次融合进行一次套娃</strong>，得到新图的一个结点(<code>key</code>)代表旧图的哪些节点(<code>value</code>)，(<code>value</code>)是一个列表。然后反转一下这个字典，以原始图节点的索引为<code>key</code>，如果这些点在新图中是一个节点，那么他们的<code>value</code>相同。之后按着边遍历原始图，相邻节点的<code>value</code>不同，则边割率++。</p>
+<p><del>所以我当时是怎么想出来各种结构和算法来实现这些的，感觉好难。</del></p>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>经过测试，能发现<code>Metis</code>算法的优缺点：</p>
+<ul>
+<li>优势：能保留节点的中心性。</li>
+<li>劣势：节点权重不平衡，边割率太高。</li>
+</ul>
+<p>可以看到到处是缺点，这里只给出一种解决方案，毕竟这只是上游任务，没必要太精细。</p>
+<p>在融合的时候，点和边的选择顺序是随机的。所以，我们可以限制融合顺序，先融合节点度小的点，在融合度大的点。目前，此方案仅增加在<strong>边处理</strong>中，其他合并没有增加，但是一个道理。</p>
+<p>结论：节点平衡率能下降，比之前好多了，如果还觉得高，其他融合函数也进行融合限制即可。边割率一如既往的高，毕竟初试划分很随机，不能纵观全局，这是导致边割率过高的原因。但降低边割率并不是粗划分的重点。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>个人还是比较喜欢这类论文的，将程序设计和理论分析完美融合。<del>不会写程序只会发论文的计算机人我通常认为是在耍流氓，不去写代码而只是高高在上的提所谓的idea，其实根本不知道底层发生了什么。</del></p>
+<p>最后感谢我的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>，在双胞胎处理、亲戚节点处理、图融合上提出了关键性想法，使得程序圆满开发成功。（她在写代码这方面真的很聪明的！！！）</p>
+]]></content>
+      <tags>
+        <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>我和我的操作系统们</title>
     <url>/2020/11/15/Arch/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>学业繁忙，作业真多。好久没来写博客了，<del>来水一篇。</del>注：本文没有任何引战的意思，不要在评论区对别人强行安利<strong>『自己喜欢，自己认为好，但别人可能根本不需要』</strong>的东西，没意思。每个人的想法都不一样。</p>
@@ -7316,6 +7387,46 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -7379,46 +7490,6 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
