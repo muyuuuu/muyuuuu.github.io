@@ -1,44 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Metis算法的python实现——图融合</title>
+    <title>基于Metis的大规模图融合算法实现</title>
     <url>/2020/11/20/Metis/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是上游任务，下游任务需要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
+<p>还有一点是，<code>python</code>第三方库的<code>Metis</code>模块是使用<code>networkx</code>开发的，它的底层是<code>python</code>，在处理超大规模图数据时肯定效率不够高，因此我们选用底层为<code>C++</code>的<code>graph-tool</code>重新开发。</p>
 <ul>
 <li>考虑到看官体验，没有结合代码一起写，但建议结合代码一起看，不然绝对云里雾里。</li>
-<li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，如桶排序、哈系、队列、列表、字典的花式操作来降低算法时间和空间复杂度。如果不是非要用<code>Metis</code>算法和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
-<li>一定要结合代码看文章！！！不然各种数据结构用来用去，调来调去很容易眩晕。</li>
+<li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，经过精心打磨，使用了桶排序、哈系、队列、列表、字典等结构的花式操作来降低算法时间和空间复杂度，一点点的将$O(n^2)$的程序降低到$O(n\log n)$在降到$O(n)$。如果不是非要用<code>Metis</code>算法来融合图和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
+<li>一定要结合代码看文章！！！不然各种数据结构用来用去、调来调去很容易眩晕。</li>
 <li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
+<li>我们实现的性能能吊打目前<code>python</code>的<code>metis</code>包，文末给出性能对比。</li>
 </ul>
-<p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a></p>
+<p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a><br>论文地址：<a href="http://glaros.dtc.umn.edu/gkhome/node/1186" target="_blank" rel="noopener">http://glaros.dtc.umn.edu/gkhome/node/1186</a></p>
 <a id="more"></a>
 <h1 id="第一次协作开发"><a href="#第一次协作开发" class="headerlink" title="第一次协作开发"></a>第一次协作开发</h1><p><img data-src="https://static01.imgkr.com/temp/8a98d8ea24b243f1bf8d1ecfbecb27ad.png" alt></p>
 <h1 id="图融合思想"><a href="#图融合思想" class="headerlink" title="图融合思想"></a>图融合思想</h1><p>原始的图记为$G_0$，融合一次得到一个规模相对较小的图$G_1$，一直融合到$G_n$为止。停止融合的条件由自己设定，比如我设置的是，当图节点的数量少于$\sqrt{n}$时停止迭代，$n$为$G_0$中节点的数量。一个两万节点的图，融合结果如下：</p>
 <p>99个节点：<img data-src="https://static01.imgkr.com/temp/8d753700aee54a61939d2051ac7050c2.jpg" alt><br>7个节点：<img data-src="https://static01.imgkr.com/temp/773434f99e384f57aac8cb4ba1c35650.jpg" alt></p>
 <h1 id="参数约定与注意事项"><a href="#参数约定与注意事项" class="headerlink" title="参数约定与注意事项"></a>参数约定与注意事项</h1><ul>
 <li>在原图中，每个节点的权重$\eta$为1，此处不考虑赋权图。</li>
-<li>$m$表示图中边的数量，$n$表示图中节点的数量。</li>
+<li>$m$表示原始图中边的数量，$n$表示原始图中节点的数量。</li>
 <li>注意：本次处理大规模图数据，切勿使用复杂度很高的程序，千万不要暴力破解。合理使用数据结构降低复杂度，以及善用迭代器和生成器，写出来的程序也要防止炸内存。</li>
 </ul>
 <h1 id="边处理"><a href="#边处理" class="headerlink" title="边处理"></a>边处理</h1><p>边融合：如果两个节点只通过一条边相邻，那么将这两个节点融合在一起，时间复杂度为$O(m)$。</p>
-<p>实现思路：此时创建一个向量<code>M</code>和<code>visited</code>（python用列表实现），如果两个节点$u$和$v$相互匹配，则<code>M[u]=v, M[v]=u</code>，如果没有匹配的节点，则$M(u)=u$。融合后的每一个点赋予权重$\eta$，如$u,v$权重为1，融合成了$a$，那么$a$的权重就是2。防止所有节点融合到一个节点，导致后期的图中某个节点的权重过大，划分不均衡。</p>
-<p><code>visited</code>长度为$n$，全部初始化为<code>False</code>，如果一个节点被访问，那么值为<code>True</code>。</p>
-<p>返回参数为向量<code>M</code>和<code>visited</code>，用于表示节点的映射关系和被访问的关系。使用向量的原因是：字典浪费内存，且本次任务中，没有节点的插入、删除和查找，列表性能更高一些。</p>
-<h1 id="防止划分不均"><a href="#防止划分不均" class="headerlink" title="防止划分不均"></a>防止划分不均</h1><p>为防止融合后的图出现节点分布不均匀的现象，即幂律图（有的节点权重$\eta$很大，有的节点权重$\eta$很小），所以放宽了融合的约束条件。并不是只有相邻节点才能融合，考虑使用二跳融合来融合两个节点，尽管他们并没有直接相连。</p>
-<h1 id="叶子节点处理"><a href="#叶子节点处理" class="headerlink" title="叶子节点处理"></a>叶子节点处理</h1><p>将度为1的节点视为叶子节点，融合叶子节点，时间复杂度为$O(n)$。根据边融合返回的<code>visited</code>参数，遍历节点，只访问度为1且没有被匹配的节点，将他们放到一个列表中，并将每个节点的父节点添加到字典中，字典的<code>key</code>为父节点，<code>value</code>为孩子节点。</p>
-<p>之后遍历字典，如果字典某个<code>key</code>对应的值的数量大于2，那么对这个<code>key</code>中对应的节点进行两两融合，将融合关系记录到<code>M</code>中。</p>
-<h1 id="双胞胎节点处理"><a href="#双胞胎节点处理" class="headerlink" title="双胞胎节点处理"></a>双胞胎节点处理</h1><p>双胞胎节点的定义是：如果节点的度相同，且节点的邻接列表相同则为双胞胎节点。融合双胞胎节点，是最难实现的一个功能，结果看到论文中提示用<code>hash</code>来简化计算，简直神来之笔，实现的时间复杂度为$O(n)$。</p>
-<p>为降低复杂度，按照度进行桶排序，即将不同度的节点放到对应的桶中，桶的取值范围是$[2,64]$。创建一个字典，<code>key</code>为邻接列表（转为字符串，可哈系），值为这个邻接列表对应的节点，<strong>这种结构会大大降低复杂度</strong>；相反，<code>key</code>为节点，值为邻接列表的数据结构，程序复杂度会达到$O(n^2)$。在每个桶内，遍历节点，并填充到上述字典中。填充完毕后，遍历字典的值，进行两两融合，将融合关系记录到<code>M</code>中。</p>
-<p>如果考虑加速执行，可以考虑多进程（python多线程不适合密集计算）来遍历每个桶，毕竟桶里面的处理都一样。这个函数仍然需要读入<code>visited</code>参数，只处理还没有被融合的节点。<del>利用到字典、哈系、桶排序来降低复杂度，能想出来的一定有很深的程序设计功底。</del></p>
+<p>实现思路：此时创建一个向量<code>M</code>和<code>visited</code>（python用列表实现），如果两个节点$u$和$v$相互匹配，则<code>M[u]=v, M[v]=u</code>。如果没有匹配的节点，则$M(u)=u$。融合后的每一个点赋予权重$\eta$，如$u,v$权重为1，融合成了$a$，那么$a$的权重就是2。记录权重的原因是：防止所有节点融合到一个节点，导致后期的图中某个节点的权重过大，划分不均衡。</p>
+<p><code>visited</code>长度为$n$，全部初始化为<code>False</code>，如果一个节点被融合，那么值为<code>True</code>。</p>
+<p>返回参数为向量<code>M</code>和<code>visited</code>，用于表示节点的融合关系以及点是否被融合。使用列表的原因是：字典浪费内存，且本次任务中，没有节点的插入、删除和查找，列表性能更高一些。</p>
+<h1 id="防止划分不均"><a href="#防止划分不均" class="headerlink" title="防止划分不均"></a>防止划分不均</h1><p>为防止融合后的图出现节点分布不均匀的现象，即出现幂律图（有的节点权重$\eta$很大，有的节点权重$\eta$很小），所以放宽了融合的约束条件。并不是只有相邻节点才能融合到一起，考虑使用节点的二跳信息来融合节点，尽管节点间并没有直接相邻。</p>
+<h1 id="叶子节点处理"><a href="#叶子节点处理" class="headerlink" title="叶子节点处理"></a>叶子节点处理</h1><p>将度为1的节点视为叶子节点，融合根节点相同的叶子节点，实现的时间复杂度为$O(n)$。根据边融合返回的<code>visited</code>参数，遍历节点，只访问度为1且没有被匹配的节点，将他们放到一个列表中，并将每个节点的父节点添加到字典中，字典的<code>key</code>为父节点，<code>value</code>为孩子节点。</p>
+<p>之后遍历字典，如果字典某个<code>key</code>对应的值的数量大于2，说明这个根节点有大于等于两个以上的叶子节点，那么对这个<code>key</code>中对应的叶子节点进行两两融合，将融合关系记录到<code>M</code>中，且更改<code>visited</code>。</p>
+<h1 id="双胞胎节点处理"><a href="#双胞胎节点处理" class="headerlink" title="双胞胎节点处理"></a>双胞胎节点处理</h1><p>双胞胎节点的定义是：如果节点的度相同，且节点的邻接列表相同，则为双胞胎节点。融合双胞胎节点是最难实现的一个功能，结果看到论文中提示用<code>hash</code>来简化计算，简直神来之笔，实现的时间复杂度为$O(n)$。</p>
+<p>这个函数仍然需要读入<code>visited</code>参数，只处理还没有被融合的节点。为降低复杂度，按照度进行桶排序，即将不同度的节点放到对应的桶中，桶的取值范围是$[2,64]$。创建一个字典，<code>key</code>为邻接列表（<strong>转为字符串，可哈系</strong>），值为这个邻接列表对应的节点，<strong>这种结构会大大降低复杂度</strong>；相反，<code>key</code>为节点，值为邻接列表的数据结构，程序复杂度会达到$O(n^2)$。在每个桶内，遍历节点，并填充到上述字典中。填充完毕后，遍历字典的值，进行两两融合，将融合关系记录到<code>M</code>中，并更改<code>visited</code>。</p>
+<p>如果考虑加速执行，可以考虑多进程（python多线程不适合密集计算）来遍历每个桶，毕竟桶里面的处理都一样。<del>利用到字典、哈系、桶排序来降低复杂度，能想出来的一定有很深的程序设计功底。</del></p>
 <h1 id="亲戚节点处理"><a href="#亲戚节点处理" class="headerlink" title="亲戚节点处理"></a>亲戚节点处理</h1><p>亲戚节点的定义与双胞胎节点类似，如果节点的度相同，则视为亲戚节点，进行融合。实现的时间复杂度为$O(n)$。</p>
 <p>这个函数也需要读入<code>visited</code>参数，只处理还没有被融合的节点。遍历<code>visited</code>列表，记录没有被访问的节点的度，将节点的度作为<code>key</code>，值为节点。融合方法和上面的就一样了，将融合关系记录到<code>M</code>中。</p>
-<h1 id="图收缩"><a href="#图收缩" class="headerlink" title="图收缩"></a>图收缩</h1><p>在得到融合关系的列表<code>M</code>后，则开始收缩图的规模，实现的时间复杂度为$O(n)$。创建辅助列表<code>C</code>，如果两个节点$u$和$v$融合到一起，那么<code>C[u]=C[v]</code>，且，在列表<code>C</code>中，只有融合到一起的节点的值相等，不融合到一起的值不相等。</p>
-<p>生成<code>C</code>后，按照<code>C</code>中数值的关系，获取图的邻接列表，因为值相等表示融合到一起，所以很容易得到融合的邻接列表<code>adj</code>。比如<code>a,b,c,d,e,f</code>邻接到一起，那么<code>adj[key]={a,b,c,d,e,f}</code>，<code>key</code>是一个自增的变量，表示新图的节点编号。至此，得到了新图和旧图之间的点的对应关系。这个字典可以保存为<code>json</code>，方便后续处理。</p>
+<h1 id="图收缩"><a href="#图收缩" class="headerlink" title="图收缩"></a>图收缩</h1><p>在利用二跳信息对节点处理后，可以达到70%到90%的匹配率。</p>
+<p>在得到融合关系的列表<code>M</code>后，则开始收缩图的规模，实现的时间复杂度为$O(n)$。创建辅助列表<code>C</code>，如果两个节点$u$和$v$融合到一起，那么<code>C[u]=C[v]</code>，且，在列表<code>C</code>中，只有融合到一起的节点的值相等，不融合到一起的值不相等。</p>
+<p>生成<code>C</code>后，按照<code>C</code>中数值的关系，开始获取图的邻接列表。因为值相等表示这些节点融合到一起，所以很容易得到融合后的图的邻接列表<code>adj</code>。比如<code>a,b,c,d,e,f</code>邻接到一起，那么<code>adj[key]={a,b,c,d,e,f}</code>，<code>key</code>是一个自增的变量，表示新图的节点编号，即新图中的<code>key</code>节点由旧图中的<code>a,b,c,d,e,f</code>这几个节点组成。至此，得到了新图和旧图之间的点的对应关系。可以将这个字典保存为<code>json</code>，方便后续处理。</p>
 <h1 id="图融合"><a href="#图融合" class="headerlink" title="图融合"></a>图融合</h1><p>遍历图收缩返回的数据结构<code>adj</code>，<code>adj</code>中的值对应的所有节点都将视为新图中的一个点，<code>len(adj)</code>就表示新图中节点的数量。</p>
-<p>创建一个字典，字典的<code>key</code>是一个元组类型。元组包含两个元素，为新图中的两个节点，表示新图中这两个节点之间有边。遍历原始图的边，判断当前边两个点是否进行融合：</p>
+<p>创建一个字典，字典的<code>key</code>是一个元组类型。元组包含两个元素，分别为新图中两个节点的索引，含义是新图中这两个节点之间有边。遍历原始图的边，判断当前边两个点是否进行融合：</p>
 <ul>
 <li>如果两个点进行融合，那么这两个顶点在新图上的映射节点相同，则对应边不用考虑，即这两个节点在新图中没有连接边；</li>
-<li>若当前边的两个顶点没有进行融合，则按照新旧图的映射关系，将旧图中边上的顶点换成映射中新图上顶点，以此作为<code>key</code>，并将边加入新图边的字典。这里太绕了，添加部分伪代码进行说明：</li>
+<li>若当前边的两个顶点没有进行融合，则按照新旧图的映射关系，将旧图中边上的两个顶点换成映射中新图上顶点，以此作为<code>key</code>，并将边填入字典。这里太绕了，添加部分伪代码进行说明：</li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 根据原始图和融合后的图节点的映射关系，求出原始图每一个点与新图的映射关系</span></span><br><span class="line"><span class="comment"># index表示原始图节点索引，old_mapping_new[index]表示原图中index节点在新图的索引</span></span><br><span class="line"><span class="keyword">for</span> new_ver, old_vers <span class="keyword">in</span> adj.items():</span><br><span class="line">    <span class="keyword">for</span> old_ver <span class="keyword">in</span> old_vers:</span><br><span class="line">        old_mapping_new[old_ver] = new_ver</span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> edges:</span><br><span class="line">    source, target = edge</span><br><span class="line">    <span class="comment"># 取节点的索引</span></span><br><span class="line">    s_index = graph.vertex_index[source]</span><br><span class="line">    t_index = graph.vertex_index[target]</span><br><span class="line">    <span class="comment"># 若当前边的两个顶点没有进行融合</span></span><br><span class="line">    <span class="keyword">if</span> old_mapping_new[s_index] != old_mapping_new[t_index]:</span><br><span class="line">        <span class="keyword">if</span> old_mapping_new[s_index] &lt; old_mapping_new[t_index]:</span><br><span class="line">            new_edges[(old_mapping_new[s_index], old_mapping_new[t_index])] += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            new_edges[(old_mapping_new[t_index], old_mapping_new[s_index])] += <span class="number">1</span></span><br><span class="line"><span class="comment"># 按照字典中的`key`，将边添加到节点中。</span></span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> new_edges.keys():</span><br><span class="line">    new_graph.add_edge(edge[<span class="number">0</span>], edge[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
 <p>之后创建新图的节点，按照字典中的<code>key</code>，将边添加到节点中，就完成了所有工作。</p>
@@ -53,7 +56,7 @@
 <p>本次代码中也进行了相关处理和计算。伪代码如下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 获取新图的一个节点代表旧图的几个节点，是数量</span></span><br><span class="line">ver_q = performance.get_vertex_map_number(ver_q, adj)</span><br><span class="line"><span class="comment"># 获取新图的一个结点代表旧图的哪些节点，是列表</span></span><br><span class="line">edge_q = performance.get_vertex_map_relation(edge_q, adj)</span><br><span class="line"><span class="comment"># 节点平衡率</span></span><br><span class="line">performance.print_vertex_balance(ver_q, ver_size_list)</span><br><span class="line"><span class="comment"># 边割率</span></span><br><span class="line">performance.print_edge_cut(edge_q, edge_size_list, origin_graph)</span><br></pre></td></tr></table></figure>
 <p>我尽力了，但本处的描述过于模糊，建议对照代码进行观看。</p>
-<p>在点平衡率的计算中，为降低空间复杂度，使用了队列。设置队列的长度为1，队列中的元素为字典，<code>key</code>为图节点的索引，<code>value</code>为节点权重。含义是：上次图和原图之间节点的对应关系。当本次图融合完成时，传入的<code>adj</code>表示本次图和上次图的对应关系。取出队列元素值，即上次图和原始图的节点对应关系，按照本次图和上次图节点的关系，<strong>进行一次套娃</strong>，完成处理，<strong>得到本次图中每个节点的权重</strong>，并压入队列并<code>return</code>，这样就可以计算点平衡率。</p>
+<p>在点平衡率的计算中，为降低空间复杂度，使用了队列这种数据结构。设置队列的长度为1，队列中的元素为字典，<code>key</code>为图节点的索引，<code>value</code>为节点权重，是节点的个数。含义是：上次融合图和原图之间节点的对应关系。当本次图融合完成时，传入的<code>adj</code>表示本次图和上次融合图的对应关系。取出队列元素值，即上次融合图和原始图的节点对应关系，按照本次图和上次融合图节点的关系，<strong>进行一次套娃，得到本次图中每个节点的权重</strong>，并压入队列并<code>return</code>，这样就可以计算点平衡率。</p>
 <p>而边平衡率的计算同理，仍然使用队列。<strong>每次融合进行一次套娃</strong>，得到新图的一个结点(<code>key</code>)代表旧图的哪些节点(<code>value</code>)，(<code>value</code>)是一个列表。然后反转一下这个字典，以原始图节点的索引为<code>key</code>，如果这些点在新图中是一个节点，那么他们的<code>value</code>相同。之后按着边遍历原始图，相邻节点的<code>value</code>不同，则边割率++。</p>
 <p><del>所以我当时是怎么想出来各种结构和算法来实现这些的，感觉好难。</del></p>
 <h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>经过测试，能发现<code>Metis</code>算法的优缺点：</p>
@@ -64,6 +67,23 @@
 <p>可以看到到处是缺点，这里只给出一种解决方案，毕竟这只是上游任务，没必要太精细。</p>
 <p>在融合的时候，点和边的选择顺序是随机的。所以，我们可以限制融合顺序，先融合节点度小的点，在融合度大的点。目前，此方案仅增加在<strong>边处理</strong>中，其他合并没有增加，但是一个道理。</p>
 <p>结论：节点平衡率能下降，比之前好多了，如果还觉得高，其他融合函数也进行融合限制即可。边割率一如既往的高，毕竟初试划分很随机，不能纵观全局，这是导致边割率过高的原因。但降低边割率并不是粗划分的重点。</p>
+<h1 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h1><p>测试数据为一个<a href="https://snap.stanford.edu/data/email-Eu-core.html" target="_blank" rel="noopener">很小规模的图数据</a></p>
+<h2 id="我们的"><a href="#我们的" class="headerlink" title="我们的"></a>我们的</h2><p><strong>我们程序的耗时为2.726秒。</strong></p>
+<p><img data-src="https://static01.imgkr.com/temp/fabdcb8a0ca845ccabcd3d74bbb6df71.png" alt></p>
+<h2 id="目前第三方的"><a href="#目前第三方的" class="headerlink" title="目前第三方的"></a>目前第三方的</h2><p><code>pip install metis netowrkx==2.3</code>后，实现了两种读取数据的方式，结果直接爆炸，且<code>networkx</code>已经更新到<code>2.5</code>版本，但<code>metis</code>只支持到了<code>2.3</code>。目前第三方支持了两种读取数据的方式，第一种是读入邻接列表，第二种是通过<code>networkx</code>读入数据并转为<code>metis</code>能处理的类型。</p>
+<p>首先是<code>networkx</code>读入图数据并转换类型，我按照官方的说明实现了一下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">g = nx.read_adjlist(<span class="string">"email-Eu-core.txt"</span>, nodetype=int)</span><br><span class="line">metis.networkx_to_metis(g)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>然后直接内存溢出：</p>
+<p><img data-src="https://static01.imgkr.com/temp/fabdcb8a0ca845ccabcd3d74bbb6df71.png" alt></p>
+<p>我放心不下，就试试手动读入图数据：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createGraph</span><span class="params">(filename)</span> :</span></span><br><span class="line">    G = nx.Graph()</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> open(filename) :</span><br><span class="line">        strlist = line.split()</span><br><span class="line">        n1 = int(strlist[<span class="number">0</span>])</span><br><span class="line">        n2 = int(strlist[<span class="number">1</span>])</span><br><span class="line">        G.add_edges_from([(n1, n2)])</span><br><span class="line">    <span class="keyword">return</span> G</span><br><span class="line"></span><br><span class="line">g = createGraph(<span class="string">"email-Eu-core.txt"</span>)</span><br><span class="line">metis.networkx_to_metis(g)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>直接段错误：</p>
+<p><img data-src="https://static01.imgkr.com/temp/a530f15ef32348e1816c5654ebb7a89f.png" alt></p>
+<p>官方还支持读入邻接列表，然后我又实现了一下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_data</span><span class="params">(filename)</span>:</span></span><br><span class="line">    adj_list = []</span><br><span class="line">    <span class="keyword">with</span> open(filename, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        lines = f.readlines()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">            temp = line.split(<span class="string">' '</span>)</span><br><span class="line">            adj_list.append((int(temp[<span class="number">0</span>]), int(temp[<span class="number">1</span>])))</span><br><span class="line">    <span class="keyword">return</span> adj_list</span><br><span class="line"></span><br><span class="line">adjlist = read_data(<span class="string">'email-Eu-core.txt'</span>)</span><br><span class="line">g = metis.adjlist_to_metis(adjlist)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>然后还是段错误：</p>
+<p><img data-src="https://static01.imgkr.com/temp/a530f15ef32348e1816c5654ebb7a89f.png" alt></p>
+<p>这种东西就没法比了，对面都执行不出来，对比的代码也会放到<code>github</code>上。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>个人还是比较喜欢这类论文的，将程序设计和理论分析完美融合。<del>不会写程序只会发论文的计算机人我通常认为是在耍流氓，不去写代码而只是高高在上的提所谓的idea，其实根本不知道底层发生了什么。</del></p>
 <p>最后感谢我的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>，在双胞胎处理、亲戚节点处理、图融合上提出了关键性想法，使得程序圆满开发成功。（她在写代码这方面真的很聪明的！！！）</p>
 ]]></content>
