@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="这是我第一次开发如此大规模的程序，论文的作者也提供了算法的C语言还是C++版本的软件来？我记不清了。但对于我们来说，Metis只是上游任务，且不需要完整的Metis算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用python来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用python来复现Metis算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-21T07:10:14.533Z">
+<meta property="og:updated_time" content="2020-11-21T07:50:55.958Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于Metis的大规模图融合算法实现">
 <meta name="twitter:description" content="这是我第一次开发如此大规模的程序，论文的作者也提供了算法的C语言还是C++版本的软件来？我记不清了。但对于我们来说，Metis只是上游任务，且不需要完整的Metis算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用python来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用python来复现Metis算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-21 15:10:14" itemprop="dateModified" datetime="2020-11-21T15:10:14+08:00">2020-11-21</time>
+                <time title="修改时间：2020-11-21 15:50:55" itemprop="dateModified" datetime="2020-11-21T15:50:55+08:00">2020-11-21</time>
               </span>
 
           
@@ -272,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.7k</span>
+              <span>7.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -298,9 +298,9 @@
 <li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，经过精心打磨，使用了桶排序、哈系、队列、列表、字典等结构的花式操作来降低算法时间和空间复杂度，一点点的将$O(n^2)$的程序降低到$O(n\log n)$在降到$O(n)$。如果不是非要用<code>Metis</code>算法来融合图和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
 <li>一定要结合代码看文章！！！不然各种数据结构用来用去、调来调去很容易眩晕。</li>
 <li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
-<li>我们实现的性能能吊打目前<code>python</code>的<code>metis</code>包，文末给出性能对比。</li>
 </ul>
 <p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a><br>论文地址：<a href="http://glaros.dtc.umn.edu/gkhome/node/1186" target="_blank" rel="noopener">http://glaros.dtc.umn.edu/gkhome/node/1186</a></p>
+<p>在本文的最后，将我们的算法和目前的第三方库<code>metis</code>与<code>pymetis</code>进行对比，我们实现的性能能吊打<code>metis</code>包，与<code>pymetis</code>还有些差距，文末给出性能对比。</p>
 <a id="more"></a>
 <h1 id="第一次协作开发"><a href="#第一次协作开发" class="headerlink" title="第一次协作开发"></a>第一次协作开发</h1><p><img data-src="https://static01.imgkr.com/temp/8a98d8ea24b243f1bf8d1ecfbecb27ad.png" alt></p>
 <h1 id="图融合思想"><a href="#图融合思想" class="headerlink" title="图融合思想"></a>图融合思想</h1><p>原始的图记为$G_0$，融合一次得到一个规模相对较小的图$G_1$，一直融合到$G_n$为止。停止融合的条件由自己设定，比如我设置的是，当图节点的数量少于$\sqrt{n}$时停止迭代，$n$为$G_0$中节点的数量。一个两万节点的图，融合结果如下：</p>
@@ -355,14 +355,15 @@
 <p>可以看到到处是缺点，这里只给出一种解决方案，毕竟这只是上游任务，没必要太精细。</p>
 <p>在融合的时候，点和边的选择顺序是随机的。所以，我们可以限制融合顺序，先融合节点度小的点，在融合度大的点。目前，此方案仅增加在<strong>边处理</strong>中，其他合并没有增加，但是一个道理。</p>
 <p>结论：节点平衡率能下降，比之前好多了，如果还觉得高，其他融合函数也进行融合限制即可。边割率一如既往的高，毕竟初试划分很随机，不能纵观全局，这是导致边割率过高的原因。但降低边割率并不是粗划分的重点。</p>
-<h1 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h1><p>测试数据为一个<a href="https://snap.stanford.edu/data/email-Eu-core.html" target="_blank" rel="noopener">很小规模的图数据</a></p>
-<h2 id="我们的"><a href="#我们的" class="headerlink" title="我们的"></a>我们的</h2><p><strong>我们程序的耗时为2.726秒。</strong></p>
+<h1 id="与metis包的性能对比"><a href="#与metis包的性能对比" class="headerlink" title="与metis包的性能对比"></a>与metis包的性能对比</h1><p><code>pip install metis</code>即可。测试数据为一个<a href="https://snap.stanford.edu/data/email-Eu-core.html" target="_blank" rel="noopener">很小规模的图数据</a>，<strong>需要注意的是：我们的算法是图融合的，metis是用来图划分的。</strong> 严格意义上来讲没有可比性，但<code>metis</code>这个包的执行结果太让人失望了。</p>
+<h2 id="我们的"><a href="#我们的" class="headerlink" title="我们的"></a>我们的</h2><p><strong>我们程序的融合部分耗时为0.57秒。</strong></p>
 <p><img data-src="https://static01.imgkr.com/temp/fabdcb8a0ca845ccabcd3d74bbb6df71.png" alt></p>
-<h2 id="目前第三方的"><a href="#目前第三方的" class="headerlink" title="目前第三方的"></a>目前第三方的</h2><p><code>pip install metis netowrkx==2.3</code>后，实现了两种读取数据的方式，结果直接爆炸，且<code>networkx</code>已经更新到<code>2.5</code>版本，但<code>metis</code>只支持到了<code>2.3</code>。目前第三方支持了两种读取数据的方式，第一种是读入邻接列表，第二种是通过<code>networkx</code>读入数据并转为<code>metis</code>能处理的类型。</p>
+<h2 id="目前第三方的"><a href="#目前第三方的" class="headerlink" title="目前第三方的"></a>目前第三方的</h2><p><code>metis</code>包的官网：<br><a href="https://metis.readthedocs.io/en/latest/" target="_blank" rel="noopener">https://metis.readthedocs.io/en/latest/</a></p>
+<p><code>pip install metis netowrkx==2.3</code>后，实现了两种读取数据的方式，结果直接爆炸，且<code>networkx</code>已经更新到<code>2.5</code>版本，但<code>metis</code>只支持到了<code>2.3</code>。目前第三方支持了两种读取数据的方式，第一种是读入邻接列表，第二种是通过<code>networkx</code>读入数据并转为<code>metis</code>能处理的类型。</p>
 <p>首先是<code>networkx</code>读入图数据并转换类型，我按照官方的说明实现了一下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">g = nx.read_adjlist(<span class="string">"email-Eu-core.txt"</span>, nodetype=int)</span><br><span class="line">metis.networkx_to_metis(g)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
 <p>然后直接内存溢出：</p>
-<p><img data-src="https://static01.imgkr.com/temp/fabdcb8a0ca845ccabcd3d74bbb6df71.png" alt></p>
+<p><img data-src="https://static01.imgkr.com/temp/7007c6a1045a46858658a3df37367ab5.png" alt></p>
 <p>我放心不下，就试试手动读入图数据：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createGraph</span><span class="params">(filename)</span> :</span></span><br><span class="line">    G = nx.Graph()</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> open(filename) :</span><br><span class="line">        strlist = line.split()</span><br><span class="line">        n1 = int(strlist[<span class="number">0</span>])</span><br><span class="line">        n2 = int(strlist[<span class="number">1</span>])</span><br><span class="line">        G.add_edges_from([(n1, n2)])</span><br><span class="line">    <span class="keyword">return</span> G</span><br><span class="line"></span><br><span class="line">g = createGraph(<span class="string">"email-Eu-core.txt"</span>)</span><br><span class="line">metis.networkx_to_metis(g)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
 <p>直接段错误：</p>
@@ -372,6 +373,9 @@
 <p>然后还是段错误：</p>
 <p><img data-src="https://static01.imgkr.com/temp/a530f15ef32348e1816c5654ebb7a89f.png" alt></p>
 <p>这种东西就没法比了，对面都执行不出来，对比的代码也会放到<code>github</code>上。</p>
+<h1 id="与pymetis的对比"><a href="#与pymetis的对比" class="headerlink" title="与pymetis的对比"></a>与pymetis的对比</h1><p>按照<a href="https://github.com/inducer/pymetis" target="_blank" rel="noopener">官网</a>实现一下<code>pymetis</code>(版本：2020.1)的代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pymetis</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_data</span><span class="params">(filename)</span>:</span></span><br><span class="line">    adjacency_list = []</span><br><span class="line">    <span class="keyword">with</span> open(filename, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        lines = f.readlines()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">            temp = line.split(<span class="string">' '</span>)</span><br><span class="line">            adjacency_list.append(np.array([int(temp[<span class="number">0</span>]), int(temp[<span class="number">1</span>])]))</span><br><span class="line">    <span class="keyword">return</span> adjacency_list</span><br><span class="line"></span><br><span class="line">adjacency_list = read_data(<span class="string">'email-Eu-core.txt'</span>)</span><br><span class="line">print(len(adjacency_list))</span><br><span class="line"></span><br><span class="line">since = time.time()</span><br><span class="line">n_cuts, membership = pymetis.part_graph(<span class="number">100</span>, adjacency=adjacency_list)</span><br><span class="line">end = time.time()</span><br><span class="line"></span><br><span class="line">print(end - since)</span><br></pre></td></tr></table></figure>
+<p>程序执行时间在0.35秒到0.5秒之间。虽然我们在叶子节点处理中加入了额外的信息处理，但<code>pymetis</code>执行的时间还包括反粗划分与图划分，所以我们的程序还有较大的改进空间，<strong>前路漫漫，还需努力</strong>。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>个人还是比较喜欢这类论文的，将程序设计和理论分析完美融合。<del>不会写程序只会发论文的计算机人我通常认为是在耍流氓，不去写代码而只是高高在上的提所谓的idea，其实根本不知道底层发生了什么。</del></p>
 <p>最后感谢我的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>，在双胞胎处理、亲戚节点处理、图融合上提出了关键性想法，使得程序圆满开发成功。（她在写代码这方面真的很聪明的！！！）</p>
 
@@ -532,7 +536,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一次协作开发"><span class="nav-number">1.</span> <span class="nav-text">第一次协作开发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图融合思想"><span class="nav-number">2.</span> <span class="nav-text">图融合思想</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数约定与注意事项"><span class="nav-number">3.</span> <span class="nav-text">参数约定与注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#边处理"><span class="nav-number">4.</span> <span class="nav-text">边处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防止划分不均"><span class="nav-number">5.</span> <span class="nav-text">防止划分不均</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#叶子节点处理"><span class="nav-number">6.</span> <span class="nav-text">叶子节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#双胞胎节点处理"><span class="nav-number">7.</span> <span class="nav-text">双胞胎节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#亲戚节点处理"><span class="nav-number">8.</span> <span class="nav-text">亲戚节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图收缩"><span class="nav-number">9.</span> <span class="nav-text">图收缩</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图融合"><span class="nav-number">10.</span> <span class="nav-text">图融合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后期处理"><span class="nav-number">11.</span> <span class="nav-text">后期处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化"><span class="nav-number">12.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#性能对比"><span class="nav-number">13.</span> <span class="nav-text">性能对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#我们的"><span class="nav-number">13.1.</span> <span class="nav-text">我们的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目前第三方的"><span class="nav-number">13.2.</span> <span class="nav-text">目前第三方的</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">14.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一次协作开发"><span class="nav-number">1.</span> <span class="nav-text">第一次协作开发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图融合思想"><span class="nav-number">2.</span> <span class="nav-text">图融合思想</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数约定与注意事项"><span class="nav-number">3.</span> <span class="nav-text">参数约定与注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#边处理"><span class="nav-number">4.</span> <span class="nav-text">边处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#防止划分不均"><span class="nav-number">5.</span> <span class="nav-text">防止划分不均</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#叶子节点处理"><span class="nav-number">6.</span> <span class="nav-text">叶子节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#双胞胎节点处理"><span class="nav-number">7.</span> <span class="nav-text">双胞胎节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#亲戚节点处理"><span class="nav-number">8.</span> <span class="nav-text">亲戚节点处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图收缩"><span class="nav-number">9.</span> <span class="nav-text">图收缩</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图融合"><span class="nav-number">10.</span> <span class="nav-text">图融合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后期处理"><span class="nav-number">11.</span> <span class="nav-text">后期处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化"><span class="nav-number">12.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与metis包的性能对比"><span class="nav-number">13.</span> <span class="nav-text">与metis包的性能对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#我们的"><span class="nav-number">13.1.</span> <span class="nav-text">我们的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目前第三方的"><span class="nav-number">13.2.</span> <span class="nav-text">目前第三方的</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与pymetis的对比"><span class="nav-number">14.</span> <span class="nav-text">与pymetis的对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">15.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -614,7 +618,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">501k</span>
+    <span title="站点总字数">502k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

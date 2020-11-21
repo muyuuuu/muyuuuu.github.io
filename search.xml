@@ -10,9 +10,9 @@
 <li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，经过精心打磨，使用了桶排序、哈系、队列、列表、字典等结构的花式操作来降低算法时间和空间复杂度，一点点的将$O(n^2)$的程序降低到$O(n\log n)$在降到$O(n)$。如果不是非要用<code>Metis</code>算法来融合图和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
 <li>一定要结合代码看文章！！！不然各种数据结构用来用去、调来调去很容易眩晕。</li>
 <li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
-<li>我们实现的性能能吊打目前<code>python</code>的<code>metis</code>包，文末给出性能对比。</li>
 </ul>
 <p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a><br>论文地址：<a href="http://glaros.dtc.umn.edu/gkhome/node/1186" target="_blank" rel="noopener">http://glaros.dtc.umn.edu/gkhome/node/1186</a></p>
+<p>在本文的最后，将我们的算法和目前的第三方库<code>metis</code>与<code>pymetis</code>进行对比，我们实现的性能能吊打<code>metis</code>包，与<code>pymetis</code>还有些差距，文末给出性能对比。</p>
 <a id="more"></a>
 <h1 id="第一次协作开发"><a href="#第一次协作开发" class="headerlink" title="第一次协作开发"></a>第一次协作开发</h1><p><img data-src="https://static01.imgkr.com/temp/8a98d8ea24b243f1bf8d1ecfbecb27ad.png" alt></p>
 <h1 id="图融合思想"><a href="#图融合思想" class="headerlink" title="图融合思想"></a>图融合思想</h1><p>原始的图记为$G_0$，融合一次得到一个规模相对较小的图$G_1$，一直融合到$G_n$为止。停止融合的条件由自己设定，比如我设置的是，当图节点的数量少于$\sqrt{n}$时停止迭代，$n$为$G_0$中节点的数量。一个两万节点的图，融合结果如下：</p>
@@ -67,14 +67,15 @@
 <p>可以看到到处是缺点，这里只给出一种解决方案，毕竟这只是上游任务，没必要太精细。</p>
 <p>在融合的时候，点和边的选择顺序是随机的。所以，我们可以限制融合顺序，先融合节点度小的点，在融合度大的点。目前，此方案仅增加在<strong>边处理</strong>中，其他合并没有增加，但是一个道理。</p>
 <p>结论：节点平衡率能下降，比之前好多了，如果还觉得高，其他融合函数也进行融合限制即可。边割率一如既往的高，毕竟初试划分很随机，不能纵观全局，这是导致边割率过高的原因。但降低边割率并不是粗划分的重点。</p>
-<h1 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h1><p>测试数据为一个<a href="https://snap.stanford.edu/data/email-Eu-core.html" target="_blank" rel="noopener">很小规模的图数据</a></p>
-<h2 id="我们的"><a href="#我们的" class="headerlink" title="我们的"></a>我们的</h2><p><strong>我们程序的耗时为2.726秒。</strong></p>
+<h1 id="与metis包的性能对比"><a href="#与metis包的性能对比" class="headerlink" title="与metis包的性能对比"></a>与metis包的性能对比</h1><p><code>pip install metis</code>即可。测试数据为一个<a href="https://snap.stanford.edu/data/email-Eu-core.html" target="_blank" rel="noopener">很小规模的图数据</a>，<strong>需要注意的是：我们的算法是图融合的，metis是用来图划分的。</strong> 严格意义上来讲没有可比性，但<code>metis</code>这个包的执行结果太让人失望了。</p>
+<h2 id="我们的"><a href="#我们的" class="headerlink" title="我们的"></a>我们的</h2><p><strong>我们程序的融合部分耗时为0.57秒。</strong></p>
 <p><img data-src="https://static01.imgkr.com/temp/fabdcb8a0ca845ccabcd3d74bbb6df71.png" alt></p>
-<h2 id="目前第三方的"><a href="#目前第三方的" class="headerlink" title="目前第三方的"></a>目前第三方的</h2><p><code>pip install metis netowrkx==2.3</code>后，实现了两种读取数据的方式，结果直接爆炸，且<code>networkx</code>已经更新到<code>2.5</code>版本，但<code>metis</code>只支持到了<code>2.3</code>。目前第三方支持了两种读取数据的方式，第一种是读入邻接列表，第二种是通过<code>networkx</code>读入数据并转为<code>metis</code>能处理的类型。</p>
+<h2 id="目前第三方的"><a href="#目前第三方的" class="headerlink" title="目前第三方的"></a>目前第三方的</h2><p><code>metis</code>包的官网：<br><a href="https://metis.readthedocs.io/en/latest/" target="_blank" rel="noopener">https://metis.readthedocs.io/en/latest/</a></p>
+<p><code>pip install metis netowrkx==2.3</code>后，实现了两种读取数据的方式，结果直接爆炸，且<code>networkx</code>已经更新到<code>2.5</code>版本，但<code>metis</code>只支持到了<code>2.3</code>。目前第三方支持了两种读取数据的方式，第一种是读入邻接列表，第二种是通过<code>networkx</code>读入数据并转为<code>metis</code>能处理的类型。</p>
 <p>首先是<code>networkx</code>读入图数据并转换类型，我按照官方的说明实现了一下：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">g = nx.read_adjlist(<span class="string">"email-Eu-core.txt"</span>, nodetype=int)</span><br><span class="line">metis.networkx_to_metis(g)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
 <p>然后直接内存溢出：</p>
-<p><img data-src="https://static01.imgkr.com/temp/fabdcb8a0ca845ccabcd3d74bbb6df71.png" alt></p>
+<p><img data-src="https://static01.imgkr.com/temp/7007c6a1045a46858658a3df37367ab5.png" alt></p>
 <p>我放心不下，就试试手动读入图数据：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">createGraph</span><span class="params">(filename)</span> :</span></span><br><span class="line">    G = nx.Graph()</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> open(filename) :</span><br><span class="line">        strlist = line.split()</span><br><span class="line">        n1 = int(strlist[<span class="number">0</span>])</span><br><span class="line">        n2 = int(strlist[<span class="number">1</span>])</span><br><span class="line">        G.add_edges_from([(n1, n2)])</span><br><span class="line">    <span class="keyword">return</span> G</span><br><span class="line"></span><br><span class="line">g = createGraph(<span class="string">"email-Eu-core.txt"</span>)</span><br><span class="line">metis.networkx_to_metis(g)</span><br><span class="line">(edgecuts, parts) = metis.part_graph(g, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
 <p>直接段错误：</p>
@@ -84,6 +85,9 @@
 <p>然后还是段错误：</p>
 <p><img data-src="https://static01.imgkr.com/temp/a530f15ef32348e1816c5654ebb7a89f.png" alt></p>
 <p>这种东西就没法比了，对面都执行不出来，对比的代码也会放到<code>github</code>上。</p>
+<h1 id="与pymetis的对比"><a href="#与pymetis的对比" class="headerlink" title="与pymetis的对比"></a>与pymetis的对比</h1><p>按照<a href="https://github.com/inducer/pymetis" target="_blank" rel="noopener">官网</a>实现一下<code>pymetis</code>(版本：2020.1)的代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pymetis</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_data</span><span class="params">(filename)</span>:</span></span><br><span class="line">    adjacency_list = []</span><br><span class="line">    <span class="keyword">with</span> open(filename, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        lines = f.readlines()</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">            temp = line.split(<span class="string">' '</span>)</span><br><span class="line">            adjacency_list.append(np.array([int(temp[<span class="number">0</span>]), int(temp[<span class="number">1</span>])]))</span><br><span class="line">    <span class="keyword">return</span> adjacency_list</span><br><span class="line"></span><br><span class="line">adjacency_list = read_data(<span class="string">'email-Eu-core.txt'</span>)</span><br><span class="line">print(len(adjacency_list))</span><br><span class="line"></span><br><span class="line">since = time.time()</span><br><span class="line">n_cuts, membership = pymetis.part_graph(<span class="number">100</span>, adjacency=adjacency_list)</span><br><span class="line">end = time.time()</span><br><span class="line"></span><br><span class="line">print(end - since)</span><br></pre></td></tr></table></figure>
+<p>程序执行时间在0.35秒到0.5秒之间。虽然我们在叶子节点处理中加入了额外的信息处理，但<code>pymetis</code>执行的时间还包括反粗划分与图划分，所以我们的程序还有较大的改进空间，<strong>前路漫漫，还需努力</strong>。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>个人还是比较喜欢这类论文的，将程序设计和理论分析完美融合。<del>不会写程序只会发论文的计算机人我通常认为是在耍流氓，不去写代码而只是高高在上的提所谓的idea，其实根本不知道底层发生了什么。</del></p>
 <p>最后感谢我的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>，在双胞胎处理、亲戚节点处理、图融合上提出了关键性想法，使得程序圆满开发成功。（她在写代码这方面真的很聪明的！！！）</p>
 ]]></content>
@@ -7407,46 +7411,6 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
       </tags>
   </entry>
   <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -7510,6 +7474,46 @@ L=\frac{1}{M} \sum_{i=1}^{M} D\left(y_{i}, z_{i},\Theta\right)</script><p>这便
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
