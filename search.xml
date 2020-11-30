@@ -3,16 +3,16 @@
   <entry>
     <title>基于Metis的大规模图融合算法实现</title>
     <url>/2020/11/20/Metis/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是图划分的上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
 <p>还有一点是，<code>python</code>第三方库的<code>Metis</code>模块是使用<code>networkx</code>开发的，它的底层是<code>python</code>，在处理超大规模图数据时肯定效率不够高，因此我们选用底层为<code>C++</code>的<code>graph-tool</code>重新开发。</p>
 <ul>
-<li>考虑到看官体验，没有结合代码一起写，但建议结合代码一起看，不然绝对云里雾里。</li>
+<li>考虑到看官体验，没有结合代码一起写。但建议结合代码一起看，不然各种数据结构用来用去、调来调去很容易眩晕。</li>
 <li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，经过精心打磨，使用了桶排序、哈系、队列、列表、字典等结构的花式操作来降低算法时间和空间复杂度，一点点的将$O(n^2)$的程序降低到$O(n\log n)$在降到$O(n)$。如果不是非要用<code>Metis</code>算法来融合图和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
-<li>一定要结合代码看文章！！！不然各种数据结构用来用去、调来调去很容易眩晕。</li>
 <li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
+<li>文末给出我对大规模图划分的一点想法，欢迎探讨。</li>
 </ul>
 <p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a><br>论文地址：<a href="http://glaros.dtc.umn.edu/gkhome/node/1186" target="_blank" rel="noopener">http://glaros.dtc.umn.edu/gkhome/node/1186</a></p>
-<p>在本文的最后，将我们的算法和目前的第三方库<code>metis</code>与<code>pymetis</code>进行对比，我们实现的性能能吊打<code>metis</code>包，与<code>pymetis</code>还有些差距，文末给出性能对比。</p>
+<p>最后，将我们的算法和目前的第三方库<code>metis</code>与<code>pymetis</code>进行对比，我们实现的性能能吊打<code>metis</code>包，与<code>pymetis</code>还有些差距，文末给出性能对比。</p>
 <a id="more"></a>
 <h1 id="第一次协作开发"><a href="#第一次协作开发" class="headerlink" title="第一次协作开发"></a>第一次协作开发</h1><p><img data-src="https://static01.imgkr.com/temp/8a98d8ea24b243f1bf8d1ecfbecb27ad.png" alt></p>
 <h1 id="图融合思想"><a href="#图融合思想" class="headerlink" title="图融合思想"></a>图融合思想</h1><p>原始的图记为$G_0$，融合一次得到一个规模相对较小的图$G_1$，一直融合到$G_n$为止。停止融合的条件由自己设定，比如我设置的是，当图节点的数量少于$\sqrt{n}$时停止迭代，$n$为$G_0$中节点的数量。一个两万节点的图，融合结果如下：</p>
@@ -29,7 +29,7 @@
 <h1 id="防止划分不均"><a href="#防止划分不均" class="headerlink" title="防止划分不均"></a>防止划分不均</h1><p>为防止融合后的图出现节点分布不均匀的现象，即出现幂律图（有的节点权重$\eta$很大，有的节点权重$\eta$很小），所以放宽了融合的约束条件。并不是只有相邻节点才能融合到一起，考虑使用节点的二跳信息来融合节点，尽管节点间并没有直接相邻。</p>
 <h1 id="叶子节点处理"><a href="#叶子节点处理" class="headerlink" title="叶子节点处理"></a>叶子节点处理</h1><p>将度为1的节点视为叶子节点，融合根节点相同的叶子节点，实现的时间复杂度为$O(n)$。根据边融合返回的<code>visited</code>参数，遍历节点，只访问度为1且没有被匹配的节点，将他们放到一个列表中，并将每个节点的父节点添加到字典中，字典的<code>key</code>为父节点，<code>value</code>为孩子节点。</p>
 <p>之后遍历字典，如果字典某个<code>key</code>对应的值的数量大于2，说明这个根节点有大于等于两个以上的叶子节点，那么对这个<code>key</code>中对应的叶子节点进行两两融合，将融合关系记录到<code>M</code>中，且更改<code>visited</code>。</p>
-<h1 id="双胞胎节点处理"><a href="#双胞胎节点处理" class="headerlink" title="双胞胎节点处理"></a>双胞胎节点处理</h1><p>双胞胎节点的定义是：如果节点的度相同，且节点的邻接列表相同，则为双胞胎节点。融合双胞胎节点是最难实现的一个功能，结果看到论文中提示用<code>hash</code>来简化计算，简直神来之笔，实现的时间复杂度为$O(n)$。</p>
+<h1 id="双胞胎节点处理"><a href="#双胞胎节点处理" class="headerlink" title="双胞胎节点处理"></a>双胞胎节点处理</h1><p>双胞胎节点的定义是：如果节点的度相同，且节点的邻接列表相同，则为双胞胎节点。融合双胞胎节点是最难实现的一个功能，结果看到论文中提示用<code>hash</code>来简化计算，简直神来之笔，实现的时间复杂度为$O(n\log n)$。</p>
 <p>这个函数仍然需要读入<code>visited</code>参数，只处理还没有被融合的节点。为降低复杂度，按照度进行桶排序，即将不同度的节点放到对应的桶中，桶的取值范围是$[2,64]$。创建一个字典，<code>key</code>为邻接列表（<strong>转为字符串，可哈系</strong>），值为这个邻接列表对应的节点，<strong>这种结构会大大降低复杂度</strong>；相反，<code>key</code>为节点，值为邻接列表的数据结构，程序复杂度会达到$O(n^2)$。在每个桶内，遍历节点，并填充到上述字典中。填充完毕后，遍历字典的值，进行两两融合，将融合关系记录到<code>M</code>中，并更改<code>visited</code>。</p>
 <p>如果考虑加速执行，可以考虑多进程（python多线程不适合密集计算）来遍历每个桶，毕竟桶里面的处理都一样。<del>利用到字典、哈系、桶排序来降低复杂度，能想出来的一定有很深的程序设计功底。</del></p>
 <h1 id="亲戚节点处理"><a href="#亲戚节点处理" class="headerlink" title="亲戚节点处理"></a>亲戚节点处理</h1><p>亲戚节点的定义与双胞胎节点类似，如果节点的度相同，则视为亲戚节点，进行融合。实现的时间复杂度为$O(n)$。</p>
@@ -90,6 +90,15 @@
 <p>程序执行时间在0.35秒到0.5秒之间。虽然我们在叶子节点处理中加入了额外的信息处理，但<code>pymetis</code>执行的时间还包括反粗划分与图划分，所以我们的程序还有较大的改进空间，<strong>前路漫漫，还需努力</strong>。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>个人还是比较喜欢这类论文的，将程序设计和理论分析完美融合。<del>不会写程序只会发论文的计算机人我通常认为是在耍流氓，不去写代码而只是高高在上的提所谓的idea，其实根本不知道底层发生了什么。</del></p>
 <p>最后感谢我的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>，在双胞胎处理、亲戚节点处理、图融合上提出了关键性想法，使得程序圆满开发成功。（她在写代码这方面真的很聪明的！！！）</p>
+<p>也许有读者能看出来，这部分代码是为了图划分做准备，但图融合只是图划分的上游任务。关于<strong>大规模图划分</strong>我想说的：</p>
+<ul>
+<li>如果使用传统启发式算法，图融合，图划分，最后反粗划分，这种思路和算法大概率已经烂大街了，<strong>无非是一丢丢可有可无的改进</strong>。所以边割率、平衡率和速度要<strong>远远好于目前的成果</strong>才算可以。即使发了论文也不一定有人看，毕竟大家都知道是那套东西。或者说，图划分的算法复杂度更多的取决于分割的算法，融合只是上游任务。</li>
+<li>如果使用图神经网络去划分，用哪种图网络是一个问题，GraphSAGE？GAT？此外损失函数如何设计又是一个问题，如何把边割率和平衡率融入到一个函数里，这更像是多目标优化。而且也会牵扯到其他问题，图的节点、边该如何用数字去表示。假设这几个问题都解决了，那么，网络训练又是一个问题，能否收敛？收敛的快不快？图神经网络便无法再用时间复杂度$O(n)$去衡量，毕竟要迭代好几次呢，每次迭代可能也要很久。</li>
+<li>我看了近几年论文，在大规模图划分上并没有发现有做的很好的。<strong>如果取得了很好的结果或有突破性思路</strong>，时间慢一点应该可以被接受。如果效果只是好了一点点但付出了巨大的时间、计算资源的代价，个人认为只具备学术论文价值，但不具备工程实际应用的价值，所以我个人不看好这个方向。图分割很大程度上是为下游任务提供支持，如生物、化学、交通网络等。<strong>其效率比起效果更应该受到重视</strong>。但神经网络的训练代价太大，程序消耗过多时间在图分割上，<strong>甚至需要GPU</strong>反而是本末倒置。</li>
+<li>图的节点、边该如何用数字去表示？关于这一点，已经有不少图嵌入表示的论文了。但那些表示是否适合图划分却不得而知，或者说，需不需要为了图划分而单独的去设计一种图嵌入表示算法。</li>
+<li>loss的收敛问题。关于这一点，<del>我认为是个坑</del>，或者需要一些数学工具去优化。我尝试过简单的将边割率、平衡率的损失直接相加，结果震荡的很严重。且边割率会受到平衡率的影响，即总体loss在下降，平衡率loss在下降，但边割率的loss却在上升，所以整体loss下降只是因为平衡率loss下降了。我也尝试过分批训练，即前200个epoch训练平衡率，后200个epoch训练边割率，如此轮回，但损失还是震荡或者回升。关于这一点，<del>我并没有很好的想法</del>。学完《工程优化》这门课程后，发现这是多目标优化的问题，需要将神经网络的多任务学习变成多目标优化，这个在顶会有不少的论文了，可以借鉴下他人的思路。</li>
+<li>如果说使用神经网络算法去完成图划分，<strong>时间比启发式算法快，且效果比它还要好</strong>。今年的顶会就是您的，这也许会颠覆目前图划分的思想和现有的图划分软件。</li>
+</ul>
 ]]></content>
       <tags>
         <tag>Algorithm</tag>
