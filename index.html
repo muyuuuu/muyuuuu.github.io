@@ -226,6 +226,83 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/12/05/MTL-to-MOO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/05/MTL-to-MOO/" class="post-title-link" itemprop="url">论文笔记：Multi-Task Learning as Multi-Objective Optimization</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-05 13:26:18 / 修改时间：14:20:31" itemprop="dateCreated datePublished" datetime="2020-12-05T13:26:18+08:00">2020-12-05</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，<strong>亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况</strong>。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的NIPS上，个人认为具有借鉴意义和开创性工作，所以记录于此。</p>
+          <!--noindex-->
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/11/20/Metis/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -257,7 +334,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-30 13:25:35" itemprop="dateModified" datetime="2020-11-30T13:25:35+08:00">2020-11-30</time>
+                <time title="修改时间：2020-12-05 13:30:28" itemprop="dateModified" datetime="2020-12-05T13:30:28+08:00">2020-12-05</time>
               </span>
 
           <br>
@@ -266,7 +343,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8.5k</span>
+              <span>8.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -285,16 +362,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是图划分的上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？自己开发还是灵活。</p>
-<p>还有一点是，<code>python</code>第三方库的<code>Metis</code>模块是使用<code>networkx</code>开发的，它的底层是<code>python</code>，在处理超大规模图数据时肯定效率不够高，因此我们选用底层为<code>C++</code>的<code>graph-tool</code>重新开发。</p>
-<ul>
-<li>考虑到看官体验，没有结合代码一起写。但建议结合代码一起看，不然各种数据结构用来用去、调来调去很容易眩晕。</li>
-<li>开发程序的过程中，使用了大量数据结构的使用和程序的设计技巧，经过精心打磨，使用了桶排序、哈系、队列、列表、字典等结构的花式操作来降低算法时间和空间复杂度，一点点的将$O(n^2)$的程序降低到$O(n\log n)$在降到$O(n)$。如果不是非要用<code>Metis</code>算法来融合图和抱着必死的决心一定要读懂代码，请谨慎观看本文。</li>
-<li>这不是我一个人的功劳，还要感谢我聪明的<a href="https://github.com/dajiaozhu" target="_blank" rel="noopener">师姐</a>和我一起开发。整体而言，对开发出来的程序表示满意。</li>
-<li>文末给出我对大规模图划分的一点想法，欢迎探讨。</li>
-</ul>
-<p>程序地址：<a href="https://github.com/muyuuuu/Metis" target="_blank" rel="noopener">https://github.com/muyuuuu/Metis</a><br>论文地址：<a href="http://glaros.dtc.umn.edu/gkhome/node/1186" target="_blank" rel="noopener">http://glaros.dtc.umn.edu/gkhome/node/1186</a></p>
-<p>最后，将我们的算法和目前的第三方库<code>metis</code>与<code>pymetis</code>进行对比，我们实现的性能能吊打<code>metis</code>包，与<code>pymetis</code>还有些差距，文末给出性能对比。</p>
+          <p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是图划分的上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？现存的库都是直接返回划分结果，但我们只想融合，自己开发还是灵活。</p>
           <!--noindex-->
           <!--/noindex-->
         
@@ -679,10 +747,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-10-09 16:45:37 / 修改时间：22:19:12" itemprop="dateCreated datePublished" datetime="2020-10-09T16:45:37+08:00">2020-10-09</time>
+              <time title="创建时间：2020-10-09 16:45:37" itemprop="dateCreated datePublished" datetime="2020-10-09T16:45:37+08:00">2020-10-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-05 13:38:02" itemprop="dateModified" datetime="2020-12-05T13:38:02+08:00">2020-12-05</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -738,88 +812,11 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/10/05/reparametrization-tricks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Just for Life.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/05/reparametrization-tricks/" class="post-title-link" itemprop="url">重参数技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-10-05 13:55:35 / 修改时间：15:32:58" itemprop="dateCreated datePublished" datetime="2020-10-05T13:55:35+08:00">2020-10-05</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解<strong>重参数</strong>到底是什么，一般都用在什么背景下。</p>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -887,7 +884,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">133</span>
+          <span class="site-state-item-count">134</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -900,7 +897,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -953,12 +950,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">503k</span>
+    <span title="站点总字数">508k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:37</span>
+    <span title="站点阅读时长">7:42</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
