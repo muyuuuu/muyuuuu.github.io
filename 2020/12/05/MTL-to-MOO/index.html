@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-05T06:20:31.315Z">
+<meta property="og:updated_time" content="2020-12-05T07:04:34.743Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="论文笔记：Multi-Task Learning as Multi-Objective Optimization">
 <meta name="twitter:description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
@@ -252,7 +252,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-05 13:26:18 / 修改时间：14:20:31" itemprop="dateCreated datePublished" datetime="2020-12-05T13:26:18+08:00">2020-12-05</time>
+              <time title="创建时间：2020-12-05 13:26:18 / 修改时间：15:04:34" itemprop="dateCreated datePublished" datetime="2020-12-05T13:26:18+08:00">2020-12-05</time>
             </span>
 
           
@@ -329,7 +329,9 @@
 <p>\begin{equation}<br>    \Bigl| \sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^t \Bigr|_2^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|_2^2 \Bigl| \sum_{i=1}^T\alpha_i\nabla_{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
 <p>$\nabla_{Z}L^t$能够在单向反向传播中计算得出，$\frac{\partial Z}{\partial \theta^{sh}}$与$\alpha$无关，不会影响到优化过程，所以在优化过程中会被移除。因此使用上界来代替优化目标：</p>
 <p>\begin{equation}<br>    \min_{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum_{i=1}^T\alpha^i\nabla_{Z}L^t(\theta^{sh},\theta^i) \Big|_2^2  \Big| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
-<p>改进的模型称为<strong>MGDA-UB:Multiple Gradient Descent Algorithm – Upper Bound</strong>。使用共享表示层来代替共享参数后，模型计算复杂度将大大降低。虽然MGDA-UB是原始优化问题的一个估计，文末给出了仍然能产生Pareto最优解的证明。</p>
+<p>改进的模型称为<strong>MGDA-UB:Multiple Gradient Descent Algorithm – Upper Bound</strong>。使用共享表示层来代替共享参数后，模型计算复杂度将大大降低。虽然MGDA-UB是原始优化问题的一个估计，文末给出了仍然能产生Pareto最优解的证明。此时网络结构为：</p>
+<p><img data-src="https://static01.imgkr.com/temp/39ef45740d8b404bbbf4b4a3a0311aba.png" alt></p>
+<p>能将网络结构和公式推导结合到一起，这个想法是真的可以。还是说：先想出了网络结构，而后给出了数学公式的推导和证明。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>这篇文章依靠数学证明等公式推导，给出了一种如何将神经网络的多任务学习转换为多目标优化的方案，读起来赏心悦目。</p>
 <p><strong>知识使人睿智，工程使人成长。</strong> 无论是遗传算法等启发式算法，还是牛顿迭代法、变尺度法等靠数学证明推导而来的公式，都只是求解问题的工具，但需要结合具体问题来判断哪种工具更为合适。但无论如何，知识会让人有更多的选择方案，而不是没有任何理论依据的胡乱求解，这更像是打开了新世界的大门。但想要更好的掌握优化这门学科，还需要不断的学习和阅读文献，同时必须要注重实际工程的练习，否则无法领会优化的作用与奥妙。<del>这段很突兀的原因是，我这是直接从课程报告里面摘出来的。</del></p>
 
