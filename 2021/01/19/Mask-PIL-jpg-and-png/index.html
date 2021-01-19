@@ -20,20 +20,19 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="只是想出来走走，谁能想到来了北京就下雪了呢。雪后的故宫少了几分平时的端庄肃穆和威严，多了些许的轻快、明丽和舒适。就像传统的中国古风，生于盛世，站于城墙之上，俯览灯火通明的闹市，忙碌一天的官人手里攥着刚买的冰糖葫芦，腰间别着集市上刚买的香包，散步于角楼水畔，栖身在城市的夜景中也算是一天后的休息；遥想日出而作日落而息穿梭于大街小巷的常人，叫卖声走路声喜悦声甚至发呆的声音, 记录于画记录于诗也描述不了盛">
-<meta name="keywords" content="Travel">
+  <meta name="description" content="生命不息，开坑不止。最近在开『目标检测』领域的坑，真坑。众所周知，[Mask R-CNN](https://arxiv.org/abs/1703.06870)是领域内比较强大的方法。仿照Pytorch官方文档，企图搭建自己的模型，制作自己的 mask 数据。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="故宫的雪，雪的故宫">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/01/07/the-palace-museum-in-snow/index.html">
+<meta property="og:title" content="Python使用PIL库制作mask数据时，JPG与PNG的异同">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/01/19/Mask-PIL-jpg-and-png/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="只是想出来走走，谁能想到来了北京就下雪了呢。雪后的故宫少了几分平时的端庄肃穆和威严，多了些许的轻快、明丽和舒适。就像传统的中国古风，生于盛世，站于城墙之上，俯览灯火通明的闹市，忙碌一天的官人手里攥着刚买的冰糖葫芦，腰间别着集市上刚买的香包，散步于角楼水畔，栖身在城市的夜景中也算是一天后的休息；遥想日出而作日落而息穿梭于大街小巷的常人，叫卖声走路声喜悦声甚至发呆的声音, 记录于画记录于诗也描述不了盛">
+<meta property="og:description" content="生命不息，开坑不止。最近在开『目标检测』领域的坑，真坑。众所周知，[Mask R-CNN](https://arxiv.org/abs/1703.06870)是领域内比较强大的方法。仿照Pytorch官方文档，企图搭建自己的模型，制作自己的 mask 数据。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-02T09:59:46.487Z">
+<meta property="og:updated_time" content="2021-01-19T10:02:51.414Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="故宫的雪，雪的故宫">
-<meta name="twitter:description" content="只是想出来走走，谁能想到来了北京就下雪了呢。雪后的故宫少了几分平时的端庄肃穆和威严，多了些许的轻快、明丽和舒适。就像传统的中国古风，生于盛世，站于城墙之上，俯览灯火通明的闹市，忙碌一天的官人手里攥着刚买的冰糖葫芦，腰间别着集市上刚买的香包，散步于角楼水畔，栖身在城市的夜景中也算是一天后的休息；遥想日出而作日落而息穿梭于大街小巷的常人，叫卖声走路声喜悦声甚至发呆的声音, 记录于画记录于诗也描述不了盛">
+<meta name="twitter:title" content="Python使用PIL库制作mask数据时，JPG与PNG的异同">
+<meta name="twitter:description" content="生命不息，开坑不止。最近在开『目标检测』领域的坑，真坑。众所周知，[Mask R-CNN](https://arxiv.org/abs/1703.06870)是领域内比较强大的方法。仿照Pytorch官方文档，企图搭建自己的模型，制作自己的 mask 数据。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/01/07/the-palace-museum-in-snow/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/01/19/Mask-PIL-jpg-and-png/">
 
 
 <script id="page-configurations">
@@ -46,7 +45,7 @@
   };
 </script>
 
-  <title>故宫的雪，雪的故宫 | Just for Life.</title>
+  <title>Python使用PIL库制作mask数据时，JPG与PNG的异同 | Just for Life.</title>
   
 
 
@@ -228,7 +227,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/01/07/the-palace-museum-in-snow/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/01/19/Mask-PIL-jpg-and-png/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          故宫的雪，雪的故宫
+          Python使用PIL库制作mask数据时，JPG与PNG的异同
         </h1>
 
         <div class="post-meta">
@@ -250,24 +249,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-01-07 21:41:59" itemprop="dateCreated datePublished" datetime="2020-01-07T21:41:59+08:00">2020-01-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-02 17:59:46" itemprop="dateModified" datetime="2020-02-02T17:59:46+08:00">2020-02-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">时光相册</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/北京印象/" itemprop="url" rel="index"><span itemprop="name">北京印象</span></a>
-                </span>
+              <time title="创建时间：2021-01-19 16:49:36 / 修改时间：18:02:51" itemprop="dateCreated datePublished" datetime="2021-01-19T16:49:36+08:00">2021-01-19</time>
             </span>
 
           
@@ -281,14 +265,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>269</span>
+              <span>2.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -300,10 +284,34 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>只是想出来走走，谁能想到来了北京就下雪了呢。雪后的故宫少了几分平时的端庄肃穆和威严，多了些许的轻快、明丽和舒适。就像传统的中国古风，生于盛世，站于城墙之上，俯览灯火通明的闹市，忙碌一天的官人手里攥着刚买的冰糖葫芦，腰间别着集市上刚买的香包，散步于角楼水畔，栖身在城市的夜景中也算是一天后的休息；遥想日出而作日落而息穿梭于大街小巷的常人，叫卖声走路声喜悦声甚至发呆的声音, 记录于画记录于诗也描述不了盛世的画卷，袅袅炊烟后的万家灯火，金谷鸣响后的烽烟四起，沧桑风雨后的山河依旧，像一曲悠长的古曲，跌宕起伏。</p>
-<p>多年不读书不写作，大概不会写文字了。</p>
+        <p>生命不息，开坑不止。最近在开『目标检测』领域的坑，<del>真坑。</del>众所周知，<code>[Mask R-CNN](https://arxiv.org/abs/1703.06870)</code>是领域内比较强大的方法。仿照<code>Pytorch</code>官方文档，企图搭建自己的模型，制作自己的 <code>mask</code> 数据。</p>
 <a id="more"></a>
-<p><img data-src="/2020/01/07/the-palace-museum-in-snow/1.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/3.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/4.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/5.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/6.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/11.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/17.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/29.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/31.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/32.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/39.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/40.jpg" alt><br><img data-src="/2020/01/07/the-palace-museum-in-snow/42.jpg" alt></p>
+<p><code>mask</code> 数据长成下图这样，背景一个颜色，每个目标的颜色是不相同的。</p>
+<p><img data-src="https://pytorch.org/tutorials/_static/img/tv_tutorial/tv_image01.png" alt><img data-src="https://pytorch.org/tutorials/_static/img/tv_tutorial/tv_image02.png" alt></p>
+<h1 id="制作数据"><a href="#制作数据" class="headerlink" title="制作数据"></a>制作数据</h1><p>按照题目中给出的 <code>json</code> 数据：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">"name": "223_89_t20201125085855802_CAM3.jpg",</span><br><span class="line">"image_height": 3500,</span><br><span class="line">"image_width": 4096,</span><br><span class="line">"category": 4,</span><br><span class="line">"bbox": [</span><br><span class="line">    1702.79,</span><br><span class="line">    2826.53,</span><br><span class="line">    1730.79,</span><br><span class="line">    <span class="number">2844.53</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>按照 <code>json</code> 数据读取图片，在按照 <code>category</code> 字段使得不同颜色对应不同类别，按照 <code>bbox</code> 字段生成矩形区域，直接一生成，完美。核心代码如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 不同的类使用不同的颜色</span></span><br><span class="line">colors = &#123;</span><br><span class="line">    <span class="string">'background'</span>: <span class="string">'#000000'</span>,</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#110000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#002200'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#000033'</span>,</span><br><span class="line">    <span class="string">'4'</span>: <span class="string">'#445500'</span>,</span><br><span class="line">    <span class="string">'5'</span>: <span class="string">'#660077'</span>,</span><br><span class="line">    <span class="string">'6'</span>: <span class="string">'#008899'</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 先创建一个图片对象，扩大数据作用域</span></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), colors[<span class="string">'background'</span>])</span><br><span class="line"><span class="comment"># 一个图片有好几个坏点 box 区域，所以循环遍历所有坏点</span></span><br><span class="line"><span class="keyword">for</span> pic <span class="keyword">in</span> items:</span><br><span class="line">    <span class="comment"># 第一次遍历，按图片大小生成mask图片大小</span></span><br><span class="line">    <span class="keyword">if</span> height <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">and</span> width <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        height, width = pic[<span class="string">'image_height'</span>], pic[<span class="string">'image_width'</span>]</span><br><span class="line">        im = Image.new(<span class="string">'RGB'</span>, (height, width), colors[<span class="string">'background'</span>])</span><br><span class="line">    <span class="comment"># 按照 size 创建背景颜色的图片</span></span><br><span class="line">    x0, y0 = int(pic[<span class="string">'bbox'</span>][<span class="number">0</span>]), int(pic[<span class="string">'bbox'</span>][<span class="number">1</span>])</span><br><span class="line">    x1, y1 = int(pic[<span class="string">'bbox'</span>][<span class="number">2</span>]), int(pic[<span class="string">'bbox'</span>][<span class="number">3</span>])</span><br><span class="line">    <span class="comment"># 对异常区域创建矩形 作为掩码</span></span><br><span class="line">    im1 = Image.new(<span class="string">'RGB'</span>, (x1-x0, y1-y0), colors[str(pic[<span class="string">'category'</span>])])</span><br><span class="line">    <span class="comment"># 添加掩码区域</span></span><br><span class="line">    im.paste(im1, (x0, y0))</span><br><span class="line"><span class="comment"># 保存图片</span></span><br><span class="line">im.save(save_path + <span class="string">'Mask_'</span> + name[:<span class="number">-4</span>] + <span class="string">'.jpg'</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><p>到这里会发现程序很简单，一帆风顺。<strong>但是，坑来了。</strong>按照如上 <code>mask</code> 生成方法，每个图片上最多有 10 种 <code>RGB</code> 的颜色存在。这里我们写一份小代码复现一下，不能说完全一致，但思想一模一样。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), <span class="string">'#000000'</span>)</span><br><span class="line">im1 = Image.new(<span class="string">'RGB'</span>, (<span class="number">5</span>, <span class="number">5</span>), <span class="string">'#006677'</span>)</span><br><span class="line">im.paste(im1, (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">im.save(<span class="string">'1.jpg'</span>)</span><br></pre></td></tr></table></figure>
+<p>这里在检测下生成的<code>1.jpg</code>中有多少颜色：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), <span class="string">'#000000'</span>)</span><br><span class="line">im1 = Image.new(<span class="string">'RGB'</span>, (<span class="number">5</span>, <span class="number">5</span>), <span class="string">'#006677'</span>)</span><br><span class="line">im.paste(im1, (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">im.save(<span class="string">'1.jpg'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一定要重新打开在读取</span></span><br><span class="line">im2 = Image.open(<span class="string">'1.jpg'</span>).convert(<span class="string">'RGB'</span>)</span><br><span class="line">a = np.array(im2)</span><br><span class="line">print(np.unique(a))</span><br></pre></td></tr></table></figure>
+<p>输出是：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[  <span class="number">0</span>   <span class="number">1</span>   <span class="number">2</span>   <span class="number">3</span>   <span class="number">4</span>   <span class="number">5</span>   <span class="number">6</span>   <span class="number">7</span>   <span class="number">8</span>   <span class="number">9</span>  <span class="number">10</span>  <span class="number">11</span>  <span class="number">12</span>  <span class="number">13</span>  <span class="number">14</span>  <span class="number">15</span>  <span class="number">16</span>  <span class="number">17</span></span><br><span class="line">  <span class="number">18</span>  <span class="number">19</span>  <span class="number">21</span>  <span class="number">22</span>  <span class="number">23</span>  <span class="number">24</span>  <span class="number">25</span>  <span class="number">26</span>  <span class="number">29</span>  <span class="number">30</span>  <span class="number">31</span>  <span class="number">33</span>  <span class="number">35</span>  <span class="number">38</span>  <span class="number">40</span>  <span class="number">41</span>  <span class="number">42</span>  <span class="number">43</span></span><br><span class="line">  <span class="number">76</span>  <span class="number">85</span>  <span class="number">87</span>  <span class="number">88</span>  <span class="number">89</span>  <span class="number">90</span>  <span class="number">91</span>  <span class="number">92</span>  <span class="number">93</span>  <span class="number">94</span>  <span class="number">95</span>  <span class="number">96</span>  <span class="number">97</span>  <span class="number">98</span>  <span class="number">99</span> <span class="number">101</span> <span class="number">102</span> <span class="number">103</span></span><br><span class="line"> <span class="number">105</span> <span class="number">107</span> <span class="number">108</span> <span class="number">109</span> <span class="number">110</span> <span class="number">111</span> <span class="number">115</span> <span class="number">116</span> <span class="number">118</span> <span class="number">122</span> <span class="number">129</span> <span class="number">130</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>平白无故多出来这么多颜色</strong>，当场人就傻了。再来试试把图片保存为 <code>png</code> 格式：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), <span class="string">'#000000'</span>)</span><br><span class="line">im1 = Image.new(<span class="string">'RGB'</span>, (<span class="number">5</span>, <span class="number">5</span>), <span class="string">'#006677'</span>)</span><br><span class="line">im.paste(im1, (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">im.save(<span class="string">'1.png'</span>)</span><br><span class="line"></span><br><span class="line">im2 = Image.open(<span class="string">'1.png'</span>).convert(<span class="string">'RGB'</span>)</span><br><span class="line">a = np.array(im2)</span><br><span class="line">print(np.unique(a))</span><br></pre></td></tr></table></figure>
+<p>此时的输出是：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[  <span class="number">0</span> <span class="number">102</span> <span class="number">119</span>]</span><br><span class="line"><span class="comment"># 16 进制的 66 在 10 进制中是 102</span></span><br><span class="line"><span class="comment"># 16 进制的 77 在 10 进制中是 119</span></span><br></pre></td></tr></table></figure>
+<p>瞬间正常了，看来的确是文件格式导致的原因。</p>
+<h1 id="踩坑分析"><a href="#踩坑分析" class="headerlink" title="踩坑分析"></a>踩坑分析</h1><p>虽然很无能为力的生气，数据集大小是 <code>10GB</code> 大小，重做一次数据都得两个小时左右，<del>好在不是自己的CPU和硬盘。</del>此时打开搜索引擎，查找<code>jpg</code>和<code>png</code>的区别：</p>
+<ul>
+<li><code>jpg</code> 是由 <code>CCITT&amp;ISO</code> 的一群人员，在1987年提出的一种工业压缩标准。此类格式的文件，通过压缩算法将图片大小压缩，会产生图像失真的情况。即在压缩过程中图像的品质会遭受到可见的破坏。</li>
+<li><code>png</code> 格式是无损数据压缩的，还有透明的选择。</li>
+</ul>
+<p>看到这里就可以了，原来是数据格式的问题。<del>是我文盲了，正在去重新做数据的路上。</del></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://mingwang0824.pixnet.net/blog/post/27833076" target="_blank" rel="noopener">https://mingwang0824.pixnet.net/blog/post/27833076</a></li>
+<li><a href="https://www.zhihu.com/question/29758228" target="_blank" rel="noopener">https://www.zhihu.com/question/29758228</a></li>
+</ol>
 
     </div>
 
@@ -311,24 +319,6 @@
     
     
       
-  <div class="popular-posts-header">本文相关</div>
-  <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\10\02\Chang-Bai-Mountain-2018-10-2\" rel="bookmark">长白山之旅</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\DunHuangDesert\" rel="bookmark">大漠飞沙</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\15\FeiCuiHu\" rel="bookmark">云雾缭绕，人间仙境——翡翠湖</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
-    </li>
-  </ul>
 
         <div class="reward-container">
   <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
@@ -371,9 +361,6 @@
 
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Travel/" rel="tag"># Travel</a>
-          </div>
 
         
   <div class="post-widgets">
@@ -386,13 +373,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/11/22/busuanzi-notdisplay/" rel="prev" title="修补hexo-next不蒜子不显示问题">
-      <i class="fa fa-chevron-left"></i> 修补hexo-next不蒜子不显示问题
+    <a href="/2021/01/10/reconcile-myself-to-life/" rel="prev" title="和自己和解">
+      <i class="fa fa-chevron-left"></i> 和自己和解
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/01/07/maintenance-blog/" rel="next" title="关于停止更新博客的通知">
-      关于停止更新博客的通知 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -453,6 +437,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#制作数据"><span class="nav-number">1.</span> <span class="nav-text">制作数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#踩坑"><span class="nav-number">2.</span> <span class="nav-text">踩坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#踩坑分析"><span class="nav-number">3.</span> <span class="nav-text">踩坑分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -736,7 +721,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '3a4a1fc1aa09f5afe82162491e737b1c',
+      id          : '8dadb5f6c294d1b69c37c66f3ab1cf7b',
         language: 'zh-CN',
       distractionFreeMode: true
     });
