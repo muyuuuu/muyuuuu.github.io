@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。本文更侧重理论解读，某些场景下，这些概念可同样用到进程中。">
-<meta name="keywords" content="Computer">
+  <meta name="description" content="使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。本文更侧重理论解读，某些场景下，这些概念可同样用到进程中；样例代码为C语言，其他语言仍然适用。">
+<meta name="keywords" content="Parallel">
 <meta property="og:type" content="article">
-<meta property="og:title" content="程序员的自我修养『二』：线程同步">
-<meta property="og:url" content="https://muyuuuu.github.io/2021/02/18/process-synchronization/index.html">
+<meta property="og:title" content="并行计算『三』：同步">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/02/19/process-synchronization/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。本文更侧重理论解读，某些场景下，这些概念可同样用到进程中。">
+<meta property="og:description" content="使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。本文更侧重理论解读，某些场景下，这些概念可同样用到进程中；样例代码为C语言，其他语言仍然适用。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-19T07:18:39.945Z">
+<meta property="og:updated_time" content="2021-02-19T15:06:39.133Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="程序员的自我修养『二』：线程同步">
-<meta name="twitter:description" content="使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。本文更侧重理论解读，某些场景下，这些概念可同样用到进程中。">
+<meta name="twitter:title" content="并行计算『三』：同步">
+<meta name="twitter:description" content="使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。本文更侧重理论解读，某些场景下，这些概念可同样用到进程中；样例代码为C语言，其他语言仍然适用。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2021/02/18/process-synchronization/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/02/19/process-synchronization/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>程序员的自我修养『二』：线程同步 | Just for Life.</title>
+  <title>并行计算『三』：同步 | Just for Life.</title>
   
 
 
@@ -228,7 +228,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/02/18/process-synchronization/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/02/19/process-synchronization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          程序员的自我修养『二』：线程同步
+          并行计算『三』：同步
         </h1>
 
         <div class="post-meta">
@@ -250,16 +250,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-02-18 17:34:32" itemprop="dateCreated datePublished" datetime="2021-02-18T17:34:32+08:00">2021-02-18</time>
+              <time title="创建时间：2021-02-19 22:41:44 / 修改时间：23:06:39" itemprop="dateCreated datePublished" datetime="2021-02-19T22:41:44+08:00">2021-02-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-19 15:18:39" itemprop="dateModified" datetime="2021-02-19T15:18:39+08:00">2021-02-19</time>
-              </span>
 
           
               <span class="post-meta-item-icon">
@@ -272,7 +266,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.6k</span>
+              <span>6.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -291,7 +285,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。<strong>本文更侧重理论解读，某些场景下，这些概念可同样用到进程中。</strong></p>
+        <p>使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。<strong>本文更侧重理论解读，某些场景下，这些概念可同样用到进程中；样例代码为C语言，其他语言仍然适用。</strong></p>
 <a id="more"></a>
 <h1 id="没有锁的保护"><a href="#没有锁的保护" class="headerlink" title="没有锁的保护"></a>没有锁的保护</h1><p>多线程中，变量都由所有线程共享。所以，任何一个变量都可以被任何一个线程修改。如修改一个变量需要多条语句，在执行这几条语句时，线程可能中断，很可能把内容给改乱了。如下所示的代码，创建一个为0的变量，创建两个线程，每个线程对变量执行+1的操作，得到的最后结果不一定是2。<code>t1, t2</code>为线程，<code>x1, x2</code>为各自线程的临时变量：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始值 g = 0</span></span><br><span class="line">t1: x1 = g + <span class="number">1</span>   <span class="comment">// x1 = 0 + 1</span></span><br><span class="line">t2: x2 = g + <span class="number">1</span>   <span class="comment">// x2 = 0 + 1</span></span><br><span class="line"></span><br><span class="line">t1: g = x1       <span class="comment">// g = x1 = 1</span></span><br><span class="line">t2: g = x2       <span class="comment">// g = x2 = 1</span></span><br><span class="line"><span class="comment">// 最终结果 g = 1 而不是 2</span></span><br></pre></td></tr></table></figure>
@@ -370,19 +364,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\11\15\Arch\" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">并行计算『一』：进程与线程</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\12\Computer-network\" rel="bookmark">计算机网络原理</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\07\about-qa\" rel="bookmark">关于提问与回答</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\17\cg\" rel="bookmark">计算机图形学笔记</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\08\05\digital-foundation\" rel="bookmark">大学计算机：数字化基础</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\18\simple-multithread\" rel="bookmark">并行计算『二』：简单的多线程编程</a></div>
     </li>
   </ul>
 
@@ -428,7 +413,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Computer/" rel="tag"># Computer</a>
+              <a href="/tags/Parallel/" rel="tag"># Parallel</a>
           </div>
 
         
@@ -442,8 +427,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/02/16/flexible-fiber-optic-network-schedule/" rel="prev" title="弹性光网络选路和频谱分配问题建模">
-      <i class="fa fa-chevron-left"></i> 弹性光网络选路和频谱分配问题建模
+    <a href="/2021/02/18/simple-multithread/" rel="prev" title="并行计算『二』：简单的多线程编程">
+      <i class="fa fa-chevron-left"></i> 并行计算『二』：简单的多线程编程
     </a></div>
       <div class="post-nav-item"></div>
     </div>
@@ -522,7 +507,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -535,7 +520,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -576,12 +561,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">538k</span>
+    <span title="站点总字数">547k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:09</span>
+    <span title="站点阅读时长">8:17</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -843,7 +828,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'ba5a9425e6f0c5f3c2b589af97085ac6',
+      id          : '1703cd5c87af73d40df1242f3832639c',
         language: 'zh-CN',
       distractionFreeMode: true
     });
