@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="经过多天的折腾和（准备期末），终于闲下来可以把已经写好的界面发布出来了。另外的修改是，我个人觉得不错的代码会直接放github的链接，一些无所谓的代码，比如 实现快速排序 这种内容就直接放源代码在博客里了。">
-<meta name="keywords" content="GUI">
+  <meta name="description" content="今天玩过头了，明天整。">
+<meta name="keywords" content="Parallel">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个好看通用的PyQt5界面">
-<meta property="og:url" content="https://muyuuuu.github.io/2019/11/16/A-Beautiful-PyQt5-Interface/index.html">
+<meta property="og:title" content="并行计算『四』：通信">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/02/20/process-communicate/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="经过多天的折腾和（准备期末），终于闲下来可以把已经写好的界面发布出来了。另外的修改是，我个人觉得不错的代码会直接放github的链接，一些无所谓的代码，比如 实现快速排序 这种内容就直接放源代码在博客里了。">
+<meta property="og:description" content="今天玩过头了，明天整。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-16T07:19:35.577Z">
+<meta property="og:updated_time" content="2021-02-20T15:23:57.550Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个好看通用的PyQt5界面">
-<meta name="twitter:description" content="经过多天的折腾和（准备期末），终于闲下来可以把已经写好的界面发布出来了。另外的修改是，我个人觉得不错的代码会直接放github的链接，一些无所谓的代码，比如 实现快速排序 这种内容就直接放源代码在博客里了。">
+<meta name="twitter:title" content="并行计算『四』：通信">
+<meta name="twitter:description" content="今天玩过头了，明天整。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2019/11/16/A-Beautiful-PyQt5-Interface/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/02/20/process-communicate/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>一个好看通用的PyQt5界面 | Just for Life.</title>
+  <title>并行计算『四』：通信 | Just for Life.</title>
   
 
 
@@ -228,7 +228,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/11/16/A-Beautiful-PyQt5-Interface/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/02/20/process-communicate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          一个好看通用的PyQt5界面
+          并行计算『四』：通信
         </h1>
 
         <div class="post-meta">
@@ -252,7 +252,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2019-11-16 14:47:52 / 修改时间：15:19:35" itemprop="dateCreated datePublished" datetime="2019-11-16T14:47:52+08:00">2019-11-16</time>
+              <time title="创建时间：2021-02-20 23:02:01 / 修改时间：23:23:57" itemprop="dateCreated datePublished" datetime="2021-02-20T23:02:01+08:00">2021-02-20</time>
             </span>
 
           
@@ -266,7 +266,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>526</span>
+              <span>50</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -285,18 +285,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>经过多天的折腾和（准备期末），终于闲下来可以把已经写好的界面发布出来了。另外的修改是，我个人觉得不错的代码会直接放github的链接，一些无所谓的代码，比如 <code>实现快速排序</code> 这种内容就直接放源代码在博客里了。</p>
+        <p>今天玩过头了，明天整。</p>
 <a id="more"></a>
-<h1 id="效果如下"><a href="#效果如下" class="headerlink" title="效果如下"></a>效果如下</h1><p><img data-src="/2019/11/16/A-Beautiful-PyQt5-Interface/1.gif" alt></p>
-<h1 id="使用工具"><a href="#使用工具" class="headerlink" title="使用工具"></a>使用工具</h1><ul>
-<li>布局类： QStackedLayout, QGridLayout, QVBoxLayout, QHBoxLayout, QSplitter</li>
-<li>容器: QTreeWidget, QFrame, QTabWidget</li>
-<li>常见控件: QLabel, QLineEdit, QRadioButton, QSpinBox, QComboBox, QCalendarWidget, QDateTimeEdit, QMessageBox</li>
-<li>QSS: qdarkstyle </li>
-</ul>
-<h1 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h1><p>写这份代码的目的是，在以后的软件开发用能够快速使用这个界面（或者借鉴修改），灵活使用。所以里面的代码并没有功能函数，只有界面函数，供大家参考借鉴。满足通用性和美观性。</p>
-<p>在以后的开发中要灵活运用这些布局，才能写出好的界面，而不是使用QtDesigner这类可视化工具，毕竟太丑了。</p>
-<h1 id="代码链接"><a href="#代码链接" class="headerlink" title="代码链接"></a>代码链接</h1><p>里面包含了依赖库和运行方式:<br><a href="https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface" target="_blank" rel="noopener">https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface</a></p>
+<p><a href="https://www.zhihu.com/question/19732473" target="_blank" rel="noopener">https://www.zhihu.com/question/19732473</a></p>
 
     </div>
 
@@ -307,19 +298,13 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\01\NCSTModel\" rel="bookmark">华北理工大学数学建模协会竞赛信息管理软件</a></div>
+      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">并行计算『一』：进程与线程</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\03\PyQt5-MVC\" rel="bookmark">PyQt5通过信号实现MVC</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\19\process-synchronization\" rel="bookmark">并行计算『三』：同步</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\05\PyQt5-QThread\" rel="bookmark">PyQt5多线程</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\18\simple-multithread\" rel="bookmark">并行计算『二』：简单的多线程编程</a></div>
     </li>
   </ul>
 
@@ -365,7 +350,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/GUI/" rel="tag"># GUI</a>
+              <a href="/tags/Parallel/" rel="tag"># Parallel</a>
           </div>
 
         
@@ -379,13 +364,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/11/16/git-use/" rel="prev" title="Git与Github的使用">
-      <i class="fa fa-chevron-left"></i> Git与Github的使用
+    <a href="/2021/02/19/process-synchronization/" rel="prev" title="并行计算『三』：同步">
+      <i class="fa fa-chevron-left"></i> 并行计算『三』：同步
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/11/22/busuanzi-notdisplay/" rel="next" title="修补hexo-next不蒜子不显示问题">
-      修补hexo-next不蒜子不显示问题 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -446,7 +428,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#效果如下"><span class="nav-number">1.</span> <span class="nav-text">效果如下</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用工具"><span class="nav-number">2.</span> <span class="nav-text">使用工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#目标"><span class="nav-number">3.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码链接"><span class="nav-number">4.</span> <span class="nav-text">代码链接</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -730,7 +711,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '7b76f8397da4432009d4c8268e3f60e3',
+      id          : '18d9689ba01d2ea7befe9638776070a3',
         language: 'zh-CN',
       distractionFreeMode: true
     });
