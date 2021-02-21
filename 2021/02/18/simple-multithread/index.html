@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-20T15:01:26.398Z">
+<meta property="og:updated_time" content="2021-02-21T09:01:49.565Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="并行计算『二』：简单的多线程编程">
 <meta name="twitter:description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-20 23:01:26" itemprop="dateModified" datetime="2021-02-20T23:01:26+08:00">2021-02-20</time>
+                <time title="修改时间：2021-02-21 17:01:49" itemprop="dateModified" datetime="2021-02-21T17:01:49+08:00">2021-02-21</time>
               </span>
 
           
@@ -272,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8.8k</span>
+              <span>9.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -331,14 +331,28 @@
 <li><code>apply</code>：阻塞执行，池子中第一个进程执行完才会执行第二个</li>
 <li><code>apply_async</code>：非阻塞执行，池子里面的进程可以一起执行</li>
 </ul>
-<p>从保存线程A的状态到准备切换为线程B时，加载线程B的状态的这个过程就叫上下文切换，而上下切换时会消耗大量的CPU时间。因此，只有在特定的条件下开启多线程才会更合适。不可避免的线程开销包括：</p>
+<h2 id="阻塞-非阻塞"><a href="#阻塞-非阻塞" class="headerlink" title="阻塞/非阻塞"></a>阻塞/非阻塞</h2><p>通过操作系统，我们可以知道进程的状态转换：</p>
+<p><img data-src="https://s3.ax1x.com/2021/02/21/yo7Zfe.png" alt></p>
 <ul>
-<li>上下文切换消耗</li>
-<li>线程创建和消亡的开销</li>
-<li>线程需要保存维持线程本地栈，会消耗内存</li>
+<li>新建，分配进程所需资源，在创建进程后，进程将被设为就绪态，所以创建时不可能为其分配CPU去执行</li>
+<li>就绪，进程等待分配处理器，不会到阻塞态</li>
+<li>运行，获取处理器后，指令在执行。中断、时间片用完后为就绪态；等待IO变为阻塞态；</li>
+<li>阻塞，进程等待某个事件发生，事件完成后为就绪，不能到运行态。操作系统会把该线程阻塞起来，避免浪费CPU资源，等到得到了资源，再变成就绪状态，等待CPU调度运行</li>
+<li>终止，进程执行完毕</li>
 </ul>
-<p>对于计算密集型的程序，程序主要为复杂的逻辑判断和复杂的运算，此时CPU的利用率高，不用开太多的线程，开太多线程反而会因为线程切换时切换上下文而浪费资源。计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。</p>
-<p>对于IO密集型的程序，比如磁盘IO(读取文件)和网络IO(网络请求)。因为IO操作会阻塞线程，CPU利用率不高，可以开多点线程，一个线程阻塞时(网络延迟等)可以切换到其他就绪线程，提高CPU的利用率。这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。</p>
+<p>阻塞和非阻塞关注的是<strong>程序在等待调用结果时的状态</strong>：</p>
+<ul>
+<li>阻塞调用是指调用结果返回之前，当前线程会被挂起。它会一直阻塞着，也就是后面的代码都不会执行了，调用线程只有在得到结果之后才会返回。</li>
+<li>非阻塞调用指在不能立刻得到结果之前，当前线程并不会阻塞，无需等待操作彻底完成，也就是后面的程序该执行就执行。</li>
+</ul>
+<p>举个例子，你打电话问书店老板有没有《分布式系统》这本书:</p>
+<ul>
+<li>阻塞式调用，你会一直把自己『挂起』，直到得到这本书有没有的结果；</li>
+<li>如果是非阻塞式调用，你不管老板有没有告诉你，你自己先一边去玩了，当然你也要偶尔过几分钟检查一下老板有没有返回结果。在这里阻塞与非阻塞与是否同步异步无关。跟老板通过什么方式回答你结果无关。</li>
+</ul>
+<blockquote>
+<p>注：阻塞和挂起：阻塞是被动的，比如抢不到资源。挂起是主动的，线程自己调用 suspend() 把自己退出运行态了。</p>
+</blockquote>
 <h1 id="多线程编程"><a href="#多线程编程" class="headerlink" title="多线程编程"></a>多线程编程</h1><p>假如机器本身安装了多个处理器，那么程序会运行得更快，毋需作出任何特殊的调校。多任务可以由多进程完成，也可以由一个进程内的多线程完成。</p>
 <h2 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time, threading</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loop</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br><span class="line"></span><br><span class="line">print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">t = threading.Thread(target=loop, name=<span class="string">'Thread-1'</span>)</span><br><span class="line">t.start()</span><br><span class="line">t.join()</span><br><span class="line">print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br></pre></td></tr></table></figure>
 <p>由于任何进程默认就会启动一个线程，我们把该线程称为主线程，主线程又可以启动新的线程。current_thread()函数，它永远返回当前线程的实例。主线程实例的名字叫MainThread，子线程的名字在创建时指定，我们用Thread-1命名子线程。输出结果如下（最后输出的是主进程的结束）：</p>
@@ -360,7 +374,15 @@
 <p>输出结果如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hello, Alice in Thread-A</span><br><span class="line">Hello, Bob in Thread-B</span><br></pre></td></tr></table></figure>
 <p>全局变量local_school就是一个ThreadLocal对象，每个Thread对它都可以读写student属性，但每个线程都只能读写自己线程的独立副本，互不影响。你可以把local_school看成全局变量，但每个属性如local_school.student都是线程的局部变量，可以任意读写而互不干扰，也不用管理锁的问题。ThreadLocal解决了参数在一个线程中各个函数之间互相传递的问题。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>我们介绍了多进程和多线程，这是实现多任务最常用的两种方式。虽然很水，在实际项目中能应用的概率四舍五入为0，但对于理解多线程、多进程还是有一定帮助的。现在，我们来讨论一下这两种方式的优缺点。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>从保存线程A的状态到准备切换为线程B时，加载线程B的状态的这个过程就叫上下文切换，而上下切换时会消耗大量的CPU时间。因此，只有在特定的条件下开启多线程才会更合适。不可避免的线程开销包括：</p>
+<ul>
+<li>上下文切换消耗</li>
+<li>线程创建和消亡的开销</li>
+<li>线程需要保存维持线程本地栈，会消耗内存</li>
+</ul>
+<p>对于计算密集型的程序，程序主要为复杂的逻辑判断和复杂的运算，此时CPU的利用率高，不用开太多的线程，开太多线程反而会因为线程切换时切换上下文而浪费资源。计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。</p>
+<p>对于IO密集型的程序，比如磁盘IO(读取文件)和网络IO(网络请求)。因为IO操作会阻塞线程，CPU利用率不高，可以开多点线程，一个线程阻塞时(网络延迟等)可以切换到其他就绪线程，提高CPU的利用率。这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。</p>
+<p>我们介绍了多进程和多线程，这是实现多任务最常用的两种方式。虽然很水，在实际项目中能应用的概率四舍五入为0，但对于理解多线程、多进程还是有一定帮助的。现在，我们来讨论一下这两种方式的优缺点。</p>
 <p>多进程模式最大的优点就是稳定性高，因为一个子进程崩溃了，不会影响主进程和其他子进程。（当然主进程挂了所有进程就全挂了，但是Master进程只负责分配任务，挂掉的概率低）。</p>
 <p>多线程模式致命的缺点就是任何一个线程挂掉都可能直接造成整个进程崩溃，因为所有线程共享进程的内存。在Windows上，如果一个线程执行的代码出了问题，你经常可以看到这样的提示：“该程序执行了非法操作，即将关闭”，其实往往是某个线程出了问题，但是操作系统会强制结束整个进程。</p>
 <p>无论是多进程还是多线程，只要数量一多，效率肯定上不去，为什么呢？</p>
@@ -510,7 +532,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程"><span class="nav-number">1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程不共享数据"><span class="nav-number">1.1.</span> <span class="nav-text">进程不共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程共享数据"><span class="nav-number">1.2.</span> <span class="nav-text">进程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程性能记录"><span class="nav-number">1.3.</span> <span class="nav-text">多进程性能记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序执行两个函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">顺序执行两个函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个进程分别执行"><span class="nav-number">1.3.2.</span> <span class="nav-text">两个进程分别执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修正"><span class="nav-number">1.4.</span> <span class="nav-text">修正</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的顺序执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">延时的顺序执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的多进程"><span class="nav-number">1.4.2.</span> <span class="nav-text">延时的多进程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程池"><span class="nav-number">1.5.</span> <span class="nav-text">进程池</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程编程"><span class="nav-number">2.</span> <span class="nav-text">多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程"><span class="nav-number">2.1.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程共享数据"><span class="nav-number">2.2.</span> <span class="nav-text">多线程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多核线程"><span class="nav-number">2.3.</span> <span class="nav-text">多核线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的变量"><span class="nav-number">2.4.</span> <span class="nav-text">线程的变量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">4.</span> <span class="nav-text">后续</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程"><span class="nav-number">1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程不共享数据"><span class="nav-number">1.1.</span> <span class="nav-text">进程不共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程共享数据"><span class="nav-number">1.2.</span> <span class="nav-text">进程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程性能记录"><span class="nav-number">1.3.</span> <span class="nav-text">多进程性能记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序执行两个函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">顺序执行两个函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个进程分别执行"><span class="nav-number">1.3.2.</span> <span class="nav-text">两个进程分别执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修正"><span class="nav-number">1.4.</span> <span class="nav-text">修正</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的顺序执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">延时的顺序执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的多进程"><span class="nav-number">1.4.2.</span> <span class="nav-text">延时的多进程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程池"><span class="nav-number">1.5.</span> <span class="nav-text">进程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞-非阻塞"><span class="nav-number">1.6.</span> <span class="nav-text">阻塞/非阻塞</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程编程"><span class="nav-number">2.</span> <span class="nav-text">多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程"><span class="nav-number">2.1.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程共享数据"><span class="nav-number">2.2.</span> <span class="nav-text">多线程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多核线程"><span class="nav-number">2.3.</span> <span class="nav-text">多核线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的变量"><span class="nav-number">2.4.</span> <span class="nav-text">线程的变量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">4.</span> <span class="nav-text">后续</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -580,12 +602,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">547k</span>
+    <span title="站点总字数">552k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:22</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="今天玩过头了，明天整。">
+  <meta name="description" content="在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、特殊变量等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。">
 <meta name="keywords" content="Parallel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="并行计算『四』：通信">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/02/20/process-communicate/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="今天玩过头了，明天整。">
+<meta property="og:description" content="在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、特殊变量等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-20T15:23:57.550Z">
+<meta property="og:updated_time" content="2021-02-21T15:49:04.273Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="并行计算『四』：通信">
-<meta name="twitter:description" content="今天玩过头了，明天整。">
+<meta name="twitter:description" content="在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、特殊变量等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/02/20/process-communicate/">
 
@@ -250,10 +250,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-02-20 23:02:01 / 修改时间：23:23:57" itemprop="dateCreated datePublished" datetime="2021-02-20T23:02:01+08:00">2021-02-20</time>
+              <time title="创建时间：2021-02-20 23:02:01" itemprop="dateCreated datePublished" datetime="2021-02-20T23:02:01+08:00">2021-02-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-21 23:49:04" itemprop="dateModified" datetime="2021-02-21T23:49:04+08:00">2021-02-21</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -266,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>50</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -285,9 +291,48 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>今天玩过头了，明天整。</p>
+        <p>在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、<a href="https://muyuuuu.github.io/2021/02/18/simple-multithread/">特殊变量</a>等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。</p>
 <a id="more"></a>
-<p><a href="https://www.zhihu.com/question/19732473" target="_blank" rel="noopener">https://www.zhihu.com/question/19732473</a></p>
+<ul>
+<li>队列返回一个进程共享的队列，队列的操作是<a href="https://docs.python.org/3/library/multiprocessing.html#exchanging-objects-between-processes" target="_blank" rel="noopener">线程安全</a>的，也是进程安全的。任何可序列化的对象（Python通过 pickable 模块序列化对象）都可以通过它进行交换。</li>
+<li>管道返回一对被管道连接的连接对象，然后对象就有了 <code>send/receive</code> 方法，可以在进程之间通信</li>
+</ul>
+<h1 id="同步-异步"><a href="#同步-异步" class="headerlink" title="同步/异步"></a>同步/异步</h1><p><strong>消息通信机制</strong>分为同步和异步，在进程间调用：</p>
+<ul>
+<li>所谓同步，就是在发出一个调用时，在没有得到结果之前，该调用就不返回。但是一旦调用返回，就得到返回值了。用户进程发起请求后，需要等待或者轮询操作完成后才能继续执行。</li>
+<li>而异步则是相反，调用在发出之后，这个调用就直接返回了。可能去执行其他的东西，所以暂时没有返回结果。换句话说，当一个异步过程调用发出后，调用者不会立刻得到结果。而是在调用发出后，被调用者通过状态、通知来通知调用者。</li>
+</ul>
+<p>举个通俗的例子：你打电话问书店老板有没有《分布式系统》这本书:</p>
+<ul>
+<li>如果是同步通信机制，书店老板会说，你稍等，”我查一下”，然后开始查啊查，等查好了（可能是5分钟，也可能是一天）告诉你结果（返回结果）。</li>
+<li>而异步通信机制，书店老板直接告诉你我查一下啊，查好了打电话给你，然后直接挂电话了（不返回结果）。然后查好了，他会主动打电话给你。在这里老板通过回电这种方式来回调。</li>
+</ul>
+<h1 id="借助队列的通信"><a href="#借助队列的通信" class="headerlink" title="借助队列的通信"></a>借助队列的通信</h1><p>写了这么多理论，来点代码看一看。这里需要注意的是，如果要创建一个进程的类并封装任务，只需要继承<code>multiprocessing.Process</code>类，并覆写<code>run()</code>方法即可。实现一个多生产者、多消费者的模型。这是典型的异步通信，生产者无需通知消费者，消费者也不需要通知生产者，而是将『队列长度』作为信号，来判断接下来的动作：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Producer</span><span class="params">(multiprocessing.Process)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, queue)</span>:</span></span><br><span class="line">        multiprocessing.Process.__init__(self)</span><br><span class="line">        self.queue = queue</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            item = random.randint(<span class="number">0</span>, <span class="number">256</span>)</span><br><span class="line">            self.queue.put(item)</span><br><span class="line">            print(<span class="string">"Producer : item %d appended to queue %s"</span> % (item, self.name))</span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line">            print(<span class="string">"The size of queue is %s"</span> % self.queue.qsize())</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span><span class="params">(multiprocessing.Process)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, queue)</span>:</span></span><br><span class="line">        multiprocessing.Process.__init__(self)</span><br><span class="line">        self.queue = queue</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">if</span> self.queue.empty():</span><br><span class="line">                print(<span class="string">"the queue is empty"</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                time.sleep(<span class="number">1</span>)</span><br><span class="line">                item = self.queue.get()</span><br><span class="line">                print(<span class="string">'Consumer : item %d popped from by %s \n'</span> % (item, self.name))</span><br><span class="line">                <span class="comment"># put到队列的每个任务都调用了task_done方法后，join才会完成阻塞</span></span><br><span class="line">                self.queue.task_done()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">main</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.queue = multiprocessing.Queue()</span><br><span class="line">        self.process_producer = Producer(self.queue)</span><br><span class="line">        self.process_consumer = Consumer(self.queue)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.t = threading.Timer(<span class="number">1</span>, self.dead)</span><br><span class="line">        self.t.start()</span><br><span class="line">        self.process_producer.start()</span><br><span class="line">        self.process_consumer.start()</span><br><span class="line">        self.process_producer.join()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dead</span><span class="params">(self)</span>:</span></span><br><span class="line">        t = threading.Timer(<span class="number">1</span>, self.dead)</span><br><span class="line">        <span class="comment"># 生产者终止，队列为空，则结束消费者</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.process_producer.is_alive() <span class="keyword">and</span> self.queue.empty():</span><br><span class="line">            self.process_consumer.terminate()</span><br><span class="line">            self.t.cancel()</span><br><span class="line">            t.cancel()</span><br><span class="line">        t.start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    a = main()</span><br><span class="line">    a.run()</span><br></pre></td></tr></table></figure>
+<h1 id="借助管道的通信"><a href="#借助管道的通信" class="headerlink" title="借助管道的通信"></a>借助管道的通信</h1><p><img data-src="https://s3.ax1x.com/2021/02/21/yozLin.png" alt></p>
+<p>管道会返回两个对象，代表了管道的两个端点。每个对象都能通过 send() 和 recv() 方法进行通信。最简单的用法：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Pipe</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(conn)</span>:</span></span><br><span class="line">    conn.send([<span class="number">42</span>, <span class="literal">None</span>, <span class="string">'hello'</span>])</span><br><span class="line">    conn.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    parent_conn, child_conn = Pipe()</span><br><span class="line">    p = Process(target=f, args=(parent_conn, ))</span><br><span class="line">    p.start()</span><br><span class="line">    p.join()</span><br><span class="line">    print(child_conn.recv())</span><br><span class="line">    child_conn.close()</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是，如果俩个进程试图在管道的一端同时进行读或写操作，可能会导致管道崩溃，也就是需要互斥。如果使用管道的两端来同时干这件事是安全的。</p>
+<p>来演示一种通信模型，异步阻塞的通信方式：</p>
+<p><img data-src="https://s3.ax1x.com/2021/02/21/yTfHBT.png" alt></p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sender</span><span class="params">(conn, msgs)</span>:</span> </span><br><span class="line">    <span class="string">""" </span></span><br><span class="line"><span class="string">    function to send messages to other end of pipe </span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">for</span> msg <span class="keyword">in</span> msgs: </span><br><span class="line">        conn.send(msg) </span><br><span class="line">        print(<span class="string">"Sent the message: &#123;&#125;"</span>.format(msg))</span><br><span class="line">    <span class="comment"># 不发送了就关闭</span></span><br><span class="line">    conn.close()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">receiver</span><span class="params">(conn)</span>:</span> </span><br><span class="line">    <span class="string">""" </span></span><br><span class="line"><span class="string">    function to print the messages received from other </span></span><br><span class="line"><span class="string">    end of pipe</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>: </span><br><span class="line">        msg = conn.recv() </span><br><span class="line">        <span class="keyword">if</span> msg == <span class="string">"END"</span>: </span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        print(<span class="string">"Received the message: &#123;&#125;"</span>.format(msg)) </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>: </span><br><span class="line">    <span class="comment"># messages to be sent </span></span><br><span class="line">    msgs = [<span class="string">"hello"</span>, <span class="string">"hey"</span>, <span class="string">"hru?"</span>, <span class="string">"END"</span>] </span><br><span class="line">  </span><br><span class="line">    <span class="comment"># creating a pipe </span></span><br><span class="line">    parent_conn, child_conn = multiprocessing.Pipe()</span><br><span class="line">    print(parent_conn)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># creating new processes </span></span><br><span class="line">    p1 = multiprocessing.Process(target=sender, args=(parent_conn, msgs)) </span><br><span class="line">    p2 = multiprocessing.Process(target=receiver, args=(child_conn))</span><br><span class="line">  </span><br><span class="line">    <span class="comment"># running processes </span></span><br><span class="line">    p1.start() </span><br><span class="line">    p2.start() </span><br><span class="line"></span><br><span class="line">    <span class="comment"># wait until processes finish </span></span><br><span class="line">    p1.join() </span><br><span class="line">    p2.join()</span><br></pre></td></tr></table></figure>
+<p>但是我在使用管道的通信的时候发现了一个<a href="https://stackoverflow.com/questions/66301489/is-connection-objects-returned-by-multiprocessing-pipe-shared-in-different-pro?" target="_blank" rel="noopener">问题</a>。众所周知多进程不共享变量，我在主进程、两个子进程中打印了<code>parent_conn</code>的地址，三个地址都是不相同的。也就是说，<code>p1</code>的发送端和<code>p2</code>的发送端是不一样的，也就是<code>p1</code>的发送端和<code>p2</code>的接收端可能对不上，离奇的是他们居然能通信。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">主进程 parent_coon 地址：0x000001F239546580</span><br><span class="line">p1进程 parent_coon 地址：0x0000016B62B6D460</span><br><span class="line">p2进程 parent_coon 地址：0x000001CC9A709190</span><br></pre></td></tr></table></figure>
+<ul>
+<li>子进程虽然在不同的变量空间中，他们的变量也不一样。这不影响通信，也就是说，子进程发送的数据，被另一个子进程收到，这也正是管道的用处。</li>
+<li>在<code>sender()</code>函数中关闭了发送端，但我在主进程检测发送端是否关闭的时候他又<strong>没有关闭</strong>。这是因为多进程不共享变量，子进程关闭不会影响主进程。神奇。</li>
+</ul>
+<h1 id="与阻塞的组合"><a href="#与阻塞的组合" class="headerlink" title="与阻塞的组合"></a>与阻塞的组合</h1><p>结合<a href="https://muyuuuu.github.io/2021/02/18/simple-multithread/">之前</a>提到的阻塞，有四种工作模式：</p>
+<ul>
+<li><strong>同步阻塞方式</strong>：发送方发送请求之后一直等待响应。接收方处理请求时，直到进行的操作返回结果后，才响应发送方，期间不能进行其他工作。</li>
+<li><strong>同步非阻塞方式</strong>：发送方发送请求之后，一直等待响应。接受方处理请求时进行的IO操作如果不能马上的得到结果，就立即返回，去做其他事情。但是由于没有得到请求处理结果，不响应发送方，发送方一直等待。当操作完成以后，将完成状态和结果通知接收方，接收方再响应发送方，发送方才进入下一次请求过程。（实际不应用）</li>
+<li><strong>异步阻塞方式</strong>：发送方向接收方请求后，不等待响应，可以继续其他工作。接收方处理请求时进行IO操作如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。（实际不应用）</li>
+<li><strong>异步非阻塞方式</strong>：发送方向接收方请求后，不等待响应，可以继续其他工作。接收方处理请求时进行IO操作如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作完成以后，将完成状态和结果通知接收方，接收方再响应发送方。（效率最高）</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://www.zhihu.com/question/19732473/answer/20851256" target="_blank" rel="noopener">https://www.zhihu.com/question/19732473/answer/20851256</a></li>
+<li><a href="https://www.cnblogs.com/loveer/p/11479249.html" target="_blank" rel="noopener">https://www.cnblogs.com/loveer/p/11479249.html</a></li>
+</ol>
 
     </div>
 
@@ -428,6 +473,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#同步-异步"><span class="nav-number">1.</span> <span class="nav-text">同步/异步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借助队列的通信"><span class="nav-number">2.</span> <span class="nav-text">借助队列的通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借助管道的通信"><span class="nav-number">3.</span> <span class="nav-text">借助管道的通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与阻塞的组合"><span class="nav-number">4.</span> <span class="nav-text">与阻塞的组合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -497,12 +543,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">547k</span>
+    <span title="站点总字数">552k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:17</span>
+    <span title="站点阅读时长">8:22</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
