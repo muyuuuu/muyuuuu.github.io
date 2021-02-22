@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-21T09:01:49.565Z">
+<meta property="og:updated_time" content="2021-02-22T09:09:57.929Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="并行计算『二』：简单的多线程编程">
 <meta name="twitter:description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-21 17:01:49" itemprop="dateModified" datetime="2021-02-21T17:01:49+08:00">2021-02-21</time>
+                <time title="修改时间：2021-02-22 17:09:57" itemprop="dateModified" datetime="2021-02-22T17:09:57+08:00">2021-02-22</time>
               </span>
 
           
@@ -272,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>9.4k</span>
+              <span>11k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>10 分钟</span>
             </span>
 
         </div>
@@ -321,17 +321,7 @@
 <h3 id="延时的多进程"><a href="#延时的多进程" class="headerlink" title="延时的多进程"></a>延时的多进程</h3><p>通过time.sleep(2)方法给每个函数增加两秒的延时：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"><span class="keyword">import</span> os, multiprocessing</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Process(target=sum1, args=(<span class="string">'a + b'</span>,))</span><br><span class="line">    q = Process(target=sum2, args=(<span class="string">'c + d'</span>,))</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    start = time.time()</span><br><span class="line">    p.start()</span><br><span class="line">    q.start()</span><br><span class="line">    q.join()</span><br><span class="line">    p.join()</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br><span class="line">    print(end - start)</span><br></pre></td></tr></table></figure>
 <p>我这里的对比结果是：顺序执行的需要4秒，而多进程仅需2秒。证明了多进程的确能有效提高程序的执行效率。</p>
-<h2 id="进程池"><a href="#进程池" class="headerlink" title="进程池"></a>进程池</h2><p>可以使用进程池实现对每个进程的管理，即：决定哪些进程可以在进程池内，等待进程池内的所有进程执行完毕才执行下一部分的程序。粗暴的理解：一个大池子，这个池子里有好多进程，通过这个池子实现对进程的统一管理。</p>
-<p>为了体现进程的<strong>并发</strong>，我特意在12个核的CPU内创建了13个进程。意思是：会有一个进程要等待其他进程释放一个CPU资源才能执行。进程池的close()方法会阻止其他进程在进入进程池，join()方法会等待进程池全部的进程执行完毕。创建13个进程，并使每个进程等待2秒观看执行效果：</p>
-<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> os, time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_time_task</span><span class="params">(name)</span>:</span></span><br><span class="line">    print(<span class="string">'Run task %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    start = time.time()</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Task %s runs %0.2f seconds.'</span> % (name, (end - start)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Pool(<span class="number">13</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">14</span>):</span><br><span class="line">    ​    p.apply_async(long_time_task, args=(i,))</span><br><span class="line">    print(<span class="string">'Waiting for all subprocesses done...'</span>)</span><br><span class="line">    <span class="comment"># 不能在增加其他进程</span></span><br><span class="line">    p.close()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'All subprocesses done.'</span>)</span><br></pre></td></tr></table></figure>
-<p><img data-src="https://s3.ax1x.com/2021/02/19/y49YKe.png" alt></p>
-<p>可以看到，第13个进程很晚才创建，在3, 2, 1, 12, 0, 10, 4, 7, 11, 8这几个进程执行完毕后，第13个进程才刚刚创建。</p>
-<p>在这13个进程中，每个进程都有一个主线程。CPU给线程分配时间片(也就是分配给线程的时间)，执行完时间片后会切换都另一个线程（不是时间片也可能是其他的调度算法）。这里的进程池可以阻塞也可以不阻塞：</p>
-<ul>
-<li><code>apply</code>：阻塞执行，池子中第一个进程执行完才会执行第二个</li>
-<li><code>apply_async</code>：非阻塞执行，池子里面的进程可以一起执行</li>
-</ul>
-<h2 id="阻塞-非阻塞"><a href="#阻塞-非阻塞" class="headerlink" title="阻塞/非阻塞"></a>阻塞/非阻塞</h2><p>通过操作系统，我们可以知道进程的状态转换：</p>
+<h1 id="阻塞-非阻塞"><a href="#阻塞-非阻塞" class="headerlink" title="阻塞/非阻塞"></a>阻塞/非阻塞</h1><p>通过操作系统，我们可以知道进程的状态转换：</p>
 <p><img data-src="https://s3.ax1x.com/2021/02/21/yo7Zfe.png" alt></p>
 <ul>
 <li>新建，分配进程所需资源，在创建进程后，进程将被设为就绪态，所以创建时不可能为其分配CPU去执行</li>
@@ -353,6 +343,18 @@
 <blockquote>
 <p>注：阻塞和挂起：阻塞是被动的，比如抢不到资源。挂起是主动的，线程自己调用 suspend() 把自己退出运行态了。</p>
 </blockquote>
+<h1 id="进程池"><a href="#进程池" class="headerlink" title="进程池"></a>进程池</h1><p>可以使用进程池实现对每个进程的管理，即：决定哪些进程可以在进程池内，等待进程池内的所有进程执行完毕才执行下一部分的程序。粗暴的理解：一个大池子，这个池子里有好多进程，通过这个池子实现对进程的统一管理。</p>
+<h2 id="apply-async-方法"><a href="#apply-async-方法" class="headerlink" title="apply_async 方法"></a>apply_async 方法</h2><p>为了体现进程的<strong>并发</strong>，我特意在12个核的CPU内创建了13个进程。意思是：会有一个进程要等待其他进程释放一个CPU资源才能执行。进程池的close()方法会阻止其他进程在进入进程池，join()方法会等待进程池全部的进程执行完毕。创建13个进程，并使每个进程等待2秒观看执行效果：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> os, time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_time_task</span><span class="params">(name)</span>:</span></span><br><span class="line">    print(<span class="string">'Run task %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    start = time.time()</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Task %s runs %0.2f seconds.'</span> % (name, (end - start)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Pool(<span class="number">13</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">14</span>):</span><br><span class="line">    ​    p.apply_async(long_time_task, args=(i,))</span><br><span class="line">    print(<span class="string">'Waiting for all subprocesses done...'</span>)</span><br><span class="line">    <span class="comment"># 不能在增加其他进程</span></span><br><span class="line">    p.close()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'All subprocesses done.'</span>)</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://s3.ax1x.com/2021/02/19/y49YKe.png" alt></p>
+<p>可以看到，第13个进程很晚才创建，在3, 2, 1, 12, 0, 10, 4, 7, 11, 8这几个进程执行完毕后，第13个进程才刚刚创建。</p>
+<p>在这13个进程中，每个进程都有一个主线程。CPU给线程分配时间片(也就是分配给线程的时间)，执行完时间片后会切换都另一个线程（不是时间片也可能是其他的调度算法）。这里的进程池可以阻塞也可以不阻塞：</p>
+<ul>
+<li><code>apply</code>：阻塞执行，池子中第一个进程执行完才会执行第二个</li>
+<li><code>apply_async</code>：非阻塞执行，池子里面的进程可以一起执行</li>
+</ul>
+<h2 id="map-方法"><a href="#map-方法" class="headerlink" title="map 方法"></a>map 方法</h2><p>普通的<code>map</code>方法只支持一个可迭代对象。这个方法会将可迭代对象分割为许多块，然后提交给进程池。对于很长的对象，可以使用<code>imap</code> 将 chunksize 设置为一个正整数从而（近似）指定每个块的大小。若想添加额外参数，可以使用 <code>starmap</code> 方法。同样，也都有对应的异步版本。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing <span class="keyword">as</span> mp</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line"></span><br><span class="line">    nprocs = mp.cpu_count()</span><br><span class="line">    print(<span class="string">f"Number of CPU cores: <span class="subst">&#123;nprocs&#125;</span>"</span>)</span><br><span class="line"></span><br><span class="line">    pool = mp.Pool(processes=nprocs)</span><br><span class="line"></span><br><span class="line">    result = pool.map(square, range(<span class="number">20</span>))</span><br><span class="line">    print(result)</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br></pre></td></tr></table></figure>
 <h1 id="多线程编程"><a href="#多线程编程" class="headerlink" title="多线程编程"></a>多线程编程</h1><p>假如机器本身安装了多个处理器，那么程序会运行得更快，毋需作出任何特殊的调校。多任务可以由多进程完成，也可以由一个进程内的多线程完成。</p>
 <h2 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h2><figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time, threading</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loop</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br><span class="line"></span><br><span class="line">print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">t = threading.Thread(target=loop, name=<span class="string">'Thread-1'</span>)</span><br><span class="line">t.start()</span><br><span class="line">t.join()</span><br><span class="line">print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br></pre></td></tr></table></figure>
 <p>由于任何进程默认就会启动一个线程，我们把该线程称为主线程，主线程又可以启动新的线程。current_thread()函数，它永远返回当前线程的实例。主线程实例的名字叫MainThread，子线程的名字在创建时指定，我们用Thread-1命名子线程。输出结果如下（最后输出的是主进程的结束）：</p>
@@ -374,6 +376,11 @@
 <p>输出结果如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hello, Alice in Thread-A</span><br><span class="line">Hello, Bob in Thread-B</span><br></pre></td></tr></table></figure>
 <p>全局变量local_school就是一个ThreadLocal对象，每个Thread对它都可以读写student属性，但每个线程都只能读写自己线程的独立副本，互不影响。你可以把local_school看成全局变量，但每个属性如local_school.student都是线程的局部变量，可以任意读写而互不干扰，也不用管理锁的问题。ThreadLocal解决了参数在一个线程中各个函数之间互相传递的问题。</p>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>通过多线程计算$\pi$，来演示串行代码和并行代码的时间差，展示并行计算的魅力。</p>
+<script type="math/tex; mode=display">\pi=\int_0^1\frac{4}{1+x^2}\text{d}x</script><h2 id="串行代码"><a href="#串行代码" class="headerlink" title="串行代码"></a>串行代码</h2><p>学过积分应该能根据公式看懂代码吧，耗时大概 3 秒左右。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">nsteps = <span class="number">10000000</span></span><br><span class="line">dx = <span class="number">1.0</span> / nsteps</span><br><span class="line">pi = <span class="number">0.0</span></span><br><span class="line">since = time.time()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(nsteps):</span><br><span class="line">    x = i / nsteps</span><br><span class="line">    pi += <span class="number">4.0</span> / (<span class="number">1.0</span> + x * x)</span><br><span class="line">pi *= dx</span><br><span class="line">end = time.time()</span><br><span class="line">print(pi / nsteps)</span><br><span class="line">print(end - since)</span><br></pre></td></tr></table></figure>
+<h2 id="并行代码"><a href="#并行代码" class="headerlink" title="并行代码"></a>并行代码</h2><p>为了并行串行的代码，我们需要将<code>for</code>循环划分为几个子任务，并将它们分配给多个进程。所以需要提供每个进程的起始点、终止点和步长，且需要防止重复计算。然后把各个进程扔到进程池中，得到最后的返回结果后相加即可。为了使展示代码更清晰，我手动划分了两个进程。执行时间大概一秒左右。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing, time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calc_pi</span><span class="params">(start, end)</span>:</span></span><br><span class="line">    steps = end - start</span><br><span class="line">    pi = <span class="number">0</span></span><br><span class="line">    dx = <span class="number">1</span> / (end - start)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(steps):</span><br><span class="line">        x = i / steps</span><br><span class="line">        pi += <span class="number">4.0</span> / (<span class="number">1.0</span> + x * x)</span><br><span class="line">    <span class="keyword">return</span> pi * dx</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line"></span><br><span class="line">    num = <span class="number">2</span></span><br><span class="line">    p = multiprocessing.Pool(num)</span><br><span class="line">    inputs = [(<span class="number">1</span>, <span class="number">5000000</span>), (<span class="number">5000000</span>, <span class="number">10000000</span>)]</span><br><span class="line"></span><br><span class="line">    since = time.time()</span><br><span class="line">    multi_result = [p.apply_async(calc_pi, inp) <span class="keyword">for</span> inp <span class="keyword">in</span> inputs]</span><br><span class="line">    p.close()</span><br><span class="line">    p.join()</span><br><span class="line">    end = time.time()</span><br><span class="line">    </span><br><span class="line">    result = [p.get() <span class="keyword">for</span> p <span class="keyword">in</span> multi_result]</span><br><span class="line">    pi = sum(result) / <span class="number">2</span></span><br><span class="line">    </span><br><span class="line">    print(pi)</span><br><span class="line">    print(end - since)</span><br></pre></td></tr></table></figure>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>从保存线程A的状态到准备切换为线程B时，加载线程B的状态的这个过程就叫上下文切换，而上下切换时会消耗大量的CPU时间。因此，只有在特定的条件下开启多线程才会更合适。不可避免的线程开销包括：</p>
 <ul>
 <li>上下文切换消耗</li>
@@ -532,7 +539,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程"><span class="nav-number">1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程不共享数据"><span class="nav-number">1.1.</span> <span class="nav-text">进程不共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程共享数据"><span class="nav-number">1.2.</span> <span class="nav-text">进程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程性能记录"><span class="nav-number">1.3.</span> <span class="nav-text">多进程性能记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序执行两个函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">顺序执行两个函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个进程分别执行"><span class="nav-number">1.3.2.</span> <span class="nav-text">两个进程分别执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修正"><span class="nav-number">1.4.</span> <span class="nav-text">修正</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的顺序执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">延时的顺序执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的多进程"><span class="nav-number">1.4.2.</span> <span class="nav-text">延时的多进程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程池"><span class="nav-number">1.5.</span> <span class="nav-text">进程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞-非阻塞"><span class="nav-number">1.6.</span> <span class="nav-text">阻塞/非阻塞</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程编程"><span class="nav-number">2.</span> <span class="nav-text">多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程"><span class="nav-number">2.1.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程共享数据"><span class="nav-number">2.2.</span> <span class="nav-text">多线程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多核线程"><span class="nav-number">2.3.</span> <span class="nav-text">多核线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的变量"><span class="nav-number">2.4.</span> <span class="nav-text">线程的变量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">4.</span> <span class="nav-text">后续</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程"><span class="nav-number">1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程不共享数据"><span class="nav-number">1.1.</span> <span class="nav-text">进程不共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程共享数据"><span class="nav-number">1.2.</span> <span class="nav-text">进程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程性能记录"><span class="nav-number">1.3.</span> <span class="nav-text">多进程性能记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序执行两个函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">顺序执行两个函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个进程分别执行"><span class="nav-number">1.3.2.</span> <span class="nav-text">两个进程分别执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修正"><span class="nav-number">1.4.</span> <span class="nav-text">修正</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的顺序执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">延时的顺序执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的多进程"><span class="nav-number">1.4.2.</span> <span class="nav-text">延时的多进程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#阻塞-非阻塞"><span class="nav-number">2.</span> <span class="nav-text">阻塞/非阻塞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程池"><span class="nav-number">3.</span> <span class="nav-text">进程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#apply-async-方法"><span class="nav-number">3.1.</span> <span class="nav-text">apply_async 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map-方法"><span class="nav-number">3.2.</span> <span class="nav-text">map 方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程编程"><span class="nav-number">4.</span> <span class="nav-text">多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程"><span class="nav-number">4.1.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程共享数据"><span class="nav-number">4.2.</span> <span class="nav-text">多线程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多核线程"><span class="nav-number">4.3.</span> <span class="nav-text">多核线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的变量"><span class="nav-number">4.4.</span> <span class="nav-text">线程的变量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实例"><span class="nav-number">5.</span> <span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#串行代码"><span class="nav-number">5.1.</span> <span class="nav-text">串行代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并行代码"><span class="nav-number">5.2.</span> <span class="nav-text">并行代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">7.</span> <span class="nav-text">后续</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -602,12 +609,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">552k</span>
+    <span title="站点总字数">553k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:22</span>
+    <span title="站点阅读时长">8:23</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -802,6 +809,59 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
