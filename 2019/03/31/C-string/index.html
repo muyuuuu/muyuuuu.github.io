@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="起初是为了刷题而学习使用C++的，毕竟算法很重要。为什么不使用python作为刷题工具呢，第一性能很差劲，第二，上学期学算法我写python的第一句就是import numpy as np，这是个不太好的习惯。 刷题的过程中，因为对C++的一些形如STL的特性并不是很了解，与其说是C++倒不如说是C，所以不如学习一下C++的特性先。没想到两年后我来填坑了。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-03-04T13:51:01.371Z">
+<meta property="og:updated_time" content="2021-03-08T02:56:33.066Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++数据结构篇『一』：字符串类">
 <meta name="twitter:description" content="起初是为了刷题而学习使用C++的，毕竟算法很重要。为什么不使用python作为刷题工具呢，第一性能很差劲，第二，上学期学算法我写python的第一句就是import numpy as np，这是个不太好的习惯。 刷题的过程中，因为对C++的一些形如STL的特性并不是很了解，与其说是C++倒不如说是C，所以不如学习一下C++的特性先。没想到两年后我来填坑了。">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-04 21:51:01" itemprop="dateModified" datetime="2021-03-04T21:51:01+08:00">2021-03-04</time>
+                <time title="修改时间：2021-03-08 10:56:33" itemprop="dateModified" datetime="2021-03-08T10:56:33+08:00">2021-03-08</time>
               </span>
 
           
@@ -272,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.9k</span>
+              <span>3.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -294,27 +294,8 @@
         <p>起初是为了刷题而学习使用<code>C++</code>的，毕竟算法很重要。为什么不使用<code>python</code>作为刷题工具呢，第一性能很差劲，第二，上学期学算法我写<code>python</code>的第一句就是<code>import numpy as np</code>，这是个不太好的习惯。</p>
 <p>刷题的过程中，因为对<code>C++</code>的一些形如<code>STL</code>的特性并不是很了解，与其说是<code>C++</code>倒不如说是<code>C</code>，所以不如学习一下<code>C++</code>的特性先。<del>没想到两年后我来填坑了。</del></p>
 <a id="more"></a>
-<h1 id="C语言中的字符串"><a href="#C语言中的字符串" class="headerlink" title="C语言中的字符串"></a>C语言中的字符串</h1><p>C语言中的字符串不能作为参数返回，因为子函数在执行完毕后所有变量的空间都会释放，（当然全局变量除外），处理起来比较麻烦。且C语言的字符串为字符数组，类型为<code>const char*</code>，遇到0会终止，无法记录自身长度，不能像对象那样用着方便。所以来用C++的String类吧，体验真正的字符串。</p>
-<h1 id="到C-中String类的世界"><a href="#到C-中String类的世界" class="headerlink" title="到C++中String类的世界"></a>到C++中String类的世界</h1><p>C语言中，字符串存到字符数组，以空字符结尾。</p>
-<p>C语言风格的数组：</p>
-<ul>
-<li>可能退化为指针，<code>sizeof(a)/sizeof(a[0])</code>失效</li>
-<li>不知道自己的大小</li>
-<li>数组元素无法直接复制, a = b</li>
-<li>不能自动推导类型，auto a[] = {1, 2, 3}</li>
-</ul>
-<p>C++风格数组：</p>
-<ul>
-<li>是一个容器类，有迭代器</li>
-<li>是模板类，容纳任何类型的数据，但数组不能扩大也不能缩小，数据类型相同</li>
-<li>对类模板的参数进行推导，推导出类型和数量</li>
-<li>可以直接赋值</li>
-<li>知道自己的大小 size()</li>
-<li>和另一个数组交换内容 swap()</li>
-<li>用指定内容填充自己 fill()</li>
-<li>取某个元素位置，做越界检查 at()</li>
-</ul>
-<h2 id="声明与初始化"><a href="#声明与初始化" class="headerlink" title="声明与初始化"></a>声明与初始化</h2><ul>
+<h1 id="C语言中的字符串"><a href="#C语言中的字符串" class="headerlink" title="C语言中的字符串"></a>C语言中的字符串</h1><p>C语言中的字符串不能作为参数返回，因为子函数在执行完毕后所有变量的空间都会释放，（当然全局变量除外），处理起来比较麻烦。且C语言的字符串为字符数组，类型为<code>const char*</code>，以空字符结尾，遇到0会终止，无法记录自身长度，不能像对象那样用着方便。所以来用C++的String类吧，体验真正的字符串。</p>
+<h1 id="到C-中String类的世界"><a href="#到C-中String类的世界" class="headerlink" title="到C++中String类的世界"></a>到C++中String类的世界</h1><h2 id="声明与初始化"><a href="#声明与初始化" class="headerlink" title="声明与初始化"></a>声明与初始化</h2><ul>
 <li>C++11中生字符串语法：R”delimiter(raw_characters)delimiter”。</li>
 <li>C++14字符串，重载 “”s 运算符。</li>
 </ul>
@@ -353,19 +334,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\05\01\Cpp-Sequential-Container\" rel="bookmark">C++数据结构篇『二』：数组、向量、链表与队列</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++数据结构篇『三』：映射、集合与栈</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\09\07\PAT-advanced\" rel="bookmark">PAT甲级整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\08\21\PAT-basic\" rel="bookmark">PAT乙级整理</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++常用数据结构</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
     </li>
   </ul>
 
@@ -509,7 +490,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-count">150</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -563,12 +544,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">567k</span>
+    <span title="站点总字数">569k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:35</span>
+    <span title="站点阅读时长">8:38</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
