@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
-<meta name="keywords" content="Python,Algorithm">
+  <meta name="description" content="容器适配器是依赖顺序容器的受限版本，处理特殊情况。如：  stack：栈，后入先出 queue，队列，先入先出 priority_queue，优先级队列，元素出队顺序取决于优先级">
+<meta name="keywords" content="DataStructure,C++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="编程与数学的结晶：从数据结构到搜索引擎">
-<meta property="og:url" content="https://muyuuuu.github.io/2019/05/19/search-engine/index.html">
+<meta property="og:title" content="C++数据结构篇『四』容器适配器">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/06/03/container-adapter/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
+<meta property="og:description" content="容器适配器是依赖顺序容器的受限版本，处理特殊情况。如：  stack：栈，后入先出 queue，队列，先入先出 priority_queue，优先级队列，元素出队顺序取决于优先级">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-26T10:00:19.827Z">
+<meta property="og:updated_time" content="2021-03-10T02:27:24.007Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="编程与数学的结晶：从数据结构到搜索引擎">
-<meta name="twitter:description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
+<meta name="twitter:title" content="C++数据结构篇『四』容器适配器">
+<meta name="twitter:description" content="容器适配器是依赖顺序容器的受限版本，处理特殊情况。如：  stack：栈，后入先出 queue，队列，先入先出 priority_queue，优先级队列，元素出队顺序取决于优先级">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2019/05/19/search-engine/">
+<link rel="canonical" href="https://muyuuuu.github.io/2019/06/03/container-adapter/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>编程与数学的结晶：从数据结构到搜索引擎 | Just for Life.</title>
+  <title>C++数据结构篇『四』容器适配器 | Just for Life.</title>
   
 
 
@@ -228,7 +228,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/05/19/search-engine/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/06/03/container-adapter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          编程与数学的结晶：从数据结构到搜索引擎
+          C++数据结构篇『四』容器适配器
         </h1>
 
         <div class="post-meta">
@@ -251,14 +251,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-19 11:08:07" itemprop="dateCreated datePublished" datetime="2019-05-19T11:08:07+08:00">2019-05-19</time>
+              <time title="创建时间：2019-06-03 20:28:03" itemprop="dateCreated datePublished" datetime="2019-06-03T20:28:03+08:00">2019-06-03</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-26 18:00:19" itemprop="dateModified" datetime="2020-03-26T18:00:19+08:00">2020-03-26</time>
+                <time title="修改时间：2021-03-10 10:27:24" itemprop="dateModified" datetime="2021-03-10T10:27:24+08:00">2021-03-10</time>
               </span>
 
           
@@ -272,7 +272,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
+              <span>4.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -291,105 +291,45 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看起来不连贯，可以阅读原书，计算机专业推荐这两本书都读，非计算机专业只推荐阅读《数学之美》）</p>
+        <p>容器适配器是依赖顺序容器的受限版本，处理特殊情况。如：</p>
+<ul>
+<li>stack：栈，后入先出</li>
+<li>queue，队列，先入先出</li>
+<li>priority_queue，优先级队列，元素出队顺序取决于优先级</li>
+</ul>
 <a id="more"></a>
-<h1 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>以下内容只是简单的举例，先来看两个简单的句子：</p>
+<h1 id="stack"><a href="#stack" class="headerlink" title="stack"></a>stack</h1><p>栈是一种先入先出的数据结构，可以很好的利用这一特性解决问题。常用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line"><span class="comment">// 压栈</span></span><br><span class="line">s.push(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// 查看栈顶元素</span></span><br><span class="line">s.top()</span><br><span class="line"><span class="comment">// 弹栈</span></span><br><span class="line">s.pop()</span><br></pre></td></tr></table></figure>
+<h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2><p>Given some segments of rope, you are supposed to chain them into one rope. Each time you may only fold two segments into loops and chain them into one piece, as shown by the figure. The resulting chain will be treated as another segment of rope and can be folded again. After each chaining, the lengths of the original two segments will be halved.</p>
+<p>Your job is to make the longest possible rope out of $N$ given segments.</p>
+<p><strong>Input Specification:</strong></p>
+<p>Each input file contains one test case. For each case, the first line gives a positive integer $N (2≤N≤10^​4)$. Then $N$ positive integer lengths of the segments are given in the next line, separated by spaces. All the integers are no more than $10^4$.</p>
+<p><strong>Output Specification:</strong></p>
+<p>For each case, print in a line the length of the longest possible rope that can be made by the given segments. The result must be rounded to the nearest integer that is no greater than the maximum length.</p>
+<p><strong>输入样例：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">8</span><br><span class="line">10 15 12 3 4 13 1 15</span><br></pre></td></tr></table></figure>
+<p><strong>输出样例：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">14</span><br></pre></td></tr></table></figure>
+<h2 id="求解"><a href="#求解" class="headerlink" title="求解"></a>求解</h2><p>题目大意很简单，两个绳子对折后成为一个新的绳子，这个新的绳子对折后和另外一个对折的绳子组成新的绳子，求最终绳子能有多长。使用栈这种结构会比vector插入删除元素要快上一倍。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span> &lt;<span class="keyword">float</span>&gt; arr;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cmp</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &gt; b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, a;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; a;</span><br><span class="line">        arr.push_back(a);</span><br><span class="line">    &#125;</span><br><span class="line">    sort(arr.begin(), arr.end(), cmp);</span><br><span class="line">    <span class="keyword">float</span> temp, temp1, temp2;</span><br><span class="line">    <span class="built_in">stack</span> &lt;<span class="keyword">float</span>&gt; s;</span><br><span class="line">    <span class="comment">// 按照降序压栈 先折短的 在折长的</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.size(); i++)</span><br><span class="line">        s.push(arr[i]);</span><br><span class="line">    <span class="keyword">while</span> (s.size() != <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 取两个栈顶元素</span></span><br><span class="line">        temp1 = s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">        temp2 = s.top();</span><br><span class="line">        temp = temp1 / <span class="number">2</span> + temp2 / <span class="number">2</span>;</span><br><span class="line">        s.pop();</span><br><span class="line">        <span class="comment">// 压入对折后的长度</span></span><br><span class="line">        s.push(temp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">floor</span>(s.top());</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有其他栈的应用，如『<a href="http://localhost:4000/2020/03/28/stack-pop-sequence/" target="_blank" rel="noopener">判断元素入栈出栈顺序</a>』</p>
+<h1 id="queue"><a href="#queue" class="headerlink" title="queue"></a>queue</h1><p>区别于<code>deque</code>，只能在队首取出元素，只能在队尾加入元素；不能在队首加入元素，不能在队尾删除元素。常用操作为：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 返回队首第一个元素</span></span><br><span class="line">front()</span><br><span class="line"><span class="comment">// 返回队尾最后一个元素</span></span><br><span class="line">back()</span><br><span class="line"><span class="comment">// 队尾添加元素</span></span><br><span class="line">push()</span><br><span class="line"><span class="comment">// 队首删除元素</span></span><br><span class="line">pop()</span><br><span class="line"><span class="comment">// 大小</span></span><br><span class="line"><span class="built_in">size</span>()</span><br><span class="line"><span class="comment">// 是否为空</span></span><br><span class="line">empty()</span><br><span class="line"><span class="comment">// 交换</span></span><br><span class="line">swap()</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是，<code>queue</code>没有迭代器，只能通过队首、队尾的操作访问元素，但<code>deque</code>有。</p>
+<h1 id="priority-queue"><a href="#priority-queue" class="headerlink" title="priority_queue"></a>priority_queue</h1><p>优先级队列，同<code>queue</code>的使用，需要先引入头文件<code>#include&lt;queue&gt;</code>才能使用。计算机专业的人可能经常听到『优先级队列』这个词汇，尤其是在操作系统中。按照元素的优先级，决定对其进行的操作，是调用，还是继续等待。这里来直接看一个题目。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>Suppose a bank has $K$ windows open for service. There is a yellow line in front of the windows which devides the waiting area into two parts. All the customers have to wait in line behind the yellow line, until it is his/her turn to be served and there is a window available. It is assumed that no window can be occupied by a single customer for more than 1 hour.</p>
+<p>Now given the arriving time $T$ and the processing time $P$ of each customer, you are supposed to tell the average waiting time of all the customers.</p>
+<h3 id="Input-Specification"><a href="#Input-Specification" class="headerlink" title="Input Specification:"></a>Input Specification:</h3><p>Each input file contains one test case. For each case, the first line contains 2 numbers: $N (≤10^4$) - the total number of customers, and $K (≤100)$ - the number of windows. Then $N$ lines follow, each contains 2 times: <code>HH:MM:SS</code> - the arriving time, and <code>P</code> - the processing time in minutes of a customer. Here <code>HH</code> is in the range [00, 23], <code>MM</code> and <code>SS</code> are both in [00, 59]. It is assumed that no two customers arrives at the same time.</p>
+<p>Notice that the bank opens from 08:00 to 17:00. Anyone arrives early will have to wait in line till 08:00, and anyone comes too late (at or after 17:00:01) will not be served nor counted into the average.</p>
+<h3 id="Output-Specification"><a href="#Output-Specification" class="headerlink" title="Output Specification:"></a>Output Specification:</h3><p>For each test case, print in one line the average waiting time of all the customers, in minutes and accurate up to 1 decimal place.</p>
+<h2 id="求解-1"><a href="#求解-1" class="headerlink" title="求解"></a>求解</h2><p>首先创建一个优先级队列，因为这个几个窗口是处理完用户就可以处理下一个用户，用户早到早处理完就早走，所以优先级设置为小，即小的元素先出队。队列的数量就是窗口的个数。然后将用户的到达时间进行排序，逐步入队。</p>
 <ul>
-<li><em>Iron Man</em> is a 2008 American superhero film based on the Marvel Comics character of the same name. </li>
-<li><em>Captain</em> America is a fictional superhero appearing in American comic books published by Marvel Comics. </li>
+<li>若到达时有窗口空闲，直接入队</li>
+<li>若到达时无窗口空闲，计算最少需要等待的时间，计算平均等待时间</li>
 </ul>
-<p>假设上面两个句子是两个网页里面的内容吧。当创建新的网页部署到因特网上的时候，形如谷歌、必应等引擎会第一时间派遣爬虫机器人来获取你网页上的内容，比如各种单词的数量，单词内容等。将获取到的信息添加到谷歌内部的数据库里面。当某一用户使用谷歌搜索时，谷歌根据自己内部数据库的东西，进行各种算法，给出你想要的结果。</p>
-<p>形如各种常用的搜索引擎，即使待推荐的网页里面有一万个单词，但是搜索的时间都不会很长。显然并没有去遍历每个网页来确定是否推荐，而是设立了一种合理的数据结构来加快搜索进程。这个数据结构就是倒排索引。</p>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>对于上面两个句子，一共有二三十个单词。假设有33个单词吧，我懒得数了，那么我们就建立一个33长度的表。那么 Iron Man 是 1 中特有的单词，fictional 是 2 中特有的单词，superhero是 1 和 2 供有的单词，那么得到下面的表。</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>单词</th>
-<th>索引</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Iron Man</td>
-<td>1</td>
-</tr>
-<tr>
-<td>fictional</td>
-<td>2</td>
-</tr>
-<tr>
-<td>superhero</td>
-<td>1, 2</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>当有新的网页时就增加第三个网页，记为 3 。当然在后期处理的时候，单词的过去式、正在进行时、被动词等可以视为一个单词。当用户在引擎中输入搜索的内容时，比如superhero，那么就会搜索superhero在哪里出现。superhero在1， 2 中出现，那么就把1， 2 推荐出去。由此可见，这个方式根据内容确立索引顺序，而别的排序方式（脑补斗地主整理牌是有顺序的）是根据索引顺序确定牌的位置。和别的排序方案的逻辑相反，因此称为倒排索引。</p>
-<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ul>
-<li>这个词表可以使用基数排序增加查询速度(基数排序就脑补新华字典的按拼音排序，一个道理)。</li>
-<li>词表不仅仅存储单词在哪里出现，还可以包括单词在该网页中出现的频率等等。</li>
-<li>这个表的后期维护也需要很大的努力，起码得精通数据结构中的查询、插入等操作吧。</li>
-</ul>
-<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>如果有 100 个网页都出现了Captain，那么又如何确定网页的排名，即推荐网页的顺序呢？这就是接下来的内容，pagerank算法和基于信息熵的TF-IDF算法。</p>
-<h1 id="提取高质量网页——pagerank"><a href="#提取高质量网页——pagerank" class="headerlink" title="提取高质量网页——pagerank"></a>提取高质量网页——pagerank</h1><h2 id="引言-1"><a href="#引言-1" class="headerlink" title="引言"></a>引言</h2><p>这曾经是谷歌搜索引擎确定网页排名的算法，不过现在被抛弃了。但是这个算法的确在曾经发挥了不可替代的作用，至少使得当初弱小的谷歌能够发展起来。</p>
-<p>既然在倒排索引后能得到一些网页，假设得到了10000个网页甚至更多。那么得确定这10000个网页的排名吧，哪个作为第一个推荐，哪个作为第二个。还有一些卖假药的网站，比如给的链接题目是：我是Iron Man， 但是点击打开之后却是卖假药的，这种网页显然不能推荐。</p>
-<p>那么pagerank做了一件事情(虽然我感觉这个事情和马尔可夫模型好像)。暂时忽略查询内容和网页的相关性，先考虑网页之间的相关性。一个不需任何人工干预的算法诞生了，思想：在某次历史课中，老师问谁是刘邦，如果99%的人都指着那个人说他是刘邦，那么他就是刘邦。在网页中，$a_{mn}$ 表示第 $m$ 个网页指向第 $n$ 个网页的连接数，将 $a_{mn}$ 理解为投票数，如果第$N$个网页获得的支持最多，就认为它的质量越好。</p>
-<h2 id="算法："><a href="#算法：" class="headerlink" title="算法："></a>算法：</h2><p>Step1：假设倒排索引后得到$N$个网页，所有的网站的初始排名是$B_0=(\frac{1}{N},\frac{1}{N},…,\frac{1}{N})^T$。</p>
-<p>Step2：矩阵$A$是网页之间的链接数目，得到这个矩阵并不难，只要有个爬虫机器人就好了。</p>
-<p><img data-src="/2019/05/19/search-engine/4.png" alt></p>
-<p>Step3：终止点问题：互联网上的网页不满足强连通的特性，因为有一些网页不指向任何网页，如果按照上面的计算，上网者到达这样的网页后便走投无路、四顾茫然。导致前面累计得到的转移概率被清零，这样下去，最终的得到的概率分布向量所有元素几乎都为0。陷阱问题：另外一个问题就是陷阱问题，即有些网页不存在指向其他网页的链接，但存在指向自己的链接。</p>
-<p>Step4：完善。假定上网者在每一步，都可能不想看当前网页了。假设上网者每一步查看当前网页的概率是$\alpha$，从地址栏跳转的概率是$1−\alpha$。$\alpha$一般取0.85,迭代公式如下:</p>
-<script type="math/tex; mode=display">B_{i+1}=\alpha A B_i + (1−\alpha)B_0</script><p>迭代计算直至$|B_{i+1}−B_i|&lt;\epsilon$，可以得到最终结果。（选排名前几的就可以了）</p>
-<h2 id="扩展-1"><a href="#扩展-1" class="headerlink" title="扩展"></a>扩展</h2><p>其实还有问题，比如搜索的问题是：application of time crystal 。相对而言，形如 of , a, an, the 等介词出现频率虽然很高但是并无卵用。application 和 time 是常用词，也是很多背景下的应用词。crystal 虽然是不常用词汇，出现频率也很低，但是却能体现查询的核心含义。如果关于crystal 的链接很少，pagerank出来的结果都是关于application of time的，那么这个查询岂不是要凉？接下来接着填坑，这个坑填完后一个简朴的搜索引擎就完成了，但是实际中的搜索引擎还需要很多细节的技术需要完善，比如是不是要考虑点击量。</p>
-<h1 id="在高质量网页中筛选最相关"><a href="#在高质量网页中筛选最相关" class="headerlink" title="在高质量网页中筛选最相关"></a>在高质量网页中筛选最相关</h1><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>假设查询application of time crystal, 有三个网页是关于时间晶体的，有100个网页是关于时间应用的。这103个网页都是高质量网页，但只有3个网页才是真正想要的网页。既然确定了目标，就想办法整俩公式把问题解决掉。然后传说中的TF-IDF算法诞生了。</p>
-<ul>
-<li>一个词预测主题的能力越强，它的权重就应该越大，反之权重越小。在网页中的“时间晶体”这个词，或多或少可以推测出查询内容。但是看到“应用”一词，还是不知道想要查询什么。</li>
-<li>形如 “的” “啊” “和” 等停用词权重为零，日常修饰语在查询的时候没有用的。</li>
-</ul>
-<h2 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h2><p>一个查询中的每一个关键词应该反应出：这个词对查询提供了多少信息。如果一个查询包括$N$个关键词，他们在一个网页中的出现频率是：$TF_1,…,TF_n$，$N$是语料库的大小。以每个词的信息熵作为它的权重。</p>
-<script type="math/tex; mode=display">I(w)=-P(w)\log P(w)=\frac{TF(w)}{N}\log \frac{N}{TF(w)}</script><p>之后，如果两个词的频率相差无几，一个词（时间晶体）是某篇文章的常用词，另一个词（应用）分散在多篇文章中，显然前者的权重应该更大，提供更好的分辨率。那么开始下面的表演：</p>
-<p>假设每篇文章的单词数是$M$，$D$是pagerank后的全部网页数量。则$M \cdot D = N$。</p>
-<p>一个关键词在一个文献中出现的次数为：$c(w)=\frac{Avg(TF(w))}{D(w)}$。推导出：</p>
-<script type="math/tex; mode=display">\frac{TF(w)}{N}\log \frac{N}{TF(w)}=TF(w)\log (\frac{D}{D(w)}\frac{M}{c(w)})=I(w)</script><p>继续，一个词的$I(w)$越大，相似性越大，一个词的平均出现次数越多，相似性越小。两者做个减法在做进一步处理，得到TFIDF的公式</p>
-<script type="math/tex; mode=display">TF\cdot IDF=I(w)-TF(w)\log \frac{M}{c(w)}=TF(w)\log \frac{D}{D(w)}</script><p>看两个等号之间的式子，第一项越大越好，第二项越小越好，推导出了新的式子。</p>
-<p>而新的式子$\mathrm{TFIDF}=TF(w)\log \frac{D}{D(w)}$也是现在最常用的方案。$TF(w)$是词频率，含义为某个词在文章中的次数除以文章总词数，而IDF的英文是inverse document frequency，逆文本频率指数，公式是$\log \frac{D}{D(w)}$，含义是语料库的文档总数除以含有该词汇的文档数后取对数。</p>
-<p>其实是先给出的TF-IDF公式，多年后信息论发展起来才用信息熵证明了IDF公式为什么这么写，是用$\log$ 而为什么不是根号。本文是直接从证明开始，引出的IDF公式。没想到数学还能严谨到如此境界，我还是好好用数学吧，我这脑子研究不了数学。</p>
-<p>最终，计算一篇文章每个词汇的$\mathrm{TFIDF}$并排序，取其中$\mathrm{TFIDF}$值最大的词汇，作为文章的关键词，即提取出一篇文章的几个关键词。</p>
-<h1 id="计算相似性"><a href="#计算相似性" class="headerlink" title="计算相似性"></a>计算相似性</h1><p>既然求出了每篇文章的代表词汇或称为关键词，仅仅需要计算查询的词汇和每篇文章关键词的相似度即可。这里使用余弦定理进行计算，当然也可以使用自然语言处理。</p>
-<p>众所周知余弦定理可以计算两个向量的相近程度，两向量重合，则相似度为1，两向量垂直，则认为没有相似性。利用这个原理，很可以推导出如何将句子映射为向量：</p>
-<ul>
-<li>句子A：我喜欢看电视，不喜欢看电影。</li>
-<li>句子B：我不喜欢看电视，也不喜欢看电影。</li>
-</ul>
-<p>而后将两个句子合在一起进行分词：我，喜欢，看，电视，电影，不，也。</p>
-<p>计算词频：</p>
-<ul>
-<li>句子A：我 1，喜欢 2，看 2，电视 1，电影 1，不 1，也 0。</li>
-<li>句子B：我 1，喜欢 2，看 2，电视 1，电影 1，不 2，也 1。</li>
-</ul>
-<p>写出词向量：</p>
-<ul>
-<li>句子A：[1, 2, 2, 1, 1, 1, 0]</li>
-<li>句子B：[1, 2, 2, 1, 1, 2, 1]</li>
-</ul>
-<p>而后就可以计算两个句子的相近程度了。如果你还不能理解，我在举个极端的例子。</p>
-<ul>
-<li>句子A：是。</li>
-<li>句子B：否。</li>
-</ul>
-<p>很容易得到句子A的词向量是[1, 0]，而句子B的词向量是[0, 1]，这两个向量垂直，相似度为0。</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>没有找到合适的数据，就自己创造的没有link的数据，所以本次代码因缺数据而没有加入pagerank算法的代码。</p>
-<p><a href="https://github.com/muyuuuu/Search-Engine" target="_blank" rel="noopener">点我过去</a></p>
-<p>倒排数据结构展示：</p>
-<p><img data-src="/2019/05/19/search-engine/1.jpg" alt></p>
-<p>查询结果输出展示，对输入的内容进行查询。</p>
-<p><img data-src="/2019/05/19/search-engine/2.jpg" alt></p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>至此，从开始的倒排索引寻找出所有满足需求的网页，再用pagerank从满足需求的网页中求出高质量网页，在用TF-IDF算法在高质量网页中求出和查询最相关的网页。一步步完善，将自然语言以恰当的方式转为数字进行处理。当然还需要更详细的处理步骤，比如网页的反作弊技术，比如点击量，如何屏蔽相似性很高的广告等等。</p>
-<p>计算机和数学的应用层出不穷，即使也存在过时的技术，比如pagerank已经被谷歌淘汰，但背后的数学思维值得我们借鉴。比如2019年的美国大学生数学建模竞赛的C题，如何确定毒品的传播源头，不就是pagerank可以应用的场景吗。</p>
-<p>其实还有坑的，比如使用中文查询：“什么是汇编语言的中断”，那么新的问题又来了。英文单词之间有分割，自动提取关键词。中文的是句子呀，怎么让计算机认识句子并从里面抠出关键词呢？下次再写吧，这就涉及到了一些中文的自然语言处理的知识了。</p>
-<hr>
-
+<p>而判断是否有空闲的方法是：判断到达时间与队首元素的值，若大于，说明到达时间大于处理完的时间，说明有空闲，否则无空闲。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn = <span class="number">10005</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">person</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> come, time;</span><br><span class="line">&#125; p[maxn];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cmp</span><span class="params">(person p1, person p2)</span> </span>&#123; <span class="keyword">return</span> p1.come &lt; p2.come; &#125;</span><br><span class="line"><span class="keyword">int</span> n, k, cnt, total;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>, &amp;n, &amp;k);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> hh, ss, mm, tt;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d:%d:%d %d"</span>, &amp;hh, &amp;mm, &amp;ss, &amp;tt);</span><br><span class="line">        <span class="keyword">int</span> sum = hh * <span class="number">3600</span> + mm * <span class="number">60</span> + ss;</span><br><span class="line">        <span class="keyword">if</span> (sum &gt; <span class="number">61200</span>) </span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="comment">// 处理的时间</span></span><br><span class="line">        p[++cnt].time = tt * <span class="number">60</span>;</span><br><span class="line">        <span class="comment">// 来的时间</span></span><br><span class="line">        p[cnt].come = sum;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 按照来的时间排序</span></span><br><span class="line">    sort(p + <span class="number">1</span>, p + <span class="number">1</span> + cnt, cmp);</span><br><span class="line">    <span class="comment">// 优先级队列，类型，容器类型，小的先出队</span></span><br><span class="line">    priority_queue&lt;<span class="keyword">int</span>, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;, greater&lt;<span class="keyword">int</span>&gt; &gt; q;</span><br><span class="line">    <span class="comment">// k 个窗口</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= k; ++i) </span><br><span class="line">        q.push(<span class="number">28800</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= cnt; ++i) &#123;</span><br><span class="line">        <span class="comment">// 来的时候有空闲，丝滑处理，无需等待</span></span><br><span class="line">        <span class="keyword">if</span> (q.top() &lt;= p[i].come) &#123;</span><br><span class="line">            <span class="comment">// 压入截止时间</span></span><br><span class="line">            q.push(p[i].come + p[i].time);</span><br><span class="line">            q.pop();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 来的时候窗口有人 ，就是等待时间</span></span><br><span class="line">            total += q.top() - p[i].come;</span><br><span class="line">            <span class="comment">// 新的截止时间</span></span><br><span class="line">            q.push(q.top() + p[i].time);</span><br><span class="line">            q.pop();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    (!cnt) ? <span class="built_in">printf</span>(<span class="string">"0.0\n"</span>) : <span class="built_in">printf</span>(<span class="string">"%.1lf"</span>, ((<span class="keyword">double</span>)total/<span class="number">60.0</span>)/(<span class="keyword">double</span>) cnt);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//升序队列，小顶堆</span></span><br><span class="line">priority_queue &lt;<span class="keyword">int</span>,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;,greater&lt;<span class="keyword">int</span>&gt; &gt; q;</span><br><span class="line"><span class="comment">//降序队列，大顶堆</span></span><br><span class="line">priority_queue &lt;<span class="keyword">int</span>,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;,less&lt;<span class="keyword">int</span>&gt; &gt;q;</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -399,19 +339,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
+      <div class="popular-posts-title"><a href="\2019\03\31\C-string\" rel="bookmark">C++数据结构篇『一』：字符串类</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\19\basic-nlp\" rel="bookmark">从分词到自然语言的世界</a></div>
+      <div class="popular-posts-title"><a href="\2019\05\01\Cpp-Sequential-Container\" rel="bookmark">C++数据结构篇『二』顺序容器：数组、向量、链表与队列</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\07\23\generator-and-iterator\" rel="bookmark">迭代器与生成器</a></div>
+      <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++数据结构篇『三』关联容器：映射与集合</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\20\gradient-function\" rel="bookmark">优化梯度函数</a></div>
+      <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\19\optimizeDL\" rel="bookmark">正则化调教神经网络</a></div>
+      <div class="popular-posts-title"><a href="\2020\09\07\PAT-advanced\" rel="bookmark">PAT甲级整理</a></div>
     </li>
   </ul>
 
@@ -457,8 +397,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Python/" rel="tag"># Python</a>
-              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
           </div>
 
         
@@ -472,12 +412,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/05/02/pic-Huang/" rel="prev" title="黄山相册">
-      <i class="fa fa-chevron-left"></i> 黄山相册
+    <a href="/2019/06/02/OJ-Cpp-cumulative/" rel="prev" title="C++数据结构篇『三』关联容器：映射与集合">
+      <i class="fa fa-chevron-left"></i> C++数据结构篇『三』关联容器：映射与集合
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/05/19/basic-nlp/" rel="next" title="从分词到自然语言的世界">
-      从分词到自然语言的世界 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/06/08/DuanWu/" rel="next" title="端午&高考乱弹">
+      端午&高考乱弹 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -539,7 +479,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#倒排索引"><span class="nav-number">1.</span> <span class="nav-text">倒排索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">1.2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">1.4.</span> <span class="nav-text">扩展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提取高质量网页——pagerank"><span class="nav-number">2.</span> <span class="nav-text">提取高质量网页——pagerank</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言-1"><span class="nav-number">2.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法："><span class="nav-number">2.2.</span> <span class="nav-text">算法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展-1"><span class="nav-number">2.3.</span> <span class="nav-text">扩展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在高质量网页中筛选最相关"><span class="nav-number">3.</span> <span class="nav-text">在高质量网页中筛选最相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">3.1.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推导"><span class="nav-number">3.2.</span> <span class="nav-text">推导</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算相似性"><span class="nav-number">4.</span> <span class="nav-text">计算相似性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#stack"><span class="nav-number">1.</span> <span class="nav-text">stack</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#例题"><span class="nav-number">1.1.</span> <span class="nav-text">例题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求解"><span class="nav-number">1.2.</span> <span class="nav-text">求解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#queue"><span class="nav-number">2.</span> <span class="nav-text">queue</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#priority-queue"><span class="nav-number">3.</span> <span class="nav-text">priority_queue</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目"><span class="nav-number">3.1.</span> <span class="nav-text">题目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Input-Specification"><span class="nav-number">3.1.1.</span> <span class="nav-text">Input Specification:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Output-Specification"><span class="nav-number">3.1.2.</span> <span class="nav-text">Output Specification:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求解-1"><span class="nav-number">3.2.</span> <span class="nav-text">求解</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -876,7 +816,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '2ab48a1bb540b0d777fd6483246e9079',
+      id          : 'ca750f056545c03d6b2ba41225caa72d',
         language: 'zh-CN',
       distractionFreeMode: true
     });
