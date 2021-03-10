@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2021-03-09T07:45:00.027Z</updated>
+  <updated>2021-03-10T10:59:00.770Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>因果扩张卷积</title>
+    <link href="https://muyuuuu.github.io/2021/03/10/causal-dilated-conv/"/>
+    <id>https://muyuuuu.github.io/2021/03/10/causal-dilated-conv/</id>
+    <published>2021-03-10T06:30:05.000Z</published>
+    <updated>2021-03-10T10:59:00.770Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>之前一直在看他们用『<strong>因果扩张卷积</strong>』这个东西，当时我只看到了一张图，大概了解了那是个什么东西。今天，在某次比赛中用到了这个模型，顺手看了下源代码，来做个整理。</p><a id="more"></a><p>在时序序列的预测问题中，很容易想到LSTM等循环神经网络。给定序列数据，预测下一时刻的输出，如翻译、问答等。</p><p>\begin{equation}<br>p(x)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1)<br>\end{equation}</p><p>当然也可以有隐藏状态：</p><p>\begin{equation}<br>p(x|h)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1, h)<br>\end{equation}</p><p>时至今日，也可以用 CNN 来代替这一过程，卷积的输入是历史数据，产生一个时刻的输出。且，相对而言 CNN 的参数要少很多，也可以叠加 CNN 层。需要注意的是，因果扩张卷积包括因果卷积和扩张卷积两部分。</p><h1 id="扩张卷积"><a href="#扩张卷积" class="headerlink" title="扩张卷积"></a>扩张卷积</h1><p>扩张卷积是为了增大卷积核感受野而设计的一种东西，看图就知道了：</p><p><img data-src="https://s3.ax1x.com/2021/03/10/6JPvCt.gif" alt></p><p>卷积核与图像计算时填充了间隙，这样就能扩大视感受野。这里的扩张步是2。代码实现也很简单，指定参数即可：</p><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">model = torch.nn.Conv2d(in_channels, out_channels, kernel_size, dilation=<span class="number">1</span>)</span><br></pre></td></tr></table></figure><p>默认情况下<code>dilation</code>取值为1，也就是没有扩张。</p><h1 id="因果卷积"><a href="#因果卷积" class="headerlink" title="因果卷积"></a>因果卷积</h1><p>因果卷积的重点突出在<strong>因果</strong>两个字上，输入的历史数据是因，输出的数据是果。来看一下模型结构图，这里有三层卷积网络。</p><p><img data-src="/2021/03/10/causal-dilated-conv/1.png" alt></p><p>第一层的卷积块读取几个历史数据，经过后几层的卷积块后输出一个数据，达到预测的目的。</p><p>但是，在逐层卷积的同时，每步只卷积两个模块。这就导致了视野域比较小。所以增加了扩张卷积，来增大网络的感受野，即：每次预测时能比之前看到更多的数据，做出更稳定的决策。此时的网络结构为：</p><p><img data-src="https://s3.ax1x.com/2021/03/10/6Jc9hT.png" alt></p><p>可以看到网络在预测输出时，能看到16个数据的信息，比之前的5个数据的信息要多出三倍，做出的决策也会更加稳定。在某种意义上，也就能像LSTM那样处理序列数据了。</p><p>也会你会有疑问，<code>1</code>号节点有历史数据，假设<code>1</code>号节点已经是输出序列的最后一个元素了，那<code>2</code>号节点和<code>3</code>号节点呢，他们的输入从哪里来？看了代码我才明白，填充即可，也就是<code>conv</code>里面常用的<code>padding</code>。卷积过程保证输入和输出的长度不变，填充多少，</p><p>至于残差连接或加入条件信息，这些都是可以的，在<a href="https://arxiv.org/pdf/1609.03499.pdf" target="_blank" rel="noopener"> casual dilated conv </a>首次被提出的论文中都有这些内容。</p><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>读懂一个算法精髓最好的方式是读代码，理解一个算法精髓最好的方式是尝试去理解它为什么这么做，而不是这么做有什么好处。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;之前一直在看他们用『&lt;strong&gt;因果扩张卷积&lt;/strong&gt;』这个东西，当时我只看到了一张图，大概了解了那是个什么东西。今天，在某次比赛中用到了这个模型，顺手看了下源代码，来做个整理。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="DeepLearning" scheme="https://muyuuuu.github.io/tags/DeepLearning/"/>
+    
+  </entry>
   
   <entry>
     <title>并行计算『六』：pytorch并行训练</title>
@@ -441,27 +462,6 @@
     
     
       <category term="Computer" scheme="https://muyuuuu.github.io/tags/Computer/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>西安电子科技大学实验报告LaTeX模板</title>
-    <link href="https://muyuuuu.github.io/2020/10/20/XDU-report-LaTeX-template/"/>
-    <id>https://muyuuuu.github.io/2020/10/20/XDU-report-LaTeX-template/</id>
-    <published>2020-10-20T10:23:02.000Z</published>
-    <updated>2020-11-06T05:48:27.804Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，<strong>非官方，非官方，非官方。</strong>如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。</p><a id="more"></a><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>来这上学一个月了，我也没找到官方的，老师也没发过任何模板，也不要求格式。我本科老师一直要求格式，内容写成啥样都行，格式错一点都不行。如：必须使用某类作业纸，写报告必须某类模板，多一个空格，错一个字体都要重新打印。主要是应付上面检查，所以很忽略内容而注重格式。但研究生没这破要求了，作业、报告写成啥样的都有，于是决定开 <code>LaTeX</code> 放飞自我。</p><p>我写的代码首要目的是简介、易用和容易扩展，所以：</p><ul><li>图片大小、文字大小不合适你都可以调，cls代码简洁明了。图片logo来自这里：<a href="https://github.com/fredqi/xduthesis" target="_blank" rel="noopener">https://github.com/fredqi/xduthesis</a></li><li>想添加内容也很简单，比如在封面添加「指导教师」这一项，你看看其他选项如何声明并传参的就可以了，很简单。</li><li>文档目录与编译方式：windows 和 Arch Linux 都跑通了，TexLive 2020，编译方式为 xelatex 配 bibtex。</li><li>代码字体为 IBM Plex Mono，没有的话换一个或下载安装；</li><li>我是计算机学院的，对其他学院的了解很少，如果有其他建议，欢迎补充～</li><li>也可以来这里下载，下载一次我能挣一毛钱，顺便帮这个网站引流：<a href="https://latexstudio.net/index/details/index/mid/870.html" target="_blank" rel="noopener">https://latexstudio.net/index/details/index/mid/870.html</a></li></ul><h1 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h1><p>第一步就是导入文档类：<code>\documentclass{xdureport}</code>，而后写入基本信息：</p><figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">major</span><span class="string">&#123;电子信息&#125;</span></span>                   <span class="comment">% 专业</span></span><br><span class="line"><span class="tag">\<span class="name">stuid</span><span class="string">&#123;201614420112&#125;</span></span>             <span class="comment">% 学号</span></span><br><span class="line"><span class="tag">\<span class="name">college</span><span class="string">&#123;计算机科学与技术学院&#125;</span></span>       <span class="comment">% 学院</span></span><br><span class="line"><span class="tag">\<span class="name">date</span><span class="string">&#123;\zhtoday&#125;</span></span>                  <span class="comment">% 日期</span></span><br><span class="line"><span class="tag">\<span class="name">expname</span><span class="string">&#123;小样本实验&#125;</span></span>               <span class="comment">% 实验名称</span></span><br><span class="line"><span class="tag">\<span class="name">course</span><span class="string">&#123;高性能智能计算实验&#125;</span></span>         <span class="comment">% 课程</span></span><br></pre></td></tr></table></figure><p>文档的目录结构如下所示：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">XDU-exp</span><br><span class="line">├─ chapter                                  <span class="comment"># 各个章节</span></span><br><span class="line">│    ├─ abstract.tex                            <span class="comment"># 摘要页</span></span><br><span class="line">│    ├─ appendix.tex                            <span class="comment"># 附录</span></span><br><span class="line">│    ├─ conclusion.tex                          <span class="comment"># 实验结果分析</span></span><br><span class="line">│    ├─ experiment.tex                          <span class="comment"># 实验步骤</span></span><br><span class="line">│    └─ reference.tex                           <span class="comment"># 参考文献</span></span><br><span class="line">├─ figure                                   <span class="comment"># 图片文件</span></span><br><span class="line">│    ├─ xdubadge.eps                            <span class="comment"># 西电文字</span></span><br><span class="line">│    └─ xdulogo.eps                             <span class="comment"># 西电校徽 logo</span></span><br><span class="line">├─ code                                     <span class="comment"># 代码文件</span></span><br><span class="line">│    └─ demo.c                                  <span class="comment"># 一个C语言样例代码</span></span><br><span class="line">├─ books.bib                                <span class="comment"># 参考文献的 bib 文件</span></span><br><span class="line">├─ main.bbl                                 <span class="comment"># 编译生成的 bbl 文件，不用管</span></span><br><span class="line">├─ main.pdf                                 <span class="comment"># 结果 pdf 文件</span></span><br><span class="line">├─ main.tex                                 <span class="comment"># 要编译的主文件</span></span><br><span class="line">└─ xdureport.cls                            <span class="comment"># 要导入的文档类</span></span><br></pre></td></tr></table></figure><p>理解文档目录结构后，就很容易知道代码中指定的相对路径是什么意思，现在就可以开始写正文了：</p><figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">makecover</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 摘要</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/abstract.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 目录</span></span><br><span class="line"><span class="tag">\<span class="name">thispagestyle</span><span class="string">&#123;empty&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">tableofcontents</span></span></span><br><span class="line"><span class="tag">\<span class="name">newpage</span></span> </span><br><span class="line"><span class="tag">\<span class="name">setcounter</span><span class="string">&#123;page&#125;</span><span class="string">&#123;1&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 实验过程</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/experiment.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 标注环境</span></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;note&#125;</span></span></span><br><span class="line">ads 测试</span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;note&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 结论</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/conclusion.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 参考文献</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/reference.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 附录</span></span><br><span class="line"><span class="tag">\<span class="name">appendix</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/appendix.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure><h1 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h1><h2 id="封面"><a href="#封面" class="headerlink" title="封面"></a>封面</h2><p><img data-src="https://static01.imgkr.com/temp/de8968992dd5421c84f8034c6d7a4655.png" alt></p><h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p><img data-src="https://static01.imgkr.com/temp/6d135f696e7d4fe1af2534dd55ae1708.png" alt></p><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p><img data-src="https://static01.imgkr.com/temp/0a451c77c18f4d8ea61d6e1f9aea482f.png" alt></p><h2 id="正文与标注环境"><a href="#正文与标注环境" class="headerlink" title="正文与标注环境"></a>正文与标注环境</h2><p><img data-src="https://static01.imgkr.com/temp/feac728074ee4f6391138c8913c36a7e.png" alt></p><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><img data-src="https://static01.imgkr.com/temp/cf8d17b244b14ba782709474be216a96.png" alt></p><h2 id="代码高亮"><a href="#代码高亮" class="headerlink" title="代码高亮"></a>代码高亮</h2><p><img data-src="https://static01.imgkr.com/temp/384e43e486e74ed7b5b82e31df10bcc9.png" alt></p><h1 id="完整代码下载"><a href="#完整代码下载" class="headerlink" title="完整代码下载"></a>完整代码下载</h1><p><a href="https://github.com/muyuuuu/XDU-report-LaTeX-template" target="_blank" rel="noopener">https://github.com/muyuuuu/XDU-report-LaTeX-template</a></p><h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>我在网上看到了西电的 <code>Beamer</code> 和 <code>thesis</code> 模板，看样子写的不错，我应该不会去继续折腾那些了。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，&lt;strong&gt;非官方，非官方，非官方。&lt;/strong&gt;如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="LaTeX" scheme="https://muyuuuu.github.io/tags/LaTeX/"/>
     
   </entry>
   
