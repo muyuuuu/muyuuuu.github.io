@@ -17,20 +17,20 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
 <meta name="keywords" content="Python,Algorithm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="编程与数学的结晶：从数据结构到搜索引擎">
+<meta property="og:title" content="编程与数学的结晶：简易搜索引擎">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/05/19/search-engine/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-26T10:00:19.827Z">
+<meta property="og:updated_time" content="2021-03-19T04:00:26.756Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="编程与数学的结晶：从数据结构到搜索引擎">
+<meta name="twitter:title" content="编程与数学的结晶：简易搜索引擎">
 <meta name="twitter:description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/05/19/search-engine/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>编程与数学的结晶：从数据结构到搜索引擎 | Just for Life.</title>
+  <title>编程与数学的结晶：简易搜索引擎 | Just for Life.</title>
   
 
 
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          编程与数学的结晶：从数据结构到搜索引擎
+          编程与数学的结晶：简易搜索引擎
         </h1>
 
         <div class="post-meta">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-26 18:00:19" itemprop="dateModified" datetime="2020-03-26T18:00:19+08:00">2020-03-26</time>
+                <time title="修改时间：2021-03-19 12:00:26" itemprop="dateModified" datetime="2021-03-19T12:00:26+08:00">2021-03-19</time>
               </span>
 
           
@@ -272,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
+              <span>3.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -331,18 +331,8 @@
 <li>词表不仅仅存储单词在哪里出现，还可以包括单词在该网页中出现的频率等等。</li>
 <li>这个表的后期维护也需要很大的努力，起码得精通数据结构中的查询、插入等操作吧。</li>
 </ul>
-<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>如果有 100 个网页都出现了Captain，那么又如何确定网页的排名，即推荐网页的顺序呢？这就是接下来的内容，pagerank算法和基于信息熵的TF-IDF算法。</p>
-<h1 id="提取高质量网页——pagerank"><a href="#提取高质量网页——pagerank" class="headerlink" title="提取高质量网页——pagerank"></a>提取高质量网页——pagerank</h1><h2 id="引言-1"><a href="#引言-1" class="headerlink" title="引言"></a>引言</h2><p>这曾经是谷歌搜索引擎确定网页排名的算法，不过现在被抛弃了。但是这个算法的确在曾经发挥了不可替代的作用，至少使得当初弱小的谷歌能够发展起来。</p>
-<p>既然在倒排索引后能得到一些网页，假设得到了10000个网页甚至更多。那么得确定这10000个网页的排名吧，哪个作为第一个推荐，哪个作为第二个。还有一些卖假药的网站，比如给的链接题目是：我是Iron Man， 但是点击打开之后却是卖假药的，这种网页显然不能推荐。</p>
-<p>那么pagerank做了一件事情(虽然我感觉这个事情和马尔可夫模型好像)。暂时忽略查询内容和网页的相关性，先考虑网页之间的相关性。一个不需任何人工干预的算法诞生了，思想：在某次历史课中，老师问谁是刘邦，如果99%的人都指着那个人说他是刘邦，那么他就是刘邦。在网页中，$a_{mn}$ 表示第 $m$ 个网页指向第 $n$ 个网页的连接数，将 $a_{mn}$ 理解为投票数，如果第$N$个网页获得的支持最多，就认为它的质量越好。</p>
-<h2 id="算法："><a href="#算法：" class="headerlink" title="算法："></a>算法：</h2><p>Step1：假设倒排索引后得到$N$个网页，所有的网站的初始排名是$B_0=(\frac{1}{N},\frac{1}{N},…,\frac{1}{N})^T$。</p>
-<p>Step2：矩阵$A$是网页之间的链接数目，得到这个矩阵并不难，只要有个爬虫机器人就好了。</p>
-<p><img data-src="/2019/05/19/search-engine/4.png" alt></p>
-<p>Step3：终止点问题：互联网上的网页不满足强连通的特性，因为有一些网页不指向任何网页，如果按照上面的计算，上网者到达这样的网页后便走投无路、四顾茫然。导致前面累计得到的转移概率被清零，这样下去，最终的得到的概率分布向量所有元素几乎都为0。陷阱问题：另外一个问题就是陷阱问题，即有些网页不存在指向其他网页的链接，但存在指向自己的链接。</p>
-<p>Step4：完善。假定上网者在每一步，都可能不想看当前网页了。假设上网者每一步查看当前网页的概率是$\alpha$，从地址栏跳转的概率是$1−\alpha$。$\alpha$一般取0.85,迭代公式如下:</p>
-<script type="math/tex; mode=display">B_{i+1}=\alpha A B_i + (1−\alpha)B_0</script><p>迭代计算直至$|B_{i+1}−B_i|&lt;\epsilon$，可以得到最终结果。（选排名前几的就可以了）</p>
-<h2 id="扩展-1"><a href="#扩展-1" class="headerlink" title="扩展"></a>扩展</h2><p>其实还有问题，比如搜索的问题是：application of time crystal 。相对而言，形如 of , a, an, the 等介词出现频率虽然很高但是并无卵用。application 和 time 是常用词，也是很多背景下的应用词。crystal 虽然是不常用词汇，出现频率也很低，但是却能体现查询的核心含义。如果关于crystal 的链接很少，pagerank出来的结果都是关于application of time的，那么这个查询岂不是要凉？接下来接着填坑，这个坑填完后一个简朴的搜索引擎就完成了，但是实际中的搜索引擎还需要很多细节的技术需要完善，比如是不是要考虑点击量。</p>
-<h1 id="在高质量网页中筛选最相关"><a href="#在高质量网页中筛选最相关" class="headerlink" title="在高质量网页中筛选最相关"></a>在高质量网页中筛选最相关</h1><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>假设查询application of time crystal, 有三个网页是关于时间晶体的，有100个网页是关于时间应用的。这103个网页都是高质量网页，但只有3个网页才是真正想要的网页。既然确定了目标，就想办法整俩公式把问题解决掉。然后传说中的TF-IDF算法诞生了。</p>
+<h1 id="筛选最相关"><a href="#筛选最相关" class="headerlink" title="筛选最相关"></a>筛选最相关</h1><h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>其实还有问题，比如搜索的问题是：application of time crystal 。相对而言，形如 of , a, an, the 等介词出现频率虽然很高但是并无卵用。application 和 time 是常用词，也是很多背景下的应用词。crystal 虽然是不常用词汇，出现频率也很低，但是却能体现查询的核心含义。如果关于crystal 的链接很少，pagerank出来的结果都是关于application of time的，那么这个查询岂不是要凉？接下来接着填坑，这个坑填完后一个简朴的搜索引擎就完成了，但是实际中的搜索引擎还需要很多细节的技术需要完善，比如是不是要考虑点击量。</p>
+<p>假设查询application of time crystal, 有三个网页是关于时间晶体的，有100个网页是关于时间应用的。这103个网页都是高质量网页，但只有3个网页才是真正想要的网页。既然确定了目标，就想办法整俩公式把问题解决掉。然后传说中的TF-IDF算法诞生了。</p>
 <ul>
 <li>一个词预测主题的能力越强，它的权重就应该越大，反之权重越小。在网页中的“时间晶体”这个词，或多或少可以推测出查询内容。但是看到“应用”一词，还是不知道想要查询什么。</li>
 <li>形如 “的” “啊” “和” 等停用词权重为零，日常修饰语在查询的时候没有用的。</li>
@@ -539,7 +529,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#倒排索引"><span class="nav-number">1.</span> <span class="nav-text">倒排索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">1.2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">1.4.</span> <span class="nav-text">扩展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提取高质量网页——pagerank"><span class="nav-number">2.</span> <span class="nav-text">提取高质量网页——pagerank</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言-1"><span class="nav-number">2.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法："><span class="nav-number">2.2.</span> <span class="nav-text">算法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展-1"><span class="nav-number">2.3.</span> <span class="nav-text">扩展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在高质量网页中筛选最相关"><span class="nav-number">3.</span> <span class="nav-text">在高质量网页中筛选最相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">3.1.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推导"><span class="nav-number">3.2.</span> <span class="nav-text">推导</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算相似性"><span class="nav-number">4.</span> <span class="nav-text">计算相似性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#倒排索引"><span class="nav-number">1.</span> <span class="nav-text">倒排索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">1.2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#筛选最相关"><span class="nav-number">2.</span> <span class="nav-text">筛选最相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">2.1.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推导"><span class="nav-number">2.2.</span> <span class="nav-text">推导</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算相似性"><span class="nav-number">3.</span> <span class="nav-text">计算相似性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">4.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -555,7 +545,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">152</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -609,12 +599,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">569k</span>
+    <span title="站点总字数">572k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:38</span>
+    <span title="站点阅读时长">8:40</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
