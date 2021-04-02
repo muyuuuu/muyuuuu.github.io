@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>交叉熵优缺点分析</title>
+    <url>/2021/04/02/cross-entropy/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>继上次了解完<a href="https://muyuuuu.github.io/2020/05/09/entropy/">信息熵</a>后，没想到在对抗训练中又回到了损失函数的分析上。<code>torch</code>实现的有点迷惑，正好趁这次机会，连着代码和公式好好推导下。这种损失的优缺点日后会放上来，主要取决论文进度。</p>
+<a id="more"></a>
+<h1 id="一个简单实例"><a href="#一个简单实例" class="headerlink" title="一个简单实例"></a>一个简单实例</h1><p>交叉熵的公式定义耳熟能详了：</p>
+<p>\begin{equation}\label{ce}<br>H(p,q) = -\sum_{x\in X} p(x) \log q(x)<br>\end{equation}</p>
+<p>这里带入一个实例算一下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># example of calculating cross entropy</span></span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> log2</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span><span class="params">(p, q)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> -sum([p[i] * log2(q[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(len(p))])</span><br><span class="line"></span><br><span class="line"><span class="comment"># define data</span></span><br><span class="line">p = [<span class="number">0.10</span>, <span class="number">0.40</span>, <span class="number">0.50</span>]</span><br><span class="line">q = [<span class="number">0.80</span>, <span class="number">0.15</span>, <span class="number">0.05</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy H(P, Q)</span></span><br><span class="line">ce_pq = cross_entropy(p, q)</span><br><span class="line">print(<span class="string">'H(P, Q): %.3f bits'</span> % ce_pq)  <span class="comment"># H(P, Q): 3.288 bits</span></span><br><span class="line"><span class="comment"># calculate cross entropy H(Q, P)</span></span><br><span class="line">ce_qp = cross_entropy(q, p)</span><br><span class="line">print(<span class="string">'H(Q, P): %.3f bits'</span> % ce_qp)  <span class="comment"># H(Q, P): 2.906 bits</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3 bit 的信息差异</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，$H(p,q) \neq H(q,p)$。那么再来看深度学习中的定义，其实都一样，只是深度学习中要求真实标签不能是 $\log$ 那一项，因为 $\log$ 的定义域不能取 0。</p>
+<p>\begin{equation}<br>H = -\sum_{c=1}^M y \log \hat{y}<br>\end{equation}</p>
+<p>其中，$y$ 是真实的标签，$M$ 是类别数量，$\hat{y}$ 是自己预测的结果。如果是三分类问题，假设 $y=[1,0,0]$，$\hat{y}=[0.4,0.1,0.5]$，那么此时的交叉熵是 $-\log 0.4$。<strong>因为其它标签取值是 0，即不参与运算</strong>，换句话说，交叉熵的损失只取决于被正确分类的概率，具体缺陷可以公式推导一下。带入上述代码，得到一致的结果。</p>
+<h1 id="torch-实现"><a href="#torch-实现" class="headerlink" title="torch 实现"></a>torch 实现</h1><p>用过 tensorflow 和 keras 之后，愈发的发现 pytorch 真好用。<code>torch</code> 实现的交叉熵有一点需要注意，是通过 <code>logsoftmaax + NLLLoss</code> 实现的，实际代码中要注意这里，不要操作失误。 </p>
+<ol>
+<li>当获取网络的输出后，这里设网络的输出是 $O$，那么直接将 $O$ 扔进 <code>logsoftmax</code> 为交叉熵做准备，不需要激活。相当于计算公式 $\eqref{ce}$ 中的 $\log$ 那一项。</li>
+<li>而后 <code>logsoftmax</code> 的输出进入 <code>NLLLoss</code>，计算真正的交叉熵损失。计算方法为，如果是三分类的任务，<code>logsoftmax</code> 的输出是 $-0.5,-0.1,-0.4$，如果当前类别是第一个类，那么损失就是 0.5，具体原因参考上述公式推导。</li>
+</ol>
+<p>如果你感觉哪里错了，可以看文末的参考链接中，有人用各种方法试验了 <code>torch</code> 的交叉熵，验证了 <code>torch</code> 的实现是正确的。</p>
+<h1 id="优缺点分析"><a href="#优缺点分析" class="headerlink" title="优缺点分析"></a>优缺点分析</h1><ol>
+<li>优点：对于 softmax 函数，常用的 MSE 误差越大，下降越慢。但交叉熵能很好改善这个问题，当误差较大时，梯度也大，下降的较快；也避免了某些情况下激活函数进入饱和区，梯度消失的问题。详情参考文末的公式推导。</li>
+<li>缺点：论文要用，等哪天论文尘埃落定，我在回来填坑。<del>你可以手推公式，推着推着就发现了。</del></li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html" target="_blank" rel="noopener">交叉熵定义</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/159477597" target="_blank" rel="noopener">torch 交叉熵代码验证</a></li>
+<li><a href="https://byjiang.com/2017/07/16/Cross_Entropy_Cost_Function/" target="_blank" rel="noopener">交叉熵优点及公式推导</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>记一次重返唐山</title>
     <url>/2021/03/31/back-to-TangShan/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>好久不更新生活类的博客了，正好最近该忙的都忙完了，下一波 deadline 还早，<del>其实也就一周</del>，忙里偷闲写篇博客。</p>
@@ -9,11 +41,11 @@
 <p>20 年因一个 SB 吃了蝙蝠，导致我毕业季只给了一天的返校时间。那天回学校的时候，才发现一切是如此亲切，才发现这竟然是我见的最后一面。比赛没拿奖没关系，朋友的感情和师生情谊这些更重要，也知道来日方长还有机会。回家的时候，发现来日不长了，送走了舍友，队友以后再也见不到了，老师也见不到了，朋友也见不到了，我都没好好告别，越想越不舍。在车上哭成了一条狗，口罩都湿透了，也不敢动作太大让旁边的人看见。</p>
 <p>周六日接到了同学结婚的邀请，正好同学留在了唐山，婚礼也在唐山。我也回唐山好好看看，算是弥补一年前没好好告别的遗憾吧，哪怕是聊聊闲天，哪怕是拍个照片。上午决定要去，买票就走了，就是这么果断。</p>
 <ol>
-<li>收到了同学婚礼邀请，想着大学毕业太匆忙了，很多人没见一面。正好天南海北的同学都来，见上一面，以后见面也不容易了。晚上联系了老师，老师听说我们都回来了，打车过来和我们一起玩，聊一聊，挺感动的，折腾到了凌晨两三点。</li>
+<li>收到了同学婚礼邀请，想着大学毕业太匆忙了，很多人没见一面。正好天南海北的同学都来，见上一面，以后见面也不容易了。晚上联系了老师，老师听说我们都回来了，打车过来和我们一起玩，聊一聊，折腾到了凌晨两三点。虽然我在写流水帐，但真的挺感动的。</li>
 <li>第二天婚礼，新郎追新娘从初二到研二，十年青春啊，快节奏的生活下真的不容易。</li>
 <li>婚礼，新娘挽着父亲，一位质朴的农民，沧桑的脸颊，杂乱的头发。说『我闺女今天就正式交给你了』，沙哑的声音却掷地有声。新娘湿红了双眼，新郎嘴角微抿。婚礼的其它流程都像排练好的，唯独这段情节不像。我在台下泪目，可能最诚挚的亲情、爱情都浓缩在那一句话里吧。</li>
 <li>这次婚礼来了很多人，从2011级到2017级，铁打的实验室，流水的人。很多人只听说过名字，不认识真人。男生见面：你代码怎么样，你项目怎么样，有论文了吗？有了女生，聊天内容逐步转变，这个真好吃，你能不能吃慢点，你在哪要饭等等，酒席之间推杯换盏打打闹闹，原来这 TM 才是生活。</li>
-<li>见到了熟悉的面孔，胡乱的扯一扯，算是给生活冲冲电吧。研一过的太混乱了，自己也很难受，混的很差，回首才发现原来他们依然对我充满了期待。哪怕是为了他们，我也该依旧热情下去，依旧努力。</li>
+<li>见到了熟悉的面孔，胡乱的扯一扯，算是给生活充充电吧。研一过的太混乱了，自己也很难受，混的很差。回首才发现原来他们依然对我充满了期待，无论走到哪里，无论身在何方，依然是同学、老师眼中的骄傲。哪怕是为了他们，我也该依旧热情下去，依旧努力。</li>
 <li>分别的时候，好好告别了，和我的恩师，和我最好的队友，没那么仓促。也有女生提出了要拥抱，可能下次见面真的是很多年后了，不舍吧。与君离别意，同是宦游人，初中不懂的诗，现在懂了。</li>
 </ol>
 ]]></content>
@@ -3421,8 +3453,6 @@
 </tbody>
 </table>
 </div>
-<h2 id="交叉熵-1"><a href="#交叉熵-1" class="headerlink" title="交叉熵"></a>交叉熵</h2><p>对于两个分布：$P(x)$为<code>0, 1, 0, 1, 0, 1</code>，$Q(x)$为<code>0, 1, 0, 1, 0, 0</code>，两者的交叉熵为</p>
-<script type="math/tex; mode=display">H(P,Q)=-(P(X=1)\log Q(X=1) + P(X=0) \log Q(X=0))=\frac{1}{2}\log \frac{9}{2}</script><p>而$Q(x)$为<code>1, 2, 2, 1, 2, 0</code>时的交叉熵为$H(P,Q)=\frac{1}{2}\log 18$，自然是前者较小，表明了$Q(x)$的第一个分布和原始分布$P(x)$较为接近。KL的计算同理，不再过多展示。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上。</p>
 <ol>
 <li>《数学之美(第二版)》第六章：信息的度量和作用</li>
