@@ -21,16 +21,16 @@
   </script>
 
   <meta name="description" content="在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、特殊变量等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。">
-<meta name="keywords" content="Parallel">
+<meta name="keywords" content="OS">
 <meta property="og:type" content="article">
-<meta property="og:title" content="并行计算『四』：通信">
+<meta property="og:title" content="操作系统『四』：进程通信">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/02/20/process-communicate/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、特殊变量等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-04T08:03:13.151Z">
+<meta property="og:updated_time" content="2021-04-16T13:58:01.032Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="并行计算『四』：通信">
+<meta name="twitter:title" content="操作系统『四』：进程通信">
 <meta name="twitter:description" content="在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、特殊变量等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/02/20/process-communicate/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>并行计算『四』：通信 | Just for Life.</title>
+  <title>操作系统『四』：进程通信 | Just for Life.</title>
   
 
 
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          并行计算『四』：通信
+          操作系统『四』：进程通信
         </h1>
 
         <div class="post-meta">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-04 16:03:13" itemprop="dateModified" datetime="2021-04-04T16:03:13+08:00">2021-04-04</time>
+                <time title="修改时间：2021-04-16 21:58:01" itemprop="dateModified" datetime="2021-04-16T21:58:01+08:00">2021-04-16</time>
               </span>
 
           
@@ -356,19 +356,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\23\MPI-basics\" rel="bookmark">并行计算『五』：MPI基础，以 mpi4py 为例</a></div>
+      <div class="popular-posts-title"><a href="\2021\04\16\CPU-context-switch\" rel="bookmark">操作系统『五』：CPU 上下文切换</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">并行计算『一』：进程与线程</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\23\MPI-basics\" rel="bookmark">MPI基础，以 mpi4py 为例（操作系统番外篇）</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\19\process-synchronization\" rel="bookmark">并行计算『三』：同步</a></div>
+      <div class="popular-posts-title"><a href="\2020\03\16\multi-process-thread\" rel="bookmark">操作系统『一』：进程与线程</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\18\simple-multithread\" rel="bookmark">并行计算『二』：简单的多线程编程</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\19\process-synchronization\" rel="bookmark">操作系统『三』：进程同步</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\23\torch-parallel\" rel="bookmark">并行计算『六』：pytorch并行训练</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\18\simple-multithread\" rel="bookmark">操作系统『二』：简单的多线程编程</a></div>
     </li>
   </ul>
 
@@ -414,7 +414,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Parallel/" rel="tag"># Parallel</a>
+              <a href="/tags/OS/" rel="tag"># OS</a>
           </div>
 
         
@@ -428,12 +428,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/02/19/process-synchronization/" rel="prev" title="并行计算『三』：同步">
-      <i class="fa fa-chevron-left"></i> 并行计算『三』：同步
+    <a href="/2021/02/19/process-synchronization/" rel="prev" title="操作系统『三』：进程同步">
+      <i class="fa fa-chevron-left"></i> 操作系统『三』：进程同步
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/02/23/MPI-basics/" rel="next" title="并行计算『五』：MPI基础，以 mpi4py 为例">
-      并行计算『五』：MPI基础，以 mpi4py 为例 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/02/23/MPI-basics/" rel="next" title="MPI基础，以 mpi4py 为例（操作系统番外篇）">
+      MPI基础，以 mpi4py 为例（操作系统番外篇） <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -511,7 +511,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-count">157</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -565,12 +565,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">583k</span>
+    <span title="站点总字数">587k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:50</span>
+    <span title="站点阅读时长">8:53</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

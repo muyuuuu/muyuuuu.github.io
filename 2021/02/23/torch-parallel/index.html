@@ -21,16 +21,16 @@
   </script>
 
   <meta name="description" content="本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。语言这么正规的原因是：这是从大作业里面摘出来的。神经网络那部分我就不写了，跑题，最后直接给代码。">
-<meta name="keywords" content="DeepLearning,Parallel">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="并行计算『六』：pytorch并行训练">
+<meta property="og:title" content="pytorch并行训练">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/02/23/torch-parallel/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。语言这么正规的原因是：这是从大作业里面摘出来的。神经网络那部分我就不写了，跑题，最后直接给代码。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-03-09T07:45:00.027Z">
+<meta property="og:updated_time" content="2021-04-16T13:59:22.637Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="并行计算『六』：pytorch并行训练">
+<meta name="twitter:title" content="pytorch并行训练">
 <meta name="twitter:description" content="本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。语言这么正规的原因是：这是从大作业里面摘出来的。神经网络那部分我就不写了，跑题，最后直接给代码。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/02/23/torch-parallel/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>并行计算『六』：pytorch并行训练 | Just for Life.</title>
+  <title>pytorch并行训练 | Just for Life.</title>
   
 
 
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          并行计算『六』：pytorch并行训练
+          pytorch并行训练
         </h1>
 
         <div class="post-meta">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-09 15:45:00" itemprop="dateModified" datetime="2021-03-09T15:45:00+08:00">2021-03-09</time>
+                <time title="修改时间：2021-04-16 21:59:22" itemprop="dateModified" datetime="2021-04-16T21:59:22+08:00">2021-04-16</time>
               </span>
 
           
@@ -436,7 +436,6 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
-              <a href="/tags/Parallel/" rel="tag"># Parallel</a>
           </div>
 
         
@@ -450,8 +449,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/02/23/MPI-basics/" rel="prev" title="并行计算『五』：MPI基础，以 mpi4py 为例">
-      <i class="fa fa-chevron-left"></i> 并行计算『五』：MPI基础，以 mpi4py 为例
+    <a href="/2021/02/23/MPI-basics/" rel="prev" title="MPI基础，以 mpi4py 为例（操作系统番外篇）">
+      <i class="fa fa-chevron-left"></i> MPI基础，以 mpi4py 为例（操作系统番外篇）
     </a></div>
       <div class="post-nav-item">
     <a href="/2021/03/10/causal-dilated-conv/" rel="next" title="因果扩张卷积">
@@ -533,7 +532,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">156</span>
+          <span class="site-state-item-count">157</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -587,12 +586,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">583k</span>
+    <span title="站点总字数">587k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:50</span>
+    <span title="站点阅读时长">8:53</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
