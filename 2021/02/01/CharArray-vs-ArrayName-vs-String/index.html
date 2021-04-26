@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>基础不牢，地动山摇。当初学C语言的时候，指针，数组等概念一直分不清楚，十分混乱。后期字符串与字符数组的出现更是云里雾里。现在学了C++，加上一些C++11后的特性数组，对这玩意的用法更加迷惑，时而<code>&amp;arr</code>时而<code>&amp;arr[0]</code>。今日来做个了结。</p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>基础不牢，地动山摇。当初学C语言的时候，指针，数组等概念一直分不清楚，十分混乱。后期字符串与字符数组的出现更是云里雾里。现在学了C++，加上一些C++11后的特性数组，对这玩意的用法更加迷惑，时而<code>&amp;arr</code>时而<code>&amp;arr[0]</code>。今日来做个了结。</p>
 <a id="more"></a>
 <h1 id="字符与ASC码"><a href="#字符与ASC码" class="headerlink" title="字符与ASC码"></a>字符与ASC码</h1><p>我们知道在计算机内部，所有信息最终都是一个二进制值，这称为数字数据。而字符数据通常称为文本，如记事本文件，word文件等。计算机使用多种类型的编码方式来展示字符数据。其中之一的编码方式为ASC码，使用8个bit位来表示一个字符。所以，在计算机设备上显示的文档是经过ASC,Unicode或UTF-8编码后的一串二进制数字。我们可以通过以下程序来观察字符<code>A</code>的二进制：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bitset&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> a&#123;<span class="number">65</span>&#125;;</span><br><span class="line">  <span class="comment">// 十进制数字65 对应的 ASC 字符</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">char</span>&gt;(a) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">char</span> b&#123;<span class="string">'b'</span>&#125;;</span><br><span class="line">  <span class="comment">// 字符对应的十进制数字</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (<span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(b)) &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">  <span class="comment">// 数字的二进制表示</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">bitset</span>&lt;8&gt;(<span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(b)) &lt;&lt;  <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -497,7 +497,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-count">159</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -551,12 +551,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">589k</span>
+    <span title="站点总字数">590k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:55</span>
+    <span title="站点阅读时长">8:56</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

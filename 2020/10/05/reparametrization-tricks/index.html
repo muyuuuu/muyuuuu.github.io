@@ -285,7 +285,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解<strong>重参数</strong>到底是什么，一般都用在什么背景下。</p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解<strong>重参数</strong>到底是什么，一般都用在什么背景下。</p>
 <a id="more"></a>
 <h1 id="VAE-中重参数生成高斯分布"><a href="#VAE-中重参数生成高斯分布" class="headerlink" title="VAE 中重参数生成高斯分布"></a>VAE 中重参数生成高斯分布</h1><p>在 VAE 中，需要从 $p(Z|X)$ 中采样得到样本，但采样的过程本身是不可逆的，就导致整个过程无法反向传播。我们已经知道 $P(Z|X)$ 是服从正态分布的，也知道均值和方差，那么如何产生数据呢？这个时候就是重采样技术了。</p>
 <p>我们首先生成一个均值为0, 标准差为1的高斯分布 $N\sim (0,1)$。在这个分布中中采样数据 $\epsilon$，经过一个变换后得到目标分布：$Z=\mu + \sigma \epsilon$。$\mu$为均值，$\sigma$为方差，由网络计算得出。伪代码如下：</p>
@@ -324,6 +324,9 @@
       <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">神经网络中的安全问题</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
@@ -331,9 +334,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\05\09\back-propagation-and-gradient-descent\" rel="bookmark">图解反向传播与梯度下降</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\19\basic-nlp\" rel="bookmark">从分词到自然语言的世界</a></div>
     </li>
   </ul>
 
@@ -476,7 +476,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-count">159</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -530,12 +530,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">589k</span>
+    <span title="站点总字数">590k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:55</span>
+    <span title="站点阅读时长">8:56</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

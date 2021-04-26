@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>之前一直在看他们用『<strong>因果扩张卷积</strong>』这个东西，当时我只看到了一张图，大概了解了那是个什么东西。今天，在某次比赛中用到了这个模型，顺手看了下源代码，来做个整理。</p>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>之前一直在看他们用『<strong>因果扩张卷积</strong>』这个东西，当时我只看到了一张图，大概了解了那是个什么东西。今天，在某次比赛中用到了这个模型，顺手看了下源代码，来做个整理。</p>
 <a id="more"></a>
 <p>在时序序列的预测问题中，很容易想到LSTM等循环神经网络。给定序列数据，预测下一时刻的输出，如翻译、问答等。</p>
 <p>\begin{equation}<br>p(x)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1)<br>\end{equation}</p>
@@ -304,7 +304,7 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">model = torch.nn.Conv2d(in_channels, out_channels, kernel_size, dilation=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 <p>默认情况下<code>dilation</code>取值为1，也就是没有扩张。</p>
 <h1 id="因果卷积"><a href="#因果卷积" class="headerlink" title="因果卷积"></a>因果卷积</h1><p>因果卷积的重点突出在<strong>因果</strong>两个字上，输入的历史数据是因，输出的数据是果。来看一下模型结构图，这里有三层卷积网络。</p>
-<p><img data-src="/2021/03/10/causal-dilated-conv/1.png" alt></p>
+<p><img data-src="causal-dilated-conv/1.png" alt></p>
 <p>第一层的卷积块读取几个历史数据，经过后几层的卷积块后输出一个数据，达到预测的目的。</p>
 <p>但是，在逐层卷积的同时，每步只卷积两个模块。这就导致了视野域比较小。所以增加了扩张卷积，来增大网络的感受野，即：每次预测时能比之前看到更多的数据，做出更稳定的决策。此时的网络结构为：</p>
 <p><img data-src="https://s3.ax1x.com/2021/03/10/6Jc9hT.png" alt></p>
@@ -325,6 +325,9 @@
       <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">神经网络中的安全问题</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
@@ -332,9 +335,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\05\09\back-propagation-and-gradient-descent\" rel="bookmark">图解反向传播与梯度下降</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\19\basic-nlp\" rel="bookmark">从分词到自然语言的世界</a></div>
     </li>
   </ul>
 
@@ -477,7 +477,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-count">159</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -531,12 +531,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">589k</span>
+    <span title="站点总字数">590k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:55</span>
+    <span title="站点阅读时长">8:56</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
