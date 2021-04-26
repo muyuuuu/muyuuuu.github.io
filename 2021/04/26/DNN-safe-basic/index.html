@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="博客的进阶使用：在指定位置插入脚注[1]，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
+  <meta name="description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
 <meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神经网络中的安全问题">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="博客的进阶使用：在指定位置插入脚注[1]，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
+<meta property="og:description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-26T09:17:57.447Z">
+<meta property="og:updated_time" content="2021-04-26T15:00:04.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络中的安全问题">
-<meta name="twitter:description" content="博客的进阶使用：在指定位置插入脚注[1]，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
+<meta name="twitter:description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/">
 
@@ -252,7 +252,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-04-26 14:42:03 / 修改时间：17:17:57" itemprop="dateCreated datePublished" datetime="2021-04-26T14:42:03+08:00">2021-04-26</time>
+              <time title="创建时间：2021-04-26 14:42:03 / 修改时间：23:00:04" itemprop="dateCreated datePublished" datetime="2021-04-26T14:42:03+08:00">2021-04-26</time>
             </span>
 
           
@@ -285,13 +285,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>博客的进阶使用：在指定位置插入脚注<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[如何加入脚注](https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8)
-">[1]</span></a></sup>，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。</p>
+        <p>博客的进阶使用：在指定位置插入脚注<sup><a href="#fn_1" id="reffn_1">1</a></sup>，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。</p>
 <a id="more"></a>
-<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>所谓对抗样本，即向原始样本中添加一些人眼无法察觉的噪声，这样的噪声不会影响人类的识别，但是却很容易欺骗 DNN <sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[对抗样本](https://arxiv.org/pdf/1312.6199.pdf)
-">[2]</span></a></sup>，使其作出与正确答案完全不同的判定。如下图所示，使用基于梯度<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[FGSM攻击](https://arxiv.org/pdf/1412.6572.pdf)
-">[3]</span></a></sup>的攻击方式，很容易欺骗神经网络：</p>
-<p><img data-src="DNN-safe-basic/1.png" alt></p>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>所谓对抗样本，即向原始样本中添加一些人眼无法察觉的噪声，这样的噪声不会影响人类的识别，但是却很容易欺骗 DNN <sup><a href="#fn_2" id="reffn_2">2</a></sup>，使其作出与正确答案完全不同的判定。如下图所示，使用基于梯度<sup><a href="#fn_3" id="reffn_3">3</a></sup>的攻击方式，很容易欺骗神经网络：</p>
+<p><img data-src="https://z3.ax1x.com/2021/04/26/gpwOwd.png" alt></p>
 <p>将肉眼不可见的细小扰动加入到原图中，网络识别出粗，甚至有 99.3% 的概率认为这是长臂猿。试想，如果犯罪分子将人烟稀少地区的交通信号牌改为立即停车，人眼不会觉得有什么不妥，但是无人驾驶系统却会乖乖停车，那么此时车上人员的安全何以保障？将禁止右转改为右转，造成交通事故就只在弹指一挥间了。究其本质原因，还是因为现有的 DNN 不能完全区分哪些特征是对分类有用的，哪些是可以忽略的。</p>
 <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><ul>
 <li>白盒攻击：攻击者能够获知机器学习所使用的算法，以及算法所使用的参数。</li>
@@ -303,17 +300,27 @@
 <p>考虑输入层对对抗样本的线性变换：</p>
 <p>\begin{equation}<br>w^Tx’=w^Tx+w^T\eta<br>\end{equation}</p>
 <p>如果假设 $\eta = \text{sign} (w)$，$w$ 是一个 $n$ 维的矩阵，每一维的模长是 $m$，那么经过线性映射后，输入将增大 $\epsilon mn$。尽管 $\Vert \eta \Vert_\inf$ 不会变换，但随着维度的升高、矩阵权重的变换和非线性激活，回导致最终结果变化很大。这也就是为什么对抗样本与原始样本相差无几，但却产生了不同的输出。</p>
-<p>因此，FGSM<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[FGSM攻击](https://arxiv.org/pdf/1412.6572.pdf)
-">[3]</span></a></sup> 产生对抗样本的方式为：</p>
+<p>因此，FGSM<sup><a href="#fn_3" id="reffn_3">3</a></sup> 产生对抗样本的方式为：</p>
 <p>\begin{equation}<br>\eta=\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
 <p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。</p>
 <h1 id="常见防御算法"><a href="#常见防御算法" class="headerlink" title="常见防御算法"></a>常见防御算法</h1><ul>
 <li>对抗训练：对抗训练旨在训练一个更加鲁棒的模型，其训练集由真实数据集和加入了对抗扰动的数据集组成，因此叫做对抗训练。</li>
 <li>去噪模块：在输入模型进行判定之前，先对当前对抗样本进行去噪，剔除其中造成扰动的信息，使其不能对模型造成攻击。</li>
 </ul>
-<p>上述几种防御类型对对抗样本扰动都具有一定的防御能力，效果参差不齐。本来想都放到这篇博客里，后来发现任务量太大了，后续我会读一些论文，列举一些代表性算法。当然，也可以移步这里，有很多关于网络安全算法<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[网络安全系列算法](https://aisafety.readthedocs.io/zh_CN/latest/index.html)
-">[4]</span></a></sup>的介绍。</p>
-<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a href="https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8" target="_blank" rel="noopener">如何加入脚注</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">对抗样本</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a href="https://arxiv.org/pdf/1412.6572.pdf" target="_blank" rel="noopener">FGSM攻击</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a><a href="#fnref:4" rev="footnote"> ↩</a></span></li></ol></div></div>
+<p>上述几种防御类型对对抗样本扰动都具有一定的防御能力，效果参差不齐。本来想都放到这篇博客里，后来发现任务量太大了，后续我会读一些论文，列举一些代表性算法。当然，也可以移步这里，有很多关于网络安全算法<sup><a href="#fn_4" id="reffn_4">4</a></sup>的介绍。</p>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><blockquote id="fn_1">
+<sup>1</sup>. <a href="https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8" target="_blank" rel="noopener">如何加入脚注</a><a href="#reffn_1" title="Jump back to footnote [1] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_2">
+<sup>2</sup>. <a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">对抗样本</a><a href="#reffn_2" title="Jump back to footnote [2] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_3">
+<sup>3</sup>. <a href="https://arxiv.org/pdf/1412.6572.pdf" target="_blank" rel="noopener">FGSM攻击</a><a href="#reffn_3" title="Jump back to footnote [3] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_4">
+<sup>4</sup>. <a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a><a href="#reffn_4" title="Jump back to footnote [4] in the text."> &#8617;</a>
+</blockquote>
+
     </div>
 
     

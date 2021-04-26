@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、<a href="https://muyuuuu.github.io/2021/02/18/simple-multithread/">特殊变量</a>等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。</p>
+        <p>在使用多进程编程时，会经常涉及到进程之间通信的问题。除了借助文件、<a href="https://muyuuuu.github.io/2021/02/18/simple-multithread/">特殊变量</a>等，还可以借助一些特殊的数据结构完成功能复杂的通信。并行应用常常需要在进程之间交换数据。python的Multiprocessing库有两个通信通道可以交换对象：队列(queue)和管道(pipe)。</p>
 <a id="more"></a>
 <ul>
 <li>队列返回一个进程共享的队列，队列的操作是<a href="https://docs.python.org/3/library/multiprocessing.html#exchanging-objects-between-processes" target="_blank" rel="noopener">线程安全</a>的，也是进程安全的。任何可序列化的对象（Python通过 pickable 模块序列化对象）都可以通过它进行交换。</li>

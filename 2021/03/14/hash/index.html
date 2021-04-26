@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>每天一点点算法开始了，<del>为什么我就写不出很爽的代码</del>。今天被邀请去水了一场类似ACM的程序设计竞赛，他说是期末考试难度，结果那个难度……题目只做出了一半，剩下的实在是…….出题人的语文水平太差了，没交代清楚题要干什么，很多细节描述的模棱两可。如果你考我程序设计，我没问题；通过模糊的信息表达来考察语文理解能力就没意思了，为啥不多打几个字把问题交代清楚呢？<strong>为节省空间，本文压缩了某些代码，实际工程切勿模仿。</strong></p>
+        <p>每天一点点算法开始了，<del>为什么我就写不出很爽的代码</del>。今天被邀请去水了一场类似ACM的程序设计竞赛，他说是期末考试难度，结果那个难度……题目只做出了一半，剩下的实在是…….出题人的语文水平太差了，没交代清楚题要干什么，很多细节描述的模棱两可。如果你考我程序设计，我没问题；通过模糊的信息表达来考察语文理解能力就没意思了，为啥不多打几个字把问题交代清楚呢？<strong>为节省空间，本文压缩了某些代码，实际工程切勿模仿。</strong></p>
 <a id="more"></a>
 <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>哈希是一种典型的利用空间换时间的算法，通过申请大量的空间，来达到在$O(1)$的时间复杂度内快速查询元素的目的。如最简单的，假设输入序列是<code>0,1,2,3,4,5</code>，申请一个数组作为哈希表。那么此时的哈希计算公式就可以是：<code>H[i] = i % size</code>。<code>size</code>是哈希表的长度，或者说是数组的长度。那么0存储在0号位置，5存储在5号位置。元素插入哈希表和查询哈希表内元素都可以在内完成。</p>
 <p>假设表长为5，如果要插入的序列是<code>0,2,4,7</code>，就不能用上面的映射公式了，因为<code>7%5 == 2%5</code>，也就是2号位置会存储2或7，导致了冲突(collision)。这个时候就需要用探测的方法来确定7该存在哪里，常用的方法有：<a href="https://en.wikipedia.org/wiki/Linear_probing" target="_blank" rel="noopener">线性探测法</a>、<a href="https://en.wikipedia.org/wiki/Quadratic_probing" target="_blank" rel="noopener">平方探测法</a>。</p>
@@ -336,13 +336,13 @@
       <div class="popular-posts-title"><a href="\2018\11\03\AVL-RB-tree\" rel="bookmark">AVL树的Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\08\21\PAT-basic\" rel="bookmark">PAT乙级整理</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\09\07\PAT-advanced\" rel="bookmark">PAT甲级整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2019\09\04\PAT\" rel="bookmark">算法笔记</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\08\21\PAT-basic\" rel="bookmark">PAT乙级整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\02\05\Spiral-matrix\" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>

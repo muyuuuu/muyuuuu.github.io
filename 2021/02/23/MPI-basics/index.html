@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>以python为例，多线程由于GIL的存在，所以有multiprocessing来缓解；但它不能面向多个计算节点编程，所以MPI来了。当面向多个计算节点编程时，程序的各部分之间通过来回传递消息的方式通信。要使得消息传递方式可移植，就需要采用标准的消息传递库。这就促成消息传递接口(Message Passing Interface, MPI)的面世，MPI是一种被广泛采用的消息传递标准，所以MPI并不是一种语言。</p>
+        <p>以python为例，多线程由于GIL的存在，所以有multiprocessing来缓解；但它不能面向多个计算节点编程，所以MPI来了。当面向多个计算节点编程时，程序的各部分之间通过来回传递消息的方式通信。要使得消息传递方式可移植，就需要采用标准的消息传递库。这就促成消息传递接口(Message Passing Interface, MPI)的面世，MPI是一种被广泛采用的消息传递标准，所以MPI并不是一种语言。</p>
 <a id="more"></a>
 <p>在程序中，不同的进程需要相互的数据交换，特别是在科学计算中，需要大规模的计算与数据交换，集群可以很好解决单节点计算力不足的问题，但在集群中大规模的数据交换是很耗费时间的，因此需要一种在多节点的情况下能快速进行数据交流的标准，这就是MPI。所以MPI是一组用于多节点数据通信的标准，而非一种语言或者接口。具体的使用方法需要依赖它的具体实现(mpich or openmpi等)。对于 python 的 MPI 标准而言，可以使用 <code>mpi4py</code> 这个库。实现了点到点通信和集群通信等功能。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>博客简明的介绍 <code>mpi4py</code> 的使用，本博客翻译自瑞典皇家理工PDC高性能计算中心发布的文章，已经过原作者同意。原文写的很好，英文水平够建议阅读原文。</p>

@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>开完一坑又一坑，这应该是<code>GUI</code>系列的完结稿了。时至今日，很多方法和函数已经忘记，一部分整理到了仓库，用时查阅；一部分学会了查官方文档。比如布局中的<code>addSpacing</code>和<code>addStretch</code>填充，以及不同空间该如何<code>Qt.Align</code>，需要大量的经验。用过一次就会知道功能，所以，官方文档永远的神。</p>
+        <p>开完一坑又一坑，这应该是<code>GUI</code>系列的完结稿了。时至今日，很多方法和函数已经忘记，一部分整理到了仓库，用时查阅；一部分学会了查官方文档。比如布局中的<code>addSpacing</code>和<code>addStretch</code>填充，以及不同空间该如何<code>Qt.Align</code>，需要大量的经验。用过一次就会知道功能，所以，官方文档永远的神。</p>
 <a id="more"></a>
 <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>在之前的<a href="https://muyuuuu.github.io/2020/05/12/reverse-radar-multi-thread/">制作倒车雷达</a>中，已经说过了多线程的应用背景。那会儿是项目驱动，现在来彻底了结。一个软件中，如果制作一个计数功能。那么主进程进入计数函数，没有进程负责界面的显示，就会导致软件卡死。如下代码：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys, time</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QMainWindow, QWidget, QHBoxLayout, QApplication, </span><br><span class="line">                             QPushButton)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mainwindow</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(mainwindow, self).__init__()</span><br><span class="line"></span><br><span class="line">        layout = QHBoxLayout()</span><br><span class="line">        w = QWidget()</span><br><span class="line">        w.setLayout(layout)</span><br><span class="line">        self.setCentralWidget(w)</span><br><span class="line"></span><br><span class="line">        btn = QPushButton(<span class="string">"点击"</span>)</span><br><span class="line">        layout.addWidget(btn)</span><br><span class="line">        btn.clicked.connect(self.count)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">count</span><span class="params">(self)</span>:</span></span><br><span class="line">        num = <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> num &lt;= <span class="number">12000</span>:</span><br><span class="line">            time.sleep(<span class="number">0.1</span>)</span><br><span class="line">            num += <span class="number">1</span></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app = QApplication([])</span><br><span class="line">    m = mainwindow()</span><br><span class="line">    m.show()</span><br><span class="line">    sys.exit(app.exec())</span><br></pre></td></tr></table></figure>
@@ -353,10 +353,10 @@
       <div class="popular-posts-title"><a href="\2021\02\03\PyQt5-MVC\" rel="bookmark">PyQt5通过信号实现MVC</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
+      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
+      <div class="popular-posts-title"><a href="\2021\04\10\pyqt5-load-huge-image\" rel="bookmark">PyQt5 显示超清高分辨率图片</a></div>
     </li>
   </ul>
 

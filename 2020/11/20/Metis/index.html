@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是图划分的上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？现存的库都是直接返回划分结果，但我们只想融合，自己开发还是灵活。</p>
+        <p>这是我第一次开发如此大规模的程序，论文的作者也提供了算法的<code>C</code>语言还是<code>C++</code>版本的软件来？我记不清了。但对于我们来说，<code>Metis</code>只是图划分的上游任务，且不需要完整的<code>Metis</code>算法，只是需要它融合图的一部分，而不需要它的图划分阶段。下游任务必须要用<code>python</code>来处理，考虑到数据结构和数据类型对接的方便性，因此我们考虑使用<code>python</code>来复现<code>Metis</code>算法。还有一点，使用别人的软件，万一结果不好怎么办？万一自己想改算法怎么办？现存的库都是直接返回划分结果，但我们只想融合，自己开发还是灵活。</p>
 <a id="more"></a>
 <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>还有一点是，<code>python</code>第三方库的<code>Metis</code>模块是使用<code>networkx</code>开发的，它的底层是<code>python</code>，在处理超大规模图数据时肯定效率不够高，因此我们选用底层为<code>C++</code>的<code>graph-tool</code>重新开发。</p>
 <ul>

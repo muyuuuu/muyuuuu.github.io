@@ -291,7 +291,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。<strong>本文更侧重理论解读，某些场景下，这些概念可同样用到进程中；样例代码为C语言，其他语言仍然适用。</strong></p>
+        <p>使用多线程必须注意一个问题，如果有多个线程同时运行，而且它们试图访问相同的资源，就会遇到各种问题。如请求在代码在阅读时写入其他函数，即一个线程要读，一个线程要写，读线程占据着资源，写线程得不到资源，自然就会与理想的结果相违背。<strong>本文更侧重理论解读，某些场景下，这些概念可同样用到进程中；样例代码为C语言，其他语言仍然适用。</strong></p>
 <a id="more"></a>
 <h1 id="没有锁的保护"><a href="#没有锁的保护" class="headerlink" title="没有锁的保护"></a>没有锁的保护</h1><p>多线程中，变量都由所有线程共享。所以，任何一个变量都可以被任何一个线程修改。如修改一个变量需要多条语句，在执行这几条语句时，线程可能中断，很可能把内容给改乱了。如下所示的代码，创建一个为0的变量，创建两个线程，每个线程对变量执行+1的操作，得到的最后结果不一定是2。<code>t1, t2</code>为线程，<code>x1, x2</code>为各自线程的临时变量：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始值 g = 0</span></span><br><span class="line">t1: x1 = g + <span class="number">1</span>   <span class="comment">// x1 = 0 + 1</span></span><br><span class="line">t2: x2 = g + <span class="number">1</span>   <span class="comment">// x2 = 0 + 1</span></span><br><span class="line"></span><br><span class="line">t1: g = x1       <span class="comment">// g = x1 = 1</span></span><br><span class="line">t2: g = x2       <span class="comment">// g = x2 = 1</span></span><br><span class="line"><span class="comment">// 最终结果 g = 1 而不是 2</span></span><br></pre></td></tr></table></figure>
