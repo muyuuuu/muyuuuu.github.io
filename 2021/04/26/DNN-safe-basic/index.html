@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-26T15:00:04.591Z">
+<meta property="og:updated_time" content="2021-04-28T03:16:58.079Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络中的安全问题">
 <meta name="twitter:description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
@@ -250,10 +250,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-26 14:42:03 / 修改时间：23:00:04" itemprop="dateCreated datePublished" datetime="2021-04-26T14:42:03+08:00">2021-04-26</time>
+              <time title="创建时间：2021-04-26 14:42:03" itemprop="dateCreated datePublished" datetime="2021-04-26T14:42:03+08:00">2021-04-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-28 11:16:58" itemprop="dateModified" datetime="2021-04-28T11:16:58+08:00">2021-04-28</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -266,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>3.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -296,13 +302,34 @@
 <li>无目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与原标注无关，即只要攻击成功就好，对抗样本的最终属于哪一类不做限制。</li>
 <li>有目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与目标标注完全一致，即不仅要求攻击成功，还要求生成的对抗样本属于特定的类。</li>
 </ul>
-<h1 id="常见攻击算法"><a href="#常见攻击算法" class="headerlink" title="常见攻击算法"></a>常见攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert_\inf &lt; \epsilon$。</p>
+<h1 id="基于梯度的攻击算法"><a href="#基于梯度的攻击算法" class="headerlink" title="基于梯度的攻击算法"></a>基于梯度的攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert_\inf &lt; \epsilon$。事实上，常说的 $l_\inf-\text{ball}$ 就是这个意思。</p>
 <p>考虑输入层对对抗样本的线性变换：</p>
 <p>\begin{equation}<br>w^Tx’=w^Tx+w^T\eta<br>\end{equation}</p>
 <p>如果假设 $\eta = \text{sign} (w)$，$w$ 是一个 $n$ 维的矩阵，每一维的模长是 $m$，那么经过线性映射后，输入将增大 $\epsilon mn$。尽管 $\Vert \eta \Vert_\inf$ 不会变换，但随着维度的升高、矩阵权重的变换和非线性激活，回导致最终结果变化很大。这也就是为什么对抗样本与原始样本相差无几，但却产生了不同的输出。</p>
 <p>因此，FGSM<sup><a href="#fn_3" id="reffn_3">3</a></sup> 产生对抗样本的方式为：</p>
 <p>\begin{equation}<br>\eta=\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
-<p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。</p>
+<p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。torch 官方<sup><a href="#fn_5" id="reffn_5">5</a></sup>也给出了对抗样本的程序：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># FGSM attack code</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fgsm_attack</span><span class="params">(image, epsilon, data_grad)</span>:</span></span><br><span class="line">    <span class="comment"># Collect the element-wise sign of the data gradient</span></span><br><span class="line">    sign_data_grad = data_grad.sign()</span><br><span class="line">    <span class="comment"># Create the perturbed image by adjusting each pixel of the input image</span></span><br><span class="line">    perturbed_image = image + epsilon*sign_data_grad</span><br><span class="line">    <span class="comment"># Adding clipping to maintain [0,1] range</span></span><br><span class="line">    perturbed_image = torch.clamp(perturbed_image, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># Return the perturbed image</span></span><br><span class="line">    <span class="keyword">return</span> perturbed_image</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    data_grad = data.grad.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Call FGSM Attack</span></span><br><span class="line">    perturbed_data = fgsm_attack(data, epsilon, data_grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Re-classify the perturbed image</span></span><br><span class="line">    output = model(perturbed_data)</span><br></pre></td></tr></table></figure>
+<h2 id="PGD-攻击算法"><a href="#PGD-攻击算法" class="headerlink" title="PGD 攻击算法"></a>PGD 攻击算法</h2><p>PGD 攻击算法<sup><a href="#fn_6" id="reffn_6">6</a></sup>是 FSGM 的变体，它即是产生对抗样本的攻击算法，也是对抗训练的防御算法。</p>
+<p>论文先抛出了两个问题：</p>
+<ol>
+<li>如何产生强有效的对抗样本，只需要一点点扰动就可以欺骗神经网络？</li>
+<li>如何训练模型，使得没有对抗样本轻易能欺骗网络？</li>
+</ol>
+<p>在论文中，为了防止网络只能抵御某一特定类型的攻击，应该保证模型有足够的对抗鲁棒性，接下来，使用一种方法来训练模型，达到这种保证。在传统的网络中，损失函数通常是优化网络参数 $\theta$，使得损失函数达到最小：$\mathbb{E}_{x\sim D}[L(x;y;\theta)]$。但是，对于对抗样本而言，就是要误导神经网络的输出。同样，这篇论文中，对抗样本的扰动范围也限制在 $l_\inf-\text{ball}$ 内。</p>
+<p>但是在训练损失函数$\mathbb{E}_{x\sim D}[L]$之前，先考虑对抗样本的扰动，所以先不把干净样本 $x$ 输入到网络，而是用对抗样本作为网络的输入。所以论文的公式将攻击和防御放入统一框架内，对抗训练就是在一个马鞍面内求鞍点。</p>
+<p>\begin{equation}<br>\min \mathbb{E}_{x\sim D} \big[ \max_{\sigma\in S} L(\theta; x; y) \big]<br>\end{equation}</p>
+<p>其中的 $S$ 表示球面限制，即无穷范数不能超过 $S$。这个统一的框架包括了内部最大化和外部最小化，因此可以视为鞍点问题，也清晰的描述了鲁棒模型应该达到的目标。内部最大化的期望是，寻找最优的对抗样本达到很高的损失；外部最小化的期望是，寻找模型参数，能抵抗对抗样本的攻击。所以，最终训练得到的模型也具有稳定的对抗鲁棒性。</p>
+<p>在攻击部分，对抗样本的制作方法为：</p>
+<p>\begin{equation}<br>x+\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
+<p>这可以解释为内部期望最大化的单步攻击。但多步攻击会更加有效，因为 DNN 是复杂的非线性映射，不要企图一步到位。在数据点的 $l_\inf$ 球边界的许多点运行PGD，来探索损失函数中的大部分位置，即在这个球的范围内，探索到绝大多数地方，以能够找到最强的对抗样本。虽然在 $x_i+S$ 的范围内有许多局部最大值，但是他们的损失值往往相似，也就是说，解决了最大化内部非凹函数的问题。</p>
+<p>\begin{equation}<br>x^{t+1}=\prod_{x+S}\bigg(x^t+\alpha \text{sign} \big( \nabla_x J(\theta, x, y) \big) bigg)<br>\end{equation}</p>
+<p>实验发现，通过PGD发现的局部最大值在正常训练的网络和对抗训练的网络中都有着相似的损失值；换句话说，PGD 训练对抗样本，和普通网络训练干净样本的损失是类似的；这也说明，只要能够防御住PGD，就会对所有的一阶攻击手段具有鲁棒性。</p>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>剩下的这些都是论文中实验部分所提及的了，更多内容，还可以参考这里<sup><a href="#fn_7" id="reffn_7">7</a></sup>的解读和这里<sup><a href="#fn_8" id="reffn_8">8</a></sup>的代码。</p>
+<ul>
+<li>在模型容量较小时，模型对 FGSM 对抗样本产生了过拟合，这种行为被称为label leaking。而且，模型无法防御 PGD 攻击。</li>
+<li>对抗样本的复杂性，是决策边界也变得复杂，因此模型需要更大的容量，才能抵御对抗样本。</li>
+</ul>
 <h1 id="常见防御算法"><a href="#常见防御算法" class="headerlink" title="常见防御算法"></a>常见防御算法</h1><ul>
 <li>对抗训练：对抗训练旨在训练一个更加鲁棒的模型，其训练集由真实数据集和加入了对抗扰动的数据集组成，因此叫做对抗训练。</li>
 <li>去噪模块：在输入模型进行判定之前，先对当前对抗样本进行去噪，剔除其中造成扰动的信息，使其不能对模型造成攻击。</li>
@@ -319,6 +346,18 @@
 </blockquote>
 <blockquote id="fn_4">
 <sup>4</sup>. <a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a><a href="#reffn_4" title="Jump back to footnote [4] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_5">
+<sup>5</sup>. <a href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html" target="_blank" rel="noopener">pytorch实现FSGM</a><a href="#reffn_5" title="Jump back to footnote [5] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_6">
+<sup>6</sup>. <a href="https://arxiv.org/pdf/1706.06083.pdf" target="_blank" rel="noopener">PGD攻击算法</a><a href="#reffn_6" title="Jump back to footnote [6] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_7">
+<sup>7</sup>. <a href="https://baidinghub.github.io/2020/04/03/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89PGD%E5%8F%8A%E9%98%B2%E5%BE%A1/#5-1-Network-Capacity-and-Adversarial-Robustness" target="_blank" rel="noopener">PGD论文笔记</a><a href="#reffn_7" title="Jump back to footnote [7] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_8">
+<sup>8</sup>. <a href="https://github.com/Harry24k/PGD-pytorch/blob/master/PGD.ipynb" target="_blank" rel="noopener">PGD攻击程序</a><a href="#reffn_8" title="Jump back to footnote [8] in the text."> &#8617;</a>
 </blockquote>
 
     </div>
@@ -466,7 +505,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见攻击算法"><span class="nav-number">3.</span> <span class="nav-text">常见攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FGSM-攻击算法"><span class="nav-number">3.1.</span> <span class="nav-text">FGSM 攻击算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见防御算法"><span class="nav-number">4.</span> <span class="nav-text">常见防御算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于梯度的攻击算法"><span class="nav-number">3.</span> <span class="nav-text">基于梯度的攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FGSM-攻击算法"><span class="nav-number">3.1.</span> <span class="nav-text">FGSM 攻击算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PGD-攻击算法"><span class="nav-number">3.2.</span> <span class="nav-text">PGD 攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#补充"><span class="nav-number">3.2.1.</span> <span class="nav-text">补充</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见防御算法"><span class="nav-number">4.</span> <span class="nav-text">常见防御算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -536,12 +575,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">590k</span>
+    <span title="站点总字数">592k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:56</span>
+    <span title="站点阅读时长">8:58</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

@@ -14,13 +14,34 @@
 <li>无目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与原标注无关，即只要攻击成功就好，对抗样本的最终属于哪一类不做限制。</li>
 <li>有目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与目标标注完全一致，即不仅要求攻击成功，还要求生成的对抗样本属于特定的类。</li>
 </ul>
-<h1 id="常见攻击算法"><a href="#常见攻击算法" class="headerlink" title="常见攻击算法"></a>常见攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert_\inf &lt; \epsilon$。</p>
+<h1 id="基于梯度的攻击算法"><a href="#基于梯度的攻击算法" class="headerlink" title="基于梯度的攻击算法"></a>基于梯度的攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert_\inf &lt; \epsilon$。事实上，常说的 $l_\inf-\text{ball}$ 就是这个意思。</p>
 <p>考虑输入层对对抗样本的线性变换：</p>
 <p>\begin{equation}<br>w^Tx’=w^Tx+w^T\eta<br>\end{equation}</p>
 <p>如果假设 $\eta = \text{sign} (w)$，$w$ 是一个 $n$ 维的矩阵，每一维的模长是 $m$，那么经过线性映射后，输入将增大 $\epsilon mn$。尽管 $\Vert \eta \Vert_\inf$ 不会变换，但随着维度的升高、矩阵权重的变换和非线性激活，回导致最终结果变化很大。这也就是为什么对抗样本与原始样本相差无几，但却产生了不同的输出。</p>
 <p>因此，FGSM<sup><a href="#fn_3" id="reffn_3">3</a></sup> 产生对抗样本的方式为：</p>
 <p>\begin{equation}<br>\eta=\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
-<p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。</p>
+<p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。torch 官方<sup><a href="#fn_5" id="reffn_5">5</a></sup>也给出了对抗样本的程序：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># FGSM attack code</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fgsm_attack</span><span class="params">(image, epsilon, data_grad)</span>:</span></span><br><span class="line">    <span class="comment"># Collect the element-wise sign of the data gradient</span></span><br><span class="line">    sign_data_grad = data_grad.sign()</span><br><span class="line">    <span class="comment"># Create the perturbed image by adjusting each pixel of the input image</span></span><br><span class="line">    perturbed_image = image + epsilon*sign_data_grad</span><br><span class="line">    <span class="comment"># Adding clipping to maintain [0,1] range</span></span><br><span class="line">    perturbed_image = torch.clamp(perturbed_image, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># Return the perturbed image</span></span><br><span class="line">    <span class="keyword">return</span> perturbed_image</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    data_grad = data.grad.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Call FGSM Attack</span></span><br><span class="line">    perturbed_data = fgsm_attack(data, epsilon, data_grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Re-classify the perturbed image</span></span><br><span class="line">    output = model(perturbed_data)</span><br></pre></td></tr></table></figure>
+<h2 id="PGD-攻击算法"><a href="#PGD-攻击算法" class="headerlink" title="PGD 攻击算法"></a>PGD 攻击算法</h2><p>PGD 攻击算法<sup><a href="#fn_6" id="reffn_6">6</a></sup>是 FSGM 的变体，它即是产生对抗样本的攻击算法，也是对抗训练的防御算法。</p>
+<p>论文先抛出了两个问题：</p>
+<ol>
+<li>如何产生强有效的对抗样本，只需要一点点扰动就可以欺骗神经网络？</li>
+<li>如何训练模型，使得没有对抗样本轻易能欺骗网络？</li>
+</ol>
+<p>在论文中，为了防止网络只能抵御某一特定类型的攻击，应该保证模型有足够的对抗鲁棒性，接下来，使用一种方法来训练模型，达到这种保证。在传统的网络中，损失函数通常是优化网络参数 $\theta$，使得损失函数达到最小：$\mathbb{E}_{x\sim D}[L(x;y;\theta)]$。但是，对于对抗样本而言，就是要误导神经网络的输出。同样，这篇论文中，对抗样本的扰动范围也限制在 $l_\inf-\text{ball}$ 内。</p>
+<p>但是在训练损失函数$\mathbb{E}_{x\sim D}[L]$之前，先考虑对抗样本的扰动，所以先不把干净样本 $x$ 输入到网络，而是用对抗样本作为网络的输入。所以论文的公式将攻击和防御放入统一框架内，对抗训练就是在一个马鞍面内求鞍点。</p>
+<p>\begin{equation}<br>\min \mathbb{E}_{x\sim D} \big[ \max_{\sigma\in S} L(\theta; x; y) \big]<br>\end{equation}</p>
+<p>其中的 $S$ 表示球面限制，即无穷范数不能超过 $S$。这个统一的框架包括了内部最大化和外部最小化，因此可以视为鞍点问题，也清晰的描述了鲁棒模型应该达到的目标。内部最大化的期望是，寻找最优的对抗样本达到很高的损失；外部最小化的期望是，寻找模型参数，能抵抗对抗样本的攻击。所以，最终训练得到的模型也具有稳定的对抗鲁棒性。</p>
+<p>在攻击部分，对抗样本的制作方法为：</p>
+<p>\begin{equation}<br>x+\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
+<p>这可以解释为内部期望最大化的单步攻击。但多步攻击会更加有效，因为 DNN 是复杂的非线性映射，不要企图一步到位。在数据点的 $l_\inf$ 球边界的许多点运行PGD，来探索损失函数中的大部分位置，即在这个球的范围内，探索到绝大多数地方，以能够找到最强的对抗样本。虽然在 $x_i+S$ 的范围内有许多局部最大值，但是他们的损失值往往相似，也就是说，解决了最大化内部非凹函数的问题。</p>
+<p>\begin{equation}<br>x^{t+1}=\prod_{x+S}\bigg(x^t+\alpha \text{sign} \big( \nabla_x J(\theta, x, y) \big) bigg)<br>\end{equation}</p>
+<p>实验发现，通过PGD发现的局部最大值在正常训练的网络和对抗训练的网络中都有着相似的损失值；换句话说，PGD 训练对抗样本，和普通网络训练干净样本的损失是类似的；这也说明，只要能够防御住PGD，就会对所有的一阶攻击手段具有鲁棒性。</p>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>剩下的这些都是论文中实验部分所提及的了，更多内容，还可以参考这里<sup><a href="#fn_7" id="reffn_7">7</a></sup>的解读和这里<sup><a href="#fn_8" id="reffn_8">8</a></sup>的代码。</p>
+<ul>
+<li>在模型容量较小时，模型对 FGSM 对抗样本产生了过拟合，这种行为被称为label leaking。而且，模型无法防御 PGD 攻击。</li>
+<li>对抗样本的复杂性，是决策边界也变得复杂，因此模型需要更大的容量，才能抵御对抗样本。</li>
+</ul>
 <h1 id="常见防御算法"><a href="#常见防御算法" class="headerlink" title="常见防御算法"></a>常见防御算法</h1><ul>
 <li>对抗训练：对抗训练旨在训练一个更加鲁棒的模型，其训练集由真实数据集和加入了对抗扰动的数据集组成，因此叫做对抗训练。</li>
 <li>去噪模块：在输入模型进行判定之前，先对当前对抗样本进行去噪，剔除其中造成扰动的信息，使其不能对模型造成攻击。</li>
@@ -37,6 +58,18 @@
 </blockquote>
 <blockquote id="fn_4">
 <sup>4</sup>. <a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a><a href="#reffn_4" title="Jump back to footnote [4] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_5">
+<sup>5</sup>. <a href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html" target="_blank" rel="noopener">pytorch实现FSGM</a><a href="#reffn_5" title="Jump back to footnote [5] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_6">
+<sup>6</sup>. <a href="https://arxiv.org/pdf/1706.06083.pdf" target="_blank" rel="noopener">PGD攻击算法</a><a href="#reffn_6" title="Jump back to footnote [6] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_7">
+<sup>7</sup>. <a href="https://baidinghub.github.io/2020/04/03/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89PGD%E5%8F%8A%E9%98%B2%E5%BE%A1/#5-1-Network-Capacity-and-Adversarial-Robustness" target="_blank" rel="noopener">PGD论文笔记</a><a href="#reffn_7" title="Jump back to footnote [7] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_8">
+<sup>8</sup>. <a href="https://github.com/Harry24k/PGD-pytorch/blob/master/PGD.ipynb" target="_blank" rel="noopener">PGD攻击程序</a><a href="#reffn_8" title="Jump back to footnote [8] in the text."> &#8617;</a>
 </blockquote>
 ]]></content>
       <tags>
@@ -8724,46 +8757,6 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       </tags>
   </entry>
   <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -8827,6 +8820,46 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
