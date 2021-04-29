@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast-RCNN 重头来过了。其中，FastRCNN 只有理论，Faster-RCNN 部分含有代码。">
+  <meta name="description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 <meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="目标检测篇：Faster-RCNN">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/04/28/faster-rcnn/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast-RCNN 重头来过了。其中，FastRCNN 只有理论，Faster-RCNN 部分含有代码。">
+<meta property="og:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-29T06:15:20.625Z">
+<meta property="og:updated_time" content="2021-04-29T14:36:15.763Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="目标检测篇：Faster-RCNN">
-<meta name="twitter:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast-RCNN 重头来过了。其中，FastRCNN 只有理论，Faster-RCNN 部分含有代码。">
+<meta name="twitter:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/04/28/faster-rcnn/">
 
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-29 14:15:20" itemprop="dateModified" datetime="2021-04-29T14:15:20+08:00">2021-04-29</time>
+                <time title="修改时间：2021-04-29 22:36:15" itemprop="dateModified" datetime="2021-04-29T22:36:15+08:00">2021-04-29</time>
               </span>
 
           
@@ -272,7 +272,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4k</span>
+              <span>4.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -291,21 +291,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>又来开计算机视觉的坑了，<strong>这次一定做好整理和记录，包括算法内容和程序</strong>。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast-RCNN 重头来过了。其中，FastRCNN 只有理论，Faster-RCNN 部分含有代码。</p>
+        <p>又来开计算机视觉的坑了，<strong>这次一定做好整理和记录，包括算法内容和程序</strong>。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。</p>
+<p>既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组成：$(x,y,w,h)$，表示物体的起始点坐标和框的宽度与高度；对于目标是什么的问题，就是传统神经网络的多分类问题了。</p>
 <a id="more"></a>
-<p>既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个框，框有四部分组成：$(x,y,w,h)$，表示起始点坐标和框的宽度与高度；对于目标是什么的问题，就是传统神经网络的多分类问题了。</p>
-<h1 id="Fast-RCNN"><a href="#Fast-RCNN" class="headerlink" title="Fast-RCNN"></a>Fast-RCNN</h1><p>算法步骤与网络结构图<sup><a href="#fn_2" id="reffn_2">2</a></sup>：</p>
+<h1 id="Fast-R-CNN"><a href="#Fast-R-CNN" class="headerlink" title="Fast R-CNN"></a>Fast R-CNN</h1><p>算法步骤与网络结构图<sup><a href="#fn_2" id="reffn_2">2</a></sup>：</p>
 <ol>
 <li>首先使用 selective search 算法<sup><a href="#fn_1" id="reffn_1">1</a></sup>搜索目标区域候选框，以下简称 SS 算法</li>
 <li>将图像输入 backbone，一个超大规模的特征提取网络，得到一个特征图</li>
 <li>将 SS 生成的候选框映射到特征图中，得到每个候选框的特征矩阵</li>
 <li>将每个候选框的特征矩阵通过 ROI（region of interest）-pooling 层缩放到 $7\times 7$ 的矩阵</li>
 <li>将矩阵展平，全连接，得到一系列的预测结果。包括预测概率和目标框，而后反向传播</li>
-<li>这里需要注意的是，最后预测分类和预测框的两个全连接是并联的</li>
+<li>这里需要注意的是，最后预测分类和预测目标边界框的两个全连接是<strong>并联</strong>的</li>
 </ol>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gP4CU1.png" alt></p>
 <h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><p>对于算法步骤 3，特征图映射问题。是为了减少计算量，不用为每个候选框单独计算特征矩阵；而是计算一个特征矩阵后，直接选择候选框的内容。选择方式也很简单，矩阵映射就行。</p>
-<h3 id="正样本与负样本"><a href="#正样本与负样本" class="headerlink" title="正样本与负样本"></a>正样本与负样本</h3><p>训练期间，并没有训练全部候选框的特征矩阵，只使用了其中的一小部分，比如只训练 64 个。正样本，表示含有待检测目标；负样本，表示背景区域。因为要让网络能正确识别背景，并不是所有图片都含有目标。</p>
+<h3 id="正样本与负样本"><a href="#正样本与负样本" class="headerlink" title="正样本与负样本"></a>正样本与负样本</h3><p>训练期间，并没有训练全部候选框的特征矩阵，只使用了其中的一小部分，比如只训练 64 个。正样本，表示含有待检测目标；负样本，表示背景区域。选用负样本的原因是，要让网络能正确识别背景，并不是所有图片都含有目标。</p>
 <ul>
 <li>正样本：候选框与真实框的 IOU 大于 0.5，选择其中的一部分进入网络</li>
 <li>负样本：候选框与真实框的 IOU 在 0.1 到 0.5 之间</li>
@@ -314,26 +314,26 @@
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gPHdIJ.png" alt></p>
 <h3 id="ROI-pooling"><a href="#ROI-pooling" class="headerlink" title="ROI-pooling"></a>ROI-pooling</h3><p>ROI-pooling 层的目的在于，不限制输入图像的大小。因为 ROI 后面的全连接层肯定是固定到某一个特殊维度的，而每个候选框对应特征矩阵的大小也不一致，所以，需要使用 ROI-pooling 将不同大小的特征矩阵映射到同一大小。具体方法如下，算了如图吧，如对任意大小的特征矩阵映射为 $2\times2$的特征矩阵，取其中的最大值或平均值。$7\times7$ 也是同一个道理。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gPIzDg.png" alt></p>
-<h3 id="预测输出与反向传播"><a href="#预测输出与反向传播" class="headerlink" title="预测输出与反向传播"></a>预测输出与反向传播</h3><p>先来看概率预测。因为含有负样本，因此网络要识别 $N$ 的类的话，网络输出的概率就是 $N+1$，多一个背景。ROI-pooling 后，经过两个全连接得到特征向量。特征向量经过第一个<strong>并联</strong>的全连接，softmax 后输出标签概率；经过第二个<strong>并联</strong>的全连接，输出目标框的位置参数。</p>
+<h3 id="预测输出与反向传播"><a href="#预测输出与反向传播" class="headerlink" title="预测输出与反向传播"></a>预测输出与反向传播</h3><p>先来看概率预测。因为含有负样本，因此网络要识别 $N$ 的类的话，网络输出的概率就是 $N+1$，多一个背景类。ROI-pooling 后，经过两个全连接得到特征向量。特征向量经过第一个<strong>并联</strong>的全连接，softmax 后输出标签概率；经过第二个<strong>并联</strong>的全连接，输出目标框的位置参数。</p>
 <ul>
 <li>对于第一个并联的全连接而言，只需要和真实标签进行交叉熵<sup><a href="#fn_3" id="reffn_3">3</a></sup>即可，<strong>分类损失</strong>记为 $L_1$；</li>
 </ul>
-<p>接下来重点讲输出目标框的部分，如何使输出的目标框越来越接近真实的目标框呢？对于边界框回归器，输出 <code>N+1</code> 个类别候选边界框的回归参数 $d_x,d_y,d_w,d_h$，共输出 $4(N+1)$ 个参数。我们设当前候选框的<strong>中心点坐标</strong>和宽高为 $(P_x,P_y,P_w,P_h)$，最终预测的边界框的参数为：</p>
+<p>接下来重点讲输出目标边界框的部分，如何使输出的目标框越来越接近真实的目标框呢？对于边界框回归器，也就是第二个并联的全连接，输出 <code>N+1</code> 个类别候选边界框的回归参数 $(d_x,d_y,d_w,d_h)$，共输出 $4(N+1)$ 个参数。我们设当前 SS 算法得到候选框的<strong>中心点坐标</strong>和宽高为 $(P_x,P_y,P_w,P_h)$，最终预测的边界框的参数 $(G_x, G_y, G_w, G_h)$ 为：</p>
 <p>\begin{equation}<br>    \begin{aligned}<br>        G_x &amp;= P_wd_x + P_x \\<br>        G_y &amp;= P_hd_y + P_y \\<br>        G_w &amp;= P_w \exp{(d_w)} \\<br>        G_h &amp;= P_h \exp{(d_h)}<br>    \end{aligned}<br>\end{equation}</p>
-<p>可视化一下得到的最终预测的坐标 $(G_x, G_y, G_w, G_h)$ ：</p>
+<p>可视化一下得到的最终预测的坐标 $(G_x, G_y, G_w, G_h)$ ，也就是，红色框是之前的候选框 $(P_x,P_y,P_w,P_h)$；绿色框是标注的候选框；经过神经网络的输出 $(d_x,d_y,d_w,d_h)$ 后，移动到蓝色框位置，也就是 $(G_x, G_y, G_w, G_h)$。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gipoqA.png" alt></p>
-<p>也就是，红色框是之前的候选框 $(P_x,P_y,P_w,P_h)$；绿色框是标注的候选框；经过神经网络的输出 $(d_x,d_y,d_w,d_h)$ 后，移动到蓝色框位置，也就是 $(G_x, G_y, G_w, G_h)$。</p>
-<p>在计算完候选框之后，现在就要计算损失反向传播了。假设此时真实的类别标签是 $u$，第 $u$ 个类的别解框的输出为 $(d_x^u,d_y^u,d_w^u,d_h^u)$，真实目标边界框的参数为 $(v_x,v_y,v_w,v_h)$。</p>
+<p>在计算完候选框之后，现在就要计算损失反向传播了。假设此时真实的类别标签是 $u$，第 $u$ 个类别的目标边界框的输出为 $(d_x^u,d_y^u,d_w^u,d_h^u)$，真实目标边界框的参数为 $(v_x,v_y,v_w,v_h)$。</p>
 <p><strong>边界框损失</strong>的损失为：</p>
 <p>\begin{equation}<br>    \begin{aligned}<br>    L_2 &amp;= \sum_{i\in{x,y,w,h}}\text{smooth}(t_i^u-v_i) \\<br>    \text{smooth}(x) &amp;=<br>        \begin{cases}<br>        0.5 x^2 &amp; |x| &lt; 1 \\<br>        |x| - 0.5 &amp; \text{other}<br>        \end{cases}<br>    \end{aligned}<br>\end{equation}</p>
-<p>它在绝对差值大于1时不求平方，可以避免梯度爆炸。大部分回归问题都可以适用，尤其是数值比较大的时候。此时，最终的损失函数为：</p>
+<p>这个损失在绝对差值大于1时不求平方，可以避免梯度爆炸。大部分回归问题都可以适用，尤其是数值比较大的时候。此时，最终的损失函数为：</p>
 <p>\begin{equation}<br>L = L_1 + \lambda[\mu\geq 1]L_2<br>\end{equation}</p>
-<p>$[u\geq 1]$ 表示爱佛森括号，意思是，当 $u\geq 1$ 时，$[u\geq 1] = 1$，否则 $[u\geq 1] = 0$；$u=0$时，表示当前是背景，背景是没有边界框的，也就没有边界框回归损失这一项。$\lambda$ 是权重。</p>
-<p>好滴，Fast RCNN 记录完毕。Faster RCNN 就相对简单点了。</p>
-<h1 id="Faster-RCNN"><a href="#Faster-RCNN" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h1><p>Faster-RCNN = Fast-RCNN + RPN<sup><a href="#fn_4" id="reffn_4">4</a></sup> 结构，用 RPN 生成特征候选框，将生成的候选框投影到特征图上得到特征矩阵，即代替了之前的 SS 操作。RPN 网络，输入为 features map，用于生成 region proposal，该层为 features map 上每个像素生成若干个 anchors（9个），随后通过softmax 判断每个 anchor 是属于 foreground（目标）或者 background（背景），再利用 bounding box regression 修正 anchors 获得精确的 proposal 位置。</p>
-<p>而 Roi Pooling 层则利用 RPN 提供的 proposals 以及 backbone 后的 feature maps，提取 proposal feature 送入后续全连接和 softmax 网络作 classification。之后的操作和 Fast RCNN 就一样了。网络结构如下，所以重点来看 RPN。未完待续。</p>
+<p>$[u\geq 1]$ 表示爱佛森括号，意思是，当 $u\geq 1$ 时，$[u\geq 1] = 1$，否则 $[u\geq 1] = 0$；$u=0$时，表示当前是背景，背景是没有边界框的，也就没有边界框回归损失这一项。$\lambda$ 是权重。好滴，Fast R-CNN 记录完毕。Faster RCNN 就相对简单点了，只是在 Fast R-CNN 的基础上使用 RPN 替换了 SS 算法。</p>
+<h1 id="Faster-RCNN"><a href="#Faster-RCNN" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h1><p>Faster-RCNN = Fast R-CNN + RPN<sup><a href="#fn_4" id="reffn_4">4</a></sup> 结构，用 RPN 生成特征候选框，将生成的候选框投影到特征图上得到特征矩阵，即代替了之前的 SS 操作，也就是，让 RPN 网络自己去寻找哪里可能有目标。</p>
+<p>RPN 网络，输入为 backbone 后的 features map，用于生成 region proposal，该层为 features map 上每个像素生成若干个 anchors（9个），随后通过 softmax 判断每个 anchor 是属于 foreground（目标）或者 background（背景），再利用边界框回归器修正 anchors 获得精确的 proposal 位置。</p>
+<p>而后，Roi Pooling 层则利用 RPN 提供的 proposals 以及 backbone 后的 feature maps，提取 proposal feature 送入后续全连接网络，再之后的操作和 Fast R-CNN 就一样了。所以重点来看 RPN，网络结构如下。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gif0ER.png" alt></p>
-<h2 id="RPN-网络"><a href="#RPN-网络" class="headerlink" title="RPN 网络"></a>RPN 网络</h2><p>在 backbone 得到特征图后，使用滑动窗口，滑动到一个位置生成一个一维向量，而后一维向量进入两个并联的卷积层，输出 $2k$ 个概率得分（背景概率和前景概率）和 $4k$ 个边界框参数，$k$ 是 <code>anchor box</code> 的数量。注意，这是一步卷积就生成这么多参数。如下图所示，256表示 backbone 提取的图像的深度。</p>
+<h2 id="RPN-网络"><a href="#RPN-网络" class="headerlink" title="RPN 网络"></a>RPN 网络</h2><p>在 backbone 得到特征图后，使用一个卷积核继续提纯，在 features map 上进行滑动，且通过 padding 保证滑动前的特征矩阵和滑动后的特征矩阵尺寸一致。每滑动到一个位置就生成一个一维向量，图中 256 的意思是 channel，所以单个卷积核会生成一个一维向量。</p>
+<p>而后一维向量进入两个并联的卷积层，使用 $2k$ 个卷积核输出 $2k$ 个概率得分（背景概率和前景概率）；另外一边使用 $4k$ 个卷积核输出 $4k$ 个边界框参数。$k$ 是 <code>anchor box</code> 的数量，卷积核的大小都是 $1\times1$。注意，这是一步卷积就生成这么多参数。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/29/gFDsDx.png" alt></p>
 <h2 id="anchor-box"><a href="#anchor-box" class="headerlink" title="anchor box"></a>anchor box</h2><p>首先在特征图上进行卷积的时候，计算当前卷积窗口中心点对应原图哪个点，然后以原图为中心，生成 $k$ 个 anchor box，anchor box 是提前给定的大小和长宽比例。如下图所示，从特征图一步步映射到原图。anchor box 里可能有目标，也可能没有目标。其中，每个 anchor 的形状不一样，因为目标大小不一样，长宽比也不一样。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/giTcxP.png" alt></p>
@@ -346,12 +346,23 @@
 <li>正样本：候选边界框与真实框的 IOU 大于 0.7；如果没有，就取与真实边界框有最大的 IOU 作为正样本（因为可能只有一小部分相交）</li>
 <li>负样本：与所有真实边界框的 IOU 低于 0.3</li>
 </ul>
-<h2 id="RPN-损失函数"><a href="#RPN-损失函数" class="headerlink" title="RPN 损失函数"></a>RPN 损失函数</h2><p>RPN 正向传播部分，使用 $3\times 3$ 步长为 1 的卷积，生成高度、宽度、通道一样的特征矩阵；而后并联两个 $1\times 1$ 的卷积，得到一维输出。如对于分类概率，就是 $2k$ 个卷积核；对于边界框，就是 $4k$ 个卷积核。<br>第一部分是类别损失，这里的类别只有两种，前景或背景。所以损失函数表示为：</p>
+<h2 id="RPN-损失函数"><a href="#RPN-损失函数" class="headerlink" title="RPN 损失函数"></a>RPN 损失函数</h2><p>第一部分是类别损失，这里的类别只有两种，前景或背景。所以损失函数表示为：</p>
 <p>\begin{equation}<br>L_1 = \frac{1}{N}\sum_i(p_i, p_i^*)<br>\end{equation}</p>
 <p>当前目标为前景时，$p_i^\star$ 为1；为背景时，$p_i^\star$ 为 0。</p>
-<p>边界框回归损失和之前的 Fast-RCNN 是一样的。</p>
-<h2 id="Faster-RCNN-1"><a href="#Faster-RCNN-1" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h2><p>和之前的一样。多分类损失和边界框回归损失。</p>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast RCNN</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></p>
+<p>边界框回归损失和之前的 Fast R-CNN 是一样的。如果是背景，没有边界框损失函数；如果是目标，就有边界框损失函数。</p>
+<h2 id="Faster-RCNN-1"><a href="#Faster-RCNN-1" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h2><p>把 RPN（目标区域选择） 与 Fast R-CNN（目标检测） 组合起来，就是最终的 Faster-RCNN。至于两个网络的 loss 如何训练，这就取决于代码了，我这就去开坑写程序。在论文中：</p>
+<ul>
+<li>RPN 和 Fast R-CNN 可以理解为互惠共赢的东西，所以不希望分开训练，这个是我个人的观点</li>
+<li>交替训练，先训练 RPN，能找到区域后，微调 Fast R-CNN 后用于初始化 RPN 网络参数，如此循环迭代。具体过程为：<ul>
+<li>训练 RPN 网络，采用 ImageNet 预训练的模型进行初始化，并进行微调</li>
+<li>利用 RPN 生成 proposal，由 Fast R-CNN 训练一个单独的检测网络，该网络同样由 ImageNet 预训练模型进行初始化。此时，两个网络还未共享卷积层</li>
+<li>用检测网络初始化 RPN 训练，固定共享的卷积层，只微调 RPN 独有的层，现在两个网络实现了卷积层共享</li>
+<li>保持共享的卷积层固定，微调 Fast R-CNN 的全连接层。这样，两个网络共享相同的卷积层，构成一个统一的网络</li>
+</ul>
+</li>
+<li>近似联合训练，RPN 和 Fast R-CNN 整合到一个网络里一起训练。前向传递生成 region proposal，在训练 Fast R-CNN 检测器将这看作是固定的、预计算的 proposal。反向传播像往常一样进行，其中对于共享层，组合来自 RPN 损失和 Fast R-CNN 损失的反向传播信号。这个解决方案很容易实现。但是这个解决方案忽略了关于 proposal 边界框的坐标的导数，因此是近似的。由 RPN 预测的边界框也是输入的参数，Fast R-CNN 中的 RoI 池化层接受卷积特征以及预测的边界框作为输入，所以理论上有效的反向传播求解器也应该包括关于边界框坐标的梯度。在上述近似联合训练中，这些梯度被忽略。</li>
+</ul>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast R-CNN</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></p>
 
     </div>
 
@@ -492,7 +503,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fast-RCNN"><span class="nav-number">1.</span> <span class="nav-text">Fast-RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">1.1.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正样本与负样本"><span class="nav-number">1.1.1.</span> <span class="nav-text">正样本与负样本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROI-pooling"><span class="nav-number">1.1.2.</span> <span class="nav-text">ROI-pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预测输出与反向传播"><span class="nav-number">1.1.3.</span> <span class="nav-text">预测输出与反向传播</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Faster-RCNN"><span class="nav-number">2.</span> <span class="nav-text">Faster-RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-网络"><span class="nav-number">2.1.</span> <span class="nav-text">RPN 网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#anchor-box"><span class="nav-number">2.2.</span> <span class="nav-text">anchor box</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正负样本"><span class="nav-number">2.3.</span> <span class="nav-text">正负样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-损失函数"><span class="nav-number">2.4.</span> <span class="nav-text">RPN 损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster-RCNN-1"><span class="nav-number">2.5.</span> <span class="nav-text">Faster-RCNN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fast-R-CNN"><span class="nav-number">1.</span> <span class="nav-text">Fast R-CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">1.1.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正样本与负样本"><span class="nav-number">1.1.1.</span> <span class="nav-text">正样本与负样本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROI-pooling"><span class="nav-number">1.1.2.</span> <span class="nav-text">ROI-pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预测输出与反向传播"><span class="nav-number">1.1.3.</span> <span class="nav-text">预测输出与反向传播</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Faster-RCNN"><span class="nav-number">2.</span> <span class="nav-text">Faster-RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-网络"><span class="nav-number">2.1.</span> <span class="nav-text">RPN 网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#anchor-box"><span class="nav-number">2.2.</span> <span class="nav-text">anchor box</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正负样本"><span class="nav-number">2.3.</span> <span class="nav-text">正负样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-损失函数"><span class="nav-number">2.4.</span> <span class="nav-text">RPN 损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster-RCNN-1"><span class="nav-number">2.5.</span> <span class="nav-text">Faster-RCNN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -562,12 +573,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">596k</span>
+    <span title="站点总字数">597k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:02</span>
+    <span title="站点阅读时长">9:03</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
