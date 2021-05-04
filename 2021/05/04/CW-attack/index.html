@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="人在西安，离华山近。不想清明或五一去下饺子，想着周内去一趟，反正离得近。事实证明这个选择是正确的，华山这么险峻的地方下饺子太危险了。接下来前面部分算是旅行攻略吧，包括路线、时间、穿衣和花费等，因本人是学生党，所以都是精打细算，没有过高消费；后一部分是风景照什么的。 这是我目前去过最接近地府的景点，我只能这么评价。">
-<meta name="keywords" content="Travel">
+  <meta name="description" content="五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 1，而论文的创新点在于损失函数的定义与梯度的截断。">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="华山自由行之一日游">
-<meta property="og:url" content="https://muyuuuu.github.io/2021/04/18/hua-shan-free-travel/index.html">
+<meta property="og:title" content="对抗攻击篇：CW 攻击算法">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/05/04/CW-attack/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="人在西安，离华山近。不想清明或五一去下饺子，想着周内去一趟，反正离得近。事实证明这个选择是正确的，华山这么险峻的地方下饺子太危险了。接下来前面部分算是旅行攻略吧，包括路线、时间、穿衣和花费等，因本人是学生党，所以都是精打细算，没有过高消费；后一部分是风景照什么的。 这是我目前去过最接近地府的景点，我只能这么评价。">
+<meta property="og:description" content="五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 1，而论文的创新点在于损失函数的定义与梯度的截断。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-19T06:11:31.785Z">
+<meta property="og:updated_time" content="2021-05-04T07:02:27.168Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="华山自由行之一日游">
-<meta name="twitter:description" content="人在西安，离华山近。不想清明或五一去下饺子，想着周内去一趟，反正离得近。事实证明这个选择是正确的，华山这么险峻的地方下饺子太危险了。接下来前面部分算是旅行攻略吧，包括路线、时间、穿衣和花费等，因本人是学生党，所以都是精打细算，没有过高消费；后一部分是风景照什么的。 这是我目前去过最接近地府的景点，我只能这么评价。">
+<meta name="twitter:title" content="对抗攻击篇：CW 攻击算法">
+<meta name="twitter:description" content="五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 1，而论文的创新点在于损失函数的定义与梯度的截断。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2021/04/18/hua-shan-free-travel/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/05/04/CW-attack/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>华山自由行之一日游 | Just for Life.</title>
+  <title>对抗攻击篇：CW 攻击算法 | Just for Life.</title>
   
 
 
@@ -228,7 +228,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/04/18/hua-shan-free-travel/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/05/04/CW-attack/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          华山自由行之一日游
+          对抗攻击篇：CW 攻击算法
         </h1>
 
         <div class="post-meta">
@@ -250,16 +250,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-04-18 12:00:04" itemprop="dateCreated datePublished" datetime="2021-04-18T12:00:04+08:00">2021-04-18</time>
+              <time title="创建时间：2021-05-04 12:08:04 / 修改时间：15:02:27" itemprop="dateCreated datePublished" datetime="2021-05-04T12:08:04+08:00">2021-05-04</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-19 14:11:31" itemprop="dateModified" datetime="2021-04-19T14:11:31+08:00">2021-04-19</time>
-              </span>
 
           
               <span class="post-meta-item-icon">
@@ -272,14 +266,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -291,58 +285,40 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>人在西安，离华山近。不想清明或五一去下饺子，想着周内去一趟，反正离得近。事实证明这个选择是正确的，华山这么险峻的地方下饺子太危险了。接下来前面部分算是旅行攻略吧，包括路线、时间、穿衣和花费等，因本人是学生党，所以都是精打细算，没有过高消费；后一部分是风景照什么的。</p>
-<p>这是我目前去过最接近地府的景点，我只能这么评价。</p>
+        <p>五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 <sup><a href="#fn_1" id="reffn_1">1</a></sup>，而论文的创新点在于损失函数的定义与梯度的截断。</p>
 <a id="more"></a>
-<h1 id="时间与路线安排"><a href="#时间与路线安排" class="headerlink" title="时间与路线安排"></a>时间与路线安排</h1><p>因同行人是三个青壮年，所以体力充沛，没有选择索道。据网上查阅，腿路的起点是玉泉院，所以我们的起点也就是玉泉院了，<strong>北上西下，腿上索道下</strong>，一天内爬完了华山，五峰全部登顶，时间还很充裕。之后用加粗字体表示重要路标和时间节点。</p>
-<ol>
-<li>学校在<strong>西安</strong>，门口就是地铁，所以买的是从<strong>西安北到华山北</strong>最早的高铁，是 <strong>7:28</strong> 开车，<strong>8:00</strong> 到达。所以5点起床洗漱，6点赶第一班地铁，6点40到了<strong>西安北</strong>，等高铁途中使劲吃面包和火腿。（普通火车没有上午的，不考虑；大巴晕车，可能堵车；不考虑）。</li>
-<li>出了<strong>华山北</strong>高铁站后，有免费公交或出租可以乘坐；因公交需要等待且可能等不到，所以选择了出租到<strong>玉泉院</strong>，因为这是腿路的起点，共计19元，大概八点半到的。翻过前面的寺院，网上预约门票耽误了一会儿，<strong>9:00</strong> 开始登山。（疫情原因，不能线下购买，只能线上购买，刷身份证进）</li>
-<li>前面的路是人工修的，之后到<strong>第一关</strong>，后面的山路就意味着正式开始登山，大约走了一个小时，也就是 <strong>10:00</strong> 正式开始登山。我们每个人的配置是：四瓶水，我单独带了三瓶酸奶，这个配置下，爬完山还剩一瓶水，如果带的水不够，立刻在山下补充。吃的就是面包之类。</li>
-<li>之后会到<strong>回心石</strong>，意思就是现在放弃还来得及；过了<strong>千尺幢</strong>，开弓没有回头箭了。</li>
-<li>华山自古一条路，旁边就是万丈悬崖。选择纠结症的福音，只能按着路线走，累了就休息下，景点就拍照留念。我们的路线是： 北峰（<strong>12:00</strong> 登顶），东峰（<strong>15:00</strong> 登顶），中峰（<strong>15:00</strong> 登顶，这俩离得很近很近），南峰(<strong>16:00</strong> 登顶)，西峰（<strong>17:00</strong> 登顶），没有去鹞子翻身，长空栈道等阴间景点，太太太危险了。西峰逗留整顿了一会儿，坐索道下山了。</li>
-<li>而后从<strong>西峰索道</strong>下山，西峰索道真的天下一绝，<del>我直接吓瘫在地上</del>，<strong>18:30</strong> 坐上了从西峰脚下去游客中心的大巴，七点到的游客中心。门口叫滴滴就行；门口的出租太黑了，不打表，直接要钱，很贵，反正我们当时是这样。</li>
-<li>县城里吃了顿肉补一补，据当地人说那里的特产是大刀面，用铡刀做的，可惜没赶上；之后乘坐 <strong>21:17</strong> 的高铁从华山北回西安北了。</li>
-</ol>
-<h1 id="花费"><a href="#花费" class="headerlink" title="花费"></a>花费</h1><h2 id="必要消费"><a href="#必要消费" class="headerlink" title="必要消费"></a>必要消费</h2><ol>
-<li>高铁单程是 54.5 元，往返 109 元</li>
-<li>出租去玉泉院 19 元</li>
-<li>门票，我们是旺季，是 160 元</li>
-<li>西峰索道 140 元，腿路下山伤膝盖</li>
-<li>下山大巴 40 元，二十公里山路呢，坐车吧</li>
-<li>因为大巴的下车点不是玉泉院，所以去华山北出租是 10 元左右</li>
-</ol>
-<h2 id="其它消费"><a href="#其它消费" class="headerlink" title="其它消费"></a>其它消费</h2><ol>
-<li>纪念品华山香石，苍龙岭后面，不是很坑，也就10元</li>
-<li>吃的喝的，自己看着买吧</li>
-</ol>
-<h1 id="装备"><a href="#装备" class="headerlink" title="装备"></a>装备</h1><ol>
-<li>我们是 4 月中旬去的，早晚天气很凉，尤其是汗水干了，风一吹，个人建议带冲锋衣。山顶有穿背心的，有穿羽绒服的，我就穿的一个外套加一件秋衣；秋裤自己看这穿吧，我穿了，同行的人没穿，都行。</li>
-<li>帽子，我们那天有风，风还凉，吹的头疼。</li>
-<li>护膝，下山极度伤膝盖，上山没事。如何选择护膝或该不该带护膝，请知乎搜索。</li>
-<li>手套，我感觉不太必要。</li>
-</ol>
-<h1 id="其它注意事项"><a href="#其它注意事项" class="headerlink" title="其它注意事项"></a>其它注意事项</h1><ol>
-<li>山路极度危险，不要着急，慢慢走。走路不看景，看景不走路。</li>
-<li>在攀登危险的山路前，做好心里和体力准备，不然会佷仓促。上也上不去，还不能下去；后面的人还会催你，只能硬着头皮继续上。</li>
-<li>不要在人极度拥挤的危险道路拍照，后面的人都没法走，但总有 SB 这么做，毕竟旅游的人越来越多，啥人都有。</li>
-<li>珍爱生命，远离 SB，不要和爱表现、哗众取宠的人一起出去。在某个坡度为 90 度直角的阶梯上，我正拉着铁链往上走，一个 SB 为了在女生面前表现，猛的往外甩铁链，故意把身体甩到外侧，把我拉铁链的手也震开了，得亏另一个手拉着铁链，不然真的从 90 度的阶梯上摔下去了，那就祝你早日摔死吧。</li>
-<li>山上厕所比较少，遇到厕所就去一趟。</li>
-<li>华山以险峻著称，如果恐高，慎来此地。</li>
-<li>山上围栏的铁链都比较结实，这个可以放心。</li>
-<li>山顶能俯瞰到关中沃野，这在古代，我也得打一仗。</li>
-<li><del>不要带女生或体力不太行的人去，女生可以带男朋友去看看他到底爱不爱你。</del></li>
-<li>我常年锻炼，第二天醒来腿居然不疼。</li>
-</ol>
-<h1 id="一些照片-超清原图，流量预警"><a href="#一些照片-超清原图，流量预警" class="headerlink" title="一些照片(超清原图，流量预警)"></a>一些照片(超清原图，流量预警)</h1><p><img data-src="https://z3.ax1x.com/2021/04/18/cIKszV.jpg" alt></p>
-<h2 id="俯瞰关中沃野"><a href="#俯瞰关中沃野" class="headerlink" title="俯瞰关中沃野"></a>俯瞰关中沃野</h2><p><img data-src="https://z3.ax1x.com/2021/04/18/cIKrR0.jpg" alt></p>
-<h2 id="直上直下的路"><a href="#直上直下的路" class="headerlink" title="直上直下的路"></a>直上直下的路</h2><p><img data-src="https://z3.ax1x.com/2021/04/18/cIKBin.jpg" alt></p>
-<p><img data-src="https://z3.ax1x.com/2021/04/18/cIKgLF.jpg" alt></p>
-<p><img data-src="https://z3.ax1x.com/2021/04/18/cIKWdJ.jpg" alt></p>
-<h2 id="中华龙脉"><a href="#中华龙脉" class="headerlink" title="中华龙脉"></a>中华龙脉</h2><p>据说韩愈在这里被吓哭了，路陡，旁边是悬崖。</p>
-<p><img data-src="https://z3.ax1x.com/2021/04/18/cIKcsU.jpg" alt></p>
-<h2 id="华山论剑"><a href="#华山论剑" class="headerlink" title="华山论剑"></a>华山论剑</h2><p><img data-src="https://z3.ax1x.com/2021/04/18/cIKRZ4.jpg" alt></p>
-<h2 id="悬崖绝壁"><a href="#悬崖绝壁" class="headerlink" title="悬崖绝壁"></a>悬崖绝壁</h2><p><img data-src="https://z3.ax1x.com/2021/04/18/cIKwIs.jpg" alt></p>
+<h1 id="L-BFGS"><a href="#L-BFGS" class="headerlink" title="L-BFGS"></a>L-BFGS</h1><p>从最开始的 L-BFGS <sup><a href="#fn_2" id="reffn_2">2</a></sup> 出发，通过 $L_2$ 范数距离寻找和原始样本 $x$ 最接近的对抗样本 $x’$，而寻找对抗样本的过程就是解决以下优化问题：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; c\Vert x-x’ \Vert_2 + \text{loss}_{F,t}(x’) \\<br>\text{s.t.} &amp; \; x’ \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>其中 $c$ 是一个常数，表示损失函数权重为 1 的情况下，对抗样本与原始样本距离的权重应该是多少；$t$ 表示错误分类的标签，$x$ 是已知的可以视为常量，那么唯一的变量就是 $x’$，可以通过一维线搜索的问题求解到 $c$ 的取值。</p>
+<p>论文中给出了 $t$ 的选择方法。假设当前为 10 分类任务，正确类别是 0，那么 $t$ 可以取 $1,2,\cdots,9$，那么取哪一个合适呢？换句话说，手写字体识别中，1 和 7 在字迹潦草的情况下容易被认错，那么正确类别是 1 时，对抗样本向 7 靠近，更容易攻击成功。</p>
+<ul>
+<li>平均选择，均匀的在错误类别中随机选择</li>
+<li>最佳选择，在所有错误类别上进行攻击，选择最容易攻击的</li>
+<li>最差选择，在所有错误类别上进行攻击，选择最难以攻击的</li>
+</ul>
+<h1 id="CW"><a href="#CW" class="headerlink" title="CW"></a>CW</h1><p>从最终输出概率的角度而言，获取最容易攻击的类别和最难以攻击的类别并不难。理解上述公式后，转换到 CW 算法论文中的攻击算法，用公式描述：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \;  D(x, x+\delta) \\<br>\text{s.t.} &amp; \;  C(x+\delta) = t \\<br>{ } &amp; \;  x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>$t$ 依然是被错误分类的标签，$C$ 表示分类结果，$D$是距离度量函数，而本文选择的距离是 $L_0, L_2, L_\inf$ 三种范数距离。论文中指出：没有任何一种距离能衡量人类感知的差异，现有距离的度量方式都有或多或少的缺陷，所以本文选取了三种范数距离，但每一种距离也达到了目前最好的攻击效果。未来的工作中，可以好好研究下如何构造合适的距离度量函数。</p>
+<h1 id="解非线性优化"><a href="#解非线性优化" class="headerlink" title="解非线性优化"></a>解非线性优化</h1><p>回到主题，将攻击公式化后，尝试借助优化的方法去求解问题。但由于 $C(x+\delta)=t$ 具有高度的非线性，所以选择一种更适合优化的表达方式。定义一个目标函数 $f$，当且仅当 $f(x+\delta) \leq 0$ 时，$C(x+\delta)=t$。论文中给出了 7 种 $f$ 的选择，但我懒，准备少写几个，不影响</p>
+<p>\begin{equation}<br>\begin{aligned}<br>f_1(x’) &amp;= -\text{loss}_{F,t}(x’) + 1 \\<br>f_2(x’) &amp;= \Big( \max_{i\neq t} \big(Z(x’)_i\big) - Z(x’)_t \Big)^+ \\<br>f_3(x’) &amp;= \big( 0.5-F(x’)_t \big)<br>\end{aligned}<br>\end{equation}</p>
+<p>其中，$e^+$ 运算表示 $\max(e,0)$；$-\text{loss}$ 表示交叉熵损失；$F(x’)_i$ 表示神经网络使用 $x’$ 作为输入，产生类别是 $i$ 的概率；$Z(x’)$ 表示 softmax 前的输出，即 $F(x)=\text{softmax}(Z(x))$。其中，效果最好的是第二个。那我们就用第二个公式解释下这些都是什么。</p>
+<p>在论文中，$i$ 表示 $x’$ 对应的正确类别；$t$ 表示 $x’$ 对应的错误类别。而 $C(x+\delta)=t$ 表示希望对抗样本被错误分类，此时按照假设，$f(x+\delta) \leq 0$。我们带入$f_2$，$\max_{i\neq t} \big(Z(x’)_i\big)$ 表示除了类别 $t$ 以外，网络以最大概率认为这是第 $i$ 个类，但第 $i$ 类的概率仍然低于第 $t$ 类的概率，以此认为攻击成功。$f_3$ 同理，表示分类错误的概率大于 0.5。因此，优化目标修改为：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \;  D(x, x+\delta) \\<br>\text{s.t.} &amp; \;  f(x+\delta) \leq 0 \\<br>{ } &amp; \;  x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>为了便于优化，按着 L-BFGS 的形式就行修改，将约束条件转为目标函数。第一项表示对抗样本要接近原始样本，第二项表示分类越错越好。</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \;  \Vert \delta \Vert_p + c f(x+\delta) \leq 0\\<br>\text{s.t.} &amp; \;  x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>其中，$c$ 的选择是一个坑，如果 $c\to 0$，那么梯度下降时，损失大部分来自图像误差；如果 $c$ 很大，那么分类损失将占主导，两者的损失应该相似。论文中，作者使用实验的方式确定了 $c$ 的最佳取值。</p>
+<h1 id="梯度截断"><a href="#梯度截断" class="headerlink" title="梯度截断"></a>梯度截断</h1><p>因为对抗样本增加、减去梯度后很容易超出 $[0,1]$ 的范围，所以目前有一些截断的方法：</p>
+<ul>
+<li>梯度投影下降，对溢出部分直接截断，把截断后的对抗样本带入下一轮，但容易将截断带来的误差给传入下一轮迭代，这样会让误差越来越大。</li>
+<li>梯度截断下降，不直接截断样本，而是将样本的截断代入要最小化的目标函数中，用 $f(\min(\max(x+\delta,0),1))$ 来代替 $f(x+\delta)$，但会带来梯度消失的问题。如当 $x$ 很大时取值为 1，且偏导数取值为 0。但反向传播时，无法更新 $x$。</li>
+</ul>
+<p>因此，本文引入变量 $w$，对抗样本可以表示为：</p>
+<p>\begin{equation}<br>x+\delta=\frac{1}{2}\big( \tanh(w) + 1 \big)<br>\end{equation}</p>
+<p>因为 $\tanh$ 的取值范围是 $[-1,1]$，所以 $x+\delta$ 的取值范围是 $[0,1]$，这样就满足了约束，也是一种光滑的截断，也算是本文比较大的创新点吧。</p>
+<h1 id="开始攻击"><a href="#开始攻击" class="headerlink" title="开始攻击"></a>开始攻击</h1><p>我看论文中，$L_0$ 和 $L_\inf$ 都有一些缺陷，所以重点写 $L_2$ 攻击了。此时的方程为：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \;  \Big| \frac{1}{2}\big(\tanh(w) + 1\big) - x \Big|_2 + c f\big(\frac{1}{2}(\tanh(w) + 1)\big) \\<br>f(x) &amp; = \max\Big( \max\big(Z(x)_{i:i\neq t}\big) - Z(x)_t, -k\Big)<br>\end{aligned}<br>\end{equation}</p>
+<p>参数 $k$ 用于控制错误分类的置信度，论文中 $k=0$，即保证被正确分类的概率低于被错误分类的概率。</p>
+<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://arxiv.org/abs/1608.04644" target="_blank" rel="noopener">https://arxiv.org/abs/1608.04644</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1312.6199.pdf</a></p>
 
     </div>
 
@@ -353,19 +329,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\10\02\Chang-Bai-Mountain-2018-10-2\" rel="bookmark">长白山之旅</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\DunHuangDesert\" rel="bookmark">大漠飞沙</a></div>
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\15\FeiCuiHu\" rel="bookmark">云雾缭绕，人间仙境——翡翠湖</a></div>
+      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\01\Mount-Huang\" rel="bookmark">黄山自由行攻略</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\09\Start-deep-learning\" rel="bookmark">DeepLearning准备进坑</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\01\17\MoGaoGrottoes\" rel="bookmark">敦煌莫高窟</a></div>
+      <div class="popular-posts-title"><a href="\2020\05\09\back-propagation-and-gradient-descent\" rel="bookmark">图解反向传播与梯度下降</a></div>
     </li>
   </ul>
 
@@ -411,7 +387,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Travel/" rel="tag"># Travel</a>
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
           </div>
 
         
@@ -425,13 +401,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/04/16/CPU-context-switch/" rel="prev" title="操作系统『五』：CPU 上下文切换">
-      <i class="fa fa-chevron-left"></i> 操作系统『五』：CPU 上下文切换
+    <a href="/2021/05/03/fast-train-eval-platform-fasterrcnn-torch/" rel="prev" title="目标检测篇：目标检测快速训练与推理框架">
+      <i class="fa fa-chevron-left"></i> 目标检测篇：目标检测快速训练与推理框架
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/04/26/DNN-safe-basic/" rel="next" title="对抗攻击篇：FGSM 与 PGD 攻击算法">
-      对抗攻击篇：FGSM 与 PGD 攻击算法 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -492,7 +465,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#时间与路线安排"><span class="nav-number">1.</span> <span class="nav-text">时间与路线安排</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#花费"><span class="nav-number">2.</span> <span class="nav-text">花费</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#必要消费"><span class="nav-number">2.1.</span> <span class="nav-text">必要消费</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它消费"><span class="nav-number">2.2.</span> <span class="nav-text">其它消费</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#装备"><span class="nav-number">3.</span> <span class="nav-text">装备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其它注意事项"><span class="nav-number">4.</span> <span class="nav-text">其它注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些照片-超清原图，流量预警"><span class="nav-number">5.</span> <span class="nav-text">一些照片(超清原图，流量预警)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#俯瞰关中沃野"><span class="nav-number">5.1.</span> <span class="nav-text">俯瞰关中沃野</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直上直下的路"><span class="nav-number">5.2.</span> <span class="nav-text">直上直下的路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#中华龙脉"><span class="nav-number">5.3.</span> <span class="nav-text">中华龙脉</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#华山论剑"><span class="nav-number">5.4.</span> <span class="nav-text">华山论剑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#悬崖绝壁"><span class="nav-number">5.5.</span> <span class="nav-text">悬崖绝壁</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#L-BFGS"><span class="nav-number">1.</span> <span class="nav-text">L-BFGS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CW"><span class="nav-number">2.</span> <span class="nav-text">CW</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解非线性优化"><span class="nav-number">3.</span> <span class="nav-text">解非线性优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度截断"><span class="nav-number">4.</span> <span class="nav-text">梯度截断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始攻击"><span class="nav-number">5.</span> <span class="nav-text">开始攻击</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">6.</span> <span class="nav-text">references</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -762,6 +735,59 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
@@ -776,7 +802,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'da26acd04db24cc86b3dc5af3a15090a',
+      id          : '7c90f76762c90dfa764b728ebc2bc29a',
         language: 'zh-CN',
       distractionFreeMode: true
     });
