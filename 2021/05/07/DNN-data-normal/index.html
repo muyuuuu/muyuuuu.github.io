@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，非官方，非官方，非官方。如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。">
-<meta name="keywords" content="LaTeX">
+  <meta name="description" content="今日在写程序时，遇到了一个蜜汁 bug，加载别人训练好的 ResNet18，识别精度很低，只有 16%，但理论上而言应该有 92%，我也好奇那 80% 的准确率去哪里了。而程序和数据本身又无错误，所以来探究一下这是为什么。">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="西安电子科技大学实验报告LaTeX模板">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/10/20/XDU-report-LaTeX-template/index.html">
+<meta property="og:title" content="神经网络中的数据问题">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/05/07/DNN-data-normal/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，非官方，非官方，非官方。如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。">
+<meta property="og:description" content="今日在写程序时，遇到了一个蜜汁 bug，加载别人训练好的 ResNet18，识别精度很低，只有 16%，但理论上而言应该有 92%，我也好奇那 80% 的准确率去哪里了。而程序和数据本身又无错误，所以来探究一下这是为什么。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-06T05:48:27.804Z">
+<meta property="og:updated_time" content="2021-05-07T14:51:23.434Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="西安电子科技大学实验报告LaTeX模板">
-<meta name="twitter:description" content="我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，非官方，非官方，非官方。如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。">
+<meta name="twitter:title" content="神经网络中的数据问题">
+<meta name="twitter:description" content="今日在写程序时，遇到了一个蜜汁 bug，加载别人训练好的 ResNet18，识别精度很低，只有 16%，但理论上而言应该有 92%，我也好奇那 80% 的准确率去哪里了。而程序和数据本身又无错误，所以来探究一下这是为什么。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/10/20/XDU-report-LaTeX-template/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/05/07/DNN-data-normal/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>西安电子科技大学实验报告LaTeX模板 | Just for Life.</title>
+  <title>神经网络中的数据问题 | Just for Life.</title>
   
 
 
@@ -228,7 +228,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/10/20/XDU-report-LaTeX-template/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/05/07/DNN-data-normal/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          西安电子科技大学实验报告LaTeX模板
+          神经网络中的数据问题
         </h1>
 
         <div class="post-meta">
@@ -250,16 +250,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-10-20 18:23:02" itemprop="dateCreated datePublished" datetime="2020-10-20T18:23:02+08:00">2020-10-20</time>
+              <time title="创建时间：2021-05-07 17:44:12 / 修改时间：22:51:23" itemprop="dateCreated datePublished" datetime="2021-05-07T17:44:12+08:00">2021-05-07</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-06 13:48:27" itemprop="dateModified" datetime="2020-11-06T13:48:27+08:00">2020-11-06</time>
-              </span>
 
           
               <span class="post-meta-item-icon">
@@ -272,14 +266,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
+              <span>3.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -291,32 +285,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>我自己写的西安电子科技大学实验报告的LaTeX模板，只是按照老师的要求添加了基本元素，<strong>非官方，非官方，非官方。</strong>如果老师有明确要求请勿使用此模板。接下来简单介绍下如何使用模板。</p>
+        <p>今日在写程序时，遇到了一个蜜汁 <code>bug</code>，加载别人训练好的 <code>ResNet18</code>，识别精度很低，只有 16%，但理论上而言应该有 92%，我也好奇那 80% 的准确率去哪里了。而程序和数据本身又无错误，所以来探究一下这是为什么。</p>
 <a id="more"></a>
-<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>来这上学一个月了，我也没找到官方的，老师也没发过任何模板，也不要求格式。我本科老师一直要求格式，内容写成啥样都行，格式错一点都不行。如：必须使用某类作业纸，写报告必须某类模板，多一个空格，错一个字体都要重新打印。主要是应付上面检查，所以很忽略内容而注重格式。但研究生没这破要求了，作业、报告写成啥样的都有，于是决定开 <code>LaTeX</code> 放飞自我。</p>
-<p>我写的代码首要目的是简介、易用和容易扩展，所以：</p>
+<p>首先，网络结构和预训练的模型来自这里 <sup><a href="#fn_1" id="reffn_1">1</a></sup>，这里声明一下，他提供的网络、参数都是没任何问题的，准确率低是我自己的原因。</p>
+<h1 id="错误程序"><a href="#错误程序" class="headerlink" title="错误程序"></a>错误程序</h1><figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> resnet18 <span class="keyword">import</span> ResNet18</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset, DataLoader</span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">testdataset</span><span class="params">(Dataset)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, data_path, label_path)</span>:</span></span><br><span class="line">        <span class="comment"># 模型是预训练好的，取后面 10000 个做测试</span></span><br><span class="line">        self.x_data = np.load(data_path)</span><br><span class="line">        <span class="comment"># 数据到 [0, 1] 之间</span></span><br><span class="line">        self.x_data = self.x_data / <span class="number">255</span></span><br><span class="line">        self.x_data = self.x_data[<span class="number">50000</span>:]</span><br><span class="line">        self.y_data = np.load(label_path)</span><br><span class="line">        self.y_data = self.y_data[<span class="number">50000</span>:]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, index)</span>:</span></span><br><span class="line">        x_ = self.x_data[index]</span><br><span class="line">        x_ = x_.transpose(<span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">        y_ = self.y_data[index]</span><br><span class="line">        <span class="keyword">return</span> torch.from_numpy(x_), torch.from_numpy(y_)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self.x_data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_error</span><span class="params">(model, X, y)</span>:</span></span><br><span class="line">    out = model(X)</span><br><span class="line">    prediction = torch.argmax(out, <span class="number">1</span>)</span><br><span class="line">    prediction = prediction.unsqueeze(<span class="number">1</span>)</span><br><span class="line">    correct = (prediction == y).sum().float()</span><br><span class="line">    <span class="keyword">return</span> correct</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_eval</span><span class="params">(model, device, test_loader)</span>:</span></span><br><span class="line">    model.eval()</span><br><span class="line">    model.to(device)</span><br><span class="line">    natural_err_total = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> data, target <span class="keyword">in</span> test_loader:</span><br><span class="line">        data, target = data.to(device,</span><br><span class="line">                               dtype=torch.float), target.to(device,</span><br><span class="line">                                                             dtype=torch.float)</span><br><span class="line">        X, y = Variable(data, requires_grad=<span class="literal">True</span>), Variable(target)</span><br><span class="line">        err_natural = _error(model, X, y)</span><br><span class="line">        natural_err_total += err_natural</span><br><span class="line">    print(<span class="string">'acc: '</span>, natural_err_total / <span class="number">10000</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加载 resnet</span></span><br><span class="line">    resnet = ResNet18()</span><br><span class="line">    resnet_path = <span class="string">"resnet18_ckpt.pth"</span></span><br><span class="line">    checkpoint = torch.load(resnet_path, map_location=<span class="string">'cpu'</span>)</span><br><span class="line">    print(<span class="string">'loaded model...'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这里只是为了对应模型参数</span></span><br><span class="line">    net_state = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> checkpoint[<span class="string">'net'</span>]:</span><br><span class="line">        net_state[key[<span class="number">7</span>:]] = checkpoint[<span class="string">'net'</span>][key]</span><br><span class="line">    resnet.load_state_dict(net_state)</span><br><span class="line">    print(<span class="string">'set model...'</span>)</span><br><span class="line"></span><br><span class="line">    data_path = <span class="string">"cifar10_data.npy"</span></span><br><span class="line">    label_path = <span class="string">"cifar10_label.npy"</span></span><br><span class="line">    test_data = testdataset(data_path=data_path, label_path=label_path)</span><br><span class="line">    test_loader = DataLoader(test_data, batch_size=<span class="number">128</span>)</span><br><span class="line">    print(<span class="string">'load data...'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 干净样本准确率</span></span><br><span class="line">    print(<span class="string">'natural'</span>, end=<span class="string">', '</span>)</span><br><span class="line">    _eval(model=resnet, device=<span class="string">'cpu'</span>, test_loader=test_loader)</span><br></pre></td></tr></table></figure>
+<p>在这样操作下，准确率只有 <code>16.89%</code> ，我也很奇怪是哪里错了。</p>
+<h1 id="正确程序"><a href="#正确程序" class="headerlink" title="正确程序"></a>正确程序</h1><p>从师兄那里找到了一份正确的程序，准确率是 <code>92.84%</code>。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> resnet18 <span class="keyword">import</span> ResNet18</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TensorDataset</span><span class="params">(Dataset)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, dataPath, labelPath)</span>:</span></span><br><span class="line">        x = np.load(dataPath)</span><br><span class="line">        x = x[<span class="number">50000</span>:] / <span class="number">255.</span></span><br><span class="line">        x = x.astype(<span class="string">"float32"</span>)</span><br><span class="line">        data = x.transpose(<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">        label = np.load(labelPath)[<span class="number">50000</span>:]</span><br><span class="line">        label = np.reshape(label, (data.shape[<span class="number">0</span>], ))</span><br><span class="line">        data, label = torch.from_numpy(data), torch.from_numpy(label)</span><br><span class="line">        self.data_tensor = data</span><br><span class="line">        self.target_tensor = label</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, index)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.data_tensor[index], self.target_tensor[index]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.data_tensor.size(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">net = ResNet18()</span><br><span class="line">resnet_path = <span class="string">"resnet18_ckpt.pth"</span></span><br><span class="line">d = torch.load(resnet_path, map_location=torch.device(<span class="string">'cpu'</span>))[<span class="string">'net'</span>]</span><br><span class="line">d = OrderedDict([(k[<span class="number">7</span>:], v) <span class="keyword">for</span> (k, v) <span class="keyword">in</span> d.items()])</span><br><span class="line">net.load_state_dict(d)</span><br><span class="line">dataPath = <span class="string">"cifar10_data.npy"</span></span><br><span class="line">labelPath = <span class="string">"cifar10_label.npy"</span></span><br><span class="line">dataset = TensorDataset(dataPath, labelPath)</span><br><span class="line">dataloader = torch.utils.data.DataLoader(dataset,</span><br><span class="line">                                         batch_size=<span class="number">64</span>,</span><br><span class="line">                                         shuffle=<span class="literal">True</span>,</span><br><span class="line">                                         num_workers=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">total = <span class="number">0</span></span><br><span class="line">correct = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> batch_idx, (inputs, targets) <span class="keyword">in</span> enumerate(dataloader):</span><br><span class="line">    outputs = net(inputs)</span><br><span class="line">    _, predicted = outputs.max(<span class="number">1</span>)</span><br><span class="line">    total += targets.size(<span class="number">0</span>)</span><br><span class="line">    correct += predicted.eq(targets).sum().item()</span><br><span class="line">acc = <span class="number">100.</span> * correct / total</span><br><span class="line">print(acc)</span><br></pre></td></tr></table></figure>
+<pre><code># acc 48 %
+# x_ = x_.transpose(2, 0, 1)
+# acc 16 %
+# x_ = x_.transpose(2, 1, 0)
+</code></pre><p>目前已经定位到是 <code>eval</code> 和 数据增强的问题，明天再看。</p>
 <ul>
-<li>图片大小、文字大小不合适你都可以调，cls代码简洁明了。图片logo来自这里：<a href="https://github.com/fredqi/xduthesis" target="_blank" rel="noopener">https://github.com/fredqi/xduthesis</a></li>
-<li>想添加内容也很简单，比如在封面添加「指导教师」这一项，你看看其他选项如何声明并传参的就可以了，很简单。</li>
-<li>文档目录与编译方式：windows 和 Arch Linux 都跑通了，TexLive 2020，编译方式为 xelatex 配 bibtex。</li>
-<li>代码字体为 IBM Plex Mono，没有的话换一个或下载安装；</li>
-<li>我是计算机学院的，对其他学院的了解很少，如果有其他建议，欢迎补充～</li>
-<li>也可以来这里下载，下载一次我能挣一毛钱，顺便帮这个网站引流：<a href="https://latexstudio.net/index/details/index/mid/870.html" target="_blank" rel="noopener">https://latexstudio.net/index/details/index/mid/870.html</a></li>
+<li><a href="https://www.zhihu.com/question/354742972" target="_blank" rel="noopener">https://www.zhihu.com/question/354742972</a> 不是</li>
+<li><a href="https://discuss.pytorch.org/t/performance-highly-degraded-when-eval-is-activated-in-the-test-phase/3323/7" target="_blank" rel="noopener">https://discuss.pytorch.org/t/performance-highly-degraded-when-eval-is-activated-in-the-test-phase/3323/7</a> 待查阅</li>
 </ul>
-<h1 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h1><p>第一步就是导入文档类：<code>\documentclass{xdureport}</code>，而后写入基本信息：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">major</span><span class="string">&#123;电子信息&#125;</span></span>                   <span class="comment">% 专业</span></span><br><span class="line"><span class="tag">\<span class="name">stuid</span><span class="string">&#123;201614420112&#125;</span></span>             <span class="comment">% 学号</span></span><br><span class="line"><span class="tag">\<span class="name">college</span><span class="string">&#123;计算机科学与技术学院&#125;</span></span>       <span class="comment">% 学院</span></span><br><span class="line"><span class="tag">\<span class="name">date</span><span class="string">&#123;\zhtoday&#125;</span></span>                  <span class="comment">% 日期</span></span><br><span class="line"><span class="tag">\<span class="name">expname</span><span class="string">&#123;小样本实验&#125;</span></span>               <span class="comment">% 实验名称</span></span><br><span class="line"><span class="tag">\<span class="name">course</span><span class="string">&#123;高性能智能计算实验&#125;</span></span>         <span class="comment">% 课程</span></span><br></pre></td></tr></table></figure>
-<p>文档的目录结构如下所示：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">XDU-exp</span><br><span class="line">├─ chapter                                  <span class="comment"># 各个章节</span></span><br><span class="line">│    ├─ abstract.tex                            <span class="comment"># 摘要页</span></span><br><span class="line">│    ├─ appendix.tex                            <span class="comment"># 附录</span></span><br><span class="line">│    ├─ conclusion.tex                          <span class="comment"># 实验结果分析</span></span><br><span class="line">│    ├─ experiment.tex                          <span class="comment"># 实验步骤</span></span><br><span class="line">│    └─ reference.tex                           <span class="comment"># 参考文献</span></span><br><span class="line">├─ figure                                   <span class="comment"># 图片文件</span></span><br><span class="line">│    ├─ xdubadge.eps                            <span class="comment"># 西电文字</span></span><br><span class="line">│    └─ xdulogo.eps                             <span class="comment"># 西电校徽 logo</span></span><br><span class="line">├─ code                                     <span class="comment"># 代码文件</span></span><br><span class="line">│    └─ demo.c                                  <span class="comment"># 一个C语言样例代码</span></span><br><span class="line">├─ books.bib                                <span class="comment"># 参考文献的 bib 文件</span></span><br><span class="line">├─ main.bbl                                 <span class="comment"># 编译生成的 bbl 文件，不用管</span></span><br><span class="line">├─ main.pdf                                 <span class="comment"># 结果 pdf 文件</span></span><br><span class="line">├─ main.tex                                 <span class="comment"># 要编译的主文件</span></span><br><span class="line">└─ xdureport.cls                            <span class="comment"># 要导入的文档类</span></span><br></pre></td></tr></table></figure>
-<p>理解文档目录结构后，就很容易知道代码中指定的相对路径是什么意思，现在就可以开始写正文了：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;document&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">makecover</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 摘要</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/abstract.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 目录</span></span><br><span class="line"><span class="tag">\<span class="name">thispagestyle</span><span class="string">&#123;empty&#125;</span></span></span><br><span class="line"><span class="tag">\<span class="name">tableofcontents</span></span></span><br><span class="line"><span class="tag">\<span class="name">newpage</span></span> </span><br><span class="line"><span class="tag">\<span class="name">setcounter</span><span class="string">&#123;page&#125;</span><span class="string">&#123;1&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 实验过程</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/experiment.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 标注环境</span></span><br><span class="line"><span class="tag">\<span class="name">begin</span><span class="string">&#123;note&#125;</span></span></span><br><span class="line">ads 测试</span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;note&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 结论</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/conclusion.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 参考文献</span></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/reference.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 附录</span></span><br><span class="line"><span class="tag">\<span class="name">appendix</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">input</span><span class="string">&#123;chapter/appendix.tex&#125;</span></span></span><br><span class="line"></span><br><span class="line"><span class="tag">\<span class="name">end</span><span class="string">&#123;document&#125;</span></span></span><br></pre></td></tr></table></figure>
-<h1 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h1><h2 id="封面"><a href="#封面" class="headerlink" title="封面"></a>封面</h2><p><img data-src="https://static01.imgkr.com/temp/de8968992dd5421c84f8034c6d7a4655.png" alt></p>
-<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p><img data-src="https://static01.imgkr.com/temp/6d135f696e7d4fe1af2534dd55ae1708.png" alt></p>
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p><img data-src="https://static01.imgkr.com/temp/0a451c77c18f4d8ea61d6e1f9aea482f.png" alt></p>
-<h2 id="正文与标注环境"><a href="#正文与标注环境" class="headerlink" title="正文与标注环境"></a>正文与标注环境</h2><p><img data-src="https://static01.imgkr.com/temp/feac728074ee4f6391138c8913c36a7e.png" alt></p>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><img data-src="https://static01.imgkr.com/temp/cf8d17b244b14ba782709474be216a96.png" alt></p>
-<h2 id="代码高亮"><a href="#代码高亮" class="headerlink" title="代码高亮"></a>代码高亮</h2><p><img data-src="https://static01.imgkr.com/temp/384e43e486e74ed7b5b82e31df10bcc9.png" alt></p>
-<h1 id="完整代码下载"><a href="#完整代码下载" class="headerlink" title="完整代码下载"></a>完整代码下载</h1><p><a href="https://github.com/muyuuuu/XDU-report-LaTeX-template" target="_blank" rel="noopener">https://github.com/muyuuuu/XDU-report-LaTeX-template</a></p>
-<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>我在网上看到了西电的 <code>Beamer</code> 和 <code>thesis</code> 模板，看样子写的不错，我应该不会去继续折腾那些了。</p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://github.com/laisimiao/classification-cifar10-pytorch" target="_blank" rel="noopener">https://github.com/laisimiao/classification-cifar10-pytorch</a></p>
 
     </div>
 
@@ -327,19 +312,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\11\07\Brief-introduction-to-LaTex\" rel="bookmark">一份不太简短的LaTeX简介</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\04\CW-attack\" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2018\11\17\LaTeX-supplement\" rel="bookmark">LaTeX补充:矩阵外加描述元素</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\01\15\MCM-template\" rel="bookmark">美赛论文LaTeX模板</a></div>
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\06\latex-feel-stonezeng\" rel="bookmark">正确打开LaTeX的姿势</a></div>
+      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\04\latex-supplement2\" rel="bookmark">LaTeX补充:如何设置代码字体</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\09\Start-deep-learning\" rel="bookmark">DeepLearning准备进坑</a></div>
     </li>
   </ul>
 
@@ -385,7 +370,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/LaTeX/" rel="tag"># LaTeX</a>
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
           </div>
 
         
@@ -399,13 +384,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/15/why-gradient-direction-is-the-fastest-ascent-direction/" rel="prev" title="为什么梯度方向是函数的最速上升方向">
-      <i class="fa fa-chevron-left"></i> 为什么梯度方向是函数的最速上升方向
+    <a href="/2021/05/04/CW-attack/" rel="prev" title="对抗攻击篇：CW 攻击算法">
+      <i class="fa fa-chevron-left"></i> 对抗攻击篇：CW 攻击算法
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/15/Arch/" rel="next" title="我和我的操作系统们">
-      我和我的操作系统们 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -466,7 +448,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本使用"><span class="nav-number">2.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#样例"><span class="nav-number">3.</span> <span class="nav-text">样例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#封面"><span class="nav-number">3.1.</span> <span class="nav-text">封面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-number">3.2.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">3.3.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正文与标注环境"><span class="nav-number">3.4.</span> <span class="nav-text">正文与标注环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">3.5.</span> <span class="nav-text">参考文献</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码高亮"><span class="nav-number">3.6.</span> <span class="nav-text">代码高亮</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#完整代码下载"><span class="nav-number">4.</span> <span class="nav-text">完整代码下载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">5.</span> <span class="nav-text">后续</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#错误程序"><span class="nav-number">1.</span> <span class="nav-text">错误程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正确程序"><span class="nav-number">2.</span> <span class="nav-text">正确程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -750,7 +732,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '1930927f89eb150c7a8a146ffc6212de',
+      id          : '29eec43192caf66650425a03476a9a4d',
         language: 'zh-CN',
       distractionFreeMode: true
     });
