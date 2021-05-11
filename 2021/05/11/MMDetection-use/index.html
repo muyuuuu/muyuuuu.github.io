@@ -20,20 +20,19 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？">
-<meta name="keywords" content="Modeling">
+  <meta name="description" content="最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 1，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，Retin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="为什么梯度方向是函数的最速上升方向">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/10/15/why-gradient-direction-is-the-fastest-ascent-direction/index.html">
+<meta property="og:title" content="MMDetection 基础使用">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/05/11/MMDetection-use/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？">
+<meta property="og:description" content="最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 1，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，Retin">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-16T06:32:30.582Z">
+<meta property="og:updated_time" content="2021-05-11T14:25:38.623Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="为什么梯度方向是函数的最速上升方向">
-<meta name="twitter:description" content="在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？">
+<meta name="twitter:title" content="MMDetection 基础使用">
+<meta name="twitter:description" content="最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 1，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，Retin">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/10/15/why-gradient-direction-is-the-fastest-ascent-direction/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/05/11/MMDetection-use/">
 
 
 <script id="page-configurations">
@@ -46,7 +45,7 @@
   };
 </script>
 
-  <title>为什么梯度方向是函数的最速上升方向 | Just for Life.</title>
+  <title>MMDetection 基础使用 | Just for Life.</title>
   
 
 
@@ -228,7 +227,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/10/15/why-gradient-direction-is-the-fastest-ascent-direction/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/05/11/MMDetection-use/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -241,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          为什么梯度方向是函数的最速上升方向
+          MMDetection 基础使用
         </h1>
 
         <div class="post-meta">
@@ -250,16 +249,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-10-15 20:32:44" itemprop="dateCreated datePublished" datetime="2020-10-15T20:32:44+08:00">2020-10-15</time>
+              <time title="创建时间：2021-05-11 22:13:23 / 修改时间：22:25:38" itemprop="dateCreated datePublished" datetime="2021-05-11T22:13:23+08:00">2021-05-11</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-16 14:32:30" itemprop="dateModified" datetime="2021-02-16T14:32:30+08:00">2021-02-16</time>
-              </span>
 
           
               <span class="post-meta-item-icon">
@@ -272,14 +265,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -291,39 +284,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？</p>
+        <p>最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 <sup><a href="#fn_1" id="reffn_1">1</a></sup>，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，RetinaNet 等，官网也给出了详细的教程。既然如此，生命不息，开坑不止。本文收录：</p>
+<ul>
+<li>安装</li>
+<li>调用槛车模型加载与训练好的参数，进行推理</li>
+<li>实现自己的训练步骤，加载数据等</li>
+<li>修改损失函数</li>
+</ul>
 <a id="more"></a>
-<p>这学期选课有毒，在各种不可抗力影响下，选了《大数据建模优化》这门课，上了几周发现跟大数据丝毫不沾边，无论是数据存储、挖掘、分析、处理和代码等一个不讲，都在讲本科数学建模竞赛那些基本模型，线性规划、二分类、SVM什么的，就是现在手推公式我能看懂了。后来发现这课的老师之前是数学系的，带《工程优化》这门课，据说讲的很不错，后来的老师都继承了他的风格。好巧不巧，我也选了《工程优化》，也是线性规划、凸集那些。然后选了《数据驱动优化》这门课，我以为是数据分析，玩玩<code>hadoop</code>什么的，结果发现也是跟数据没关系，也是在约束条件下优化目标，遗传算法、粒子群算法，就是本科建模那些常见算法。我寻思能开个专题好好整理下了，就开了个 <code>Math</code> 的标签。</p>
-<p><del>其实我想选《Linux 内核分析》这种只有计科人才能玩懂的直面怼代码的硬核课程，懂操作系统懂计算机原理才能写出好程序。</del></p>
-<h1 id="偏导"><a href="#偏导" class="headerlink" title="偏导"></a>偏导</h1><p>对于一个多元函数$z=f(x_1,x_2,\ldots,x_n)$，对第$i$个分量$x_i$的偏导为$\frac{\partial f}{\partial x_i}$，可以写成：<br>\begin{equation}<br>\frac{\partial f}{\partial x_i}=\lim_{t\to 0} \frac{f(x+te_i)-f(x)}{t}<br>\end{equation}<br>其中，$e=(0,\ldots,1,\ldots,0)$，只有第$i$个元素为1。</p>
-<h1 id="可微"><a href="#可微" class="headerlink" title="可微"></a>可微</h1><p>以二元函数为例（我懒，多元写着费劲），若函数$z=f(x,y)$在点$(x_0,y_0)$的全增量$\Delta z=f(x_0+\Delta x,y_0+\Delta y)-f(x_0,y_0)$可表示为$\Delta z =A\Delta x+B \Delta y +o(p)$，则$f(x,y)$在点$(x_0,y_0)$处可微，在这一点的全微分记作$\text{d} z=A\Delta x+B\Delta y$，等价于：</p>
-<p>\begin{equation}<br>\lim_{||(\Delta x,\Delta y)|| \to 0} \frac{f(x_0+\Delta x,y_0+\Delta y)-f(x_0,y_0)-A\Delta x-B \Delta y}{||(\Delta x,\Delta y)||}=0<br>\end{equation}</p>
-<p>记$x=(x,y)^T,\Delta x=(\Delta x,\Delta y)^T,l=(A,B)^T$，再次得到：</p>
-<p>\begin{equation}<br>\lim_{\Delta x \to 0} \frac{f(x+\Delta x)-f(x)-l^T\Delta x}{||\Delta x||}=0<br>\end{equation}</p>
-<h1 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h1><p>若函数$z=f(x,y)$在点$(x_0,y_0)$处可微，在该点的偏导必然存在，$\text{d}z$可以改写成$\text{z}=\frac{\partial z}{\partial x}|_{x=x_0}\Delta x+\frac{\partial z}{\partial y}|_{y=y_0}\Delta y$：</p>
-<p>\begin{equation}<br>l=(A,B)^T=(\frac{\partial z}{\partial x}|_{x=x_0},\frac{\partial z}{\partial y}|_{y=y_0})^T<br>\end{equation}</p>
-<p>则向量$l=(\frac{\partial z}{\partial x}|_{x=x_0},\frac{\partial z}{\partial y}|_{y=y_0})^T$称为函数$f(x,y)$在点$(x_0,y_0)$处的梯度。</p>
-<p><strong>注：对于任意多元函数，以上的梯度和可微定理均成立。</strong></p>
-<h1 id="方向导数"><a href="#方向导数" class="headerlink" title="方向导数"></a>方向导数</h1><p>设多元函数$f$在点$x$处可微，向量$p=te$，$t$是$p$的模，$e$是$p$的单位向量，函数$f$在点$x$沿$p$方向的方向导数记为：</p>
-<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\lim_{t \to 0^+}\frac{f(x+p)-f(x)}{t}=\lim_{t \to 0^+}\frac{f(x+te)-f(x)}{t}<br>\end{equation}</p>
-<ul>
-<li>若$\frac{\partial f(x)}{\partial p}&lt;0$，可以得到$f(x+te)-f(x)&lt;0$，函数$f$在点$x$附近沿着$p$方向是下降的；</li>
-<li>若$\frac{\partial f(x)}{\partial p}&gt;0$，可以得到$f(x+te)-f(x)&gt;0$，函数$f$在点$x$附近沿着$p$方向是上升的。</li>
-</ul>
-<p>则方向导数正负决定了函数升降；升降速度的快慢由方向导数绝对值大小来决定，绝对值越大升降速度越大。</p>
-<h1 id="结论证明"><a href="#结论证明" class="headerlink" title="结论证明"></a>结论证明</h1><p>前面准备了那么多基础知识，现在可以证明标题的结论了：<strong>为什么梯度方向是函数的最速上升方向</strong>。</p>
-<p>多元函数$f$在点$x$处可微，可以得到：</p>
-<p>\begin{equation}<br>f(x+p)=f(x)+l^Tp=f(x)+\nabla f(x)^Tp<br>\end{equation}</p>
-<p>将$p$替换为$te$，可以得到：</p>
-<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\lim_{t\to 0^+}\frac{f(x+p)-f(x)}{t}=\lim_{t\to 0^+}\frac{t\nabla f(x)^Te}{t}=\nabla f(x)^Te<br>\end{equation}</p>
-<p>继续：</p>
-<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\nabla f(x)^T e \text{向量内积} =||\nabla f(x)||\cos \beta (e\text{的模是1})<br>\end{equation}</p>
-<p>我们已经知道：<strong>方向导数正负决定了函数升降；升降速度的快慢由方向导数绝对值大小来决定，绝对值越大升降速度越大。</strong>所以：</p>
-<ul>
-<li>当夹角为$\beta =0$时，即方向导数和梯度重合，方向导数取得最大值；</li>
-<li>当夹角为$\beta =180$时，即沿着负梯度方向，方向导数取得最小值；</li>
-</ul>
-<p>可见梯度方向即为函数的最速上升方向；负梯度方向即为函数的最速下降方向，从而梯度方向是函数具有最大变化率的方向。<del>忽然发现这种证明题也挺好玩（逃</del></p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>MMDetection 检测框架包括 mmdetection 和 mmcv，两者是不可分割的。首先安装 mmcv，掏出官方文档 <sup><a href="#fn_2" id="reffn_2">2</a></sup>，发现有两个版本可供安装，支持 <code>CUDA</code> 操作的 mmcv-full 和不支持的 mmcv，而图片处理显然需要 <code>GPU</code>。所以知道了要安装的是 mmcv-full，之后就是确定安装版本。</p>
+<p>首先查看自己的 <code>CUDA</code> 和 <code>pytorch</code> 版本，然后查阅官方提供的表格，找到对应的安装命令。综上，我本地服务器的安装指令就是（我现在写代码都默认 Linux 系统了，本教程不知道适不适合 windows）</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu92/torch1<span class="number">.7</span><span class="number">.0</span>/index.html</span><br></pre></td></tr></table></figure>
+<p>而后安装 mmdetection，继续掏出官方文档 <sup><a href="#fn_3" id="reffn_3">3</a></sup>，按着步骤一步一步来：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/open-mmlab/mmdetection.git</span><br><span class="line">cd mmdetection</span><br><span class="line">pip install -r requirements/build.txt</span><br><span class="line">pip install -v -e .</span><br></pre></td></tr></table></figure>
+<p>也就是安装完成后，当前目录会保留一个 <code>mmdetection</code> 的文件夹，一些模型的配置文件都在里面。在安装完成后，执行一段代码查看是否安装成功。这段代码要<strong>指定好路径</strong>，其实只执行第一句也是可以的。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> mmdet.apis <span class="keyword">import</span> init_detector, inference_detector</span><br><span class="line"></span><br><span class="line">config_file = <span class="string">'configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py'</span></span><br><span class="line"><span class="comment"># download the checkpoint from model zoo and put it in `checkpoints/`</span></span><br><span class="line"><span class="comment"># url: http://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth</span></span><br><span class="line">checkpoint_file = <span class="string">'checkpoints/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth'</span></span><br><span class="line">device = <span class="string">'cuda:0'</span></span><br><span class="line"><span class="comment"># init a detector</span></span><br><span class="line">model = init_detector(config_file, checkpoint_file, device=device)</span><br><span class="line"><span class="comment"># inference the demo image</span></span><br><span class="line">inference_detector(model, <span class="string">'demo/demo.jpg'</span>)</span><br></pre></td></tr></table></figure>
+<p>未完待续。</p>
+<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://github.com/open-mmlab/mmdetection/blob/master/README_zh-CN.md" target="_blank" rel="noopener">MMDetection 介绍</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://github.com/open-mmlab/mmcv#install-with-pip" target="_blank" rel="noopener">mmcv-full 安装文档</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://mmdetection.readthedocs.io/en/latest/get_started.html#installation" target="_blank" rel="noopener">mmdetection 安装文档</a></p>
 
     </div>
 
@@ -331,24 +308,6 @@
     
     
       
-  <div class="popular-posts-header">本文相关</div>
-  <ul class="popular-posts">
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\01\20\MCM-notice\" rel="bookmark">美赛进坑须知</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\01\15\MCM-template\" rel="bookmark">美赛论文LaTeX模板</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\02\14\autocell\" rel="bookmark">元胞自动机——万物皆可模拟</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020\12\19\filled-function\" rel="bookmark">一种求目标函数最优值的方法（填充函数法</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\16\flexible-fiber-optic-network-schedule\" rel="bookmark">弹性光网络选路和频谱分配问题建模</a></div>
-    </li>
-  </ul>
 
         <div class="reward-container">
   <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
@@ -391,9 +350,6 @@
 
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Modeling/" rel="tag"># Modeling</a>
-          </div>
 
         
   <div class="post-widgets">
@@ -406,13 +362,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/13/blog-two-years/" rel="prev" title="博客两年了">
-      <i class="fa fa-chevron-left"></i> 博客两年了
+    <a href="/2021/05/07/DNN-data-normal/" rel="prev" title="神经网络中的数据问题">
+      <i class="fa fa-chevron-left"></i> 神经网络中的数据问题
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/10/20/XDU-report-LaTeX-template/" rel="next" title="西安电子科技大学实验报告LaTeX模板">
-      西安电子科技大学实验报告LaTeX模板 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -473,7 +426,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#偏导"><span class="nav-number">1.</span> <span class="nav-text">偏导</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可微"><span class="nav-number">2.</span> <span class="nav-text">可微</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度"><span class="nav-number">3.</span> <span class="nav-text">梯度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方向导数"><span class="nav-number">4.</span> <span class="nav-text">方向导数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结论证明"><span class="nav-number">5.</span> <span class="nav-text">结论证明</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">2.</span> <span class="nav-text">references</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -743,59 +696,6 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 
@@ -810,7 +710,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '2dc46aacdd3eafb468d00a95bdeafe0d',
+      id          : 'ee5eea4b79fc4fb0e2800553eb6dbf42',
         language: 'zh-CN',
       distractionFreeMode: true
     });
