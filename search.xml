@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>MMDetection 基础使用</title>
+    <title>MMDetection 基础使用与详细踩坑记录</title>
     <url>/2021/05/11/MMDetection-use/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 <sup><a href="#fn_1" id="reffn_1">1</a></sup>，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，RetinaNet 等，官网也给出了详细的教程。既然如此，生命不息，开坑不止。本文收录：</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>最近喜欢上了听音乐，B 站关注了个 UP 主叫『<strong>咻咻满</strong>』，长得好看，戏腔唱『<strong>青花瓷</strong>』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 <sup><a href="#fn_1" id="reffn_1">1</a></sup>，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，RetinaNet 等，官网也给出了详细的教程。既然如此，生命不息，开坑不止。本文收录：</p>
 <ul>
 <li>安装</li>
 <li>调用槛车模型加载与训练好的参数，进行推理</li>
 <li>实现自己的训练步骤，加载数据等</li>
 <li>修改损失函数</li>
 </ul>
+<p>注意，本文更多像是记录学习过程，遇到问题一步一步的 debug 与记录，并不是直接的教程。且，本文程序大多能直接复制运行，需要对应到自己的路径。</p>
 <a id="more"></a>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>MMDetection 检测框架包括 mmdetection 和 mmcv，两者是不可分割的。首先安装 mmcv，掏出官方文档 <sup><a href="#fn_2" id="reffn_2">2</a></sup>，发现有两个版本可供安装，支持 <code>CUDA</code> 操作的 mmcv-full 和不支持的 mmcv，而图片处理显然需要 <code>GPU</code>。所以知道了要安装的是 mmcv-full，之后就是确定安装版本。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>MMDetection 检测框架包括 mmdetection 和 mmcv，两者是不可分割的。首先安装 mmcv，掏出官方文档 <sup><a href="#fn_2" id="reffn_2">2</a></sup>，发现有两个版本可供安装，支持 <code>CUDA</code> 操作的 mmcv-full 和不支持 <code>CUDA</code> 的 mmcv，而图片处理显然需要 <code>GPU</code>。所以知道了要安装的是 mmcv-full，之后就是确定安装版本。</p>
 <p>首先查看自己的 <code>CUDA</code> 和 <code>pytorch</code> 版本，然后查阅官方提供的表格，找到对应的安装命令。综上，我本地服务器的安装指令就是（我现在写代码都默认 Linux 系统了，本教程不知道适不适合 windows）</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu92/torch1<span class="number">.7</span><span class="number">.0</span>/index.html</span><br></pre></td></tr></table></figure>
 <p>而后安装 mmdetection，继续掏出官方文档 <sup><a href="#fn_3" id="reffn_3">3</a></sup>，按着步骤一步一步来：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/open-mmlab/mmdetection.git</span><br><span class="line">cd mmdetection</span><br><span class="line">pip install -r requirements/build.txt</span><br><span class="line">pip install -v -e .</span><br></pre></td></tr></table></figure>
-<p>也就是安装完成后，当前目录会保留一个 <code>mmdetection</code> 的文件夹，一些模型的配置文件都在里面。在安装完成后，执行一段代码查看是否安装成功。这段代码要<strong>指定好路径</strong>，其实只执行第一句也是可以的。</p>
-<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> mmdet.apis <span class="keyword">import</span> init_detector, inference_detector</span><br><span class="line"></span><br><span class="line">config_file = <span class="string">'configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py'</span></span><br><span class="line"><span class="comment"># download the checkpoint from model zoo and put it in `checkpoints/`</span></span><br><span class="line"><span class="comment"># url: http://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth</span></span><br><span class="line">checkpoint_file = <span class="string">'checkpoints/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth'</span></span><br><span class="line">device = <span class="string">'cuda:0'</span></span><br><span class="line"><span class="comment"># init a detector</span></span><br><span class="line">model = init_detector(config_file, checkpoint_file, device=device)</span><br><span class="line"><span class="comment"># inference the demo image</span></span><br><span class="line">inference_detector(model, <span class="string">'demo/demo.jpg'</span>)</span><br></pre></td></tr></table></figure>
-<p>未完待续。</p>
-<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://github.com/open-mmlab/mmdetection/blob/master/README_zh-CN.md" target="_blank" rel="noopener">MMDetection 介绍</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://github.com/open-mmlab/mmcv#install-with-pip" target="_blank" rel="noopener">mmcv-full 安装文档</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://mmdetection.readthedocs.io/en/latest/get_started.html#installation" target="_blank" rel="noopener">mmdetection 安装文档</a></p>
+<p>也就是安装完成后，当前目录会保留一个 <code>mmdetection</code> 的文件夹，一些模型的配置文件都在里面，不要删除这个文件夹。在安装完成后，执行一段代码查看是否安装成功</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> mmdet.apis <span class="keyword">import</span> init_detector, inference_detector</span><br></pre></td></tr></table></figure>
+<h1 id="简单推理"><a href="#简单推理" class="headerlink" title="简单推理"></a>简单推理</h1><p>在网上查阅相关用法时，发现绝大多数教程<strong>已经过时</strong>，软件迭代重构、接口更新很正常。即使某一天本文被骂陈旧过时，我也不会感觉到任何意外。接口问题多查阅官方文档，其余问题可以多用谷歌搜索。但官方文档 <sup><a href="#fn_4" id="reffn_4">4</a></sup> 写的实在是烂，甚至连返回类型都没写，是 tensor，还是 list。不仅没写类型，输出是什么也没写，是得分，是窗口还是类别，一个字都不肯多说，<strong>以上结论仅限博客发布的日期</strong>。所以只能自己一个一个打印了，然后自己分析了下，结果的形式是多个列表，因为有多个目标。每个列表的形式是盒子 <code>xmin, ymin, w, h</code> 以及得分。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> mmdet.apis <span class="keyword">import</span> init_detector, inference_detector</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目标检测配置文件</span></span><br><span class="line">config_file = <span class="string">'mmdetection/configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py'</span></span><br><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">checkpoint_file = <span class="string">'mmdetection/checkpoints/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置模型</span></span><br><span class="line">model = init_detector(config=config_file,</span><br><span class="line">                      checkpoint=checkpoint_file,</span><br><span class="line">                      device=<span class="string">'cuda:0'</span>)</span><br><span class="line"></span><br><span class="line">img = <span class="string">'woman-3377839_1920.jpg'</span></span><br><span class="line"><span class="comment">#  推理实际调用语句</span></span><br><span class="line"><span class="comment"># results = model(return_loss=False, rescale=True, **data)</span></span><br><span class="line">result = inference_detector(model=model, imgs=img)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印结果</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> result:</span><br><span class="line">    print(i)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 展示</span></span><br><span class="line">model.show_result(img=img,</span><br><span class="line">                  result=result,</span><br><span class="line">                  score_thr=<span class="number">0.5</span>,</span><br><span class="line">                  show=<span class="literal">False</span>,</span><br><span class="line">                  bbox_color=(<span class="number">72</span>, <span class="number">101</span>, <span class="number">241</span>),</span><br><span class="line">                  text_color=(<span class="number">72</span>, <span class="number">101</span>, <span class="number">241</span>),</span><br><span class="line">                  out_file=<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
+<p>在我打印 result 后，发现了一个震惊的消息，只有盒子、概率，没有类别，也就时说代码只能预测当前目标在哪，目标的概率，但不能预测目标是什么 <sup><a href="#fn_5" id="reffn_5">5</a></sup>，没有类别输出。来看一下官方的回答。我当时属实没看懂，数据集有类别信息？既然有了类别信息还推理干啥…</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/13/gBkChn.png" alt></p>
+<p>没办法接着去翻 github，自己提了个问 <sup><a href="#fn_6" id="reffn_6">6</a></sup>。才知道 <code>result</code> 的长度就是类别长度，而 <code>print(model.CLASSES)</code> 可以打印类别。比如 <code>model.ClASSES</code> 的长度是 80，那么 <code>result</code> 的长度也就是 80，<code>result[0]</code> 就对应 <code>model.CLASSES</code> 的第一个类别，表示第一个类别的盒子、概率。这样一切就解释通了。</p>
+<ul>
+<li>如果一个图片里只有一个目标，那么 <code>result</code> 类别索引对应的元素中，只有一组数据。</li>
+<li>如果一个图片里有多个目标，那么 <code>result</code> 类别索引对应的元素中，就有多组数据。</li>
+</ul>
+<p>因为我的服务器没有 GUI，而官方画图程序需要调用 matplotlib 和 tkiner，所以无法显示图片，只能读取结果信息，自己用 PIL 画一下了。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw</span><br><span class="line"><span class="comment"># 打开原图</span></span><br><span class="line">img = Image.open(<span class="string">'Hippopx.jpg'</span>).convert(<span class="string">'RGB'</span>)</span><br><span class="line"><span class="comment"># 画出目标框，因为一个类别可能对应多个目标</span></span><br><span class="line"><span class="keyword">for</span> rec <span class="keyword">in</span> result[<span class="number">0</span>]:</span><br><span class="line">    x, y, w, h = rec[<span class="number">0</span>], rec[<span class="number">1</span>], rec[<span class="number">2</span>], rec[<span class="number">3</span>]</span><br><span class="line">    draw = ImageDraw.Draw(img)</span><br><span class="line">    draw.rectangle((x, y, w, h), width=<span class="number">2</span>, outline=<span class="string">'#41fc59'</span>)</span><br><span class="line"><span class="comment"># 保存结果图片</span></span><br><span class="line">img.save(<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
+<p>一个类对应一个目标：<img data-src="https://z3.ax1x.com/2021/05/13/gBksu8.jpg" alt> 一个类有多个目标：<img data-src="https://z3.ax1x.com/2021/05/13/gBAUqU.jpg" alt></p>
+<h1 id="自定义推理"><a href="#自定义推理" class="headerlink" title="自定义推理"></a>自定义推理</h1><h2 id="准备数据"><a href="#准备数据" class="headerlink" title="准备数据"></a>准备数据</h2><p>将数据的软链接挂到 <code>mmdetection</code> 文件夹下，目录结构如下。 <code>ln -s minidata /mmdetection/data/</code>，创建软链时需要注意，使用绝对路径。因为之后会沿着软链访问数据，相对路径可能找不到数据。此时的目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mmdetection</span><br><span class="line">├── mmdet</span><br><span class="line">├── tools</span><br><span class="line">├── configs</span><br><span class="line">├── data</span><br><span class="line">│   ├── minidata</span><br><span class="line">│   │   ├── annotations/</span><br><span class="line">│   │   ├── test_data/</span><br></pre></td></tr></table></figure>
+<p><code>annotations</code> 是对图片信息的说明，<code>test_data</code> 就是要推理的图片。而后下载预训练的模型，对目标数据集进行推理。因为目标数据集位于 <code>data/mini_data</code> 下，所以要修改配置文件，使配置文件找到正确的数据路径。打开 <code>configs/_base_/datasets/coco_detection.py</code>，修改 <code>data</code> 字典中的 <code>test</code>，</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test=dict(</span><br><span class="line">    type=dataset_type,</span><br><span class="line">    <span class="comment"># 找到自己的 json</span></span><br><span class="line">    ann_file=data_root + <span class="string">'annotations/openbrand_train.json'</span>,</span><br><span class="line">    <span class="comment"># 找到自己的图片路径</span></span><br><span class="line">    img_prefix=data_root + <span class="string">'test_data/'</span>,</span><br><span class="line">    pipeline=test_pipeline)</span><br></pre></td></tr></table></figure>
+<p>而最后执行推理的代码如下：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python tools/test.py \</span><br><span class="line">    <span class="variable">$&#123;CONFIG_FILE&#125;</span> \</span><br><span class="line">    <span class="variable">$&#123;CHECKPOINT_FILE&#125;</span> \</span><br><span class="line">    [--out <span class="variable">$&#123;RESULT_FILE&#125;</span>] \</span><br><span class="line">    [--<span class="built_in">eval</span> <span class="variable">$&#123;EVAL_METRICS&#125;</span>] \</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>RESULT_FILE</code> 结果序列化输出到指定文件中，必须是 <code>.pkl</code> 文件</li>
+<li><code>EVAL_METRICS</code> 结果要评估的项目，对于 COCO 数据接而言，有 <code>proposal, bbox, segm</code> 等。但是需要注意的是，faster rcnn 没有 segm，mask rcnn 才有。</li>
+</ul>
+<p>比如：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python tools/test.py \</span><br><span class="line">    configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py \</span><br><span class="line">    checkpoints/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth \</span><br><span class="line">    --out /mmnet/out.pkl \</span><br><span class="line">    --<span class="built_in">eval</span> bbox proposal \</span><br><span class="line">    --show-score-thr 0.5 <span class="comment"># 概率低于 0.5 的月测结果都要被删除</span></span><br></pre></td></tr></table></figure>
+<p>打开 <code>test.py</code>，一步步追踪源码，发现调用的东西和 <code>inference_detector</code> 接口调用的一样，所以推理阶段不输出类别，类别需要自己从 <code>model.CLASSES</code> 中获取。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    result = model(return_loss=<span class="literal">False</span>, rescale=<span class="literal">True</span>, **data)</span><br></pre></td></tr></table></figure>
+<h1 id="自定义训练"><a href="#自定义训练" class="headerlink" title="自定义训练"></a>自定义训练</h1><h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://github.com/open-mmlab/mmdetection/blob/master/README_zh-CN.md" target="_blank" rel="noopener">MMDetection 介绍</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://github.com/open-mmlab/mmcv#install-with-pip" target="_blank" rel="noopener">mmcv-full 安装文档</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://mmdetection.readthedocs.io/en/latest/get_started.html#installation" target="_blank" rel="noopener">mmdetection 安装文档</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://mmdetection.readthedocs.io/en/latest/api.html#mmdet.apis.init_detector" target="_blank" rel="noopener">mmdetection 官方文档</a><br><sup><a href="#fn_5" id="reffn_5">5</a></sup>：<a href="https://github.com/open-mmlab/mmdetection/issues/3755" target="_blank" rel="noopener">inference_detector 无法输出每个盒子的所属类别</a><br><sup><a href="#fn_6" id="reffn_6">6</a></sup>：<a href="https://github.com/open-mmlab/mmdetection/issues/3755#issuecomment-840228347" target="_blank" rel="noopener">inference_detector 获取类别</a></p>
 ]]></content>
   </entry>
   <entry>
@@ -117,7 +143,38 @@
 <li>若这一项大于0，会有损失，表示要降低对真实标签的可信度；</li>
 <li>若这一相小于0，取值为0，表示无法识别正确分类。此时没有损失，满足之前的当且仅当 $f(x+\delta) \leq 0$ 时，$C(x+\delta)=t$，也就是，分类错误后，就不用优化这一项了；换句话说，在不满足 $C(x+\delta)=t$ 约束下，是没有目标函数的损失值的。这里的确需要好好理解。</li>
 </ul>
-<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://arxiv.org/abs/1608.04644" target="_blank" rel="noopener">https://arxiv.org/abs/1608.04644</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1312.6199.pdf</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb" target="_blank" rel="noopener">https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb</a></p>
+<h1 id="程序-4"><a href="#程序-4" class="headerlink" title="程序 4"></a>程序 <sup><a href="#fn_4" id="reffn_4">4</a></sup></h1><ul>
+<li><code>fgsm_attack.py</code>，使用 <code>fgsm</code> 算法制作对抗样本</li>
+<li><code>resnet</code>，使用 <code>ResNet50</code> 制作对抗样本</li>
+<li><code>vgg</code>，黑盒攻击，使用 <code>VGG16</code> 作为目标模型</li>
+<li><code>eval.py</code>，验证目标模型在对抗样本攻击下的准确率</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>攻击模型</th>
+<th>目标模型</th>
+<th>原始准确率</th>
+<th>L2攻击</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ResNet50</td>
+<td>VGG16</td>
+<td>94.27</td>
+<td>53.63</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>预训练模型<a href="https://github.com/laisimiao/classification-cifar10-pytorch" target="_blank" rel="noopener">下载</a>。</p>
+<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><ul>
+<li><code>python cw_attack.py</code>，制作对抗样本</li>
+<li><code>python eval.py</code>，验证目标模型在对抗样本攻击下的准确率</li>
+</ul>
+<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://arxiv.org/abs/1608.04644" target="_blank" rel="noopener">https://arxiv.org/abs/1608.04644</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1312.6199.pdf</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb" target="_blank" rel="noopener">https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://github.com/muyuuuu/Adversarial-Attack/tree/main/CW_L2" target="_blank" rel="noopener">https://github.com/muyuuuu/Adversarial-Attack/tree/main/CW_L2</a></p>
 ]]></content>
       <tags>
         <tag>DeepLearning</tag>
