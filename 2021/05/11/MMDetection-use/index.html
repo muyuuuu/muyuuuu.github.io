@@ -27,7 +27,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 1，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，Retin">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-16T06:48:25.822Z">
+<meta property="og:updated_time" content="2021-05-16T11:53:25.034Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MMDetection 基础使用与详细踩坑记录">
 <meta name="twitter:description" content="最近喜欢上了听音乐，B 站关注了个 UP 主叫『咻咻满』，长得好看，戏腔唱『青花瓷』入坑了，也听了其它的『星辰大海』和『白月光和朱砂痣』，都挺好听。以后得关注点女 UP 了，看着多可爱，生活又不是只有代码。卧艹不对说回正题。MMDetection 是一个基于 PyTorch 的目标检测开源工具箱 1，支持了众多主流的和最新的检测算法，例如 Faster R-CNN，Mask R-CNN，Retin">
@@ -257,7 +257,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-16 14:48:25" itemprop="dateModified" datetime="2021-05-16T14:48:25+08:00">2021-05-16</time>
+                <time title="修改时间：2021-05-16 19:53:25" itemprop="dateModified" datetime="2021-05-16T19:53:25+08:00">2021-05-16</time>
               </span>
 
           
@@ -271,7 +271,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>10k</span>
+              <span>11k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -297,7 +297,7 @@
 <li>实现自己的训练步骤，加载数据等</li>
 <li>修改损失函数</li>
 </ul>
-<p>注意，本文更多像是记录学习过程，遇到问题一步一步的 debug 与记录，并不是直接的教程。且，本文程序大多能直接复制运行，需要对应到自己的路径。</p>
+<p>注意，本文更多像是记录学习过程，这也是我第一次用这个工具，遇到问题一步一步的 debug 与记录，并不是直接的教程。且，本文程序大多能直接复制运行，需要对应到自己的路径。我希望读者看完本文后具有解决问题的能力，而不只是会解决问题。</p>
 <a id="more"></a>
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>MMDetection 检测框架包括 mmdetection 和 mmcv，两者是不可分割的。首先安装 mmcv，掏出官方文档 <sup><a href="#fn_2" id="reffn_2">2</a></sup>，发现有两个版本可供安装，支持 <code>CUDA</code> 操作的 mmcv-full 和不支持 <code>CUDA</code> 的 mmcv，而图片处理显然需要 <code>GPU</code>。所以知道了要安装的是 mmcv-full，之后就是确定安装版本。</p>
 <p>首先查看自己的 <code>CUDA</code> 和 <code>pytorch</code> 版本，然后查阅官方提供的表格，找到对应的安装命令。综上，我本地服务器的安装指令就是（我现在写代码都默认 Linux 系统了，本教程不知道适不适合 windows）</p>
@@ -326,7 +326,10 @@
 <p>也就是，配置文件是继承自 <code>_base_</code> 文件夹下面的模型、数据、学习率、运行时设置这四个文件。所以要按照自己想要的方式运行，就需要修改这四个配置文件。</p>
 <p>比如以数据为例，因为目标数据集位于 <code>data/mini_data</code> 下，所以要修改配置文件，使配置文件找到正确的数据路径。打开 <code>configs/_base_/datasets/coco_detection.py</code>，修改 <code>data</code> 字典中的 <code>test</code>。<strong>类别数量修改同理。</strong></p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">test=dict(</span><br><span class="line">    type=dataset_type,</span><br><span class="line">    <span class="comment"># 找到自己的 json</span></span><br><span class="line">    ann_file=data_root + <span class="string">'annotations/openbrand_train.json'</span>,</span><br><span class="line">    <span class="comment"># 找到自己的图片路径</span></span><br><span class="line">    img_prefix=data_root + <span class="string">'test_data/'</span>,</span><br><span class="line">    pipeline=test_pipeline)</span><br></pre></td></tr></table></figure>
-<p>而后在 <code>mmdetection/mmdet/core/evaluation/classes_names</code> 中的 <code>coco_classes</code> 函数中修改类别名称信息。（这个我没找到如何在配置文件中修改，只能在源文件中修改了）</p>
+<ul>
+<li>而后在 <code>mmdetection/mmdet/core/evaluation/classes_names</code> 中的 <code>coco_classes</code> 函数中修改类别名称信息。（这个我没找到如何在配置文件中修改，只能在源文件中修改了）</li>
+<li>也在<code>mmdetection/mmdet/datasets/coco.py</code> 中的 <code>class CocoDataset(CustomDataset):</code> 类中的 <code>CLASSES</code> 字段修改为自己需要的类别信息。</li>
+</ul>
 <h2 id="开始推理"><a href="#开始推理" class="headerlink" title="开始推理"></a>开始推理</h2><p>而最后执行推理的代码如下：</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python tools/test.py \</span><br><span class="line">    <span class="variable">$&#123;CONFIG_FILE&#125;</span> \</span><br><span class="line">    <span class="variable">$&#123;CHECKPOINT_FILE&#125;</span> \</span><br><span class="line">    [--out <span class="variable">$&#123;RESULT_FILE&#125;</span>] \</span><br><span class="line">    [--<span class="built_in">eval</span> <span class="variable">$&#123;EVAL_METRICS&#125;</span>] \</span><br></pre></td></tr></table></figure>
 <ul>
