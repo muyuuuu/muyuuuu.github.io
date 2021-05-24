@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>语义分割篇：开山之作 FCN</title>
+    <url>/2021/05/24/FCN/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。</p>
+<a id="more"></a>
+<h1 id="什么是语义分割"><a href="#什么是语义分割" class="headerlink" title="什么是语义分割"></a>什么是语义分割</h1><p>语义分割的直观解释可以见下图，计算照片中的每一个像素点的类别，进而得到哪些像素点属于同一类，把一些物体给分割出来：</p>
+<p><img data-src="http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/pr/DBOverview1_1_huff_0000964.jpg" alt></p>
+<h1 id="FCN"><a href="#FCN" class="headerlink" title="FCN"></a>FCN</h1><p>CNN 能够对图片进行分类，可是怎么样才能识别图片中特定部分的物体，在这篇论文之前，还是一个未解难题。</p>
+<ul>
+<li>对于传统的分类网络，经过 CNN 不断卷积、池化的处理，最后进入全连接网络，预测当前图片的分类。但会丢失空间信息，无法预测每个像素的分类。</li>
+<li>对于目标检测的网络，也是经过 CNN 不断卷积、池化的处理，在最后的特征图上预测类别和位置。但识别出来的是目标框，并非物体的轮廓边界。</li>
+</ul>
+<p>而 FCN 的创新之处在于，使用卷积操作替换了分类网络的全连接，使得输入输出保持在相同尺寸，这样就可以预测每个像素点的类别。加上使用了卷积，自然而然也就可以处理任意尺寸的图像。网络结构如下，用下面的卷积替换上面的全连接：</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvGwrQ.png" alt></p>
+<h1 id="上采样"><a href="#上采样" class="headerlink" title="上采样"></a>上采样</h1><p>经过不断的卷积，图像的尺寸会减少而维度会增加。所以为了使得网络输出的图像尺寸和原图像一致，需要进行一些上采样，使它恢复到输入图像相同的尺寸，从而可以对每个像素都产生了一个预测, 同时保留了原始输入图像中的空间信息, 最后在与输入图等大小的特征图上对每个像素进行分类，逐像素地用 softmax 分类计算损失，相当于每个像素对应一个训练样本。这部分在论文的第三章有所描述。</p>
+<p>而上采样采用的操作是<strong>转置卷积</strong>，如下图 <sup><a href="#fn_2" id="reffn_2">2</a></sup> 所示，蓝色是输入，青色是输出，将图像的尺寸瞬间增加了一倍。而文中发现，这种形式的上采样是最有效的，且，可以通过叠加之前的输入（类此残差），获得更好的精度。此外文中特意表明了转置卷积也是卷积层，按照普通的卷积层进行训练即可。</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvNSo9.gif" alt></p>
+<h1 id="融合操作"><a href="#融合操作" class="headerlink" title="融合操作"></a>融合操作</h1><p><img data-src="https://z3.ax1x.com/2021/05/24/gva3Vg.png" alt></p>
+<p>如上图所示，论文给出了 FCN 的三种版本。</p>
+<ul>
+<li>对于 FCN-32s，直接在最后一层进行 32 倍的上采样，原始空间信息倍大量丢失</li>
+<li>对于 FCN-16s，将 pool5 后的结果进行 2 倍上采样，与 pool4 的结果相加，得到结果 $F$，而后进行 16 倍上采样</li>
+<li>对于 FCN-8s，将 $F$ 与 pool3 后的结果相加，而后进行 8 倍上采样</li>
+</ul>
+<p>论文中的结论是，FCN-8s 的效果要好一些，毕竟更多的利用了原始空间信息。网络结构图如下 <sup><a href="#fn_3" id="reffn_3">3</a></sup> ：</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvwICd.png" alt></p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>网上看到了份程序，逻辑写的还不错：</p>
+<p><a href="https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py" target="_blank" rel="noopener">https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py</a></p>
+<p>尺寸在我裁剪图片的时候进行了放缩，不要太在意。</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvBWfH.png" alt></p>
+<h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><p>若要可视化展示结果，需要对网络输出的结果进行解码。如标注图片上的类别等。假设输入图像的尺寸是 [800, 800] 的，当前类别数量是 21，会得到 [bacthsize, num_classes, height, width] 的输出。假设当前 batchsize 是 1，那么就需要在 num_classes 张 [height, width] 大小的图片中选择出每个像素点的类别。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">out = fcn(data)[<span class="string">'out'</span>]</span><br><span class="line"><span class="comment"># 选择每个像素点的最大的类别</span></span><br><span class="line">om = torch.argmax(out.squeeze(), dim=<span class="number">0</span>).detach().cpu().numpy()</span><br><span class="line">decode_segmap(om)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_segmap</span><span class="params">(image, nc=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 类别颜色，画图用</span></span><br><span class="line">    label_colors = np.array([</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),  <span class="comment"># 0=background</span></span><br><span class="line">        <span class="comment"># 1=aeroplane, 2=bicycle, 3=bird, 4=boat, 5=bottle</span></span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 6=bus, 7=car, 8=cat, 9=chair, 10=cow</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        <span class="comment"># 11=dining table, 12=dog, 13=horse, 14=motorbike, 15=person</span></span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 16=potted plant, 17=sheep, 18=sofa, 19=train, 20=tv/monitor</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">    ])</span><br><span class="line">    r = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    g = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    b = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">0</span>, nc):</span><br><span class="line">        <span class="comment"># 目标类的索引</span></span><br><span class="line">        idx = image == l</span><br><span class="line">        r[idx] = label_colors[l, <span class="number">0</span>]</span><br><span class="line">        g[idx] = label_colors[l, <span class="number">1</span>]</span><br><span class="line">        b[idx] = label_colors[l, <span class="number">2</span>]</span><br><span class="line">    rgb = np.stack([r, g, b], axis=<span class="number">2</span>)</span><br><span class="line">    plt.imshow(rgb)</span><br><span class="line">    plt.savefig(<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>此外，U-Net <sup><a href="#fn_5" id="reffn_5">5</a></sup> 的网络结构也适合做分割，先记下来，也许某一天做语义分割的任务会用到。</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gv6rd0.png" alt></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://arxiv.org/abs/1411.4038" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://github.com/vdumoulin/conv_arithmetic" target="_blank" rel="noopener">卷积动画</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="http://flyrie.top/2018/06/22/%E5%85%A8%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%EF%BC%88FCN%EF%BC%89/" target="_blank" rel="noopener">FCN-8s 结构图</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://learnopencv.com/pytorch-for-beginners-semantic-segmentation-using-torchvision/" target="_blank" rel="noopener">分割后的图片解码</a><br><sup><a href="#fn_5" id="reffn_5">5</a></sup>：<a href="https://github.com/milesial/Pytorch-UNet" target="_blank" rel="noopener">U-Net 网络实现</a></p>
+]]></content>
+      <tags>
+        <tag>CV</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>目标检测篇：自定义 MMDetection 的 Pipeline</title>
     <url>/2021/05/20/MMdetection-pipeline/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>经过几天连续的开坑和读源代码，对 mmdetection 的配置流程了解的差不多了。考虑一个实例应用，尝试着将 <code>FGSM</code> 攻击算法的制作的对抗样本植入目标检测中，企图增加网络的鲁棒性，也就是一个自定义输出处理 <code>Pipeline</code> 的实际流程。之后会尝试自定义损失函数，支持简单的对抗训练，如 MART 算法等 <sup><a href="#fn_1" id="reffn_1">1</a></sup>。</p>
@@ -405,7 +445,7 @@
       </tags>
   </entry>
   <entry>
-    <title>目标检测篇：Faster-RCNN</title>
+    <title>目标检测篇：Faster-RCNN 系列</title>
     <url>/2021/04/28/faster-rcnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>又来开计算机视觉的坑了，<strong>这次一定做好整理和记录，包括算法内容和程序</strong>。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。</p>
 <p>既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组成：$(x,y,w,h)$，表示物体的起始点坐标和框的宽度与高度；对于目标是什么的问题，就是传统神经网络的多分类问题了。</p>
@@ -478,6 +518,19 @@
 </li>
 <li>近似联合训练，RPN 和 Fast R-CNN 整合到一个网络里一起训练。前向传递生成 region proposal，在训练 Fast R-CNN 检测器将这看作是固定的、预计算的 proposal。反向传播像往常一样进行，其中对于共享层，组合来自 RPN 损失和 Fast R-CNN 损失的反向传播信号。这个解决方案很容易实现。但是这个解决方案忽略了关于 proposal 边界框的坐标的导数，因此是近似的。由 RPN 预测的边界框也是输入的参数，Fast R-CNN 中的 RoI 池化层接受卷积特征以及预测的边界框作为输入，所以理论上有效的反向传播求解器也应该包括关于边界框坐标的梯度。在上述近似联合训练中，这些梯度被忽略。</li>
 </ul>
+<h1 id="扩展到-Cascade-RCNN"><a href="#扩展到-Cascade-RCNN" class="headerlink" title="扩展到 Cascade RCNN"></a>扩展到 Cascade RCNN</h1><p>至于经常听闻的 Cascade RCNN，只是 Faster RCNN 的一个变体，只是在 ROI head 预测部分增加了几个串联的网络，IOU 逐步提升，从不太 mismatch 的 0.5 开始，逐步提升目标框的质量。</p>
+<ol>
+<li>detector 在训练阶段和推理阶段面对的数据分布是不一样的，训练阶段 proposal 都是经过 IOU 采样的，正样本含有目标；推理阶段不知道哪个 proposal 为正样本，只能认为所有 proposal 都是正样本，但这样得到的 proposal 的 IOU 都很低，所以推理结果不太好；</li>
+<li>如果使用低 IOU 重新训练网络，对噪音的识别较大；如果提高 IOU ，又会造成对正样本的过拟合；</li>
+<li>所以可以在网络中使用不同的 IOU 逐步提纯。</li>
+</ol>
+<p>所以推荐几篇文章，就不详细解读了：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/112828052" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/112828052</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/161530664" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/161530664</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/42553957" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/42553957</a></li>
+<li><a href="https://linzhenyuyuchen.github.io/2019/12/05/Cascade-R-CNN/" target="_blank" rel="noopener">https://linzhenyuyuchen.github.io/2019/12/05/Cascade-R-CNN/</a> （个人认为写的最好）</li>
+</ol>
 <h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast R-CNN</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></p>
 ]]></content>
       <tags>
@@ -9256,6 +9309,46 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -9319,46 +9412,6 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
