@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -291,18 +291,19 @@
 <p>(3) 执行被调用的函数;</p>
 <p>(4) 调用函数结束, 给出返回值, 函数回到调用前的暂停位置继续执行.</p>
 <a id="more"></a>
+
 <h1 id="调用栈"><a href="#调用栈" class="headerlink" title="调用栈"></a>调用栈</h1><p>调用栈函数调用时产生，描述了函数之间的调用关系。由多个栈帧组成，每个栈帧对应一个没有运行完的函数，栈帧保存了该函数的返回地址和局部变量。所以可以保证在执行完毕后找到返回地址。保证了不同函数的局部变量互不相干，因为不同函数对应了不同的栈帧。</p>
 <h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><p>步骤与上述内容相同, 但是调用的函数为自己, 即自身调用自身。（如经典的非波那切数列）</p>
 <p>以<code>Cpp</code>为例，编译后的可执行文件存放的内容中主要内容为段，段是指二进制文件内的区域。所有某种特定类型的信息保存在里面，<code>size</code>得到各个段的大小。执行如下指令会：</p>
-<p><img data-src="/2019/09/22/stack/1.png" alt></p>
+<p><img data-src="/2019/09/22/stack/1.png"></p>
 <p><code>text</code>：存储代码指令（也叫正文段）</p>
 <p><code>data</code>：存储初始化的全局变量（也叫数据段）</p>
 <p><code>bss</code>：存储未赋值的全局变量所需要的空间</p>
 <p>可执行文件并不包括调用函数时的调用栈，而是在运行时创建。调用栈所在的段为堆栈段，也有自己的大小，不能被访问越界，否则会出现段错误（Segmentation Fault）。而每次递归会在调用栈里面添加一个栈帧，栈帧过多会越界，叫做堆栈溢出（Stack Overflow）。调用栈存放了函数的调用关系和局部变量。</p>
 <h1 id="查看堆栈段的大小"><a href="#查看堆栈段的大小" class="headerlink" title="查看堆栈段的大小"></a>查看堆栈段的大小</h1><p><code>linux</code>下，栈大小并没有在可执行文件中，需要通过指令修改。<code>ulimit-a</code>，观察其中的<code>stack size</code>即为所求。</p>
-<p><img data-src="/2019/09/22/stack/2.png" alt></p>
+<p><img data-src="/2019/09/22/stack/2.png"></p>
 <p><code>ulimit -s 37629</code>进行修改：</p>
-<p><img data-src="/2019/09/22/stack/3.png" alt></p>
+<p><img data-src="/2019/09/22/stack/3.png"></p>
 <p>栈溢出不一定是递归太多，也可能是局部变量太大，总大小超出允许的范围，就会产生栈溢出。因此，较大数组存储在main函数之外，因为局部变量存放在堆栈段。（main函数中的变量同样为局部变量）</p>
 
     </div>
@@ -476,7 +477,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -522,12 +523,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -562,23 +563,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

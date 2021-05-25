@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -289,6 +289,7 @@
         <p>进程 CPU 调度和资源分配的单位，是一个程序在一个数据集上的一次执行；线程是CPU上运行和调度的基本执行单位，进程内的一个代码片段可创建为线程，线程由进程创建，寄生在进程身上。</p>
 <p>CPU 从一个<strong>任务</strong>切换到另一个<strong>任务</strong>，俗称上下文切换。理论上而言，进程负载了程序运行所有内容，开销较大。线程较轻量，和父进程共享各类资源，上下文切换的成本较低。可实际情况中具体如何？今天一探究竟。</p>
 <a id="more"></a>
+
 <h1 id="多任务系统与上下文切换"><a href="#多任务系统与上下文切换" class="headerlink" title="多任务系统与上下文切换"></a>多任务系统与上下文切换</h1><p>我们都知道，现代操作系统是一个多任务操作系统，它支持远大于 CPU 数量的任务同时运行。当然，这些任务实际上并不是真的在同时运行，而是因为系统在很短的时间内，将 CPU 轮流分配给它们，每秒可能发生几百次上下文切换，造成多任务同时运行的错觉。</p>
 <p>其中上下文的意思是指：某一时刻，寄存器内的数据和程序计数器的值；寄存器保留了CPU的指令，程序计数器表明了指令所在的地址，即当前指令之后立即执行的指令的地址。它们都是 CPU 在运行任何任务前，必须的依赖环境。</p>
 <p>而在每个任务运行前，CPU 都需要知道任务从哪里加载、又从哪里开始运行，也就是说，需要系统事先帮它设置好 CPU 寄存器和程序计数器，也就是上下文。涉及到具体的切换，就是先把前一个任务的 CPU 上下文（也就是 CPU 寄存器和程序计数器）保存起来，然后加载新任务的上下文到这些寄存器和程序计数器，最后再跳转到程序计数器所指的位置，运行新任务。而这些保存下来的上下文，会存储在系统内核中，并在任务重新调度执行时再次加载进来。这样就能保证任务原来的状态不受影响，让任务看起来还是连续运行。</p>
@@ -312,7 +313,7 @@
 <p>不过，需要注意的是，系统调用过程中，并不会涉及到虚拟内存等进程用户态的资源，也不会切换进程。这跟我们通常所说的进程上下文切换是不一样的：进程上下文切换，是指从一个进程切换到另一个进程运行；而系统调用过程中一直是同一个进程在运行。所以，系统调用过程通常称为特权模式切换，而不是上下文切换，系统调用属于同进程内的 CPU 上下文切换。</p>
 <h1 id="进程上下文切换与系统调用"><a href="#进程上下文切换与系统调用" class="headerlink" title="进程上下文切换与系统调用"></a>进程上下文切换与系统调用</h1><p>首先，进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以，进程的上下文不仅包括了内核堆栈、寄存器等内核空间的状态，还包括了虚拟内存、栈、全局变量等用户空间的资源。</p>
 <p>因此，进程的上下文切换就比系统调用时多了一步：在保存内核态资源（当前进程的内核状态和 CPU 寄存器）之前，需要先把该进程的用户态资源（虚拟内存、栈等）保存下来；而加载了下一进程的内核态后，还需要刷新进程的虚拟内存和用户栈。如下图所示，保存上下文和恢复上下文的过程开销是很大的，此外，考虑到进程之间的相互的保护，只有操作系统能操作其它进程和了解其它进程的状态，因此这个过程需要在内核态完成。</p>
-<p><img data-src="https://z3.ax1x.com/2021/04/16/chAMcR.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/04/16/chAMcR.png"></p>
 <p>另外，我们知道，现代操作系统通过 TLB（Translation Lookaside Buffer）来管理虚拟内存到物理内存的映射关系。如果发生运行时动态链接（进入系统态）、内存紧缩等情况，即虚拟内存更新后，TLB 也需要刷新，内存的访问也会随之变慢，不过这是进程上下文切换带来的副作用了。</p>
 <p>发生进程上下文切换的场景</p>
 <ol>
@@ -531,7 +532,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -577,12 +578,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -617,23 +618,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

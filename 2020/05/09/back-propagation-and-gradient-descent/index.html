@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -295,32 +295,35 @@
         <p>在之前的学习深度学习的过程中，以MLP为例，仅仅是知道了梯度下降和反向传播能很好的降低预测误差(本文暂且不谈论梯度消失和爆炸的问题)，使得训练出来的模型能够对未知的数据进行预测或者分类，以此来达到智能的目的。</p>
 <p>时至今日，意识到不求甚解释不好的行为，于是下决心搞懂梯度下降和反向传播的原理。结果上网一搜，呵，大部分tm的是各处偷来的截图，截图里还有三四个水印，最后胡乱的堆一些数学公式，讲解的并不够彻底，也不通俗易懂。于是本文决定图解反向传播和梯度下降，并配备必要的数学计算，使读者一目了然。</p>
 <a id="more"></a>
+
 <h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>求偏导的概念得会一下(懂概念即可，不用自己求)，激活函数如何工作得会，网络的连接得会(搞明白参数在哪里工作就好了)。</p>
 <h1 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h1><p>我们先设一个简单的函数$y=3x^2+2x+1$。假设此时$x=10$，那么$y=321$，我们想优化这个函数，即利用梯度下降的方式来求得$y$的最小值和对应的$x$的值。<del>为什么不求导直接算$y$的最小值？因为现实中的函数维度极度复杂，在复杂的函数空间内可能求不出来极小值点，这里只是用简单函数举例。</del>可以求出目标函数的导函数为：$y’=6x+2$。万事具备，再来回顾下导数的意义<del>非严谨数学定义，不要较真</del>：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/2.png" alt></p>
+<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/2.png"></p>
 <p>如上图所示，无限放大曲线的一小部分，在$y$轴方向截取一段$dy$，向$x$轴方向截取一段$dx$，则$f’(x)=dy/dx$即为这一小段曲线的斜率，也为导数值。当然，具体到实际问题，并不是取一段曲线而是以一个具体的点计算，这里只是距离。如$f(x)=2x^2$在$x=2$处的导数值为8。</p>
 <p>梯度的本意是一个向量（矢量），即函数在该点处沿着该方向（此梯度的方向）变化最快，变化率最大，显而易见，对一元函数而言就是求导(多元函数求偏导并含有方向)。继续推导，可以得到这样的式子：$f’(x)dx=dy$。在详细一点，当前$x=10$，我们取一个固定的$dx=0.2$，沿着导数的方向，让$x$逐渐的变化，此时的$y$也逐渐变小，是不是就能逐步得到目标函数的最小值呢？数学语言如下：</p>
 <ol>
 <li>初始化$x$</li>
-<li>开始迭代：<ul>
+<li>开始迭代：</li>
+</ol>
+<ul>
 <li>求$f(x)$的导数$f’(x)$</li>
 <li>$x_{i+1} = x_i - dx * f’(x)$</li>
 <li>$i ++$</li>
 </ul>
-</li>
-</ol>
 <p>即迭代示意图如下：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/3.png" alt></p>
+<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/3.png"></p>
 <ul>
 <li>$x_1-f’_1dx=x_2$，$f’_1$为$x_1$处的导数值</li>
 <li>$x_2-f’_2dx=x_3$，$f’_2$为$x_2$处的导数值</li>
 </ul>
 <p>当然，$dx$也可以换成$\alpha$表示，含义为学习率，即每次行走的步幅。直到行走到最低点结束，代码如下：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">dx = <span class="number">0.2</span></span><br><span class="line">n_eproch = <span class="number">1000</span></span><br><span class="line">x = <span class="number">-10</span> </span><br><span class="line">ls = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> range(n_eproch):  </span><br><span class="line">    y = <span class="number">3</span> * x ** <span class="number">2</span> + <span class="number">2</span> * x + <span class="number">1</span></span><br><span class="line">    ls.append(y)</span><br><span class="line">    x = x - (<span class="number">6</span> * x + <span class="number">2</span>) * dx</span><br><span class="line"></span><br><span class="line">print(ls[<span class="number">-1</span>])</span><br><span class="line"><span class="comment"># 0.67</span></span><br></pre></td></tr></table></figure>
+
 <p>可见在迭代1000次后，$y$的最终取值为0.67，和函数实际的最小值不谋而合<del>利用中学知识求一下即可</del>，这就是梯度下降的力量。当然，对于复杂的多元函数求偏导，或者求导的链式法则，还是借助<code>Tensorflow</code>这种专业工具更加省事。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">X = tf.constant([<span class="number">0.</span>, <span class="number">0.25</span>, <span class="number">0.5</span>, <span class="number">0.74</span>, <span class="number">1.</span>])</span><br><span class="line">y = tf.constant([<span class="number">0.</span>, <span class="number">0.36</span>, <span class="number">0.54</span>, <span class="number">0.82</span>, <span class="number">1.</span>])</span><br><span class="line"></span><br><span class="line">a = tf.Variable(initial_value=<span class="number">0.</span>)</span><br><span class="line">b = tf.Variable(initial_value=<span class="number">0.</span>)</span><br><span class="line">variables = [a, b]</span><br><span class="line"></span><br><span class="line">num_epoch = <span class="number">100</span></span><br><span class="line">optimizer = tf.keras.optimizers.SGD(learning_rate=<span class="number">5e-4</span>)</span><br><span class="line"><span class="keyword">for</span> e <span class="keyword">in</span> range(num_epoch):</span><br><span class="line">    <span class="comment"># 使用tf.GradientTape()记录损失函数的梯度信息</span></span><br><span class="line">    <span class="keyword">with</span> tf.GradientTape() <span class="keyword">as</span> tape:</span><br><span class="line">        y_pred = a * X + b</span><br><span class="line">        loss = tf.reduce_sum(tf.square(y_pred - y))</span><br><span class="line">    <span class="comment"># TensorFlow自动计算损失函数关于自变量（模型参数）的梯度</span></span><br><span class="line">    grads = tape.gradient(loss, variables)</span><br><span class="line">    <span class="comment"># TensorFlow自动根据梯度更新参数</span></span><br><span class="line">    optimizer.apply_gradients(grads_and_vars=zip(grads, variables))</span><br><span class="line"></span><br><span class="line">print(a, b)</span><br></pre></td></tr></table></figure>
+
 <h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><p>反向传播是一种以梯度下降为基础，对误差进行反馈，并调节相关参数的方法，因网络文章普遍都是公式较为晦涩，因此这里以数学计算为主，给出反向传播的实例，供读者理解。(因此期待看数学公式的可以移步了)。以MLP为例，首先构建结构如下图所示的网络：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/4.png" alt></p>
+<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/4.png"></p>
 <p>然后完成参数的初始化，且激活函数均采用Sigmoid($f(x)=\frac{1}{1 + e ^{-x}}$)</p>
 <p>$x=2,w_{11}=1,w_{12}=-1,b_1=3,w_{21}=2,w{22}=1,b_2=0,y_{true}=1,\alpha=0.2$</p>
 <h2 id="前向计算"><a href="#前向计算" class="headerlink" title="前向计算"></a>前向计算</h2><ol>
@@ -339,6 +342,7 @@
 </ol>
 <p>以此类推，通过不断的迭代，参数会逐渐修改，最终的结果是模型能有效的对输入进行预测或者分类。其他参数的更新同理。对于经常变成的小伙伴，会发现训练过程经常使用batch，此时最终的误差为这个bacth的总误差，需要对总误差求均值或求和等操作：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">loss = tf.keras.losses.sparse_categorical_crossentropy(y_true=y, y_pred=y_pred)</span><br><span class="line">loss = tf.reduce_mean(loss)</span><br></pre></td></tr></table></figure>
+
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><ol>
 <li>总算搞明白了梯度下降和反向传播的工作原理。其实，这么手推一下也就对梯度爆炸和梯度消失有了大概的了解。</li>
 <li>学习率$\alpha$不是一成不变的，可以根据学习状态进行更新，参考这里：<br><a href="https://muyuuuu.github.io/2019/02/20/gradient-function/">https://muyuuuu.github.io/2019/02/20/gradient-function/</a></li>
@@ -361,10 +365,10 @@
       <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
@@ -517,7 +521,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -563,12 +567,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -603,23 +607,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

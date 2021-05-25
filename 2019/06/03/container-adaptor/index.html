@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -299,8 +299,10 @@
 <li>priority_queue，优先级队列，元素出队顺序取决于优先级</li>
 </ul>
 <a id="more"></a>
+
 <h1 id="stack"><a href="#stack" class="headerlink" title="stack"></a>stack</h1><p>栈是一种先入先出的数据结构，可以很好的利用这一特性解决问题。常用方法如下：</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line"><span class="comment">// 压栈</span></span><br><span class="line">s.push(<span class="number">1</span>)</span><br><span class="line"><span class="comment">// 查看栈顶元素</span></span><br><span class="line">s.top()</span><br><span class="line"><span class="comment">// 弹栈</span></span><br><span class="line">s.pop()</span><br></pre></td></tr></table></figure>
+
 <h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2><p>Given some segments of rope, you are supposed to chain them into one rope. Each time you may only fold two segments into loops and chain them into one piece, as shown by the figure. The resulting chain will be treated as another segment of rope and can be folded again. After each chaining, the lengths of the original two segments will be halved.</p>
 <p>Your job is to make the longest possible rope out of $N$ given segments.</p>
 <p><strong>Input Specification:</strong></p>
@@ -309,13 +311,17 @@
 <p>For each case, print in a line the length of the longest possible rope that can be made by the given segments. The result must be rounded to the nearest integer that is no greater than the maximum length.</p>
 <p><strong>输入样例：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">8</span><br><span class="line">10 15 12 3 4 13 1 15</span><br></pre></td></tr></table></figure>
+
 <p><strong>输出样例：</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">14</span><br></pre></td></tr></table></figure>
+
 <h2 id="求解"><a href="#求解" class="headerlink" title="求解"></a>求解</h2><p>题目大意很简单，两个绳子对折后成为一个新的绳子，这个新的绳子对折后和另外一个对折的绳子组成新的绳子，求最终绳子能有多长。使用栈这种结构会比vector插入删除元素要快上一倍。</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span> &lt;<span class="keyword">float</span>&gt; arr;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cmp</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &gt; b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n, a;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; a;</span><br><span class="line">        arr.push_back(a);</span><br><span class="line">    &#125;</span><br><span class="line">    sort(arr.begin(), arr.end(), cmp);</span><br><span class="line">    <span class="keyword">float</span> temp, temp1, temp2;</span><br><span class="line">    <span class="built_in">stack</span> &lt;<span class="keyword">float</span>&gt; s;</span><br><span class="line">    <span class="comment">// 按照降序压栈 先折短的 在折长的</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.size(); i++)</span><br><span class="line">        s.push(arr[i]);</span><br><span class="line">    <span class="keyword">while</span> (s.size() != <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 取两个栈顶元素</span></span><br><span class="line">        temp1 = s.top();</span><br><span class="line">        s.pop();</span><br><span class="line">        temp2 = s.top();</span><br><span class="line">        temp = temp1 / <span class="number">2</span> + temp2 / <span class="number">2</span>;</span><br><span class="line">        s.pop();</span><br><span class="line">        <span class="comment">// 压入对折后的长度</span></span><br><span class="line">        s.push(temp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">floor</span>(s.top());</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>还有其他栈的应用，如『<a href="http://localhost:4000/2020/03/28/stack-pop-sequence/" target="_blank" rel="noopener">判断元素入栈出栈顺序</a>』</p>
 <h1 id="queue"><a href="#queue" class="headerlink" title="queue"></a>queue</h1><p>区别于<code>deque</code>，只能在队首取出元素，只能在队尾加入元素；不能在队首加入元素，不能在队尾删除元素。常用操作为：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 返回队首第一个元素</span></span><br><span class="line">front()</span><br><span class="line"><span class="comment">// 返回队尾最后一个元素</span></span><br><span class="line">back()</span><br><span class="line"><span class="comment">// 队尾添加元素</span></span><br><span class="line">push()</span><br><span class="line"><span class="comment">// 队首删除元素</span></span><br><span class="line">pop()</span><br><span class="line"><span class="comment">// 大小</span></span><br><span class="line"><span class="built_in">size</span>()</span><br><span class="line"><span class="comment">// 是否为空</span></span><br><span class="line">empty()</span><br><span class="line"><span class="comment">// 交换</span></span><br><span class="line">swap()</span><br></pre></td></tr></table></figure>
+
 <p>这里需要注意的是，<code>queue</code>没有迭代器，只能通过队首、队尾的操作访问元素，但<code>deque</code>有。</p>
 <h1 id="priority-queue"><a href="#priority-queue" class="headerlink" title="priority_queue"></a>priority_queue</h1><p>优先级队列，同<code>queue</code>的使用，需要先引入头文件<code>#include&lt;queue&gt;</code>才能使用。计算机专业的人可能经常听到『优先级队列』这个词汇，尤其是在操作系统中。按照元素的优先级，决定对其进行的操作，是调用，还是继续等待。这里来直接看一个题目。</p>
 <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><p>Suppose a bank has $K$ windows open for service. There is a yellow line in front of the windows which devides the waiting area into two parts. All the customers have to wait in line behind the yellow line, until it is his/her turn to be served and there is a window available. It is assumed that no window can be occupied by a single customer for more than 1 hour.</p>
@@ -330,6 +336,7 @@
 </ul>
 <p>而判断是否有空闲的方法是：判断到达时间与队首元素的值，若大于，说明到达时间大于处理完的时间，说明有空闲，否则无空闲。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn = <span class="number">10005</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">person</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> come, time;</span><br><span class="line">&#125; p[maxn];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cmp</span><span class="params">(person p1, person p2)</span> </span>&#123; <span class="keyword">return</span> p1.come &lt; p2.come; &#125;</span><br><span class="line"><span class="keyword">int</span> n, k, cnt, total;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>, &amp;n, &amp;k);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> hh, ss, mm, tt;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d:%d:%d %d"</span>, &amp;hh, &amp;mm, &amp;ss, &amp;tt);</span><br><span class="line">        <span class="keyword">int</span> sum = hh * <span class="number">3600</span> + mm * <span class="number">60</span> + ss;</span><br><span class="line">        <span class="keyword">if</span> (sum &gt; <span class="number">61200</span>) </span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="comment">// 处理的时间</span></span><br><span class="line">        p[++cnt].time = tt * <span class="number">60</span>;</span><br><span class="line">        <span class="comment">// 来的时间</span></span><br><span class="line">        p[cnt].come = sum;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 按照来的时间排序</span></span><br><span class="line">    sort(p + <span class="number">1</span>, p + <span class="number">1</span> + cnt, cmp);</span><br><span class="line">    <span class="comment">// 优先级队列，类型，容器类型，小的先出队</span></span><br><span class="line">    priority_queue&lt;<span class="keyword">int</span>, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;, greater&lt;<span class="keyword">int</span>&gt; &gt; q;</span><br><span class="line">    <span class="comment">// k 个窗口</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= k; ++i) </span><br><span class="line">        q.push(<span class="number">28800</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= cnt; ++i) &#123;</span><br><span class="line">        <span class="comment">// 来的时候有空闲，丝滑处理，无需等待</span></span><br><span class="line">        <span class="keyword">if</span> (q.top() &lt;= p[i].come) &#123;</span><br><span class="line">            <span class="comment">// 压入截止时间</span></span><br><span class="line">            q.push(p[i].come + p[i].time);</span><br><span class="line">            q.pop();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 来的时候窗口有人 ，就是等待时间</span></span><br><span class="line">            total += q.top() - p[i].come;</span><br><span class="line">            <span class="comment">// 新的截止时间</span></span><br><span class="line">            q.push(q.top() + p[i].time);</span><br><span class="line">            q.pop();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    (!cnt) ? <span class="built_in">printf</span>(<span class="string">"0.0\n"</span>) : <span class="built_in">printf</span>(<span class="string">"%.1lf"</span>, ((<span class="keyword">double</span>)total/<span class="number">60.0</span>)/(<span class="keyword">double</span>) cnt);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//升序队列，小顶堆</span></span><br><span class="line">priority_queue &lt;<span class="keyword">int</span>,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;,greater&lt;<span class="keyword">int</span>&gt; &gt; q;</span><br><span class="line"><span class="comment">//降序队列，大顶堆</span></span><br><span class="line">priority_queue &lt;<span class="keyword">int</span>,<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;,less&lt;<span class="keyword">int</span>&gt; &gt;q;</span><br></pre></td></tr></table></figure>
     </div>
 
@@ -343,13 +350,13 @@
       <div class="popular-posts-title"><a href="\2019\03\31\C-string\" rel="bookmark">C++数据结构篇『一』C++风格数组与字符串类</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\01\CharArray-vs-ArrayName-vs-String\" rel="bookmark">字符数组，字符串与数组名</a></div>
+      <div class="popular-posts-title"><a href="\2019\05\01\Cpp-Sequential-Container\" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\01\29\Cpp-public-vs-protected\" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\05\01\Cpp-Sequential-Container\" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\01\CharArray-vs-ArrayName-vs-String\" rel="bookmark">字符数组，字符串与数组名</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2019\06\02\OJ-Cpp-cumulative\" rel="bookmark">C++数据结构篇『三』关联容器：映射与集合</a></div>
@@ -502,7 +509,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -548,12 +555,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -588,23 +595,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

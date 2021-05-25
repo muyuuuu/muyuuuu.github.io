@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -294,21 +294,23 @@
       
         <p>之前一直在看他们用『<strong>因果扩张卷积</strong>』这个东西，当时我只看到了一张图，大概了解了那是个什么东西。今天，在某次比赛中用到了这个模型，顺手看了下源代码，来做个整理。</p>
 <a id="more"></a>
+
 <p>在时序序列的预测问题中，很容易想到LSTM等循环神经网络。给定序列数据，预测下一时刻的输出，如翻译、问答等。</p>
 <p>\begin{equation}<br>p(x)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1)<br>\end{equation}</p>
 <p>当然也可以有隐藏状态：</p>
 <p>\begin{equation}<br>p(x|h)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1, h)<br>\end{equation}</p>
 <p>时至今日，也可以用 CNN 来代替这一过程，卷积的输入是历史数据，产生一个时刻的输出。且，相对而言 CNN 的参数要少很多，也可以叠加 CNN 层。需要注意的是，因果扩张卷积包括因果卷积和扩张卷积两部分。</p>
 <h1 id="扩张卷积"><a href="#扩张卷积" class="headerlink" title="扩张卷积"></a>扩张卷积</h1><p>扩张卷积是为了增大卷积核感受野而设计的一种东西，看图就知道了：</p>
-<p><img data-src="https://s3.ax1x.com/2021/03/10/6JPvCt.gif" alt></p>
+<p><img data-src="https://s3.ax1x.com/2021/03/10/6JPvCt.gif"></p>
 <p>卷积核与图像计算时填充了间隙，在移动相同步伐的情况下，能卷积更多的数据，这样就能扩大视感受野。这里的扩张步是2。代码实现也很简单，指定参数即可：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">model = torch.nn.Conv2d(in_channels, out_channels, kernel_size, dilation=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
 <p>默认情况下<code>dilation</code>取值为1，也就是没有扩张。</p>
 <h1 id="因果卷积"><a href="#因果卷积" class="headerlink" title="因果卷积"></a>因果卷积</h1><p>因果卷积的重点突出在<strong>因果</strong>两个字上，输入的历史数据是因，输出的数据是果。来看一下模型结构图，这里有三层卷积网络。</p>
-<p><img data-src="/2021/03/10/causal-dilated-conv/1.png" alt></p>
+<p><img data-src="/2021/03/10/causal-dilated-conv/1.png"></p>
 <p>第一层的卷积块读取几个历史数据，经过后几层的卷积块后输出一个数据，达到预测的目的。</p>
 <p>但是，在逐层卷积的同时，每步只卷积两个模块。这就导致了视野域比较小。所以增加了扩张卷积，来增大网络的感受野，即：每次预测时能比之前看到更多的数据，做出更稳定的决策。此时的网络结构为：</p>
-<p><img data-src="https://s3.ax1x.com/2021/03/10/6Jc9hT.png" alt></p>
+<p><img data-src="https://s3.ax1x.com/2021/03/10/6Jc9hT.png"></p>
 <p>可以看到网络在预测输出时，能看到16个数据的信息，比之前的5个数据的信息要多出三倍，做出的决策也会更加稳定。在某种意义上，也就能像LSTM那样处理序列数据了。</p>
 <p>也会你会有疑问，<code>1</code>号节点有历史数据，假设<code>1</code>号节点已经是输出序列的最后一个元素了，那<code>2</code>号节点和<code>3</code>号节点呢，他们的输入从哪里来？看了代码我才明白，填充即可，也就是<code>conv</code>里面常用的<code>padding</code>。卷积过程保证输入和输出的长度不变，填充多少，</p>
 <p>至于残差连接或加入条件信息，这些都是可以的，在<a href="https://arxiv.org/pdf/1609.03499.pdf" target="_blank" rel="noopener"> casual dilated conv </a>首次被提出的论文中都有这些内容。</p>
@@ -329,10 +331,10 @@
       <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
@@ -485,7 +487,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -531,12 +533,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -571,23 +573,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

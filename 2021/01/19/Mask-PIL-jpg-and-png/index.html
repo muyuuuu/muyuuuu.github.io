@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -294,21 +294,30 @@
       
         <p>生命不息，开坑不止。最近在开『目标检测』领域的坑，<del>真坑。</del>众所周知，<a href="https://arxiv.org/abs/1703.06870" target="_blank" rel="noopener"><code>Mask R-CNN</code></a> 是领域内比较强大的方法。仿照<code>Pytorch</code>官方文档，企图搭建自己的模型，制作自己的 <code>mask</code> 数据。</p>
 <a id="more"></a>
+
 <p><code>mask</code> 数据长成下图这样，背景一个颜色，每个目标的颜色是不相同的。</p>
-<p><img data-src="https://pytorch.org/tutorials/_static/img/tv_tutorial/tv_image01.png" alt><img data-src="https://pytorch.org/tutorials/_static/img/tv_tutorial/tv_image02.png" alt></p>
+<p><img data-src="https://pytorch.org/tutorials/_static/img/tv_tutorial/tv_image01.png"><img data-src="https://pytorch.org/tutorials/_static/img/tv_tutorial/tv_image02.png"></p>
 <h1 id="制作数据"><a href="#制作数据" class="headerlink" title="制作数据"></a>制作数据</h1><p>按照题目中给出的 <code>json</code> 数据：</p>
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">"name": "223_89_t20201125085855802_CAM3.jpg",</span><br><span class="line">"image_height": 3500,</span><br><span class="line">"image_width": 4096,</span><br><span class="line">"category": 4,</span><br><span class="line">"bbox": [</span><br><span class="line">    1702.79,</span><br><span class="line">    2826.53,</span><br><span class="line">    1730.79,</span><br><span class="line">    <span class="number">2844.53</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-<p>按照 <code>json</code> 数据读取图片，在按照 <code>category</code> 字段使得不同颜色对应不同类别，按照 <code>bbox</code> 字段生成矩形区域，直接一生成，完美。核心代码如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 不同的类使用不同的颜色</span></span><br><span class="line">colors = &#123;</span><br><span class="line">    <span class="string">'background'</span>: <span class="string">'#000000'</span>,</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#110000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#002200'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#000033'</span>,</span><br><span class="line">    <span class="string">'4'</span>: <span class="string">'#445500'</span>,</span><br><span class="line">    <span class="string">'5'</span>: <span class="string">'#660077'</span>,</span><br><span class="line">    <span class="string">'6'</span>: <span class="string">'#008899'</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 先创建一个图片对象，扩大数据作用域</span></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), colors[<span class="string">'background'</span>])</span><br><span class="line"><span class="comment"># 一个图片有好几个坏点 box 区域，所以循环遍历所有坏点</span></span><br><span class="line"><span class="keyword">for</span> pic <span class="keyword">in</span> items:</span><br><span class="line">    <span class="comment"># 第一次遍历，按图片大小生成mask图片大小</span></span><br><span class="line">    <span class="keyword">if</span> height <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">and</span> width <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        height, width = pic[<span class="string">'image_height'</span>], pic[<span class="string">'image_width'</span>]</span><br><span class="line">        im = Image.new(<span class="string">'RGB'</span>, (height, width), colors[<span class="string">'background'</span>])</span><br><span class="line">    <span class="comment"># 按照 size 创建背景颜色的图片</span></span><br><span class="line">    x0, y0 = int(pic[<span class="string">'bbox'</span>][<span class="number">0</span>]), int(pic[<span class="string">'bbox'</span>][<span class="number">1</span>])</span><br><span class="line">    x1, y1 = int(pic[<span class="string">'bbox'</span>][<span class="number">2</span>]), int(pic[<span class="string">'bbox'</span>][<span class="number">3</span>])</span><br><span class="line">    <span class="comment"># 对异常区域创建矩形 作为掩码</span></span><br><span class="line">    im1 = Image.new(<span class="string">'RGB'</span>, (x1-x0, y1-y0), colors[str(pic[<span class="string">'category'</span>])])</span><br><span class="line">    <span class="comment"># 添加掩码区域</span></span><br><span class="line">    im.paste(im1, (x0, y0))</span><br><span class="line"><span class="comment"># 保存图片</span></span><br><span class="line">im.save(save_path + <span class="string">'Mask_'</span> + name[:<span class="number">-4</span>] + <span class="string">'.jpg'</span>)</span><br></pre></td></tr></table></figure></p>
+
+<p>按照 <code>json</code> 数据读取图片，在按照 <code>category</code> 字段使得不同颜色对应不同类别，按照 <code>bbox</code> 字段生成矩形区域，直接一生成，完美。核心代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 不同的类使用不同的颜色</span></span><br><span class="line">colors = &#123;</span><br><span class="line">    <span class="string">'background'</span>: <span class="string">'#000000'</span>,</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#110000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#002200'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#000033'</span>,</span><br><span class="line">    <span class="string">'4'</span>: <span class="string">'#445500'</span>,</span><br><span class="line">    <span class="string">'5'</span>: <span class="string">'#660077'</span>,</span><br><span class="line">    <span class="string">'6'</span>: <span class="string">'#008899'</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># 先创建一个图片对象，扩大数据作用域</span></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), colors[<span class="string">'background'</span>])</span><br><span class="line"><span class="comment"># 一个图片有好几个坏点 box 区域，所以循环遍历所有坏点</span></span><br><span class="line"><span class="keyword">for</span> pic <span class="keyword">in</span> items:</span><br><span class="line">    <span class="comment"># 第一次遍历，按图片大小生成mask图片大小</span></span><br><span class="line">    <span class="keyword">if</span> height <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">and</span> width <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        height, width = pic[<span class="string">'image_height'</span>], pic[<span class="string">'image_width'</span>]</span><br><span class="line">        im = Image.new(<span class="string">'RGB'</span>, (height, width), colors[<span class="string">'background'</span>])</span><br><span class="line">    <span class="comment"># 按照 size 创建背景颜色的图片</span></span><br><span class="line">    x0, y0 = int(pic[<span class="string">'bbox'</span>][<span class="number">0</span>]), int(pic[<span class="string">'bbox'</span>][<span class="number">1</span>])</span><br><span class="line">    x1, y1 = int(pic[<span class="string">'bbox'</span>][<span class="number">2</span>]), int(pic[<span class="string">'bbox'</span>][<span class="number">3</span>])</span><br><span class="line">    <span class="comment"># 对异常区域创建矩形 作为掩码</span></span><br><span class="line">    im1 = Image.new(<span class="string">'RGB'</span>, (x1-x0, y1-y0), colors[str(pic[<span class="string">'category'</span>])])</span><br><span class="line">    <span class="comment"># 添加掩码区域</span></span><br><span class="line">    im.paste(im1, (x0, y0))</span><br><span class="line"><span class="comment"># 保存图片</span></span><br><span class="line">im.save(save_path + <span class="string">'Mask_'</span> + name[:<span class="number">-4</span>] + <span class="string">'.jpg'</span>)</span><br></pre></td></tr></table></figure>
+
 <h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><p>到这里会发现程序很简单，一帆风顺。<strong>但是，坑来了。</strong>按照如上 <code>mask</code> 生成方法，每个图片上最多有 10 种 <code>RGB</code> 的颜色存在。这里我们写一份小代码复现一下，不能说完全一致，但思想一模一样。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), <span class="string">'#000000'</span>)</span><br><span class="line">im1 = Image.new(<span class="string">'RGB'</span>, (<span class="number">5</span>, <span class="number">5</span>), <span class="string">'#006677'</span>)</span><br><span class="line">im.paste(im1, (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">im.save(<span class="string">'1.jpg'</span>)</span><br></pre></td></tr></table></figure>
+
 <p>这里在检测下生成的<code>1.jpg</code>中有多少颜色：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), <span class="string">'#000000'</span>)</span><br><span class="line">im1 = Image.new(<span class="string">'RGB'</span>, (<span class="number">5</span>, <span class="number">5</span>), <span class="string">'#006677'</span>)</span><br><span class="line">im.paste(im1, (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">im.save(<span class="string">'1.jpg'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一定要重新打开在读取</span></span><br><span class="line">im2 = Image.open(<span class="string">'1.jpg'</span>).convert(<span class="string">'RGB'</span>)</span><br><span class="line">a = np.array(im2)</span><br><span class="line">print(np.unique(a))</span><br></pre></td></tr></table></figure>
+
 <p>输出是：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[  <span class="number">0</span>   <span class="number">1</span>   <span class="number">2</span>   <span class="number">3</span>   <span class="number">4</span>   <span class="number">5</span>   <span class="number">6</span>   <span class="number">7</span>   <span class="number">8</span>   <span class="number">9</span>  <span class="number">10</span>  <span class="number">11</span>  <span class="number">12</span>  <span class="number">13</span>  <span class="number">14</span>  <span class="number">15</span>  <span class="number">16</span>  <span class="number">17</span></span><br><span class="line">  <span class="number">18</span>  <span class="number">19</span>  <span class="number">21</span>  <span class="number">22</span>  <span class="number">23</span>  <span class="number">24</span>  <span class="number">25</span>  <span class="number">26</span>  <span class="number">29</span>  <span class="number">30</span>  <span class="number">31</span>  <span class="number">33</span>  <span class="number">35</span>  <span class="number">38</span>  <span class="number">40</span>  <span class="number">41</span>  <span class="number">42</span>  <span class="number">43</span></span><br><span class="line">  <span class="number">76</span>  <span class="number">85</span>  <span class="number">87</span>  <span class="number">88</span>  <span class="number">89</span>  <span class="number">90</span>  <span class="number">91</span>  <span class="number">92</span>  <span class="number">93</span>  <span class="number">94</span>  <span class="number">95</span>  <span class="number">96</span>  <span class="number">97</span>  <span class="number">98</span>  <span class="number">99</span> <span class="number">101</span> <span class="number">102</span> <span class="number">103</span></span><br><span class="line"> <span class="number">105</span> <span class="number">107</span> <span class="number">108</span> <span class="number">109</span> <span class="number">110</span> <span class="number">111</span> <span class="number">115</span> <span class="number">116</span> <span class="number">118</span> <span class="number">122</span> <span class="number">129</span> <span class="number">130</span>]</span><br></pre></td></tr></table></figure>
+
 <p><strong>平白无故多出来这么多颜色</strong>，当场人就傻了。再来试试把图片保存为 <code>png</code> 格式：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">im = Image.new(<span class="string">'RGB'</span>, (<span class="number">10</span>, <span class="number">10</span>), <span class="string">'#000000'</span>)</span><br><span class="line">im1 = Image.new(<span class="string">'RGB'</span>, (<span class="number">5</span>, <span class="number">5</span>), <span class="string">'#006677'</span>)</span><br><span class="line">im.paste(im1, (<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line"></span><br><span class="line">im.save(<span class="string">'1.png'</span>)</span><br><span class="line"></span><br><span class="line">im2 = Image.open(<span class="string">'1.png'</span>).convert(<span class="string">'RGB'</span>)</span><br><span class="line">a = np.array(im2)</span><br><span class="line">print(np.unique(a))</span><br></pre></td></tr></table></figure>
+
 <p>此时的输出是：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[  <span class="number">0</span> <span class="number">102</span> <span class="number">119</span>]</span><br><span class="line"><span class="comment"># 16 进制的 66 在 10 进制中是 102</span></span><br><span class="line"><span class="comment"># 16 进制的 77 在 10 进制中是 119</span></span><br></pre></td></tr></table></figure>
+
 <p>瞬间正常了，看来的确是文件格式导致的原因。</p>
 <h1 id="踩坑分析"><a href="#踩坑分析" class="headerlink" title="踩坑分析"></a>踩坑分析</h1><p>虽然很无能为力的生气，数据集大小是 <code>10GB</code> 大小，重做一次数据都得两个小时左右，<del>好在不是自己的CPU和硬盘。</del>此时打开搜索引擎，查找<code>jpg</code>和<code>png</code>的区别：</p>
 <ul>
@@ -330,10 +339,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\11\MMDetection-use\" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
@@ -492,7 +501,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -538,12 +547,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -578,23 +587,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -301,6 +301,7 @@
 </ol>
 <p>注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。</p>
 <a id="more"></a>
+
 <h1 id="什么是熵"><a href="#什么是熵" class="headerlink" title="什么是熵"></a>什么是熵</h1><p>首先，仅需要知道熵能够衡量信息的不确定性即可。一条信息的价值和他的不确定性有密切的关系，如：明天下雨的概率是1%和明天下雨的概率是99%这两条信息的价值是不一样的。不清楚事物的不确定性时，决策时出错的概率就越大；相反，通过自己逐步抽丝剥茧搞清了一个事物的本质，那么他的不确定性就为0，决策就不可能出错。那么如何衡量事物的不确定性呢？答案就是熵。</p>
 <p>假设此时有32个盒子，31个盒子里是白球，1个盒子里是黑球。假设让人<strong>用二分法</strong>来猜测黑球在哪个盒子里，猜一次1块钱，只需要5次就能猜中$(\log_232=5)$，那么这个信息值5块钱。当然信息的不确定性不能用钱来衡量，香农给出的定义是：<br>\begin{equation}<br>H = -(p_1\log p_1 + p_2\log p_2 + \cdots+p_n\log p_n), n=32<br>\end{equation}</p>
 <p>$p_i$为黑球在第$i$个盒子里的概率，$H$即为信息熵，且此时的熵恰好为5。在通俗一点，对于一个随机变量$X$，它的熵定义如下：</p>
@@ -335,8 +336,8 @@
 </ol>
 <h1 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h1><p>也许说了一大堆你还是不明白，那么在这里举例说明。</p>
 <h2 id="信息熵"><a href="#信息熵" class="headerlink" title="信息熵"></a>信息熵</h2><p>还是那个例子，32个箱子，31个箱子里是白球，1个箱子里是黑球，你用二分法去摸球，直到摸到黑球位置，此时摸球次数的随机变量$X$为：</p>
-<script type="math/tex; mode=display">H(X)=-32\times \frac{1}{32} \times \log_2(\frac{1}{32})=5</script><h2 id="条件熵-1"><a href="#条件熵-1" class="headerlink" title="条件熵"></a>条件熵</h2><p>根据以下的表格，对于第一列上班族，上班族的随机变量为$X$，且1表示上班，那么上班族的熵$H(X)=0.589$。对于第二列上班族的年龄，年龄在区间内$[0,20]$为0，年龄在区间$[20, 100]$内为1，那么年龄这列的熵$H(Y)$为0.589。互信息$I(X;Y)$(自行手动按照公式计算即可)为0.42，表明两者上班的人和上班的人的年龄之间有一定的相关性。</p>
-<div class="table-container">
+<p>$$H(X)=-32\times \frac{1}{32} \times \log_2(\frac{1}{32})=5$$</p>
+<h2 id="条件熵-1"><a href="#条件熵-1" class="headerlink" title="条件熵"></a>条件熵</h2><p>根据以下的表格，对于第一列上班族，上班族的随机变量为$X$，且1表示上班，那么上班族的熵$H(X)=0.589$。对于第二列上班族的年龄，年龄在区间内$[0,20]$为0，年龄在区间$[20, 100]$内为1，那么年龄这列的熵$H(Y)$为0.589。互信息$I(X;Y)$(自行手动按照公式计算即可)为0.42，表明两者上班的人和上班的人的年龄之间有一定的相关性。</p>
 <table>
 <thead>
 <tr>
@@ -344,8 +345,7 @@
 <th>上班族的年龄$Y$</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>1</td>
 <td>1</td>
 </tr>
@@ -365,9 +365,7 @@
 <td>0</td>
 <td>0</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上。</p>
 <ol>
 <li>《数学之美(第二版)》第六章：信息的度量和作用</li>
@@ -546,7 +544,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -592,12 +590,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -632,23 +630,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

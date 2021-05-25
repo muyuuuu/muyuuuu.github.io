@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-25T07:50:14.163Z">
+<meta property="og:updated_time" content="2021-05-25T09:33:16.065Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分割篇：Mask R-CNN">
 <meta name="twitter:description" content="不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失">
@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -251,7 +251,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-25 10:15:16 / 修改时间：15:50:14" itemprop="dateCreated datePublished" datetime="2021-05-25T10:15:16+08:00">2021-05-25</time>
+              <time title="创建时间：2021-05-25 10:15:16 / 修改时间：17:33:16" itemprop="dateCreated datePublished" datetime="2021-05-25T10:15:16+08:00">2021-05-25</time>
             </span>
 
           
@@ -288,10 +288,11 @@
       
         <p>不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失函数的设计和 ROI-Align 上。</p>
 <p>实体分割不同于语义分割的是，不仅要检测出所属类别，还要区分同一类别下的不同实例。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gxXEss.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gxXEss.png"></p>
 <a id="more"></a>
+
 <p>按着前文描述，网络结构如下，蓝色分支是 Faster R-CNN 中用于预测类别和回归框的分支，红色分支是新加入的预测掩码的分支。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gxOoa6.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gxOoa6.png"></p>
 <h1 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h1><p>语义分割问题只需要在语义上对像素点进行区分即可。而实例分割问题不仅需要正确地检测出所有的目标，还需要在单个目标的基础上对每一个实例进行准确的分割。而作者基于 Faster R-CNN 目标检测的框架和 FCN 的语义分割提出了 Mask R-CNN。所以流程就是：</p>
 <ol>
 <li>输入一副图片，将图片输入到特征提取层 backbone，也可以融合 FPN 机制，最终获得对应的 feature map。下图中，左图是 Mask R-CNN 和 Faster R-CNN 结合的方式，右图是 Mask R-CNN 和 FPN 结合的方式。</li>
@@ -300,29 +301,28 @@
 <li>对这些 ROI 进行分类、box 回归和 MASK 生成</li>
 </ol>
 <p><del>如果看不懂建议重新看 Faster R-CNN 和 FCN</del></p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gxvu2F.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gxvu2F.png"></p>
 <h1 id="ROI-Align"><a href="#ROI-Align" class="headerlink" title="ROI-Align"></a>ROI-Align</h1><p>对于传统的 ROI pooling 而言，难免会有精度损失。比如 <code>20X20</code> 的特征图 pool 到 <code>7X7</code>，自然无法整除，就需要对像素点进行取舍，带来精度上的损失。RoI 对应至特征图和 ROI 进行划分这两步取整量化操作会导致 ROI 与抽取出的特征图在空间位置上不匹配。这一问题不会对目标的分类造成大的影响，但会对 mask 预测造成极大的负面影响。如下图所示 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> ，并非均匀划分：</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gzSIZd.gif" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gzSIZd.gif"></p>
 <p>对于 ROI-Align 而言，不在对 ROI 边界进行取整。假设 pool 到 <code>3X3</code> 的格子，那么计算每个格子中心四个点的坐标。对于每个点而言，对每个周围的四个点进行采样，使用双线性插值计算当前点的取值，而后 max pool 获取当前格子里面的值。无论采样点的多少与采样方式，结果都不会很差。如果使用的量化取整，结果就会很差。如下图，作者也只使用了这一张图介绍了 ROI-Align。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gzptwd.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gzptwd.png"></p>
 <p>这个过程佷繁琐不易理解，但其实并不难，可以来这篇博客看下动图。<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gziG9I.gif" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gziG9I.gif"></p>
 <h1 id="Mask-损失"><a href="#Mask-损失" class="headerlink" title="Mask 损失"></a>Mask 损失</h1><p>Mask R-CNN 的分支由三部分组成，其中 $L_{\text{cls}}$ 和 $L_{\text{box}}$ 与 Faster R-CNN 没有本质区别，所以重点是 $ L_{\text{mask}}$，它是平均二分类交叉熵损失。</p>
 <p>\begin{equation}<br>L = L_{\text{cls}} + L_{\text{box}} + L_{\text{mask}}<br>\end{equation}</p>
 <p>假设一共有 $K$ 个类别，则 Mask 分割分支的输出维度是 $K m m$。所以对于 $m\times m$ 中的每个点，都会输出 $K$ 个二值 Mask（每个类别使用 <code>sigmoid</code> 输出）。这里与 FCN 的做法不同，FCN 在每个像素点上应用 softmax 函数，整体采用多任务交叉熵，这样会导致类间竞争（class competition），最终导致分割效果差。其实上文也能看到，分割效果的确很差。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gzgnb9.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gzgnb9.png"></p>
 <blockquote>
 <p>在 Faster RCNN 做 object detection 的时候，已经把某一块 RoI 识别为汽车，但这个 RoI 内可能存在其他物体的一部分，因此分割的 mask 中，除了要将汽车分割出来外，还要把另外那个物体也分割出来。这就导致这样的情况，在 object detection 的分支中，这块 RoI 整体被识别为汽车，但在 segmentation 的时候，这块 RoI 一部分被识别为汽车，一部分又要当作其他物体。如此一来，这两个分支回传到前面的梯度多少存在冲突，而前面的特征提取网络可是共享的，结果网络在学习的时候就可能出现左右为难的情况。</p>
 </blockquote>
 <p>那么来考虑二分类。To this we apply a per-pixel sigmoid, and define $L_{\text{mask}}$ as the average binary cross-entropy loss. For an RoI associated with ground-truth class $k$, $L_{\text{mask}}$ is only defined on the $k$-th mask (other mask outputs do not contribute to the loss). 也就是，只考虑一种类别，如果 ground truth 中标记了这个 bounding box 中是个人的话，那我们就只针对人的 mask 进行分割，而对这个 bounding box 中其他可能存在的物体一律忽视。如下图所示。这里画图的思想参考了这篇文章 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/25/gzRBjS.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/25/gzRBjS.png"></p>
 <p>在测试阶段，通过分类分支预测的类别来选择相应的 Mask 预测。这样，Mask 预测和分类预测就彻底解耦了。</p>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><ol>
 <li><a href="https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html" target="_blank" rel="noopener">torchvision</a> 上有现成的示例。</li>
 <li>等我以后用到语义分割的时候再回来补冲这里的程序，那时候肯定是 open-mmlab 系列的东西了。</li>
 </ol>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>：<a href="https://en.wikipedia.org/wiki/File:RoI_pooling_animated.gif" target="_blank" rel="noopener">ROI pooling 动图</a><br><sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：<a href="https://towardsdatascience.com/understanding-region-of-interest-part-2-roi-align-and-roi-warp-f795196fc193" target="_blank" rel="noopener">ROI Align 动图</a><br><sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>：<a href="https://zhuanlan.zhihu.com/p/65321082" target="_blank" rel="noopener">二分类损失代替多分类损失</a></p>
-
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://en.wikipedia.org/wiki/File:RoI_pooling_animated.gif" target="_blank" rel="noopener">ROI pooling 动图</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://towardsdatascience.com/understanding-region-of-interest-part-2-roi-align-and-roi-warp-f795196fc193" target="_blank" rel="noopener">ROI Align 动图</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="https://zhuanlan.zhihu.com/p/65321082" target="_blank" rel="noopener">二分类损失代替多分类损失</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
     
@@ -332,10 +332,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\11\MMDetection-use\" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
@@ -491,7 +491,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -537,12 +537,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -577,23 +577,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

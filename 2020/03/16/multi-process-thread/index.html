@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -294,16 +294,20 @@
       
         <p>作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，<del>大多东西为网上搜刮而来后整理，可能不严谨。</del>今天有空了回来填坑。</p>
 <a id="more"></a>
+
 <h1 id="从物理机开始"><a href="#从物理机开始" class="headerlink" title="从物理机开始"></a>从物理机开始</h1><p>本文以Linux操作为主，Windows操作不太了解。首先先从物理机出发，了解物理CPU、CPU的核、线程是什么概念。物理CPU指实际存在的CPU处理器，安装在PC主板或服务器上。首先查看物理CPU个数，查看电脑有几个CPU：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep <span class="string">'physical id'</span> /proc/CPUinfo | sort -u</span><br></pre></td></tr></table></figure>
+
 <p>执行结果反馈如下：（后期解释为什么是12个id为0的记录）</p>
-<p><img data-src="/2020/03/16/multi-process-thread/1.png" alt></p>
+<p><img data-src="/2020/03/16/multi-process-thread/1.png"></p>
 <p>其id均为0，表示我电脑有一个CPU（从0开始编号）。CPU中包含物理内核，比如多核CPU，单核CPU。这个多核或者单核已经集成在CPU内部了，那么来查看一下核心数量，就是买电脑的时候常听商家常说的4核CPU或者8核CPU：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep <span class="string">'core id'</span> /proc/CPUinfo | sort -u | wc -l</span><br></pre></td></tr></table></figure>
+
 <p>我这里输出的结果为6,表示我的是6核CPU。同时，你在买电脑的时候听说过，6核12线程，4核8线程的CPU，那么，再看一下自己的电脑支持几个线程：（说了半天终于到线程了）。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep <span class="string">'processor'</span> /proc/CPUinfo | sort -u | wc -l</span><br></pre></td></tr></table></figure>
+
 <p>输出的结果是12，表示我的电脑的处理器是一个CPU，且是6核心12线程的。所谓的6核12线程，6核指的是物理核心。用Intel的超线程技术(HT， Hyper-threading)将物理核虚拟而成的逻辑处理单元，现在大部分的主机的CPU都在使用HT技术，用一个物理核模拟两个虚拟核，即每个核两个线程，总数为12线程。所以在操作系统看来是12个核，但实际是一个物理CPU中的6个物理内核虚拟出来的12个线程：</p>
-<p><img data-src="/2020/03/16/multi-process-thread/1.png" alt></p>
+<p><img data-src="/2020/03/16/multi-process-thread/1.png"></p>
 <p>此时我们需要知道：<strong>一个核心只能同时执行一个线程</strong>。</p>
 <h1 id="进程与线程的概念"><a href="#进程与线程的概念" class="headerlink" title="进程与线程的概念"></a>进程与线程的概念</h1><h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><ul>
 <li>进程是操作系统的CPU调度和资源分配的单位，是执行中的程序，是一个程序在一个数据集上的一次执行。是程序的一个实例，程序的一次运行。包括代码段，当前活动（PC，当前要指向指令的地址；堆栈，函数参数、临时变量；数据，全局变量，处理的文件；堆，动态内存分配）；</li>
@@ -512,7 +516,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -558,12 +562,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -598,23 +602,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

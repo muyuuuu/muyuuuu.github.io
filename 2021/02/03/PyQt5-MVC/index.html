@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -296,28 +296,34 @@
 <p>扯回正题：假设此时面临的场景是，一个软件涉及好几个页面，每个页面是单独的代码。且每个页面需要有自己的<code>controller</code>，最终所有的<code>controller</code>汇总到一起，统一管理。</p>
 <p>本文中，文字只是辅助理解，务必读懂代码。</p>
 <a id="more"></a>
+
 <h1 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h1><p>众所周知，GUI中当一个控件的状态改变时需要通知另一个控件，也就是实现了对象间的通信。当事件发生或状态改变时，就会发出信号，信号会触发与这个事件相关联的函数，我们这个函数为槽。信号与槽可以是多对多的关系。信号在类创建时定义，即需要在初始化的前面定义。</p>
 <h2 id="自定义信号与槽"><a href="#自定义信号与槽" class="headerlink" title="自定义信号与槽"></a>自定义信号与槽</h2><p>别问，静静感受以下代码。以下的代码中，已经包含了信号的定义、指定参数的类型、发射、绑定槽函数等一系列过程。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> QObject, pyqtSignal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 信号对象</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">QSignal</span><span class="params">(QObject)</span>:</span></span><br><span class="line">    <span class="comment"># 定义信号</span></span><br><span class="line">    <span class="comment"># 在类创建时定义，不能在类创建后作为类的属性而添加</span></span><br><span class="line">    <span class="comment"># 指定信号传递参数的数量，类型等</span></span><br><span class="line">    send_msg = pyqtSignal(str, str)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(QSignal, self).__init__()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 信号发射</span></span><br><span class="line">        self.send_msg.emit(<span class="string">'First arg'</span>, <span class="string">'Second arg'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 槽对象</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">QSlot</span><span class="params">(QObject)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(QSlot, self).__init__()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, *args)</span>:</span></span><br><span class="line">        <span class="comment"># 信号接收</span></span><br><span class="line">        print(<span class="string">"Get message =&gt;"</span> + args[<span class="number">0</span>], args[<span class="number">1</span>], sep=<span class="string">', '</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    send = QSignal()</span><br><span class="line">    slot = QSlot()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将信号与槽函数绑定</span></span><br><span class="line">    send.send_msg.connect(slot.get)</span><br><span class="line">    <span class="comment"># 外部调用 发射信号</span></span><br><span class="line">    send.run()</span><br><span class="line">    <span class="comment"># 信号与槽解除关联</span></span><br><span class="line">    send.send_msg.disconnect(slot.get)</span><br><span class="line">    send.run()</span><br></pre></td></tr></table></figure>
+
 <h2 id="内置信号绑定自定义槽"><a href="#内置信号绑定自定义槽" class="headerlink" title="内置信号绑定自定义槽"></a>内置信号绑定自定义槽</h2><p>这样，再来看一个和窗口结合的实例。窗口中有一个按钮，点击按钮就退出窗口。虽然这个例子很简单，不用信号和槽也能实现。但这里给个例子静心感受下：信号连接、发射、接收的全逻辑。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> partial</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> pyqtSignal</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QMainWindow, QApplication, QPushButton, QWidget, </span><br><span class="line">                             QHBoxLayout)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainWindow</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line">    btn_signal = pyqtSignal()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(MainWindow, self).__init__()</span><br><span class="line"></span><br><span class="line">        a = QPushButton(<span class="string">"退出"</span>)</span><br><span class="line">        <span class="comment"># 给绑定的槽函数增加额外信息</span></span><br><span class="line">        a.clicked.connect(partial(self.btn_clicked, <span class="number">1</span>))</span><br><span class="line">        self.btn_signal.connect(self.close)</span><br><span class="line"></span><br><span class="line">        self.setWindowTitle(<span class="string">"演示"</span>)</span><br><span class="line"></span><br><span class="line">        main_widget = QWidget()</span><br><span class="line">        layout = QHBoxLayout()</span><br><span class="line">        layout.addWidget(a)</span><br><span class="line">        main_widget.setLayout(layout)</span><br><span class="line">        <span class="comment"># QMainWindow 不能设置布局</span></span><br><span class="line">        self.setCentralWidget(main_widget)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">btn_clicked</span><span class="params">(self, n)</span>:</span></span><br><span class="line">        print(n)</span><br><span class="line">        self.btn_signal.emit()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close</span><span class="params">(self)</span>:</span></span><br><span class="line">        app = QApplication.instance()</span><br><span class="line">        app.quit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment"># 在shell中执行</span></span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    mywin = MainWindow()</span><br><span class="line">    mywin.show()</span><br><span class="line">    <span class="comment"># 开始主循环，直到退出</span></span><br><span class="line">    sys.exit(app.exec())</span><br></pre></td></tr></table></figure>
+
 <p>这里，想给绑定的槽函数<code>btn_clicked</code>传递额外参数，但信号绑定时不能添加额外参数。对应到上述例子中，<code>close()</code>可以通过指定信号的参数和类型来增加参数，但<code>btn_clicked()</code>不能。一种解决方案是掏出万能的<code>partial</code>函数，将函数和参数绑定在一起。</p>
 <p>至此，应该了解了信号的工作方式和原理。而关于信号更多的内容，如重载、装饰器等，这里不做更多介绍，详情参考官方文档。话说，也佩服当年的学习方式：『把所有代码敲一遍』。时至今日也忘记了大多控件的含义和各种样式的代码，变成了：到时候去查API。<del>一边谈技术一边谈没用的，不愧是我的博客。</del></p>
 <h1 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h1><p>MVC的大名应该都听说过，model, view 和 control，即数据库、页面和处理逻辑相分离，这样写出来的代码更加专一化。这里给份代码感受下，三个内容用三个类所实现，个人不建议这样写，建议将文件放到三个文件夹下，而不是扔进一份代码里：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5 <span class="keyword">import</span> QtCore</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QHBoxLayout, QPushButton, QMessageBox, </span><br><span class="line">                             QLineEdit, QApplication)</span><br><span class="line"></span><br><span class="line"><span class="comment"># View</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainWindow</span><span class="params">(QWidget)</span>:</span></span><br><span class="line">    verifySignal = QtCore.pyqtSignal()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        super(MainWindow, self).__init__(*args, **kwargs)</span><br><span class="line">        self.id_line = QLineEdit()</span><br><span class="line">        self.id_line.setPlaceholderText(<span class="string">"请输入账号"</span>)</span><br><span class="line">        self.psd_line = QLineEdit()</span><br><span class="line">        self.psd_line.setPlaceholderText(<span class="string">"请输入密码"</span>)</span><br><span class="line"></span><br><span class="line">        self.init()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init</span><span class="params">(self)</span>:</span></span><br><span class="line"></span><br><span class="line">        layout = QHBoxLayout()</span><br><span class="line">        self.setLayout(layout)</span><br><span class="line"></span><br><span class="line">        self.button = QPushButton(<span class="string">"登录"</span>)</span><br><span class="line">        layout.addWidget(self.button)</span><br><span class="line"></span><br><span class="line">        layout.addWidget(self.id_line)</span><br><span class="line">        layout.addWidget(self.psd_line)</span><br><span class="line">    </span><br><span class="line">        <span class="comment"># 连接定义的信号</span></span><br><span class="line">        self.button.clicked.connect(self.verify_emit)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">verify_emit</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.verifySignal.emit()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">verify_ok</span><span class="params">(self)</span>:</span></span><br><span class="line">        QMessageBox.about(self, <span class="string">"密码正确"</span>, <span class="string">"已经登录"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">verify_no</span><span class="params">(self)</span>:</span></span><br><span class="line">        QMessageBox.about(self, <span class="string">"你犯了一个粗误"</span>, <span class="string">"请重新检查输入"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># model</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.name = <span class="string">"aaa"</span></span><br><span class="line">        self.password = <span class="string">"aaa"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># control</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginControll</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 不需要从命令行输入参数</span></span><br><span class="line">        self._app = QApplication([])</span><br><span class="line">        self._model = Student()</span><br><span class="line">        self._view = MainWindow()</span><br><span class="line">        self.init()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._view.verifySignal.connect(self.verify_user)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">verify_user</span><span class="params">(self)</span>:</span></span><br><span class="line">        id_ = self._view.id_line.text()</span><br><span class="line">        psd_ = self._view.psd_line.text()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> id_ == self._model.name <span class="keyword">and</span> psd_ == self._model.password:</span><br><span class="line">            self._view.verify_ok()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self._view.verify_no()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._view.show()</span><br><span class="line">        <span class="comment"># 事件循环，直到应用退出</span></span><br><span class="line">        <span class="keyword">return</span> self._app.exec_()</span><br><span class="line"></span><br><span class="line"><span class="comment"># main.py</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    login_control_ = LoginControll()</span><br><span class="line">    <span class="comment"># 退出主程序</span></span><br><span class="line">    sys.exit(login_control_.run())</span><br></pre></td></tr></table></figure>
+
 <p>在这个例子里需要注意的是，将model，view和controller分成了三个类。在view中定义信号以及信号何时发射，在controller中定义信号发射后连接的槽函数，即触发何种的响应。这样，通过信号的发射与连接，就将view和controller绑定在了一起。view负责页面展示与信号定义，controller负责信号的连接与功能的实现，完美。</p>
 <h1 id="MVC实现"><a href="#MVC实现" class="headerlink" title="MVC实现"></a>MVC实现</h1><h2 id="单页面"><a href="#单页面" class="headerlink" title="单页面"></a>单页面</h2><p>如果读懂以上内容，那么应该可以实战了。首先给出一个demo，就是将上面最简单的MVC的例子拆分为三个文件。这里不便代码展示，请移步到我的github进行观看，这是<a href="https://github.com/muyuuuu/PyQt5-learn/tree/master/GUI/Basic-train/MVC-single-page" target="_blank" rel="noopener">文件结构</a>，这是<a href="https://github.com/muyuuuu/PyQt5-learn/blob/master/GUI/Basic-train/MVC-single-page/main.py" target="_blank" rel="noopener">主文件</a>。</p>
 <h2 id="多页面"><a href="#多页面" class="headerlink" title="多页面"></a>多页面</h2><p>在实现个复杂点的逻辑，多个页面，多个<code>controller</code>，文件结构如下所示，一个主文件，配三个文件夹，完美。这里命名时尽量规范，文件名、类名、函数名，不然容易把自己搞晕了。<code>python main.py</code>执行。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">MVC-demo</span><br><span class="line">├─ main.py</span><br><span class="line">├─ UI</span><br><span class="line">│    ├─ leftbtn_ui.py</span><br><span class="line">│    ├─ login_ui.py</span><br><span class="line">│    ├─ main_window_ui.py</span><br><span class="line">│    └─ verify_ui.py</span><br><span class="line">├─ control</span><br><span class="line">│    ├─ controller.py</span><br><span class="line">│    ├─ leftbtn_control.py</span><br><span class="line">│    ├─ login_control.py</span><br><span class="line">│    └─ verify_control.py</span><br><span class="line">└─ model</span><br><span class="line">       └─ model.py</span><br></pre></td></tr></table></figure>
+
 <p>调用关系如下：</p>
-<p><img data-src="https://static01.imgkr.com/temp/5fcf0ccbb7b94c89ba5b42f8f3605432.png" alt></p>
+<p><img data-src="https://static01.imgkr.com/temp/5fcf0ccbb7b94c89ba5b42f8f3605432.png"></p>
 <p>这里需要注意的是<strong>变量的生存周期</strong>，main调用controller，controller调用其它的子controller，很容易在声明一个类后局部变量消失，导致信号无法连接。如在<code>controller.py</code>中，典型错误的写法：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Controll</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line"></span><br><span class="line">        self._app = QApplication([])</span><br><span class="line"></span><br><span class="line">        self._stu = Student()</span><br><span class="line"></span><br><span class="line">        self._view = MainWindow()</span><br><span class="line">        self.init()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 子 controller 作为局部变量，调用完后立刻消失，所以无法连接信号和槽</span></span><br><span class="line">        <span class="comment"># 这个问题困扰了我三天，可真是滑稽</span></span><br><span class="line">        login_controller = login_control.Controller(self._view, self._stu.name, self._stu.password)</span><br></pre></td></tr></table></figure>
+
 <p>因为代码文件实在太多且混乱，就不在这里展示了，不然读者会更容易感到乱。这里只展示一个效果，完整代码见我的<a href="https://github.com/muyuuuu/PyQt5-learn/tree/master/GUI/Basic-train/MVC/MVC-demo" target="_blank" rel="noopener">github</a>。其实看一个例子，就啥都懂了。</p>
-<p><img data-src="https://static01.imgkr.com/temp/5b351da806dd4c9c888d0215fd7ec703.gif" alt></p>
+<p><img data-src="https://static01.imgkr.com/temp/5b351da806dd4c9c888d0215fd7ec703.gif"></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
 <li>有篇很好的MVC实现找不到了，具有启蒙意义，看这篇吧：<a href="https://www.pythonf.cn/read/11042" target="_blank" rel="noopener">https://www.pythonf.cn/read/11042</a></li>
-<li>那个困扰我三天的问题，stackoverflow太伟大了：<br><a href="https://stackoverflow.com/questions/66026582/in-pyqt5-why-signal-cant-connect-a-slot-in-a-external-class?" target="_blank" rel="noopener">https://stackoverflow.com/questions/66026582/in-pyqt5-why-signal-cant-connect-a-slot-in-a-external-class?</a></li>
+<li>那个困扰我三天的问题，stackoverflow太伟大了：<br><a href="https://stackoverflow.com/questions/66026582/in-pyqt5-why-signal-cant-connect-a-slot-in-a-external-class" target="_blank" rel="noopener">https://stackoverflow.com/questions/66026582/in-pyqt5-why-signal-cant-connect-a-slot-in-a-external-class</a>?</li>
 </ol>
 
     </div>
@@ -341,7 +347,7 @@
       <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\10\11\pyqt-pit\" rel="bookmark">PyQt5踩坑</a></div>
+      <div class="popular-posts-title"><a href="\2019\10\06\pyqt5-basic\" rel="bookmark">PyQt5的基本控件整理</a></div>
     </li>
   </ul>
 
@@ -491,7 +497,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -537,12 +543,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -577,23 +583,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 

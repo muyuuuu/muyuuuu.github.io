@@ -118,57 +118,57 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>本站主页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>时光轴</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于兰铃</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签云</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="image fa-fw"></i>远夏拾忆</a>
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
 
   </li>
         <li class="menu-item menu-item-share">
 
-    <a href="/share/" rel="section"><i class="share fa-fw"></i>好物分享</a>
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
 
   </li>
         <li class="menu-item menu-item-message">
 
-    <a href="/message/" rel="section"><i class="list fa-fw"></i>留言板</a>
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
 
   </li>
         <li class="menu-item menu-item-friends">
 
-    <a href="/friends/" rel="section"><i class="link fa-fw"></i>友情链接</a>
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
 
   </li>
         <li class="menu-item menu-item-reward">
 
-    <a href="/reward/" rel="section"><i class="history fa-fw"></i>博客收益</a>
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
 
   </li>
         <li class="menu-item menu-item-hot">
 
-    <a href="/hot/" rel="section"><i class="fire fa-fw"></i>热门文章</a>
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
 
   </li>
         <li class="menu-item menu-item-record">
 
-    <a href="/record/" rel="section"><i class="sticky-note fa-fw"></i>记录</a>
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -301,8 +301,10 @@
 <li>类别平衡处理</li>
 </ol>
 <a id="more"></a>
+
 <p>题目中，提供的 <code>json</code> 格式文件如下，即使在文件名相同的情况下，也是一个目标对应一条 <code>json</code> 数据。</p>
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"235_2_t20201127123021723_CAM2.jpg"</span>,</span><br><span class="line">    <span class="attr">"image_height"</span>: <span class="number">6000</span>,</span><br><span class="line">    <span class="attr">"image_width"</span>: <span class="number">8192</span>,</span><br><span class="line">    <span class="attr">"category"</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="attr">"bbox"</span>: [</span><br><span class="line">        <span class="number">1655.06</span>,</span><br><span class="line">        <span class="number">1094.04</span>,</span><br><span class="line">        <span class="number">1663.06</span>,</span><br><span class="line">        <span class="number">1102.04</span></span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"235_2_t20201127123021723_CAM2.jpg"</span>,</span><br><span class="line">    <span class="attr">"image_height"</span>: <span class="number">6000</span>,</span><br><span class="line">    <span class="attr">"image_width"</span>: <span class="number">8192</span>,</span><br><span class="line">    <span class="attr">"category"</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="attr">"bbox"</span>: [</span><br><span class="line">        <span class="number">1909.06</span>,</span><br><span class="line">        <span class="number">1379.04</span>,</span><br><span class="line">        <span class="number">1920.06</span>,</span><br><span class="line">        <span class="number">1388.04</span></span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
 <h1 id="制作-COCO-数据集"><a href="#制作-COCO-数据集" class="headerlink" title="制作 COCO 数据集"></a>制作 COCO 数据集</h1><p><code>COCO</code> 数据集格式可以<a href="https://blog.yuxinzhao.top/coco-dataset-format/" target="_blank" rel="noopener">参考这里</a>。在真实训练的过程中，<code>info, version, licenses</code>等信息没啥卵用，可以直接设为 <code>None</code>。</p>
 <p>对于 <code>images</code> 字段，由『图片名、图片ID、图片宽高』组成，图片宽高和图片名可以直接获取。所以需要为每一个图片设置 <code>ID</code>，图片名相同，则 <code>ID</code> 名相同且唯一，这个用 python 的字典不难实现。</p>
 <p>对于 <code>annotations</code> 字段，由『segmentation, area, iscrowd, image_id, bbox, category_id, id』组成。其中，这里的 <code>id</code> 是盒子的 <code>id</code>，全局唯一，遍历数据集的时候设置自增变量便可实现。</p>
@@ -317,12 +319,16 @@
 <p>获取起来也不是很难的样子，一次 for 循环就可以搞定。<a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/coco.py" target="_blank" rel="noopener">代码</a>。</p>
 <h1 id="制作-mask-数据集"><a href="#制作-mask-数据集" class="headerlink" title="制作 mask 数据集"></a>制作 mask 数据集</h1><p><code>mask</code> 数据格式可以参考我的<a href="https://muyuuuu.github.io/2021/01/19/Mask-PIL-jpg-and-png/">上篇文章</a>。这里，因为一张图片里面有好几个目标。所以，先用字典按照 <code>name</code> 排序，再用 <code>groupby</code> 进行分组，使得一张图片下面能包括所有的目标区域。新json文件的格式：</p>
 <figure class="highlight"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"197_100_t20201119093903298_CAM1.jpg"</span>,</span><br><span class="line">    <span class="attr">"image_height"</span>: <span class="number">6000</span>,</span><br><span class="line">    <span class="attr">"image_width"</span>: <span class="number">8192</span>,</span><br><span class="line">    <span class="attr">"category"</span>: [</span><br><span class="line">        <span class="number">3</span>,</span><br><span class="line">        <span class="number">3</span>,</span><br><span class="line">        <span class="number">3</span>,</span><br><span class="line">        <span class="number">5</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"bbox"</span>: [</span><br><span class="line">        [</span><br><span class="line">            <span class="number">3485.51</span>,</span><br><span class="line">            <span class="number">5037.54</span>,</span><br><span class="line">            <span class="number">3492.51</span>,</span><br><span class="line">            <span class="number">5046.54</span></span><br><span class="line">        ],</span><br><span class="line">        [</span><br><span class="line">            <span class="number">4225.65</span>,</span><br><span class="line">            <span class="number">1587.67</span>,</span><br><span class="line">            <span class="number">4233.65</span>,</span><br><span class="line">            <span class="number">1597.67</span></span><br><span class="line">        ],</span><br><span class="line">        [</span><br><span class="line">            <span class="number">4362.51</span>,</span><br><span class="line">            <span class="number">4815.54</span>,</span><br><span class="line">            <span class="number">4370.51</span>,</span><br><span class="line">            <span class="number">4823.54</span></span><br><span class="line">        ],</span><br><span class="line">        [</span><br><span class="line">            <span class="number">1931.72</span>,</span><br><span class="line">            <span class="number">3621.12</span>,</span><br><span class="line">            <span class="number">1960.72</span>,</span><br><span class="line">            <span class="number">3725.12</span></span><br><span class="line">        ]</span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
 <p>遍历得到的新字典(<strong>注意：groupby 后得到的字典只能迭代一次</strong>)。这里为了节省内存，不打开原始图片文件，按照 <code>json</code> 文件提供生成背景为黑色、尺寸为原图像尺寸的图片，在对图片的每个目标区域生成掩码颜色，把掩码颜色贴到背景图片在保存即可。<a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/mask.py" target="_blank" rel="noopener">代码</a>。</p>
 <h2 id="mask-颜色注意事项"><a href="#mask-颜色注意事项" class="headerlink" title="mask 颜色注意事项"></a>mask 颜色注意事项</h2><p>这里需要注意的是，如果要用颜色来区分类别（<del>取决于训练数据的代码如何写</del>），一定不能写成这样。因为读取图片后，想要根据目标的数量来设置训练使用的 label，此时用<code>np.unique()</code>统计类别数量时，所有类别的数值都一样，便无法获取准确类别。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#FF0000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#00FF00'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#0000FF'</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以写成这样，总之保证颜色不一致就可以了。<br><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#110000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#002200'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#000033'</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+<p>可以写成这样，总之保证颜色不一致就可以了。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#110000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#002200'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#000033'</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h1 id="切割图片"><a href="#切割图片" class="headerlink" title="切割图片"></a>切割图片</h1><p>这个是最头疼的一步。假设我们要切割 <code>512 X 512</code> 的图片，使切割图片包含目标区域。<code>FasrerRCNN</code>等主流目标检测工具有负样本的机制，所以不用切割无关区域。初试的裁剪想法是，随机生成一个点的坐标，这个点是左上角的顶点，这个顶点的坐标加上 512 后能覆盖目标区域。点的坐标由两部分组成，分别是 <code>left</code> 和 <code>top</code>。在生成<code>left</code>和<code>top</code>时加入限制，保证裁剪区域会覆盖目标区域的像素点。但切割中仍然会有很多问题存在，溢出、损坏区域大于 512 等，如下图所示：</p>
-<p><img data-src="https://static01.imgkr.com/temp/23b21b60987c46b199f89c3e66581084.png" alt></p>
+<p><img data-src="https://static01.imgkr.com/temp/23b21b60987c46b199f89c3e66581084.png"></p>
 <p>所以总结后的裁剪逻辑：</p>
 <ol>
 <li>先处理损坏区域大于 512 的情况</li>
@@ -368,10 +374,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\11\MMDetection-use\" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
@@ -530,7 +536,7 @@
             <a href="/categories/">
           
         <span class="site-state-item-count">8</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">相册</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
@@ -576,12 +582,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">655k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">9:56</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -616,23 +622,13 @@ show_date_time();
         
 <div class="busuanzi-count">
   <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="user"></i>
-      </span>
       <span class="site-uv" title="总访客量">
-        <span id="busuanzi_value_site_uv"></span>
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
       </span>
-    </span>
     <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="eye"></i>
-      </span>
       <span class="site-pv" title="总访问量">
-        <span id="busuanzi_value_site_pv"></span>
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
       </span>
-    </span>
 </div>
 
 
