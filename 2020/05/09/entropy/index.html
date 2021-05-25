@@ -301,7 +301,6 @@
 </ol>
 <p>注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。</p>
 <a id="more"></a>
-
 <h1 id="什么是熵"><a href="#什么是熵" class="headerlink" title="什么是熵"></a>什么是熵</h1><p>首先，仅需要知道熵能够衡量信息的不确定性即可。一条信息的价值和他的不确定性有密切的关系，如：明天下雨的概率是1%和明天下雨的概率是99%这两条信息的价值是不一样的。不清楚事物的不确定性时，决策时出错的概率就越大；相反，通过自己逐步抽丝剥茧搞清了一个事物的本质，那么他的不确定性就为0，决策就不可能出错。那么如何衡量事物的不确定性呢？答案就是熵。</p>
 <p>假设此时有32个盒子，31个盒子里是白球，1个盒子里是黑球。假设让人<strong>用二分法</strong>来猜测黑球在哪个盒子里，猜一次1块钱，只需要5次就能猜中$(\log_232=5)$，那么这个信息值5块钱。当然信息的不确定性不能用钱来衡量，香农给出的定义是：<br>\begin{equation}<br>H = -(p_1\log p_1 + p_2\log p_2 + \cdots+p_n\log p_n), n=32<br>\end{equation}</p>
 <p>$p_i$为黑球在第$i$个盒子里的概率，$H$即为信息熵，且此时的熵恰好为5。在通俗一点，对于一个随机变量$X$，它的熵定义如下：</p>
@@ -336,8 +335,8 @@
 </ol>
 <h1 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h1><p>也许说了一大堆你还是不明白，那么在这里举例说明。</p>
 <h2 id="信息熵"><a href="#信息熵" class="headerlink" title="信息熵"></a>信息熵</h2><p>还是那个例子，32个箱子，31个箱子里是白球，1个箱子里是黑球，你用二分法去摸球，直到摸到黑球位置，此时摸球次数的随机变量$X$为：</p>
-<p>$$H(X)=-32\times \frac{1}{32} \times \log_2(\frac{1}{32})=5$$</p>
-<h2 id="条件熵-1"><a href="#条件熵-1" class="headerlink" title="条件熵"></a>条件熵</h2><p>根据以下的表格，对于第一列上班族，上班族的随机变量为$X$，且1表示上班，那么上班族的熵$H(X)=0.589$。对于第二列上班族的年龄，年龄在区间内$[0,20]$为0，年龄在区间$[20, 100]$内为1，那么年龄这列的熵$H(Y)$为0.589。互信息$I(X;Y)$(自行手动按照公式计算即可)为0.42，表明两者上班的人和上班的人的年龄之间有一定的相关性。</p>
+<script type="math/tex; mode=display">H(X)=-32\times \frac{1}{32} \times \log_2(\frac{1}{32})=5</script><h2 id="条件熵-1"><a href="#条件熵-1" class="headerlink" title="条件熵"></a>条件熵</h2><p>根据以下的表格，对于第一列上班族，上班族的随机变量为$X$，且1表示上班，那么上班族的熵$H(X)=0.589$。对于第二列上班族的年龄，年龄在区间内$[0,20]$为0，年龄在区间$[20, 100]$内为1，那么年龄这列的熵$H(Y)$为0.589。互信息$I(X;Y)$(自行手动按照公式计算即可)为0.42，表明两者上班的人和上班的人的年龄之间有一定的相关性。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -345,27 +344,30 @@
 <th>上班族的年龄$Y$</th>
 </tr>
 </thead>
-<tbody><tr>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr>
-<td>1</td>
-<td>0</td>
-</tr>
-<tr>
-<td>0</td>
-<td>0</td>
-</tr>
+<tbody>
 <tr>
 <td>1</td>
 <td>1</td>
 </tr>
 <tr>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
 <td>0</td>
 <td>0</td>
 </tr>
-</tbody></table>
+<tr>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上。</p>
 <ol>
 <li>《数学之美(第二版)》第六章：信息的度量和作用</li>
@@ -590,12 +592,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">655k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:56</span>
+    <span title="站点阅读时长">9:49</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

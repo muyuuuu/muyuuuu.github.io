@@ -294,21 +294,17 @@
       
         <p>前阵子写了个集群计算资源监控程序，我觉得架构设计的还行，于是来整理成一篇博客。内容只有架构，不含代码，因为自己的实验室要用。<del>利益相关，人在美国，刚下飞机，懂的自然懂，匿了匿了。</del></p>
 <a id="more"></a>
-
 <h1 id="集群架构"><a href="#集群架构" class="headerlink" title="集群架构"></a>集群架构</h1><p>首先来看一下集群的结构，也就是计算节点如何连接，以及每个计算节点配备的计算资源如何，方便编写后续程序。</p>
-<p><img data-src="https://z3.ax1x.com/2021/03/31/ck5RyR.png"></p>
+<p><img data-src="https://z3.ax1x.com/2021/03/31/ck5RyR.png" alt></p>
 <p>首先 <code>ssh</code> 到登录节点，而后可以由登录节点前往各个计算节点，假设这里一共由 <code>N</code> 个计算节点。其中，第 <code>M</code> 个计算节点配备了 <code>n</code> 个 GPU。这里就假设要监控 GPU 资源了，如果要监控 CPU 资源，一个道理。</p>
 <h1 id="多线程工作模式"><a href="#多线程工作模式" class="headerlink" title="多线程工作模式"></a>多线程工作模式</h1><p>既然要监控这么多 GPU 的占用情况，轮询显然是一种最差的做法，毕竟 ssh 过去有网络延迟，且<strong>同步阻塞</strong>调用的方式效率很是低下。首先通过多线程的形式，将阻塞调用改为<strong>异步非阻塞调用</strong>。</p>
 <p>这里，我们创建一个子线程去完成 GPU 负载信息的查询任务，使其不影响主进程的执行，这实现了<strong>异步</strong>；在子线程查询 GPU 负载信息时，再次创建多个子线程并发的完成查询，对于结果的返回选择<strong>非阻塞</strong>的方式，啥时候结果执行完了反馈回来就行；但多个子线程<strong>阻塞</strong>了子线程的执行，因为毕竟要等到多个子线程拿到结果才能返回，不然白执行一趟。理论上这里也应该非阻塞，但非阻塞也不需要去执行其他任务，索性让它阻塞在这里。</p>
 <p>当然，我这里计算节点很少，可以为每个节点创建一个线程。当面临成百上千个计算节点时，可以分组创建线程，一次性创建这么多线程，维护、切换之类的开销太大了。</p>
 <p>此时多线程的调用结构图如下所示：</p>
-<p><img data-src="https://z3.ax1x.com/2021/03/31/ckLviq.png"></p>
-<p>主进程核心代码如下：</p>
-<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 主进程创建子线程定期轮询</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">monitor</span><span class="params">(compute_num, shell_path, timeout)</span>:</span></span><br><span class="line">    set_gpu_infoes_list(</span><br><span class="line">        get_all_gpu_node_info(compute_num, shell_path, timeout))</span><br><span class="line">    threading.Timer(interval, monitor, (compute_num, shell_path, timeout)).start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    th = threading.Timer(interval, monitor, (compute_num, shell_path, timeout))</span><br><span class="line">    <span class="comment"># 子线程去访问GPU信息，主进程干其他的</span></span><br><span class="line">    th.start()</span><br></pre></td></tr></table></figure>
-
+<p><img data-src="https://z3.ax1x.com/2021/03/31/ckLviq.png" alt></p>
+<p>主进程核心代码如下：<br><figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 主进程创建子线程定期轮询</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">monitor</span><span class="params">(compute_num, shell_path, timeout)</span>:</span></span><br><span class="line">    set_gpu_infoes_list(</span><br><span class="line">        get_all_gpu_node_info(compute_num, shell_path, timeout))</span><br><span class="line">    threading.Timer(interval, monitor, (compute_num, shell_path, timeout)).start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    th = threading.Timer(interval, monitor, (compute_num, shell_path, timeout))</span><br><span class="line">    <span class="comment"># 子线程去访问GPU信息，主进程干其他的</span></span><br><span class="line">    th.start()</span><br></pre></td></tr></table></figure></p>
 <p>子线程核心代码如下：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 子线程创建多个子线程去查询</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_all_gpu_node_info</span><span class="params">(compute_num, shell_path, timeout)</span>:</span></span><br><span class="line">    task_list = []</span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, compute_num+<span class="number">1</span>):</span><br><span class="line">        params = &#123;&#125;</span><br><span class="line">        params[<span class="string">'hostname'</span>] = <span class="string">'gpu0&#123;&#125;'</span>.format(i)</span><br><span class="line">        params[<span class="string">'shell_path'</span>] = shell_path</span><br><span class="line">        params[<span class="string">'timeout'</span>] = timeout</span><br><span class="line">        <span class="comment"># 创建线程</span></span><br><span class="line">        task = athread.AThread(get_single_gpu_node_info, args=params)</span><br><span class="line">        task_list.append(task)</span><br><span class="line">        task.start()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> task <span class="keyword">in</span> task_list:</span><br><span class="line">        <span class="comment"># 等待每个线程结束</span></span><br><span class="line">        task.join()</span><br><span class="line">        result.append(task.get_result())</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
-
 <h1 id="log-写出"><a href="#log-写出" class="headerlink" title="log 写出"></a>log 写出</h1><p>这个是为了记录计算资源的历史使用信息准备的，每个计算节点一个 log 文件，每个 log 文件限长 1000 行，超过 1000 行后就先入先出处理掉。</p>
 <h1 id="socket-通信"><a href="#socket-通信" class="headerlink" title="socket 通信"></a>socket 通信</h1><h1 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h1><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
 <li><a href="https://juejin.cn/post/6844903817348136968" target="_blank" rel="noopener">什么是消息队列</a></li>
@@ -515,12 +511,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">655k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:56</span>
+    <span title="站点阅读时长">9:49</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

@@ -288,11 +288,9 @@
       
         <p>今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解<strong>重参数</strong>到底是什么，一般都用在什么背景下。</p>
 <a id="more"></a>
-
 <h1 id="VAE-中重参数生成高斯分布"><a href="#VAE-中重参数生成高斯分布" class="headerlink" title="VAE 中重参数生成高斯分布"></a>VAE 中重参数生成高斯分布</h1><p>在 VAE 中，需要从 $p(Z|X)$ 中采样得到样本，但采样的过程本身是不可逆的，就导致整个过程无法反向传播。我们已经知道 $P(Z|X)$ 是服从正态分布的，也知道均值和方差，那么如何产生数据呢？这个时候就是重采样技术了。</p>
 <p>我们首先生成一个均值为0, 标准差为1的高斯分布 $N\sim (0,1)$。在这个分布中中采样数据 $\epsilon$，经过一个变换后得到目标分布：$Z=\mu + \sigma \epsilon$。$\mu$为均值，$\sigma$为方差，由网络计算得出。伪代码如下：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reparametrization</span><span class="params">(z_mean, z_log_var)</span>:</span></span><br><span class="line">    epsilon = K.random_normal(shape=K.shape(z_mean))</span><br><span class="line">    <span class="keyword">return</span> z_mean + z_log_var * epsilon</span><br></pre></td></tr></table></figure>
-
 <p>此时，返回的变量就具有了梯度，而采样的过程在整个计算图之外，采样的 $\epsilon$ 就是一个常量，此时便可以梯度下降。</p>
 <h1 id="Gumbel-Softmax"><a href="#Gumbel-Softmax" class="headerlink" title="Gumbel Softmax"></a>Gumbel Softmax</h1><p><a href="https://static01.imgkr.com/temp/8798f13886ad45d78ed32dbdccdb0386.png" target="_blank" rel="noopener">https://static01.imgkr.com/temp/8798f13886ad45d78ed32dbdccdb0386.png</a></p>
 <p>上图在 DARTS 算法中表示为一个 Cell。每个 Cell 由多个 Node 组成，Node 和 Node 之间有多条边，每条边代表的操作不一样，比如可能是CNN，可能是RNN，可能是 maxpool。每条边都有一个权重 $\alpha$，权重是可以学习的。根据权重来选择每条边到底执行什么操作。</p>
@@ -532,12 +530,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">655k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:56</span>
+    <span title="站点阅读时长">9:49</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

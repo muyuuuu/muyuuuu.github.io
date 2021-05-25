@@ -294,10 +294,8 @@
       
         <p>昨天写程序遇到一个问题，<code>pyqt5</code> 加载常规的图片完全可以显示。可当加载超清的高分辨率图片时，只能显示一个小角落。可我就想把一张 <code>3840x2160</code> 的图片加载到一个 <code>800x600</code> 的标签里该怎么办呢，如何自适应放缩尺寸？国内社区众所周知大多是抄袭，没什么解决方案，<del>就像本文刚发布两天就被抄走了</del>；外网站搜了一下也没找到现成的解决方案，我知道又到了我开坑的时候了。<del>博客能火全靠pyqt5，以后请叫我pyqt5之父（不是</del></p>
 <a id="more"></a>
-
 <h1 id="常规加载"><a href="#常规加载" class="headerlink" title="常规加载"></a>常规加载</h1><p>先来看一下，如何借助 <code>QLabel</code> 和 <code>QFileDialog</code> 加载低分辨率的图片，这时候时能正常显示的。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QMainWindow, QWidget, QHBoxLayout, QApplication, </span><br><span class="line">                             QPushButton, QLabel, QFileDialog, QVBoxLayout, </span><br><span class="line">                             QLineEdit)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QPixmap</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mainwindow</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(mainwindow, self).__init__()</span><br><span class="line"></span><br><span class="line">        layout = QVBoxLayout()</span><br><span class="line">        w = QWidget()</span><br><span class="line">        w.setLayout(layout)</span><br><span class="line">        self.setCentralWidget(w)</span><br><span class="line"></span><br><span class="line">        self.image_label = QLabel()</span><br><span class="line">        self.image_label.setFixedSize(<span class="number">800</span>, <span class="number">500</span>)</span><br><span class="line">        layout.addWidget(self.image_label)</span><br><span class="line"></span><br><span class="line">        tmp_layout = QHBoxLayout()</span><br><span class="line">        btn = QPushButton(<span class="string">"选择图片路径"</span>)</span><br><span class="line">        tmp_layout.addWidget(btn)</span><br><span class="line">        btn.clicked.connect(self.load_image)</span><br><span class="line"></span><br><span class="line">        self.result = QLineEdit()</span><br><span class="line">        self.result.setPlaceholderText(<span class="string">"车牌展示"</span>)</span><br><span class="line">        self.result.setReadOnly(<span class="literal">True</span>)</span><br><span class="line">        tmp_layout.addWidget(self.result)</span><br><span class="line">        layout.addLayout(tmp_layout)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load_image</span><span class="params">(self)</span>:</span></span><br><span class="line">        fname, _ = QFileDialog.getOpenFileName(self, <span class="string">'Open File'</span>, </span><br><span class="line">                    <span class="string">'C://'</span>, <span class="string">"Image files (*.jpg *.png)"</span>)</span><br><span class="line">        <span class="keyword">if</span> fname <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            pixmap = QPixmap(fname)</span><br><span class="line">            self.image_label.setPixmap(pixmap)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app = QApplication([])</span><br><span class="line">    m = mainwindow()</span><br><span class="line">    m.show()</span><br><span class="line">    sys.exit(app.exec())</span><br></pre></td></tr></table></figure>
-
 <p>上述代码中，点击『选择图片路径』按钮就会调用文件对话框，选择图片后就会打开。步骤为：</p>
 <ol>
 <li>第一步，<code>QFileDialog</code> 选择文件路径</li>
@@ -305,9 +303,9 @@
 <li>第三步，将 <code>QPixmap</code> 对象传给标签的 <code>setPixmap</code> 方法，就完成了图片的显示。</li>
 </ol>
 <p>对于低分辨率图片，加载是没问题的：</p>
-<p><img data-src="https://z3.ax1x.com/2021/04/10/calOyQ.png"></p>
+<p><img data-src="https://z3.ax1x.com/2021/04/10/calOyQ.png" alt></p>
 <p>但高分辨率的图片，只能显示一个角落，也就是蓝色框那一部分：</p>
-<p><img data-src="https://z3.ax1x.com/2021/04/10/ca81Zd.png"></p>
+<p><img data-src="https://z3.ax1x.com/2021/04/10/ca81Zd.png" alt></p>
 <p>如何解决呢？既然国内外都没有现成的解决方案，只能掏出万能的官方文档了。</p>
 <h1 id="QImageReader-类"><a href="#QImageReader-类" class="headerlink" title="QImageReader 类"></a>QImageReader 类</h1><p>需要注意的是官方文档的语言是 <code>C++</code>，<del>还好我会C++。</del>打开文档，映入眼帘的就四句话：</p>
 <ul>
@@ -318,7 +316,6 @@
 </ul>
 <p>剩下的任务就很简单了，读图片，设置尺寸，显示。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sys, time</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QMainWindow, QWidget, QHBoxLayout, QApplication, </span><br><span class="line">                             QPushButton, QLabel, QFileDialog, QVBoxLayout, </span><br><span class="line">                             QLineEdit)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QPixmap, QFont</span><br><span class="line"><span class="keyword">from</span> PyQt5.Qt <span class="keyword">import</span> QSize, QImageReader</span><br><span class="line"><span class="keyword">import</span> qdarkstyle</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mainwindow</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(mainwindow, self).__init__()</span><br><span class="line"></span><br><span class="line">        layout = QVBoxLayout()</span><br><span class="line">        w = QWidget()</span><br><span class="line">        w.setLayout(layout)</span><br><span class="line">        self.setCentralWidget(w)</span><br><span class="line"></span><br><span class="line">        self.image_label = QLabel()</span><br><span class="line">        self.image_label.setFixedSize(<span class="number">800</span>, <span class="number">500</span>)</span><br><span class="line">        layout.addWidget(self.image_label)</span><br><span class="line"></span><br><span class="line">        tmp_layout = QHBoxLayout()</span><br><span class="line">        btn = QPushButton(<span class="string">"选择图片路径"</span>)</span><br><span class="line">        tmp_layout.addWidget(btn)</span><br><span class="line">        btn.clicked.connect(self.load_image)</span><br><span class="line"></span><br><span class="line">        self.result = QLineEdit()</span><br><span class="line">        self.result.setPlaceholderText(<span class="string">"车牌展示"</span>)</span><br><span class="line">        self.result.setReadOnly(<span class="literal">True</span>)</span><br><span class="line">        tmp_layout.addWidget(self.result)</span><br><span class="line">        layout.addLayout(tmp_layout)</span><br><span class="line"></span><br><span class="line">        self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load_image</span><span class="params">(self)</span>:</span></span><br><span class="line">        fname, _ = QFileDialog.getOpenFileName(self, <span class="string">'Open File'</span>, </span><br><span class="line">                   <span class="string">'C://'</span>, <span class="string">"Image files (*.jpg *.png)"</span>)</span><br><span class="line">        <span class="keyword">if</span> fname <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="comment"># 还需要对图片进行重新调整大小</span></span><br><span class="line">            img = QImageReader(fname)</span><br><span class="line">            scale = <span class="number">800</span> / img.size().width()</span><br><span class="line">            height = int(img.size().height() * scale)</span><br><span class="line">            img.setScaledSize(QSize(<span class="number">800</span>, height))</span><br><span class="line">            img = img.read()</span><br><span class="line">            <span class="comment"># 打开设置好的图片</span></span><br><span class="line">            pixmap = QPixmap(img)</span><br><span class="line">            self.image_label.setPixmap(pixmap)</span><br><span class="line">            self.result.setText(<span class="string">"车牌号放到这里"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app = QApplication([])</span><br><span class="line">    font = QFont()</span><br><span class="line">    font.setFamily(<span class="string">"SimHei"</span>)</span><br><span class="line">    font.setPointSize(<span class="number">14</span>)</span><br><span class="line">    app.setFont(font)</span><br><span class="line">    m = mainwindow()</span><br><span class="line">    m.show()</span><br><span class="line">    sys.exit(app.exec())</span><br></pre></td></tr></table></figure>
-
 <p>考虑到可能会加载超清图像，为了方便对图片进行控制，不要采用 <code>QImage</code> 或 <code>QPixmap</code>，而是使用 <code>QImageReader</code></p>
 <p>代码解析：</p>
 <ol>
@@ -327,7 +324,7 @@
 <li>将设置好的图像读入为 <code>QImage</code> 类型，而后程序里将其转为 <code>QPixmap</code> 类型</li>
 <li>正常方法设置即可，超清图像完美被加载</li>
 </ol>
-<p><img data-src="https://z3.ax1x.com/2021/04/10/caJGgf.png"></p>
+<p><img data-src="https://z3.ax1x.com/2021/04/10/caJGgf.png" alt></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
 <li><a href="https://wiki.qt.io/Loading_Large_Images" target="_blank" rel="noopener">QImageReader官方文档</a></li>
 </ol>
@@ -347,10 +344,10 @@
       <div class="popular-posts-title"><a href="\2020\02\01\NCSTModel\" rel="bookmark">华北理工大学数学建模协会竞赛信息管理软件</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\03\PyQt5-MVC\" rel="bookmark">PyQt5通过信号实现MVC</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\05\PyQt5-QThread\" rel="bookmark">PyQt5多线程</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\02\05\PyQt5-QThread\" rel="bookmark">PyQt5多线程</a></div>
+      <div class="popular-posts-title"><a href="\2021\02\03\PyQt5-MVC\" rel="bookmark">PyQt5通过信号实现MVC</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2019\10\19\pyqt-layout\" rel="bookmark">PyQt5高级布局与美化</a></div>
@@ -549,12 +546,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">655k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:56</span>
+    <span title="站点阅读时长">9:49</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
