@@ -23,14 +23,14 @@
   <meta name="description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 <meta name="keywords" content="CV">
 <meta property="og:type" content="article">
-<meta property="og:title" content="目标检测篇：Faster-RCNN 系列">
+<meta property="og:title" content="目标检测篇：Faster R-CNN 系列">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/04/28/faster-rcnn/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-24T07:06:33.855Z">
+<meta property="og:updated_time" content="2021-05-25T02:21:15.364Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="目标检测篇：Faster-RCNN 系列">
+<meta name="twitter:title" content="目标检测篇：Faster R-CNN 系列">
 <meta name="twitter:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/04/28/faster-rcnn/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>目标检测篇：Faster-RCNN 系列 | Just for Life.</title>
+  <title>目标检测篇：Faster R-CNN 系列 | Just for Life.</title>
   
 
 
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          目标检测篇：Faster-RCNN 系列
+          目标检测篇：Faster R-CNN 系列
         </h1>
 
         <div class="post-meta">
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-24 15:06:33" itemprop="dateModified" datetime="2021-05-24T15:06:33+08:00">2021-05-24</time>
+                <time title="修改时间：2021-05-25 10:21:15" itemprop="dateModified" datetime="2021-05-25T10:21:15+08:00">2021-05-25</time>
               </span>
 
           
@@ -294,9 +294,9 @@
         <p>又来开计算机视觉的坑了，<strong>这次一定做好整理和记录，包括算法内容和程序</strong>。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。</p>
 <p>既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组成：$(x,y,w,h)$，表示物体的起始点坐标和框的宽度与高度；对于目标是什么的问题，就是传统神经网络的多分类问题了。</p>
 <a id="more"></a>
-<h1 id="Fast-R-CNN"><a href="#Fast-R-CNN" class="headerlink" title="Fast R-CNN"></a>Fast R-CNN</h1><p>算法步骤与网络结构图<sup><a href="#fn_2" id="reffn_2">2</a></sup>：</p>
+<h1 id="Fast-R-CNN"><a href="#Fast-R-CNN" class="headerlink" title="Fast R-CNN"></a>Fast R-CNN</h1><p>算法步骤与网络结构图<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：</p>
 <ol>
-<li>首先使用 selective search 算法<sup><a href="#fn_1" id="reffn_1">1</a></sup>搜索目标区域候选框，以下简称 SS 算法</li>
+<li>首先使用 selective search 算法<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>搜索目标区域候选框，以下简称 SS 算法</li>
 <li>将图像输入 backbone，一个超大规模的特征提取网络，得到一个特征图</li>
 <li>将 SS 生成的候选框映射到特征图中，得到每个候选框的特征矩阵</li>
 <li>将每个候选框的特征矩阵通过 ROI（region of interest）-pooling 层缩放到 $7\times 7$ 的矩阵</li>
@@ -316,7 +316,7 @@
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gPIzDg.png" alt></p>
 <h3 id="预测输出与反向传播"><a href="#预测输出与反向传播" class="headerlink" title="预测输出与反向传播"></a>预测输出与反向传播</h3><p>先来看概率预测。因为含有负样本，因此网络要识别 $N$ 的类的话，网络输出的概率就是 $N+1$，多一个背景类。ROI-pooling 后，经过两个全连接得到特征向量。特征向量经过第一个<strong>并联</strong>的全连接，softmax 后输出标签概率；经过第二个<strong>并联</strong>的全连接，输出目标框的位置参数。</p>
 <ul>
-<li>对于第一个并联的全连接而言，只需要和真实标签进行交叉熵<sup><a href="#fn_3" id="reffn_3">3</a></sup>即可，<strong>分类损失</strong>记为 $L_1$；</li>
+<li>对于第一个并联的全连接而言，只需要和真实标签进行交叉熵<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>即可，<strong>分类损失</strong>记为 $L_1$；</li>
 </ul>
 <p>接下来重点讲输出目标边界框的部分，如何使输出的目标框越来越接近真实的目标框呢？对于边界框回归器，也就是第二个并联的全连接，输出 <code>N+1</code> 个类别候选边界框的回归参数 $(d_x,d_y,d_w,d_h)$，共输出 $4(N+1)$ 个参数。我们设当前 SS 算法得到候选框的<strong>中心点坐标</strong>和宽高为 $(P_x,P_y,P_w,P_h)$，最终预测的边界框的参数 $(G_x, G_y, G_w, G_h)$ 为：</p>
 <p>\begin{equation}<br>    \begin{aligned}<br>        G_x &amp;= P_wd_x + P_x \\<br>        G_y &amp;= P_hd_y + P_y \\<br>        G_w &amp;= P_w \exp{(d_w)} \\<br>        G_h &amp;= P_h \exp{(d_h)}<br>    \end{aligned}<br>\end{equation}</p>
@@ -328,7 +328,7 @@
 <p>这个损失在绝对差值大于1时不求平方，可以避免梯度爆炸。大部分回归问题都可以适用，尤其是数值比较大的时候。此时，最终的损失函数为：</p>
 <p>\begin{equation}<br>L = L_1 + \lambda[\mu\geq 1]L_2<br>\end{equation}</p>
 <p>$[u\geq 1]$ 表示爱佛森括号，意思是，当 $u\geq 1$ 时，$[u\geq 1] = 1$，否则 $[u\geq 1] = 0$；$u=0$时，表示当前是背景，背景是没有边界框的，也就没有边界框回归损失这一项。$\lambda$ 是权重。好滴，Fast R-CNN 记录完毕。Faster RCNN 就相对简单点了，只是在 Fast R-CNN 的基础上使用 RPN 替换了 SS 算法。</p>
-<h1 id="Faster-RCNN"><a href="#Faster-RCNN" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h1><p>Faster-RCNN = Fast R-CNN + RPN<sup><a href="#fn_4" id="reffn_4">4</a></sup> 结构，用 RPN 生成特征候选框，将生成的候选框投影到特征图上得到特征矩阵，即代替了之前的 SS 操作，也就是，让 RPN 网络自己去寻找哪里可能有目标。</p>
+<h1 id="Faster-RCNN"><a href="#Faster-RCNN" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h1><p>Faster-RCNN = Fast R-CNN + RPN<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup> 结构，用 RPN 生成特征候选框，将生成的候选框投影到特征图上得到特征矩阵，即代替了之前的 SS 操作，也就是，让 RPN 网络自己去寻找哪里可能有目标。</p>
 <p>RPN 网络，输入为 backbone 后的 features map，用于生成 region proposal，该层为 features map 上每个像素生成若干个 anchors（9个），随后通过 softmax 判断每个 anchor 是属于 foreground（目标）或者 background（背景），再利用边界框回归器修正 anchors 获得精确的 proposal 位置。</p>
 <p>而后，Roi Pooling 层则利用 RPN 提供的 proposals 以及 backbone 后的 feature maps，提取 proposal feature 送入后续全连接网络，再之后的操作和 Fast R-CNN 就一样了。所以重点来看 RPN，网络结构如下。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gif0ER.png" alt></p>
@@ -375,7 +375,7 @@
 <li><a href="https://zhuanlan.zhihu.com/p/42553957" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/42553957</a></li>
 <li><a href="https://linzhenyuyuchen.github.io/2019/12/05/Cascade-R-CNN/" target="_blank" rel="noopener">https://linzhenyuyuchen.github.io/2019/12/05/Cascade-R-CNN/</a> （个人认为写的最好）</li>
 </ol>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast R-CNN</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>：<a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a><br><sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：<a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast R-CNN</a><br><sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>：<a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a><br><sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>：<a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></p>
 
     </div>
 
@@ -386,10 +386,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">语义分割篇：开山之作 FCN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\11\MMDetection-use\" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
@@ -541,7 +541,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -595,12 +595,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">646k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:47</span>
+    <span title="站点阅读时长">9:49</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

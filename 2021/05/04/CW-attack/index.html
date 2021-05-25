@@ -291,9 +291,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 <sup><a href="#fn_1" id="reffn_1">1</a></sup>，而论文的创新点在于损失函数的定义与梯度的截断。</p>
+        <p>五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>，而论文的创新点在于损失函数的定义与梯度的截断。</p>
 <a id="more"></a>
-<h1 id="L-BFGS"><a href="#L-BFGS" class="headerlink" title="L-BFGS"></a>L-BFGS</h1><p>从最开始的 L-BFGS <sup><a href="#fn_2" id="reffn_2">2</a></sup> 出发，通过 $L_2$ 范数距离寻找和原始样本 $x$ 最接近的对抗样本 $x’$，而寻找对抗样本的过程就是解决以下优化问题：</p>
+<h1 id="L-BFGS"><a href="#L-BFGS" class="headerlink" title="L-BFGS"></a>L-BFGS</h1><p>从最开始的 L-BFGS <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 出发，通过 $L_2$ 范数距离寻找和原始样本 $x$ 最接近的对抗样本 $x’$，而寻找对抗样本的过程就是解决以下优化问题：</p>
 <p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; c\Vert x-x’ \Vert_2 + \text{loss}_{F,t}(x’) \\<br>\text{s.t.} &amp; \; x’ \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
 <p>其中 $c$ 是一个常数，表示损失函数权重为 1 的情况下，对抗样本与原始样本距离的权重应该是多少；$t$ 表示错误分类的标签，$x$ 是已知的可以视为常量，那么唯一的变量就是 $x’$，可以通过一维线搜索的问题求解到 $c$ 的取值。</p>
 <p>论文中给出了 $t$ 的选择方法。假设当前为 10 分类任务，正确类别是 0，那么 $t$ 可以取 $1,2,\cdots,9$，那么取哪一个合适呢？换句话说，手写字体识别中，1 和 7 在字迹潦草的情况下容易被认错，那么正确类别是 1 时，对抗样本向 7 靠近，更容易攻击成功。</p>
@@ -323,12 +323,12 @@
 <p>因为 $\tanh$ 的取值范围是 $[-1,1]$，所以 $x+\delta$ 的取值范围是 $[0,1]$，这样就满足了约束，也是一种光滑的截断，也算是本文比较大的创新点吧。</p>
 <h1 id="开始攻击"><a href="#开始攻击" class="headerlink" title="开始攻击"></a>开始攻击</h1><p>我看论文中，$L_0$ 和 $L_\inf$ 都有一些缺陷，所以重点写 $L_2$ 攻击了。此时的方程为：</p>
 <p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \;  \Big| \frac{1}{2}\big(\tanh(w) + 1\big) - x \Big|_2 + c f\big(\frac{1}{2}(\tanh(w) + 1)\big) \\<br>f(x) &amp; = \max\Big( \max\big(Z(x)_{i:i\neq t}\big) - Z(x)_t, -k\Big)<br>\end{aligned}<br>\end{equation}</p>
-<p>参数 $k$ 用于控制错误分类的置信度，论文中 $k=0$，即保证被正确分类的概率低于被错误分类的概率。他人实现的程序 <sup><a href="#fn_3" id="reffn_3">3</a></sup>，但是程序的实现和论文的内容有一些出入。论文中，$Z(x)_t$ 表示错误分类。在实现用，用真实标签的概率 $y_\text{true}$ 减去被错误识别的概率 $y_\text{false}$ 中最大的一个。</p>
+<p>参数 $k$ 用于控制错误分类的置信度，论文中 $k=0$，即保证被正确分类的概率低于被错误分类的概率。他人实现的程序 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>，但是程序的实现和论文的内容有一些出入。论文中，$Z(x)_t$ 表示错误分类。在实现用，用真实标签的概率 $y_\text{true}$ 减去被错误识别的概率 $y_\text{false}$ 中最大的一个。</p>
 <ul>
 <li>若这一项大于0，会有损失，表示要降低对真实标签的可信度；</li>
 <li>若这一相小于0，取值为0，表示无法识别正确分类。此时没有损失，满足之前的当且仅当 $f(x+\delta) \leq 0$ 时，$C(x+\delta)=t$，也就是，分类错误后，就不用优化这一项了；换句话说，在不满足 $C(x+\delta)=t$ 约束下，是没有目标函数的损失值的。这里的确需要好好理解。</li>
 </ul>
-<h1 id="程序-4"><a href="#程序-4" class="headerlink" title="程序 4"></a>程序 <sup><a href="#fn_4" id="reffn_4">4</a></sup></h1><ul>
+<h1 id="程序-4"><a href="#程序-4" class="headerlink" title="程序 4"></a>程序 <sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup></h1><ul>
 <li><code>fgsm_attack.py</code>，使用 <code>fgsm</code> 算法制作对抗样本</li>
 <li><code>resnet</code>，使用 <code>ResNet50</code> 制作对抗样本</li>
 <li><code>vgg</code>，黑盒攻击，使用 <code>VGG16</code> 作为目标模型</li>
@@ -359,7 +359,7 @@
 <li><code>python cw_attack.py</code>，制作对抗样本</li>
 <li><code>python eval.py</code>，验证目标模型在对抗样本攻击下的准确率</li>
 </ul>
-<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://arxiv.org/abs/1608.04644" target="_blank" rel="noopener">https://arxiv.org/abs/1608.04644</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1312.6199.pdf</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb" target="_blank" rel="noopener">https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://github.com/muyuuuu/Adversarial-Attack/tree/main/CW_L2" target="_blank" rel="noopener">https://github.com/muyuuuu/Adversarial-Attack/tree/main/CW_L2</a></p>
+<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>：<a href="https://arxiv.org/abs/1608.04644" target="_blank" rel="noopener">https://arxiv.org/abs/1608.04644</a><br><sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1312.6199.pdf</a><br><sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>：<a href="https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb" target="_blank" rel="noopener">https://github.com/Harry24k/CW-pytorch/blob/master/CW.ipynb</a><br><sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>：<a href="https://github.com/muyuuuu/Adversarial-Attack/tree/main/CW_L2" target="_blank" rel="noopener">https://github.com/muyuuuu/Adversarial-Attack/tree/main/CW_L2</a></p>
 
     </div>
 
@@ -525,7 +525,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -579,12 +579,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">646k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:47</span>
+    <span title="站点阅读时长">9:49</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

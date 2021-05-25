@@ -322,7 +322,7 @@
 <ul>
 <li><code>pretrained</code> 取值为 <code>False</code> 的情况下，<code>pretrained_backbone</code> 取值会为 <code>True</code>，会返回在 <code>ImageNet</code> 上预训练的 backbone；<code>pretrained</code> 取值为 <code>True</code> 的情况下，<code>pretrained_backbone</code> 取值会为 <code>False</code>，将会返回一个在 <code>COCO train2017</code> 上预训练的模型；而无论如何，<code>backbone</code> 是使用了 <code>FPN</code> 机制的。</li>
 <li><code>num_classes</code> 设置成自己需要检测的类的数量，<strong>注意多一个背景类</strong>；</li>
-<li>观察 <code>**kwargs</code> 参数，传给了 <code>FasterRCNN</code>，所以追踪这个类，发现它能设置很多参数 <sup><a href="#fn_1" id="reffn_1">1</a></sup> ，比如 <code>anchor</code> 的大小和比例。这个时候对原始数据 <code>EDA</code> 一下，设置合适的参数就可以了；</li>
+<li>观察 <code>**kwargs</code> 参数，传给了 <code>FasterRCNN</code>，所以追踪这个类，发现它能设置很多参数 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> ，比如 <code>anchor</code> 的大小和比例。这个时候对原始数据 <code>EDA</code> 一下，设置合适的参数就可以了；</li>
 </ul>
 <p>此时创建模型的程序为：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision.models.detection <span class="keyword">as</span> td</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_model</span><span class="params">(num_class)</span>:</span></span><br><span class="line">    anchor_sizes = ((<span class="number">64</span>, ), (<span class="number">128</span>, ), (<span class="number">256</span>, ), (<span class="number">512</span>, ), (<span class="number">1024</span>, ))</span><br><span class="line">    aspect_ratios = ((<span class="number">0.5</span>, <span class="number">1.0</span>, <span class="number">2.0</span>), ) * len(anchor_sizes)</span><br><span class="line">    rpn_anchor_generator = td.anchor_utils.AnchorGenerator(</span><br><span class="line">        anchor_sizes, aspect_ratios)</span><br><span class="line">    <span class="comment"># https://github.com/pytorch/vision/blob/master/torchvision/models/detection/faster_rcnn.py</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># faster rcnn，网络会再次对 图像数据进行重定义尺寸</span></span><br><span class="line">    <span class="comment"># https://github.com/pytorch/vision/blob/c2ab0c59f42babf9ad01aa616cd8a901daac86dd/torchvision/models/detection/transform.py#L64</span></span><br><span class="line">    detector = td.fasterrcnn_resnet50_fpn(</span><br><span class="line">        rpn_anchor_generator=rpn_anchor_generator, pretrained=<span class="literal">True</span>)</span><br><span class="line">    num_classes = num_class</span><br><span class="line">    <span class="comment"># ROI head 是 backbone 后，预测盒子和类别的位置</span></span><br><span class="line">    <span class="comment"># box_predictor 是 FastRCNNPredictor 类，cls_score 是类别分类器</span></span><br><span class="line">    <span class="comment"># in_features 是模型的输入特征</span></span><br><span class="line">    <span class="comment"># https://github.com/pytorch/vision/blob/5339e63148304ce32fd1cbd1e8bb74ea79458691/torchvision/models/detection/faster_rcnn.py#L263-L276</span></span><br><span class="line">    in_features = detector.roi_heads.box_predictor.cls_score.in_features</span><br><span class="line">    <span class="comment"># 设置要预测的新的分类数</span></span><br><span class="line">    detector.roi_heads.box_predictor = td.faster_rcnn.FastRCNNPredictor(</span><br><span class="line">        in_features, num_classes)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> detector</span><br></pre></td></tr></table></figure>
@@ -337,7 +337,7 @@
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">floating_point_types = (torch.float, torch.double, torch.half)</span><br><span class="line"><span class="keyword">assert</span> t[<span class="string">"boxes"</span>].dtype <span class="keyword">in</span> floating_point_types, <span class="string">'target boxes must of float type'</span></span><br><span class="line"><span class="keyword">assert</span> t[<span class="string">"labels"</span>].dtype == torch.int64, <span class="string">'target labels must of int64 type'</span></span><br></pre></td></tr></table></figure>
 <p>一目了然，这并不是说 boxes 是浮点数，而是说，张量中的元素应该是 <code>torch.float32, torch.float64, torch.float16</code> 类型的，创建张量的时候要加上这个参数；</p>
 <ul>
-<li>如果遇到 ValueError: All bounding boxes should have positive height and width. 错误，并不是说盒子里面出现的负数，而是说，FasterRCNN 希望看到 <code>[xmin, ymin, xmax, ymax]</code> 这样的数据，而你传入的是 <code>[xmin, ymin, width, height]</code> 这样的数据。但在后面 <code>torchvision</code> 中修复了这个问题 <sup><a href="#fn_2" id="reffn_2">2</a></sup>。</li>
+<li>如果遇到 ValueError: All bounding boxes should have positive height and width. 错误，并不是说盒子里面出现的负数，而是说，FasterRCNN 希望看到 <code>[xmin, ymin, xmax, ymax]</code> 这样的数据，而你传入的是 <code>[xmin, ymin, width, height]</code> 这样的数据。但在后面 <code>torchvision</code> 中修复了这个问题 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>。</li>
 <li>如果遇到 sampled_pos_inds_subset = torch.where(labels &gt; 0)[0] CUDA error: device-side assert triggered 这样的错误，也不要慌。有两种解决方案，选一个就好。<ul>
 <li>这里出错的原因很简单，数据提供的类是从 1 开始编号的，假设是 <code>label = [1，2，3]</code>；在预测时，正确的标签是 3，但程序中 <code>label[3]</code> 会出错，所以，将标签改为 <code>[0,1,2]</code> 就可以了。</li>
 <li>传入训练模型时，增加背景类。这里看自己，如果需要背景类，就第二种方案；如果不需要背景类，就第一种方案。</li>
@@ -356,7 +356,7 @@
 <li>类别数目没有加一，也就是没有考虑背景类。这个解决方案在上面已经给出。传入训练模型时，增加一个背景类</li>
 <li><code>pretrained=False</code>。当时是我考虑少了，以为 <code>pretrained=False</code>的情况下，毕竟模型的 backbone 是经过预训练的，以为能应付简单的目标检测，后来发现是我草率了；<code>pretrained=True</code>，不仅 backbone，整个模型都是预训练的，这样才能检测到目标。</li>
 </ul>
-<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://github.com/pytorch/vision/blob/730c5e1eab130e2900c8e839ea08fa11f024516f/torchvision/models/detection/faster_rcnn.py#L23" target="_blank" rel="noopener">https://github.com/pytorch/vision/blob/730c5e1eab130e2900c8e839ea08fa11f024516f/torchvision/models/detection/faster_rcnn.py#L23</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://github.com/pytorch/vision/issues/2740" target="_blank" rel="noopener">https://github.com/pytorch/vision/issues/2740</a></p>
+<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><p><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>：<a href="https://github.com/pytorch/vision/blob/730c5e1eab130e2900c8e839ea08fa11f024516f/torchvision/models/detection/faster_rcnn.py#L23" target="_blank" rel="noopener">https://github.com/pytorch/vision/blob/730c5e1eab130e2900c8e839ea08fa11f024516f/torchvision/models/detection/faster_rcnn.py#L23</a><br><sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：<a href="https://github.com/pytorch/vision/issues/2740" target="_blank" rel="noopener">https://github.com/pytorch/vision/issues/2740</a></p>
 
     </div>
 
@@ -367,10 +367,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">分割篇：开山之作 FCN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\24\FCN\" rel="bookmark">语义分割篇：开山之作 FCN</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\11\MMDetection-use\" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
@@ -522,7 +522,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -576,12 +576,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">646k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:47</span>
+    <span title="站点阅读时长">9:49</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

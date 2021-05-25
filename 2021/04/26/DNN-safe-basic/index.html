@@ -291,9 +291,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>博客的进阶使用：在指定位置插入脚注<sup><a href="#fn_1" id="reffn_1">1</a></sup>，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。</p>
+        <p>博客的进阶使用：在指定位置插入脚注<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。</p>
 <a id="more"></a>
-<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>所谓对抗样本，即向原始样本中添加一些人眼无法察觉的噪声，这样的噪声不会影响人类的识别，但是却很容易欺骗 DNN <sup><a href="#fn_2" id="reffn_2">2</a></sup>，使其作出与正确答案完全不同的判定。如下图所示，使用基于梯度<sup><a href="#fn_3" id="reffn_3">3</a></sup>的攻击方式，很容易欺骗神经网络：</p>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>所谓对抗样本，即向原始样本中添加一些人眼无法察觉的噪声，这样的噪声不会影响人类的识别，但是却很容易欺骗 DNN <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>，使其作出与正确答案完全不同的判定。如下图所示，使用基于梯度<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>的攻击方式，很容易欺骗神经网络：</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/26/gpwOwd.png" alt></p>
 <p>将肉眼不可见的细小扰动加入到原图中，网络识别出粗，甚至有 99.3% 的概率认为这是长臂猿。试想，如果犯罪分子将人烟稀少地区的交通信号牌改为立即停车，人眼不会觉得有什么不妥，但是无人驾驶系统却会乖乖停车，那么此时车上人员的安全何以保障？将禁止右转改为右转，造成交通事故就只在弹指一挥间了。究其本质原因，还是因为现有的 DNN 不能完全区分哪些特征是对分类有用的，哪些是可以忽略的。</p>
 <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><ul>
@@ -306,11 +306,11 @@
 <p>考虑输入层对对抗样本的线性变换：</p>
 <p>\begin{equation}<br>w^Tx’=w^Tx+w^T\eta<br>\end{equation}</p>
 <p>如果假设 $\eta = \text{sign} (w)$，$w$ 是一个 $n$ 维的矩阵，每一维的模长是 $m$，那么经过线性映射后，输入将增大 $\epsilon mn$。尽管 $\Vert \eta \Vert_\inf$ 不会变换，但随着维度的升高、矩阵权重的变换和非线性激活，回导致最终结果变化很大。这也就是为什么对抗样本与原始样本相差无几，但却产生了不同的输出。</p>
-<p>因此，FGSM<sup><a href="#fn_3" id="reffn_3">3</a></sup> 产生对抗样本的方式为：</p>
+<p>因此，FGSM<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> 产生对抗样本的方式为：</p>
 <p>\begin{equation}<br>\eta=\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
-<p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。torch 官方<sup><a href="#fn_5" id="reffn_5">5</a></sup>也给出了对抗样本的程序：</p>
+<p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。torch 官方<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>也给出了对抗样本的程序：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># FGSM attack code</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fgsm_attack</span><span class="params">(image, epsilon, data_grad)</span>:</span></span><br><span class="line">    <span class="comment"># Collect the element-wise sign of the data gradient</span></span><br><span class="line">    sign_data_grad = data_grad.sign()</span><br><span class="line">    <span class="comment"># Create the perturbed image by adjusting each pixel of the input image</span></span><br><span class="line">    perturbed_image = image + epsilon*sign_data_grad</span><br><span class="line">    <span class="comment"># Adding clipping to maintain [0,1] range</span></span><br><span class="line">    perturbed_image = torch.clamp(perturbed_image, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># Return the perturbed image</span></span><br><span class="line">    <span class="keyword">return</span> perturbed_image</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    data_grad = data.grad.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Call FGSM Attack</span></span><br><span class="line">    perturbed_data = fgsm_attack(data, epsilon, data_grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Re-classify the perturbed image</span></span><br><span class="line">    output = model(perturbed_data)</span><br></pre></td></tr></table></figure>
-<h2 id="PGD-攻击算法"><a href="#PGD-攻击算法" class="headerlink" title="PGD 攻击算法"></a>PGD 攻击算法</h2><p>PGD 攻击算法<sup><a href="#fn_6" id="reffn_6">6</a></sup>是 FSGM 的变体，它即是产生对抗样本的攻击算法，也是对抗训练的防御算法。</p>
+<h2 id="PGD-攻击算法"><a href="#PGD-攻击算法" class="headerlink" title="PGD 攻击算法"></a>PGD 攻击算法</h2><p>PGD 攻击算法<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup>是 FSGM 的变体，它即是产生对抗样本的攻击算法，也是对抗训练的防御算法。</p>
 <p>论文先抛出了两个问题：</p>
 <ol>
 <li>如何产生强有效的对抗样本，只需要一点点扰动就可以欺骗神经网络？</li>
@@ -327,7 +327,7 @@
 <p>$\prod_{x+S}$ 符号的意思是，先计算原图像的损失梯度得到对抗样本，对抗样本减去原图像得到扰动值，并通过 <code>torch.clamp</code> 限制在球面范围内，原图像加上扰动值就是最终的对抗样本。还是看代码吧：</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pgd_attack</span><span class="params">(model, images, labels, eps=<span class="number">0.3</span>, alpha=<span class="number">2</span>/<span class="number">255</span>, iters=<span class="number">40</span>)</span> :</span></span><br><span class="line">    images = images.to(device)</span><br><span class="line">    labels = labels.to(device)</span><br><span class="line">    loss = nn.CrossEntropyLoss()</span><br><span class="line">    <span class="comment"># 原图像</span></span><br><span class="line">    ori_images = images.data</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(iters) :</span><br><span class="line">        images.requires_grad = <span class="literal">True</span></span><br><span class="line">        outputs = model(images)</span><br><span class="line"></span><br><span class="line">        model.zero_grad()</span><br><span class="line">        cost = loss(outputs, labels).to(device)</span><br><span class="line">        cost.backward()</span><br><span class="line">        <span class="comment"># 图像 + 梯度得到对抗样本</span></span><br><span class="line">        adv_images = images + alpha*images.grad.sign()</span><br><span class="line">        <span class="comment"># 限制扰动范围</span></span><br><span class="line">        eta = torch.clamp(adv_images - ori_images, min=-eps, max=eps)</span><br><span class="line">        <span class="comment"># 进行下一轮对抗样本的生成。破坏之前的计算图</span></span><br><span class="line">        images = torch.clamp(ori_images + eta, min=<span class="number">0</span>, max=<span class="number">1</span>).detach_()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> images</span><br></pre></td></tr></table></figure>
 <p>实验发现，通过PGD发现的局部最大值在正常训练的网络和对抗训练的网络中都有着相似的损失值；换句话说，PGD 训练对抗样本，和普通网络训练干净样本的损失是类似的；这也说明，只要能够防御住PGD，就会对所有的一阶攻击手段具有鲁棒性。</p>
-<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>剩下的这些都是论文中实验部分所提及的了，更多内容，还可以参考这里<sup><a href="#fn_7" id="reffn_7">7</a></sup>的解读和这里<sup><a href="#fn_8" id="reffn_8">8</a></sup>的代码。</p>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>剩下的这些都是论文中实验部分所提及的了，更多内容，还可以参考这里<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>的解读和这里<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>的代码。</p>
 <ul>
 <li>在模型容量较小时，模型对 FGSM 对抗样本产生了过拟合，这种行为被称为label leaking。而且，模型无法防御 PGD 攻击。</li>
 <li>对抗样本的复杂性，是决策边界也变得复杂，因此模型需要更大的容量，才能抵御对抗样本。</li>
@@ -336,8 +336,8 @@
 <li>对抗训练：对抗训练旨在训练一个更加鲁棒的模型，其训练集由真实数据集和加入了对抗扰动的数据集组成，因此叫做对抗训练。</li>
 <li>去噪模块：在输入模型进行判定之前，先对当前对抗样本进行去噪，剔除其中造成扰动的信息，使其不能对模型造成攻击。</li>
 </ul>
-<p>上述几种防御类型对对抗样本扰动都具有一定的防御能力，效果参差不齐。本来想都放到这篇博客里，后来发现任务量太大了，后续我会读一些论文，列举一些代表性算法。当然，也可以移步这里，有很多关于网络安全算法<sup><a href="#fn_4" id="reffn_4">4</a></sup>的介绍。</p>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>使用 <code>ResNet50</code> 制作对抗样本，攻击类型为黑盒攻击，使用 <code>VGG16</code> 作为目标模型，程序 <sup><a href="#fn_9" id="reffn_9">9</a></sup> 放到了 Github。</p>
+<p>上述几种防御类型对对抗样本扰动都具有一定的防御能力，效果参差不齐。本来想都放到这篇博客里，后来发现任务量太大了，后续我会读一些论文，列举一些代表性算法。当然，也可以移步这里，有很多关于网络安全算法<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>的介绍。</p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>使用 <code>ResNet50</code> 制作对抗样本，攻击类型为黑盒攻击，使用 <code>VGG16</code> 作为目标模型，程序 <sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup> 放到了 Github。</p>
 <div class="table-container">
 <table>
 <thead>
@@ -373,7 +373,7 @@
 </tbody>
 </table>
 </div>
-<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8" target="_blank" rel="noopener">如何加入脚注</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">对抗样本</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="https://arxiv.org/pdf/1412.6572.pdf" target="_blank" rel="noopener">FGSM攻击</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a><br><sup><a href="#fn_5" id="reffn_5">5</a></sup>：<a href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html" target="_blank" rel="noopener">pytorch实现FSGM</a><br><sup><a href="#fn_6" id="reffn_6">6</a></sup>：<a href="https://arxiv.org/pdf/1706.06083.pdf" target="_blank" rel="noopener">PGD攻击算法</a><br><sup><a href="#fn_7" id="reffn_7">7</a></sup>：<a href="https://baidinghub.github.io/2020/04/03/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89PGD%E5%8F%8A%E9%98%B2%E5%BE%A1/#5-1-Network-Capacity-and-Adversarial-Robustness" target="_blank" rel="noopener">PGD论文笔记</a><br><sup><a href="#fn_8" id="reffn_8">8</a></sup>：<a href="https://github.com/Harry24k/PGD-pytorch/blob/master/PGD.ipynb" target="_blank" rel="noopener">PGD攻击程序</a><br><sup><a href="#fn_9" id="reffn_9">9</a></sup>：<a href="https://github.com/muyuuuu/Adversarial-Attack" target="_blank" rel="noopener">PGD与FGSM的黑盒攻击</a></p>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>：<a href="https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8" target="_blank" rel="noopener">如何加入脚注</a><br><sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：<a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">对抗样本</a><br><sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>：<a href="https://arxiv.org/pdf/1412.6572.pdf" target="_blank" rel="noopener">FGSM攻击</a><br><sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>：<a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a><br><sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>：<a href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html" target="_blank" rel="noopener">pytorch实现FSGM</a><br><sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup>：<a href="https://arxiv.org/pdf/1706.06083.pdf" target="_blank" rel="noopener">PGD攻击算法</a><br><sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>：<a href="https://baidinghub.github.io/2020/04/03/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89PGD%E5%8F%8A%E9%98%B2%E5%BE%A1/#5-1-Network-Capacity-and-Adversarial-Robustness" target="_blank" rel="noopener">PGD论文笔记</a><br><sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>：<a href="https://github.com/Harry24k/PGD-pytorch/blob/master/PGD.ipynb" target="_blank" rel="noopener">PGD攻击程序</a><br><sup id="fnref:9"><a href="#fn:9" rel="footnote">9</a></sup>：<a href="https://github.com/muyuuuu/Adversarial-Attack" target="_blank" rel="noopener">PGD与FGSM的黑盒攻击</a></p>
 
     </div>
 
@@ -384,10 +384,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\04\CW-attack\" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\04\CW-attack\" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
@@ -460,8 +460,8 @@
       <i class="fa fa-chevron-left"></i> 华山自由行之一日游
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/04/28/faster-rcnn/" rel="next" title="目标检测篇：Faster-RCNN 系列">
-      目标检测篇：Faster-RCNN 系列 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/04/28/faster-rcnn/" rel="next" title="目标检测篇：Faster R-CNN 系列">
+      目标检测篇：Faster R-CNN 系列 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -539,7 +539,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -593,12 +593,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">646k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:47</span>
+    <span title="站点阅读时长">9:49</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){

@@ -23,14 +23,14 @@
   <meta name="description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。">
 <meta name="keywords" content="CV">
 <meta property="og:type" content="article">
-<meta property="og:title" content="语义分割篇：开山之作 FCN">
+<meta property="og:title" content="分割篇：开山之作 FCN">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/24/FCN/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-24T08:50:09.918Z">
+<meta property="og:updated_time" content="2021-05-25T02:21:49.591Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="语义分割篇：开山之作 FCN">
+<meta name="twitter:title" content="分割篇：开山之作 FCN">
 <meta name="twitter:description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/24/FCN/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>语义分割篇：开山之作 FCN | Just for Life.</title>
+  <title>分割篇：开山之作 FCN | Just for Life.</title>
   
 
 
@@ -241,7 +241,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          语义分割篇：开山之作 FCN
+          分割篇：开山之作 FCN
         </h1>
 
         <div class="post-meta">
@@ -250,10 +250,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-05-24 15:04:53 / 修改时间：16:50:09" itemprop="dateCreated datePublished" datetime="2021-05-24T15:04:53+08:00">2021-05-24</time>
+              <time title="创建时间：2021-05-24 15:04:53" itemprop="dateCreated datePublished" datetime="2021-05-24T15:04:53+08:00">2021-05-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-25 10:21:49" itemprop="dateModified" datetime="2021-05-25T10:21:49+08:00">2021-05-25</time>
+              </span>
 
           
               <span class="post-meta-item-icon">
@@ -297,7 +303,7 @@
 <p>而 FCN 的创新之处在于，使用卷积操作替换了分类网络的全连接，使得输入输出保持在相同尺寸，这样就可以预测每个像素点的类别。加上使用了卷积，自然而然也就可以处理任意尺寸的图像。网络结构如下，用下面的卷积替换上面的全连接：</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvGwrQ.png" alt></p>
 <h1 id="上采样"><a href="#上采样" class="headerlink" title="上采样"></a>上采样</h1><p>经过不断的卷积，图像的尺寸会减少而维度会增加。所以为了使得网络输出的图像尺寸和原图像一致，需要进行一些上采样，使它恢复到输入图像相同的尺寸，从而可以对每个像素都产生了一个预测, 同时保留了原始输入图像中的空间信息, 最后在与输入图等大小的特征图上对每个像素进行分类，逐像素地用 softmax 分类计算损失，相当于每个像素对应一个训练样本。这部分在论文的第三章有所描述。</p>
-<p>而上采样采用的操作是<strong>转置卷积</strong>，如下图 <sup><a href="#fn_2" id="reffn_2">2</a></sup> 所示，蓝色是输入，青色是输出，将图像的尺寸瞬间增加了一倍。而文中发现，这种形式的上采样是最有效的，且，可以通过叠加之前的输入（类此残差），获得更好的精度。此外文中特意表明了转置卷积也是卷积层，按照普通的卷积层进行训练即可。</p>
+<p>而上采样采用的操作是<strong>转置卷积</strong>，如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示，蓝色是输入，青色是输出，将图像的尺寸瞬间增加了一倍。而文中发现，这种形式的上采样是最有效的，且，可以通过叠加之前的输入（类此残差），获得更好的精度。此外文中特意表明了转置卷积也是卷积层，按照普通的卷积层进行训练即可。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvNSo9.gif" alt></p>
 <h1 id="融合操作"><a href="#融合操作" class="headerlink" title="融合操作"></a>融合操作</h1><p><img data-src="https://z3.ax1x.com/2021/05/24/gva3Vg.png" alt></p>
 <p>如上图所示，论文给出了 FCN 的三种版本。</p>
@@ -306,7 +312,7 @@
 <li>对于 FCN-16s，将 pool5 后的结果进行 2 倍上采样，与 pool4 的结果相加，得到结果 $F$，而后进行 16 倍上采样</li>
 <li>对于 FCN-8s，将 $F$ 与 pool3 后的结果相加，而后进行 8 倍上采样</li>
 </ul>
-<p>论文中的结论是，FCN-8s 的效果要好一些，毕竟更多的利用了原始空间信息。网络结构图如下 <sup><a href="#fn_3" id="reffn_3">3</a></sup> ：</p>
+<p>论文中的结论是，FCN-8s 的效果要好一些，毕竟更多的利用了原始空间信息。网络结构图如下 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> ：</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvwICd.png" alt></p>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>网上看到了份程序，逻辑写的还不错：</p>
 <p><a href="https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py" target="_blank" rel="noopener">https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py</a></p>
@@ -314,9 +320,9 @@
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvBWfH.png" alt></p>
 <h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><p>若要可视化展示结果，需要对网络输出的结果进行解码。如标注图片上的类别等。假设输入图像的尺寸是 [800, 800] 的，当前类别数量是 21，会得到 [bacthsize, num_classes, height, width] 的输出。假设当前 batchsize 是 1，那么就需要在 num_classes 张 [height, width] 大小的图片中选择出每个像素点的类别。</p>
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line">out = fcn(data)[<span class="string">'out'</span>]</span><br><span class="line"><span class="comment"># 选择每个像素点的最大的类别</span></span><br><span class="line">om = torch.argmax(out.squeeze(), dim=<span class="number">0</span>).detach().cpu().numpy()</span><br><span class="line">decode_segmap(om)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_segmap</span><span class="params">(image, nc=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 类别颜色，画图用</span></span><br><span class="line">    label_colors = np.array([</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),  <span class="comment"># 0=background</span></span><br><span class="line">        <span class="comment"># 1=aeroplane, 2=bicycle, 3=bird, 4=boat, 5=bottle</span></span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 6=bus, 7=car, 8=cat, 9=chair, 10=cow</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        <span class="comment"># 11=dining table, 12=dog, 13=horse, 14=motorbike, 15=person</span></span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 16=potted plant, 17=sheep, 18=sofa, 19=train, 20=tv/monitor</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">    ])</span><br><span class="line">    r = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    g = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    b = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">0</span>, nc):</span><br><span class="line">        <span class="comment"># 目标类的索引</span></span><br><span class="line">        idx = image == l</span><br><span class="line">        r[idx] = label_colors[l, <span class="number">0</span>]</span><br><span class="line">        g[idx] = label_colors[l, <span class="number">1</span>]</span><br><span class="line">        b[idx] = label_colors[l, <span class="number">2</span>]</span><br><span class="line">    rgb = np.stack([r, g, b], axis=<span class="number">2</span>)</span><br><span class="line">    plt.imshow(rgb)</span><br><span class="line">    plt.savefig(<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
-<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>此外，U-Net <sup><a href="#fn_5" id="reffn_5">5</a></sup> 的网络结构也适合做分割，先记下来，也许某一天做语义分割的任务会用到。</p>
+<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>此外，U-Net <sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup> 的网络结构也适合做分割，先记下来，也许某一天做语义分割的任务会用到。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gv6rd0.png" alt></p>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup><a href="#fn_1" id="reffn_1">1</a></sup>：<a href="https://arxiv.org/abs/1411.4038" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a><br><sup><a href="#fn_2" id="reffn_2">2</a></sup>：<a href="https://github.com/vdumoulin/conv_arithmetic" target="_blank" rel="noopener">卷积动画</a><br><sup><a href="#fn_3" id="reffn_3">3</a></sup>：<a href="http://flyrie.top/2018/06/22/%E5%85%A8%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%EF%BC%88FCN%EF%BC%89/" target="_blank" rel="noopener">FCN-8s 结构图</a><br><sup><a href="#fn_4" id="reffn_4">4</a></sup>：<a href="https://learnopencv.com/pytorch-for-beginners-semantic-segmentation-using-torchvision/" target="_blank" rel="noopener">分割后的图片解码</a><br><sup><a href="#fn_5" id="reffn_5">5</a></sup>：<a href="https://github.com/milesial/Pytorch-UNet" target="_blank" rel="noopener">U-Net 网络实现</a></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>：<a href="https://arxiv.org/abs/1411.4038" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a><br><sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>：<a href="https://github.com/vdumoulin/conv_arithmetic" target="_blank" rel="noopener">卷积动画</a><br><sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>：<a href="http://flyrie.top/2018/06/22/%E5%85%A8%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%EF%BC%88FCN%EF%BC%89/" target="_blank" rel="noopener">FCN-8s 结构图</a><br><sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>：<a href="https://learnopencv.com/pytorch-for-beginners-semantic-segmentation-using-torchvision/" target="_blank" rel="noopener">分割后的图片解码</a><br><sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>：<a href="https://github.com/milesial/Pytorch-UNet" target="_blank" rel="noopener">U-Net 网络实现</a></p>
 
     </div>
 
@@ -339,7 +345,7 @@
       <div class="popular-posts-title"><a href="\2021\01\19\Mask-PIL-jpg-and-png\" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\10\computer-vision\" rel="bookmark">卷积神经网络</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\25\Mask-R-CNN\" rel="bookmark">分割篇：Mask R-CNN</a></div>
     </li>
   </ul>
 
@@ -402,7 +408,10 @@
     <a href="/2021/05/20/MMdetection-pipeline/" rel="prev" title="目标检测篇：自定义 MMDetection 的 Pipeline">
       <i class="fa fa-chevron-left"></i> 目标检测篇：自定义 MMDetection 的 Pipeline
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/25/Mask-R-CNN/" rel="next" title="分割篇：Mask R-CNN">
+      分割篇：Mask R-CNN <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -479,7 +488,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -533,12 +542,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">646k</span>
+    <span title="站点总字数">648k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:47</span>
+    <span title="站点阅读时长">9:49</span>
 </div><div id="days"></div>
 <script>
 function show_date_time(){
