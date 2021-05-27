@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -294,19 +294,20 @@
       
         <p>CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。</p>
 <a id="more"></a>
+
 <h1 id="什么是语义分割"><a href="#什么是语义分割" class="headerlink" title="什么是语义分割"></a>什么是语义分割</h1><p>语义分割的直观解释可以见下图，计算照片中的每一个像素点的类别，进而得到哪些像素点属于同一类，把一些物体给分割出来：</p>
-<p><img data-src="http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/pr/DBOverview1_1_huff_0000964.jpg" alt></p>
+<p><img data-src="http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/pr/DBOverview1_1_huff_0000964.jpg"></p>
 <h1 id="FCN"><a href="#FCN" class="headerlink" title="FCN"></a>FCN</h1><p>CNN 能够对图片进行分类，可是怎么样才能识别图片中特定部分的物体，在这篇论文之前，还是一个未解难题。</p>
 <ul>
 <li>对于传统的分类网络，经过 CNN 不断卷积、池化的处理，最后进入全连接网络，预测当前图片的分类。但会丢失空间信息，无法预测每个像素的分类。</li>
 <li>对于目标检测的网络，也是经过 CNN 不断卷积、池化的处理，在最后的特征图上预测类别和位置。但识别出来的是目标框，并非物体的轮廓边界。</li>
 </ul>
 <p>而 FCN 的创新之处在于，使用卷积操作替换了分类网络的全连接，使得输入输出保持在相同尺寸，这样就可以预测每个像素点的类别。加上使用了卷积，自然而然也就可以处理任意尺寸的图像。网络结构如下，用下面的卷积替换上面的全连接：</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/24/gvGwrQ.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvGwrQ.png"></p>
 <h1 id="上采样"><a href="#上采样" class="headerlink" title="上采样"></a>上采样</h1><p>经过不断的卷积，图像的尺寸会减少而维度会增加。所以为了使得网络输出的图像尺寸和原图像一致，需要进行一些上采样，使它恢复到输入图像相同的尺寸，从而可以对每个像素都产生了一个预测, 同时保留了原始输入图像中的空间信息, 最后在与输入图等大小的特征图上对每个像素进行分类，逐像素地用 softmax 分类计算损失，相当于每个像素对应一个训练样本。这部分在论文的第三章有所描述。</p>
 <p>而上采样采用的操作是<strong>转置卷积</strong>，如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示，蓝色是输入，青色是输出，将图像的尺寸瞬间增加了一倍。而文中发现，这种形式的上采样是最有效的，且，可以通过叠加之前的输入（类此残差），获得更好的精度。此外文中特意表明了转置卷积也是卷积层，按照普通的卷积层进行训练即可。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/24/gvNSo9.gif" alt></p>
-<h1 id="融合操作"><a href="#融合操作" class="headerlink" title="融合操作"></a>融合操作</h1><p><img data-src="https://z3.ax1x.com/2021/05/24/gva3Vg.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvNSo9.gif"></p>
+<h1 id="融合操作"><a href="#融合操作" class="headerlink" title="融合操作"></a>融合操作</h1><p><img data-src="https://z3.ax1x.com/2021/05/24/gva3Vg.png"></p>
 <p>如上图所示，论文给出了 FCN 的三种版本。</p>
 <ul>
 <li>对于 FCN-32s，直接在最后一层进行 32 倍的上采样，原始空间信息倍大量丢失</li>
@@ -314,15 +315,16 @@
 <li>对于 FCN-8s，将 $F$ 与 pool3 后的结果相加，而后进行 8 倍上采样</li>
 </ul>
 <p>论文中的结论是，FCN-8s 的效果要好一些，毕竟更多的利用了原始空间信息。网络结构图如下 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> ：</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/24/gvwICd.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvwICd.png"></p>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>网上看到了份程序，逻辑写的还不错：</p>
 <p><a href="https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py" target="_blank" rel="noopener">https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py</a></p>
 <p>尺寸在我裁剪图片的时候进行了放缩，不要太在意。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/24/gvBWfH.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gvBWfH.png"></p>
 <h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><p>若要可视化展示结果，需要对网络输出的结果进行解码。如标注图片上的类别等。假设输入图像的尺寸是 [800, 800] 的，当前类别数量是 21，会得到 [bacthsize, num_classes, height, width] 的输出。假设当前 batchsize 是 1，那么就需要在 num_classes 张 [height, width] 大小的图片中选择出每个像素点的类别。</p>
-<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">out = fcn(data)[<span class="string">'out'</span>]</span><br><span class="line"><span class="comment"># 选择每个像素点的最大的类别</span></span><br><span class="line">om = torch.argmax(out.squeeze(), dim=<span class="number">0</span>).detach().cpu().numpy()</span><br><span class="line">decode_segmap(om)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_segmap</span><span class="params">(image, nc=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 类别颜色，画图用</span></span><br><span class="line">    label_colors = np.array([</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),  <span class="comment"># 0=background</span></span><br><span class="line">        <span class="comment"># 1=aeroplane, 2=bicycle, 3=bird, 4=boat, 5=bottle</span></span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 6=bus, 7=car, 8=cat, 9=chair, 10=cow</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        <span class="comment"># 11=dining table, 12=dog, 13=horse, 14=motorbike, 15=person</span></span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 16=potted plant, 17=sheep, 18=sofa, 19=train, 20=tv/monitor</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">    ])</span><br><span class="line">    r = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    g = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    b = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">0</span>, nc):</span><br><span class="line">        <span class="comment"># 目标类的索引</span></span><br><span class="line">        idx = image == l</span><br><span class="line">        r[idx] = label_colors[l, <span class="number">0</span>]</span><br><span class="line">        g[idx] = label_colors[l, <span class="number">1</span>]</span><br><span class="line">        b[idx] = label_colors[l, <span class="number">2</span>]</span><br><span class="line">    rgb = np.stack([r, g, b], axis=<span class="number">2</span>)</span><br><span class="line">    plt.imshow(rgb)</span><br><span class="line">    plt.savefig(<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">out = fcn(data)[<span class="string">'out'</span>]</span><br><span class="line"><span class="comment"># 选择每个像素点的最大的类别</span></span><br><span class="line">om = torch.argmax(out.squeeze(), dim=<span class="number">0</span>).detach().cpu().numpy()</span><br><span class="line">decode_segmap(om)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_segmap</span><span class="params">(image, nc=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 类别颜色，画图用</span></span><br><span class="line">    label_colors = np.array([</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),  <span class="comment"># 0=background</span></span><br><span class="line">        <span class="comment"># 1=aeroplane, 2=bicycle, 3=bird, 4=boat, 5=bottle</span></span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 6=bus, 7=car, 8=cat, 9=chair, 10=cow</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        <span class="comment"># 11=dining table, 12=dog, 13=horse, 14=motorbike, 15=person</span></span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 16=potted plant, 17=sheep, 18=sofa, 19=train, 20=tv/monitor</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">    ])</span><br><span class="line">    r = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    g = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    b = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">0</span>, nc):</span><br><span class="line">        <span class="comment"># 目标类的索引</span></span><br><span class="line">        idx = image == l</span><br><span class="line">        r[idx] = label_colors[l, <span class="number">0</span>]</span><br><span class="line">        g[idx] = label_colors[l, <span class="number">1</span>]</span><br><span class="line">        b[idx] = label_colors[l, <span class="number">2</span>]</span><br><span class="line">    rgb = np.stack([r, g, b], axis=<span class="number">2</span>)</span><br><span class="line">    plt.imshow(rgb)</span><br><span class="line">    plt.savefig(<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
+
 <h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>此外，U-Net <sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup> 的网络结构也适合做分割，先记下来，也许某一天做语义分割的任务会用到。</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/24/gv6rd0.png" alt></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/24/gv6rd0.png"></p>
 <h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1411.4038" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/vdumoulin/conv_arithmetic" target="_blank" rel="noopener">卷积动画演示</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="http://flyrie.top/2018/06/22/%E5%85%A8%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%EF%BC%88FCN%EF%BC%89/" target="_blank" rel="noopener">FCN-8s 结构图</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a href="https://learnopencv.com/pytorch-for-beginners-semantic-segmentation-using-torchvision/" target="_blank" rel="noopener">分割后的图片解码 </a></span><a href="#fnref:4" rev="footnote"> ↩</a></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/milesial/Pytorch-UNet" target="_blank" rel="noopener">U-Net 网络实现</a></span><a href="#fnref:5" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
@@ -332,6 +334,9 @@
       
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\26\Deform-CNN\" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
+    </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\05\01\FPN\" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
@@ -343,9 +348,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\01\19\Mask-PIL-jpg-and-png\" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\25\Mask-R-CNN\" rel="bookmark">分割篇：Mask R-CNN</a></div>
     </li>
   </ul>
 
@@ -487,7 +489,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">169</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -541,12 +543,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">682k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">10:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

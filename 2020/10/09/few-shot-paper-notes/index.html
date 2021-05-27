@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>3.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -303,10 +303,11 @@
 </ol>
 <p><strong>Warning：</strong>优缺点仅代表个人意见。</p>
 <a id="more"></a>
+
 <h1 id="第一篇"><a href="#第一篇" class="headerlink" title="第一篇"></a>第一篇</h1><blockquote>
 <p>Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019</p>
 </blockquote>
-<h2 id="准确率"><a href="#准确率" class="headerlink" title="准确率"></a>准确率</h2><p>$61.2\pm1.8\%$。</p>
+<h2 id="准确率"><a href="#准确率" class="headerlink" title="准确率"></a>准确率</h2><p>$61.2\pm1.8%$。</p>
 <h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><ol>
 <li>迁移学习获取预先的知识，将已有的知识用到小样本中；</li>
 <li>对于表现很差的查询数据，进行反复训练。就像高中那会儿，整理错题本并反复做错题一个道理。</li>
@@ -315,6 +316,8 @@
 <h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>引用论文原话：</p>
 <blockquote>
 <p>Specifically, for a particular few-shot dataset, we merge all-class data $D$ for pretraining. There are totally 64 classes in the training split of $D$ and each class contains 600 samples used to pre-train a 64-class classifier.</p>
+</blockquote>
+<blockquote>
 <p>“pre”means pre-trained for a single classificationtask using all training datapoints.</p>
 </blockquote>
 <p>意思是，对于一个具体任务。提前把任务中的所有样本都训练了一遍获取了知识，然后又用训练好的经验去做同一个任务的小样本问题。</p>
@@ -322,7 +325,7 @@
 <h1 id="第二篇"><a href="#第二篇" class="headerlink" title="第二篇"></a>第二篇</h1><blockquote>
 <p>Adaptive Cross-Modal Few-shot Learning, 2019, NIPS</p>
 </blockquote>
-<h2 id="准确率-1"><a href="#准确率-1" class="headerlink" title="准确率"></a>准确率</h2><p>$65.3\pm0.49\%$。</p>
+<h2 id="准确率-1"><a href="#准确率-1" class="headerlink" title="准确率"></a>准确率</h2><p>$65.3\pm0.49%$。</p>
 <h2 id="核心思想-1"><a href="#核心思想-1" class="headerlink" title="核心思想"></a>核心思想</h2><p>在图像分类问题中，图像本身带有视觉信息。当视觉模态的信息很少时，可以尝试利用语义模态的信息。利用 GloVe 获得词嵌入矩阵，这样就能得到标签的语义表示。于模态对齐相反的是，将数据的视觉信息和语义表示同时扔进两个网络，语义的网络学习得到一个参数$\lambda$，将语义空间的表示和视觉空间的表示进行线性加权，得到最后的结果：</p>
 <p>\begin{equation}<br>    \lambda \textbf{p}_c + (1-\lambda) \textbf{w}_c<br>\end{equation}</p>
 <h2 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h2><h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ol>
@@ -333,27 +336,27 @@
 <h1 id="第三篇"><a href="#第三篇" class="headerlink" title="第三篇"></a>第三篇</h1><blockquote>
 <p>Meta-Learning of Neural Architectures for Few-Shot Learning, CVPR, 2020</p>
 </blockquote>
-<h2 id="准确率-2"><a href="#准确率-2" class="headerlink" title="准确率"></a>准确率</h2><p>$61.7\pm0.3\%$</p>
+<h2 id="准确率-2"><a href="#准确率-2" class="headerlink" title="准确率"></a>准确率</h2><p>$61.7\pm0.3%$</p>
 <h2 id="核心思想-2"><a href="#核心思想-2" class="headerlink" title="核心思想"></a>核心思想</h2><p>个人对 NAS(neural architecture search) 不太熟，但愿我没理解错。NAS 的方法中有一类是基于梯度下降来调整网络结构的，而 meta-learning 中也有基于梯度下降来调整网络参数的。那么以 meta-learning 为框架，在训练数据的时候同时对这两者进行梯度下降，学到最后的网络结构和参数。</p>
 <p>然后如果没看错：后面的章节应该是调节 softmax 的方式，使得网络中节点边之间的权重（DARTS算法）快速的向 0 或 1靠近，避免网络结构难以训练时需要重新训练 meta-learning 的参数。实在对 NAS 不太熟，但愿没理解错。</p>
 <h2 id="优缺点-2"><a href="#优缺点-2" class="headerlink" title="优缺点"></a>优缺点</h2><p>和 NAS 结合了起来，但，总感觉偏应用。</p>
 <h1 id="第四篇"><a href="#第四篇" class="headerlink" title="第四篇"></a>第四篇</h1><blockquote>
 <p>Charting the Right Manifold: Manifold Mixup for Few-shot Learning, IEEE, MACV, 2020</p>
 </blockquote>
-<h2 id="准确率-3"><a href="#准确率-3" class="headerlink" title="准确率"></a>准确率</h2><p>$64.93\pm0.18\%$</p>
+<h2 id="准确率-3"><a href="#准确率-3" class="headerlink" title="准确率"></a>准确率</h2><p>$64.93\pm0.18%$</p>
 <h2 id="核心思想-3"><a href="#核心思想-3" class="headerlink" title="核心思想"></a>核心思想</h2><p>该论文设计的算法的目标就是在迁移学习的第一个阶段(即训练模型$f$的参数), 能够学习到一个模型, 该模型能够学习到丰富的, 通用的, 有意义的特征表示, 对数据分布的微小变化具有鲁棒性.</p>
 <p>使用了自监督学习的方法, 来首先学习到一个丰富, 通用, 有意义的特征表示(特征流形). 使用了两个辅助任务(可以任选其一): rotation和exemplar. (表现为损失函数)。我的理解: 特征流形就是一个特征空间, 这个特征空间中的特征向量是低维的, 没有冗余, 丰富的, 表示强。使用正则化技术(流形混合(manifold mixup)), 通过插值法实现的, 原理: 使决策边界更加光滑, 每个类的数据表示在一个更低的维度空间, 可以泛化到新任务中.</p>
 <h1 id="第五篇"><a href="#第五篇" class="headerlink" title="第五篇"></a>第五篇</h1><blockquote>
 <p>A BASELINE FOR FEW-SHOT IMAGE CLASSIFICATION, ICL, 2020</p>
 </blockquote>
-<h2 id="准确率-4"><a href="#准确率-4" class="headerlink" title="准确率"></a>准确率</h2><p>$68.11\%$</p>
+<h2 id="准确率-4"><a href="#准确率-4" class="headerlink" title="准确率"></a>准确率</h2><p>$68.11%$</p>
 <h2 id="核心思想-4"><a href="#核心思想-4" class="headerlink" title="核心思想"></a>核心思想</h2><p>对经过标准交叉熵损失训练的深度网络进行微调，是进行少量学习的坚实基础。如果对它们进行超导地微调，它的性能将优于标准数据集中具有相同超参数的最新技术。传统交叉熵：</p>
 <p>\begin{equation}<br>    \theta^*(D_s)=\arg\min_\theta\frac{1}{N_s}\sum_{(s,y)\in D_s} -\log p_\theta(y|x)<br>\end{equation}</p>
 <p>其中$D_s$代表训练集，$N_s$表示训练集中数据量。传导式微调：假设有一个查询样本$(x,y)$属于$D_q$，<br>\begin{equation}<br>    \theta^*=\arg\min_\theta\frac{1}{N_s}\sum_{(s,y)\in D_s} -\log p_\theta(y|x)+\frac{1}{N_q}\sum_{(x,y)\in D_q} H(p_\theta(\cdot|x))<br>\end{equation}<br>其中，$H$代表香农熵，作为损失函数的正则化项。</p>
 <h1 id="第六篇"><a href="#第六篇" class="headerlink" title="第六篇"></a>第六篇</h1><blockquote>
 <p>Zero and Few Shot Learning with Semantic Feature Synthesis and Competitive Learning, IEEE transactions on pattern analysis and machine intelligence, 2020</p>
 </blockquote>
-<h2 id="准确率-5"><a href="#准确率-5" class="headerlink" title="准确率"></a>准确率</h2><p>$62.28\pm0.13\%$</p>
+<h2 id="准确率-5"><a href="#准确率-5" class="headerlink" title="准确率"></a>准确率</h2><p>$62.28\pm0.13%$</p>
 <h2 id="核心思想-5"><a href="#核心思想-5" class="headerlink" title="核心思想"></a>核心思想</h2><p>通过两个方法来进行零样本学习，即: unseen classes 数据合成和健壮的投影函数学习。通过一定的策略从seen classes 数据生成 unseen classes 数据， 然后通过投影函数模型来最好的利用合成的unseen classes数据。</p>
 <ol>
 <li>合成的特征向量不能被认为属于第 $j$ 个unseen class. 也就是说, 生成的样本比较混乱. 不能正确归类。</li>
@@ -514,7 +517,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">169</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -568,12 +571,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">682k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">10:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

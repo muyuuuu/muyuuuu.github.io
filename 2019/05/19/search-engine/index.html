@@ -294,6 +294,7 @@
       
         <p>内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看起来不连贯，可以阅读原书，计算机专业推荐这两本书都读，非计算机专业只推荐阅读《数学之美》）</p>
 <a id="more"></a>
+
 <h1 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>以下内容只是简单的举例，先来看两个简单的句子：</p>
 <ul>
 <li><em>Iron Man</em> is a 2008 American superhero film based on the Marvel Comics character of the same name. </li>
@@ -302,7 +303,6 @@
 <p>假设上面两个句子是两个网页里面的内容吧。当创建新的网页部署到因特网上的时候，形如谷歌、必应等引擎会第一时间派遣爬虫机器人来获取你网页上的内容，比如各种单词的数量，单词内容等。将获取到的信息添加到谷歌内部的数据库里面。当某一用户使用谷歌搜索时，谷歌根据自己内部数据库的东西，进行各种算法，给出你想要的结果。</p>
 <p>形如各种常用的搜索引擎，即使待推荐的网页里面有一万个单词，但是搜索的时间都不会很长。显然并没有去遍历每个网页来确定是否推荐，而是设立了一种合理的数据结构来加快搜索进程。这个数据结构就是倒排索引。</p>
 <h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>对于上面两个句子，一共有二三十个单词。假设有33个单词吧，我懒得数了，那么我们就建立一个33长度的表。那么 Iron Man 是 1 中特有的单词，fictional 是 2 中特有的单词，superhero是 1 和 2 供有的单词，那么得到下面的表。</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -310,8 +310,7 @@
 <th>索引</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>Iron Man</td>
 <td>1</td>
 </tr>
@@ -323,9 +322,7 @@
 <td>superhero</td>
 <td>1, 2</td>
 </tr>
-</tbody>
-</table>
-</div>
+</tbody></table>
 <p>当有新的网页时就增加第三个网页，记为 3 。当然在后期处理的时候，单词的过去式、正在进行时、被动词等可以视为一个单词。当用户在引擎中输入搜索的内容时，比如superhero，那么就会搜索superhero在哪里出现。superhero在1， 2 中出现，那么就把1， 2 推荐出去。由此可见，这个方式根据内容确立索引顺序，而别的排序方式（脑补斗地主整理牌是有顺序的）是根据索引顺序确定牌的位置。和别的排序方案的逻辑相反，因此称为倒排索引。</p>
 <h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ul>
 <li>这个词表可以使用基数排序增加查询速度(基数排序就脑补新华字典的按拼音排序，一个道理)。</li>
@@ -339,11 +336,14 @@
 <li>形如 “的” “啊” “和” 等停用词权重为零，日常修饰语在查询的时候没有用的。</li>
 </ul>
 <h2 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h2><p>一个查询中的每一个关键词应该反应出：这个词对查询提供了多少信息。如果一个查询包括$N$个关键词，他们在一个网页中的出现频率是：$TF_1,…,TF_n$，$N$是语料库的大小。以每个词的信息熵作为它的权重。</p>
-<script type="math/tex; mode=display">I(w)=-P(w)\log P(w)=\frac{TF(w)}{N}\log \frac{N}{TF(w)}</script><p>之后，如果两个词的频率相差无几，一个词（时间晶体）是某篇文章的常用词，另一个词（应用）分散在多篇文章中，显然前者的权重应该更大，提供更好的分辨率。那么开始下面的表演：</p>
+<p>$$I(w)=-P(w)\log P(w)=\frac{TF(w)}{N}\log \frac{N}{TF(w)}$$</p>
+<p>之后，如果两个词的频率相差无几，一个词（时间晶体）是某篇文章的常用词，另一个词（应用）分散在多篇文章中，显然前者的权重应该更大，提供更好的分辨率。那么开始下面的表演：</p>
 <p>假设每篇文章的单词数是$M$，$D$是pagerank后的全部网页数量。则$M \cdot D = N$。</p>
 <p>一个关键词在一个文献中出现的次数为：$c(w)=\frac{Avg(TF(w))}{D(w)}$。推导出：</p>
-<script type="math/tex; mode=display">\frac{TF(w)}{N}\log \frac{N}{TF(w)}=TF(w)\log (\frac{D}{D(w)}\frac{M}{c(w)})=I(w)</script><p>继续，一个词的$I(w)$越大，相似性越大，一个词的平均出现次数越多，相似性越小。两者做个减法在做进一步处理，得到TFIDF的公式</p>
-<script type="math/tex; mode=display">TF\cdot IDF=I(w)-TF(w)\log \frac{M}{c(w)}=TF(w)\log \frac{D}{D(w)}</script><p>看两个等号之间的式子，第一项越大越好，第二项越小越好，推导出了新的式子。</p>
+<p>$$\frac{TF(w)}{N}\log \frac{N}{TF(w)}=TF(w)\log (\frac{D}{D(w)}\frac{M}{c(w)})=I(w)$$</p>
+<p>继续，一个词的$I(w)$越大，相似性越大，一个词的平均出现次数越多，相似性越小。两者做个减法在做进一步处理，得到TFIDF的公式</p>
+<p>$$TF\cdot IDF=I(w)-TF(w)\log \frac{M}{c(w)}=TF(w)\log \frac{D}{D(w)}$$  </p>
+<p>看两个等号之间的式子，第一项越大越好，第二项越小越好，推导出了新的式子。</p>
 <p>而新的式子$\mathrm{TFIDF}=TF(w)\log \frac{D}{D(w)}$也是现在最常用的方案。$TF(w)$是词频率，含义为某个词在文章中的次数除以文章总词数，而IDF的英文是inverse document frequency，逆文本频率指数，公式是$\log \frac{D}{D(w)}$，含义是语料库的文档总数除以含有该词汇的文档数后取对数。</p>
 <p>其实是先给出的TF-IDF公式，多年后信息论发展起来才用信息熵证明了IDF公式为什么这么写，是用$\log$ 而为什么不是根号。本文是直接从证明开始，引出的IDF公式。没想到数学还能严谨到如此境界，我还是好好用数学吧，我这脑子研究不了数学。</p>
 <p>最终，计算一篇文章每个词汇的$\mathrm{TFIDF}$并排序，取其中$\mathrm{TFIDF}$值最大的词汇，作为文章的关键词，即提取出一篇文章的几个关键词。</p>
@@ -373,9 +373,9 @@
 <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>没有找到合适的数据，就自己创造的没有link的数据，所以本次代码因缺数据而没有加入pagerank算法的代码。</p>
 <p><a href="https://github.com/muyuuuu/Search-Engine" target="_blank" rel="noopener">点我过去</a></p>
 <p>倒排数据结构展示：</p>
-<p><img data-src="/2019/05/19/search-engine/1.jpg" alt></p>
+<p><img data-src="/2019/05/19/search-engine/1.jpg"></p>
 <p>查询结果输出展示，对输入的内容进行查询。</p>
-<p><img data-src="/2019/05/19/search-engine/2.jpg" alt></p>
+<p><img data-src="/2019/05/19/search-engine/2.jpg"></p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>至此，从开始的倒排索引寻找出所有满足需求的网页，再用pagerank从满足需求的网页中求出高质量网页，在用TF-IDF算法在高质量网页中求出和查询最相关的网页。一步步完善，将自然语言以恰当的方式转为数字进行处理。当然还需要更详细的处理步骤，比如网页的反作弊技术，比如点击量，如何屏蔽相似性很高的广告等等。</p>
 <p>计算机和数学的应用层出不穷，即使也存在过时的技术，比如pagerank已经被谷歌淘汰，但背后的数学思维值得我们借鉴。比如2019年的美国大学生数学建模竞赛的C题，如何确定毒品的传播源头，不就是pagerank可以应用的场景吗。</p>
 <p>其实还有坑的，比如使用中文查询：“什么是汇编语言的中断”，那么新的问题又来了。英文单词之间有分割，自动提取关键词。中文的是句子呀，怎么让计算机认识句子并从里面抠出关键词呢？下次再写吧，这就涉及到了一些中文的自然语言处理的知识了。</p>
@@ -545,7 +545,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">169</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -599,12 +599,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">682k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">10:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

@@ -295,12 +295,13 @@
         <p>在很久之前，看过粒子群算法等相关的以概率收敛的优化算法。当时那个破教程写的又臭又长，丝毫没看懂。今日考试重温了一下，原来是这么简单。八点半考完的，闲的没事于是手动实现了粒子群算法。之后考虑在本文中添加遗传算法、模拟退火这两个主流的碰运气的优化算法。</p>
 <p>这类算法被优化课程的老师嘲讽了一番，缺乏严格的推导证明和参数的解释，大多是以科学的方法去碰运气，在解空间内进行搜索。</p>
 <a id="more"></a>
+
 <h1 id="粒子群算法"><a href="#粒子群算法" class="headerlink" title="粒子群算法"></a>粒子群算法</h1><p>对于一个目标函数，随机生成几个解视为粒子。将这几个粒子（数学意义为决策变量的取值）代入目标函数中，根据公式不断的迭代粒子的位置和速度参数，模仿鸟类觅食的行为来求出目标函数的最优解。</p>
-<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p><img data-src="https://static01.imgkr.com/temp/56609f049fc147fa8846b417236f846f.gif" alt></p>
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p><img data-src="https://static01.imgkr.com/temp/56609f049fc147fa8846b417236f846f.gif"></p>
 <h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>假设此时要优化的目标为：</p>
-<p>\begin{cases}<br>\min \Bigl( (x - 2)^2 - 6x + \frac{12\sin x}{x} - 9x \cos x \Bigr) \\<br>\text{s.t.} -4 \leq x \leq 4<br>\end{cases}</p>
+<p>\begin{cases}<br>\min \Bigl( (x - 2)^2 - 6x + \frac{12\sin x}{x} - 9x \cos x \Bigr) \<br>\text{s.t.} -4 \leq x \leq 4<br>\end{cases}</p>
 <p>粒子的更新只有以下两个公式：</p>
-<p>\begin{cases}<br>x_i(t+1)=x_i(t)+v_i(t+1) \\<br>v_i(t+1)=wv_i(t)+c_1r_{1t}\bigl(\text{pbest}-x_i(t)\bigl)+c_2r_{2t}\bigl(\text{gbest}-x_i(t)\bigl)<br>\end{cases}</p>
+<p>\begin{cases}<br>x_i(t+1)=x_i(t)+v_i(t+1) \<br>v_i(t+1)=wv_i(t)+c_1r_{1t}\bigl(\text{pbest}-x_i(t)\bigl)+c_2r_{2t}\bigl(\text{gbest}-x_i(t)\bigl)<br>\end{cases}</p>
 <ul>
 <li>$x_i(t)$，表示$t$时刻第$i$个粒子的位置，$0$时刻随机初始化即可；</li>
 <li>$v_i(t)$，表示$t$时刻第$i$个粒子的移动速度，$0$时刻随机初始化即可；</li>
@@ -312,7 +313,8 @@
 </ul>
 <p>其中，$\text{pbest},\text{gbest}$带进目标函数求解即可获得。编程实现可以考虑向量形式，容易实现。</p>
 <h2 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h2><p>核心程序如下所示，全部程序请<a href="https://github.com/muyuuuu/Algorithm/tree/master/PSO" target="_blank" rel="noopener">点击这里</a>。注意：代码目前仅限于单决策变量，暂时没时间适配到多决策变量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 迭代次数</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(self._iter_num):</span><br><span class="line">    <span class="comment"># 计算每个点的 fitness</span></span><br><span class="line">    self._fitness = op_func(self._x)</span><br><span class="line">    <span class="comment"># 当前最优</span></span><br><span class="line">    self._pbest = self._x[np.argmin(self._fitness)]</span><br><span class="line">    <span class="comment"># 全局最优</span></span><br><span class="line">    <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">        self._gbest = self._pbest</span><br><span class="line">    <span class="keyword">elif</span> op_func(self._pbest) &lt; op_func(self._gbest):</span><br><span class="line">        self._gbest = self._pbest</span><br><span class="line">    <span class="comment"># 速度更新</span></span><br><span class="line">    r1, r2 = np.random.rand(), np.random.rand()</span><br><span class="line">    self._v = self._w * self._v + \</span><br><span class="line">        r1 * self._c1 * (self._pbest - self._x) + \</span><br><span class="line">        r2 * self._c2 * (self._gbest - self._x) </span><br><span class="line">    <span class="comment"># 位置更新</span></span><br><span class="line">    self._x += self._v</span><br><span class="line">    <span class="comment"># 越界后强制到边界点</span></span><br><span class="line">    self._x = np.clip(self._x, self._left, self._right)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 迭代次数</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(self._iter_num):</span><br><span class="line">    <span class="comment"># 计算每个点的 fitness</span></span><br><span class="line">    self._fitness = op_func(self._x)</span><br><span class="line">    <span class="comment"># 当前最优</span></span><br><span class="line">    self._pbest = self._x[np.argmin(self._fitness)]</span><br><span class="line">    <span class="comment"># 全局最优</span></span><br><span class="line">    <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">        self._gbest = self._pbest</span><br><span class="line">    <span class="keyword">elif</span> op_func(self._pbest) &lt; op_func(self._gbest):</span><br><span class="line">        self._gbest = self._pbest</span><br><span class="line">    <span class="comment"># 速度更新</span></span><br><span class="line">    r1, r2 = np.random.rand(), np.random.rand()</span><br><span class="line">    self._v = self._w * self._v + \</span><br><span class="line">        r1 * self._c1 * (self._pbest - self._x) + \</span><br><span class="line">        r2 * self._c2 * (self._gbest - self._x) </span><br><span class="line">    <span class="comment"># 位置更新</span></span><br><span class="line">    self._x += self._v</span><br><span class="line">    <span class="comment"># 越界后强制到边界点</span></span><br><span class="line">    self._x = np.clip(self._x, self._left, self._right)</span><br></pre></td></tr></table></figure>
+
 <h1 id="遗传算法"><a href="#遗传算法" class="headerlink" title="遗传算法"></a>遗传算法</h1><h1 id="模拟退火"><a href="#模拟退火" class="headerlink" title="模拟退火"></a>模拟退火</h1>
     </div>
 
@@ -477,7 +479,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">169</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -531,12 +533,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">648k</span>
+    <span title="站点总字数">682k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:49</span>
+    <span title="站点阅读时长">10:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
