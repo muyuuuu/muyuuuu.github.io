@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。">
+  <meta name="description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
 <meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面向长尾目标检测的 Seesaw Loss">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/28/seesaw-loss/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。">
+<meta property="og:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-28T12:05:29.138Z">
+<meta property="og:updated_time" content="2021-05-30T06:02:21.764Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面向长尾目标检测的 Seesaw Loss">
-<meta name="twitter:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。">
+<meta name="twitter:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/28/seesaw-loss/">
 
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-05-28 15:54:02 / 修改时间：20:05:29" itemprop="dateCreated datePublished" datetime="2021-05-28T15:54:02+08:00">2021-05-28</time>
+              <time title="创建时间：2021-05-28 15:54:02" itemprop="dateCreated datePublished" datetime="2021-05-28T15:54:02+08:00">2021-05-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-30 14:02:21" itemprop="dateModified" datetime="2021-05-30T14:02:21+08:00">2021-05-30</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -286,7 +292,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>论文好像是 2020 年底传到 arxiv <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。</p>
+        <p>论文好像是 2020 年底传到 arxiv <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。</p>
 <a id="more"></a>
 
 <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>在现实世界中，只有少部分类有充足的数据，大部分类别其实只有小部分数据，这就是类别数量呈现长尾分布。如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示：</p>
@@ -559,7 +565,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">685k</span>
+    <span title="站点总字数">686k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

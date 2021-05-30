@@ -3,7 +3,7 @@
   <entry>
     <title>面向长尾目标检测的 Seesaw Loss</title>
     <url>/2021/05/28/seesaw-loss/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>论文好像是 2020 年底传到 arxiv <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>论文好像是 2020 年底传到 arxiv <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。</p>
 <a id="more"></a>
 
 <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>在现实世界中，只有少部分类有充足的数据，大部分类别其实只有小部分数据，这就是类别数量呈现长尾分布。如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示：</p>
@@ -2368,11 +2368,11 @@
 <li>对于任意任务$t$，$\nabla_{\theta^t}L^t(\theta^{sh},\theta^t)=0$</li>
 </ul>
 <p>任意解满足以上条件就是Pareto平稳点，每一个优化解都是平稳点，反之不成立。优化问题改写为：</p>
-<p>\begin{equation}<br>\min_{\alpha_1\cdots,\alpha_T}\Bigl(  \Big| \sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}L^t(\theta^{sh},\theta^i) \Big|<em>2^2  \Big| \sum</em>{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i\Bigr)<br>\label{KKT}<br>\end{equation}</p>
+<p>\begin{equation}<br>\min_{\alpha_1\cdots,\alpha_T}\Bigl(  \Bigl| \sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}L^t(\theta^{sh},\theta^i) \Bigr|^2 \Bigl| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i\Bigr)<br>\label{KKT}<br>\end{equation}</p>
 <p>这个优化问题已经被证明任何一个优化解取值都是0且结果满足KKT条件；或者当前解能提供一个下降的方向来优化所有的任务。于是MTL算法将计算式\eqref{KKT}得到每一个任务的梯度，并使用$\sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}$来更新共享参数的梯度。</p>
 <h2 id="算法应用到大规模任务中"><a href="#算法应用到大规模任务中" class="headerlink" title="算法应用到大规模任务中"></a>算法应用到大规模任务中</h2><p>\eqref{KKT}中定义的优化问题等价于在<strong>输入空间的凸组合中找到最小范数</strong>。因此使用基于凸优化的一种方法来求解。</p>
 <p>在处理一般情况之前，先处理只有两个优化目标的一般情况。此时的优化目标是一个一元二次函数：$min_{\alpha\in [0,1]}||\alpha\nabla_{\theta^{sh}} L^1+(1-\alpha)\nabla_{\theta^{sh}}L^2||_2^2$，$\alpha$的解为：</p>
-<p>\begin{equation}<br>\hat\alpha=\biggl( \frac{\nabla_{\theta^{sh}}L^2-\nabla_{\theta^{sh}}L^1}{||\nabla_{\theta^{sh}}L^1-\nabla_{\theta^{sh}}L^2||<em>2^2}\nabla</em>{\theta^{sh}}L^2 \biggr)_+<br>\label{two}<br>\end{equation}</p>
+<p>\begin{equation}<br>\hat\alpha=\biggl( \frac{\nabla_{\theta^{sh}}L^2-\nabla_{\theta^{sh}}L^1}{||\nabla_{\theta^{sh}}L^1-\nabla_{\theta^{sh}}L^2||^2}\nabla_{\theta^{sh}}L^2 \biggr)_+<br>\label{two}<br>\end{equation}</p>
 <p>$[a]_+$表示$\max(\min(a,1),0)$。以\eqref{two}作为优化求解的示例，在算法2中给出了Frank-Wolfe求解大规模问题的一般化算法(见算法2)：</p>
 <p><img data-src="https://static01.imgkr.com/temp/20a8a63f1da840e08fdda5ae5a314ae4.png" alt="example-image"></p>
 <p><img data-src="https://static01.imgkr.com/temp/3fd47e446a944c3bad7af6bc4ca8c543.png" alt="example-image"></p>
@@ -2380,9 +2380,9 @@
 <p>为降低计算复杂度，提出了一种有效的方法来确定优化目标的上界，且此时的模型只需要一次反向传播。将模型的结构分为：<strong>共享的表示层函数与特定任务的决策函数。</strong>此类架构涵盖了大多数现有的MTL模型，定义为：</p>
 <p>\begin{equation}<br>    f^t(x;\theta^{sh},\theta^t)=f^t(g(x;\theta^{sh});\theta^t)<br>\end{equation}</p>
 <p>$g$是共享的多任务表示层函数，$f^t$是第$t$个任务的决策函数，且输入为$g$的输出。如果表示层的函数输出为$[z_1,z_2,\cdots,z_n]$，$z_i=g(x_i;\theta^{sh})$，则优化问题的上界为：</p>
-<p>\begin{equation}<br>    \Bigl| \sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^t \Bigr|<em>2^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|<em>2^2 \Bigl| \sum</em>{i=1}^T\alpha_i\nabla</em>{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
+<p>\begin{equation}<br>    \Bigl| \sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^t \Bigr|^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|^2 \Bigl| \sum_{i=1}^T\alpha_i\nabla_{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
 <p>$\nabla_{Z}L^t$能够在单向反向传播中计算得出，$\frac{\partial Z}{\partial \theta^{sh}}$与$\alpha$无关，不会影响到优化过程，所以在优化过程中会被移除。因此使用上界来代替优化目标：</p>
-<p>\begin{equation}<br>    \min_{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum_{i=1}^T\alpha^i\nabla_{Z}L^t(\theta^{sh},\theta^i) \Big|<em>2^2  \Big| \sum</em>{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
+<p>\begin{equation}<br>    \min_{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum_{i=1}^T\alpha^i\nabla_{Z}L^t(\theta^{sh},\theta^i) \Big|^2  \Big| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
 <p>改进的模型称为<strong>MGDA-UB:Multiple Gradient Descent Algorithm – Upper Bound</strong>。使用共享表示层来代替共享参数后，模型计算复杂度将大大降低。虽然MGDA-UB是原始优化问题的一个估计，文末给出了仍然能产生Pareto最优解的证明。此时网络结构为：</p>
 <p><img data-src="https://static01.imgkr.com/temp/39ef45740d8b404bbbf4b4a3a0311aba.png"></p>
 <p>能将网络结构和公式推导结合到一起，这个想法是真的可以。还是说：先想出了网络结构，而后给出了数学公式的推导和证明。</p>
@@ -10683,8 +10683,8 @@
 <p>Limit one solution per email.</p>
 <p> The names of the students, advisor, or institution should NOT appear on any page of the electronic solution. Your team’s summary should be included as the first page of your file. Note: The attachment must be less than 17MB.</p>
 <hr>
-<h2 id="About-MCM-competition-time"><a href="#About-MCM-competition-time" class="headerlink" title="About MCM competition time:"></a>About MCM competition time:</h2><p>Each team is required to submit an electronic copy of its solution paper by email to <a href="mailto:&#x73;&#111;&#x6c;&#117;&#x74;&#x69;&#x6f;&#x6e;&#x73;&#x40;&#99;&#x6f;&#109;&#97;&#x70;&#46;&#x63;&#x6f;&#109;" target="_blank" rel="noopener">&#x73;&#111;&#x6c;&#117;&#x74;&#x69;&#x6f;&#x6e;&#x73;&#x40;&#99;&#x6f;&#109;&#97;&#x70;&#46;&#x63;&#x6f;&#109;</a>. Any team member or the advisor may submit this email.</p>
-<p>Send the signed Control Sheet by email to COMAP:After the signed control sheet is prepared, email it to: <a href="mailto:&#x66;&#x6f;&#114;&#x6d;&#x73;&#64;&#99;&#111;&#109;&#97;&#x70;&#46;&#x63;&#111;&#x6d;" target="_blank" rel="noopener">&#x66;&#x6f;&#114;&#x6d;&#x73;&#64;&#99;&#111;&#109;&#97;&#x70;&#46;&#x63;&#111;&#x6d;</a>.</p>
+<h2 id="About-MCM-competition-time"><a href="#About-MCM-competition-time" class="headerlink" title="About MCM competition time:"></a>About MCM competition time:</h2><p>Each team is required to submit an electronic copy of its solution paper by email to <a href="mailto:&#115;&#111;&#108;&#117;&#116;&#105;&#111;&#110;&#x73;&#64;&#x63;&#111;&#109;&#x61;&#112;&#x2e;&#x63;&#x6f;&#x6d;" target="_blank" rel="noopener">&#115;&#111;&#108;&#117;&#116;&#105;&#111;&#110;&#x73;&#64;&#x63;&#111;&#109;&#x61;&#112;&#x2e;&#x63;&#x6f;&#x6d;</a>. Any team member or the advisor may submit this email.</p>
+<p>Send the signed Control Sheet by email to COMAP:After the signed control sheet is prepared, email it to: <a href="mailto:&#x66;&#111;&#x72;&#109;&#x73;&#64;&#x63;&#111;&#109;&#97;&#112;&#46;&#99;&#111;&#x6d;" target="_blank" rel="noopener">&#x66;&#111;&#x72;&#109;&#x73;&#64;&#x63;&#111;&#109;&#97;&#112;&#46;&#99;&#111;&#x6d;</a>.</p>
 <p>In the subject line of your email write: your team’s control number. For example: 1900000.</p>
 <hr>
 <h2 id="Some-Thinking-About-Reading-UMAP"><a href="#Some-Thinking-About-Reading-UMAP" class="headerlink" title="Some Thinking About Reading UMAP"></a>Some Thinking About Reading UMAP</h2><p>论文中的某些部分可以简写，但是考虑因素要全面。符号说明简明清晰的包含所有要素。摘要写一页，包括使用的方法和对结果的总结,传达模型的意义(有所限制的展示基本的模型和潜在的假设)。包含你的结果，结果做到量化。</p>

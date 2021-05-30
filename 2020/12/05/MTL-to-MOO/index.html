@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-05T07:04:34.743Z">
+<meta property="og:updated_time" content="2021-05-30T05:54:35.820Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="论文笔记：Multi-Task Learning as Multi-Objective Optimization">
 <meta name="twitter:description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-12-05 13:26:18 / 修改时间：15:04:34" itemprop="dateCreated datePublished" datetime="2020-12-05T13:26:18+08:00">2020-12-05</time>
+              <time title="创建时间：2020-12-05 13:26:18" itemprop="dateCreated datePublished" datetime="2020-12-05T13:26:18+08:00">2020-12-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-30 13:54:35" itemprop="dateModified" datetime="2021-05-30T13:54:35+08:00">2021-05-30</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -316,11 +322,11 @@
 <li>对于任意任务$t$，$\nabla_{\theta^t}L^t(\theta^{sh},\theta^t)=0$</li>
 </ul>
 <p>任意解满足以上条件就是Pareto平稳点，每一个优化解都是平稳点，反之不成立。优化问题改写为：</p>
-<p>\begin{equation}<br>\min_{\alpha_1\cdots,\alpha_T}\Bigl(  \Big| \sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}L^t(\theta^{sh},\theta^i) \Big|<em>2^2  \Big| \sum</em>{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i\Bigr)<br>\label{KKT}<br>\end{equation}</p>
+<p>\begin{equation}<br>\min_{\alpha_1\cdots,\alpha_T}\Bigl(  \Bigl| \sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}L^t(\theta^{sh},\theta^i) \Bigr|^2 \Bigl| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i\Bigr)<br>\label{KKT}<br>\end{equation}</p>
 <p>这个优化问题已经被证明任何一个优化解取值都是0且结果满足KKT条件；或者当前解能提供一个下降的方向来优化所有的任务。于是MTL算法将计算式\eqref{KKT}得到每一个任务的梯度，并使用$\sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}$来更新共享参数的梯度。</p>
 <h2 id="算法应用到大规模任务中"><a href="#算法应用到大规模任务中" class="headerlink" title="算法应用到大规模任务中"></a>算法应用到大规模任务中</h2><p>\eqref{KKT}中定义的优化问题等价于在<strong>输入空间的凸组合中找到最小范数</strong>。因此使用基于凸优化的一种方法来求解。</p>
 <p>在处理一般情况之前，先处理只有两个优化目标的一般情况。此时的优化目标是一个一元二次函数：$min_{\alpha\in [0,1]}||\alpha\nabla_{\theta^{sh}} L^1+(1-\alpha)\nabla_{\theta^{sh}}L^2||_2^2$，$\alpha$的解为：</p>
-<p>\begin{equation}<br>\hat\alpha=\biggl( \frac{\nabla_{\theta^{sh}}L^2-\nabla_{\theta^{sh}}L^1}{||\nabla_{\theta^{sh}}L^1-\nabla_{\theta^{sh}}L^2||<em>2^2}\nabla</em>{\theta^{sh}}L^2 \biggr)_+<br>\label{two}<br>\end{equation}</p>
+<p>\begin{equation}<br>\hat\alpha=\biggl( \frac{\nabla_{\theta^{sh}}L^2-\nabla_{\theta^{sh}}L^1}{||\nabla_{\theta^{sh}}L^1-\nabla_{\theta^{sh}}L^2||^2}\nabla_{\theta^{sh}}L^2 \biggr)_+<br>\label{two}<br>\end{equation}</p>
 <p>$[a]_+$表示$\max(\min(a,1),0)$。以\eqref{two}作为优化求解的示例，在算法2中给出了Frank-Wolfe求解大规模问题的一般化算法(见算法2)：</p>
 <p><img data-src="https://static01.imgkr.com/temp/20a8a63f1da840e08fdda5ae5a314ae4.png" alt="example-image"></p>
 <p><img data-src="https://static01.imgkr.com/temp/3fd47e446a944c3bad7af6bc4ca8c543.png" alt="example-image"></p>
@@ -328,9 +334,9 @@
 <p>为降低计算复杂度，提出了一种有效的方法来确定优化目标的上界，且此时的模型只需要一次反向传播。将模型的结构分为：<strong>共享的表示层函数与特定任务的决策函数。</strong>此类架构涵盖了大多数现有的MTL模型，定义为：</p>
 <p>\begin{equation}<br>    f^t(x;\theta^{sh},\theta^t)=f^t(g(x;\theta^{sh});\theta^t)<br>\end{equation}</p>
 <p>$g$是共享的多任务表示层函数，$f^t$是第$t$个任务的决策函数，且输入为$g$的输出。如果表示层的函数输出为$[z_1,z_2,\cdots,z_n]$，$z_i=g(x_i;\theta^{sh})$，则优化问题的上界为：</p>
-<p>\begin{equation}<br>    \Bigl| \sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^t \Bigr|<em>2^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|<em>2^2 \Bigl| \sum</em>{i=1}^T\alpha_i\nabla</em>{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
+<p>\begin{equation}<br>    \Bigl| \sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^t \Bigr|^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|^2 \Bigl| \sum_{i=1}^T\alpha_i\nabla_{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
 <p>$\nabla_{Z}L^t$能够在单向反向传播中计算得出，$\frac{\partial Z}{\partial \theta^{sh}}$与$\alpha$无关，不会影响到优化过程，所以在优化过程中会被移除。因此使用上界来代替优化目标：</p>
-<p>\begin{equation}<br>    \min_{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum_{i=1}^T\alpha^i\nabla_{Z}L^t(\theta^{sh},\theta^i) \Big|<em>2^2  \Big| \sum</em>{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
+<p>\begin{equation}<br>    \min_{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum_{i=1}^T\alpha^i\nabla_{Z}L^t(\theta^{sh},\theta^i) \Big|^2  \Big| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
 <p>改进的模型称为<strong>MGDA-UB:Multiple Gradient Descent Algorithm – Upper Bound</strong>。使用共享表示层来代替共享参数后，模型计算复杂度将大大降低。虽然MGDA-UB是原始优化问题的一个估计，文末给出了仍然能产生Pareto最优解的证明。此时网络结构为：</p>
 <p><img data-src="https://static01.imgkr.com/temp/39ef45740d8b404bbbf4b4a3a0311aba.png"></p>
 <p>能将网络结构和公式推导结合到一起，这个想法是真的可以。还是说：先想出了网络结构，而后给出了数学公式的推导和证明。</p>
@@ -545,7 +551,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">685k</span>
+    <span title="站点总字数">686k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
