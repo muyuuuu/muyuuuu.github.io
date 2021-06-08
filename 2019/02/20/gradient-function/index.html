@@ -293,9 +293,8 @@
 
       
         <p>优化器这种东西之前从来不去接触，以为是很高深莫测的东西。直到今天自己去亲自探测才发现，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。</p>
-<p><img data-src="/2019/02/20/gradient-function/opt1.gif"></p>
+<p><img data-src="/2019/02/20/gradient-function/opt1.gif" alt></p>
 <a id="more"></a>
-
 <p>本文收录内容：</p>
 <ul>
 <li>加权移动平均</li>
@@ -308,47 +307,30 @@
 <h2 id="学习率衰减"><a href="#学习率衰减" class="headerlink" title="学习率衰减"></a>学习率衰减</h2><p>普及一下随机梯度下降<strong>SGD</strong>就是，没使用一个样本就对网络权重更新一次，因为一个样本过于片面，所以导致成本函数在最小值附近徘徊但是很难收敛。</p>
 <p>为什么难以收敛呢，这是学习率$\alpha$的原因，因为刚开始和最后结束$\alpha$是一直不变的，后期只要以$\alpha$学习了噪音数据，那么终究会导致函数值不够收敛，总是震荡。</p>
 <p>所以，可以通过某种方式，规定在后期的$\alpha$会越来越小，也就是在后期能学习到的经验逐渐减少，强迫网络收敛。实现方式多种多样，举个栗子：</p>
-<p>$$\alpha=\frac{\alpha_0}{1+\mathrm{DecaryRate}\times \mathrm{eproch}}$$</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">model.compile(optimizer=tf.train.MomentumOptimizer(</span><br><span class="line">                            learning_rate=<span class="number">0.01</span>,</span><br><span class="line">                            decay=<span class="number">0.9</span></span><br><span class="line">                            use_locking=<span class="literal">False</span>,</span><br><span class="line">                            name=<span class="string">'Momentum'</span>,</span><br><span class="line">                            use_nesterov=<span class="literal">False</span>),</span><br><span class="line">              loss=<span class="string">'sparse_categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
-
+<script type="math/tex; mode=display">\alpha=\frac{\alpha_0}{1+\mathrm{DecaryRate}\times \mathrm{eproch}}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">model.compile(optimizer=tf.train.MomentumOptimizer(</span><br><span class="line">                            learning_rate=<span class="number">0.01</span>,</span><br><span class="line">                            decay=<span class="number">0.9</span></span><br><span class="line">                            use_locking=<span class="literal">False</span>,</span><br><span class="line">                            name=<span class="string">'Momentum'</span>,</span><br><span class="line">                            use_nesterov=<span class="literal">False</span>),</span><br><span class="line">              loss=<span class="string">'sparse_categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
 <p>实际上，在多位特征输入的情况下，很慢出现局部最优点的情况，出现局部最优就是函数为凸函数，而假设有<strong>100</strong>个特征(算比较少的了)，每个特征同时出现局部最优，此处出现局部最优解的概率为$2^{-100}$。</p>
 <p>所以，更需要在意的是本文开头动画中马鞍面的处理。这个时候就需要一些强大的梯度函数来处理复杂情况了。</p>
 <h2 id="加权移动平均"><a href="#加权移动平均" class="headerlink" title="加权移动平均"></a>加权移动平均</h2><p>给出加权移动平均的公式：</p>
-<p>$$v_n=\beta V_{n-1}+(1-\beta)x_n,v_0=0$$</p>
-<p>$x_n$是第$n$个数值，$v_n$是第$n$个的平均值，$\beta$是对前面数值的学习情况，因为设置初始值为0，前期的函数数值会偏低，不过这点误差可以接受。来看下图，首先产生一堆随机数，然后用不同的$\beta$去求随机数的平均值。</p>
-<p><img data-src="/2019/02/20/gradient-function/1.png"></p>
+<script type="math/tex; mode=display">v_n=\beta V_{n-1}+(1-\beta)x_n,v_0=0</script><p>$x_n$是第$n$个数值，$v_n$是第$n$个的平均值，$\beta$是对前面数值的学习情况，因为设置初始值为0，前期的函数数值会偏低，不过这点误差可以接受。来看下图，首先产生一堆随机数，然后用不同的$\beta$去求随机数的平均值。</p>
+<p><img data-src="/2019/02/20/gradient-function/1.png" alt></p>
 <p>我们发现，当$\beta$过大的时候(0.98)，学习的趋势呈现出了随机性，而$\beta$太小时(0.5)，学习的趋势呈现出了滞后性，也就是对前面的信息学的慢，反应也慢。选择一个合适的$\beta$(0.9)，就能很好的描述出数据的平均走势。而接下来的优化器，也很大程度借鉴了这个观念。</p>
 <h3 id="python实现："><a href="#python实现：" class="headerlink" title="python实现："></a>python实现：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">date = <span class="number">365</span></span><br><span class="line">x = np.linspace(<span class="number">-1</span>, <span class="number">1</span>, date)</span><br><span class="line">x = x.reshape(date, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 噪音数据</span></span><br><span class="line">noise = <span class="number">0.1</span> * np.random.randn(date)</span><br><span class="line">noise = noise.reshape(date, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 产生随机函数</span></span><br><span class="line">y = - x * x + noise + <span class="number">1</span></span><br><span class="line"><span class="comment"># 加权移动平均函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">weight__move_average</span><span class="params">(beta, date, y_value)</span>:</span></span><br><span class="line"></span><br><span class="line">    v = [<span class="number">0</span>] * date</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">1</span>, date):</span><br><span class="line">        v[i] = beta * v[i - <span class="number">1</span>] + (<span class="number">1</span> - beta) * y_value[i]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line"></span><br><span class="line">y_beta1 = weight__move_average(<span class="number">0.90</span>, <span class="number">365</span>, y)</span><br><span class="line">y_beta2 = weight__move_average(<span class="number">0.98</span>, <span class="number">365</span>, y)</span><br><span class="line">y_beta3 = weight__move_average(<span class="number">0.50</span>, <span class="number">365</span>, y)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plt.plot(x, y, label=<span class="string">'data'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plt.plot(x, y_beta1, label = <span class="string">'0.9'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">plt.plot(x, y_beta2, label = <span class="string">'0.98'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">4</span>)</span><br><span class="line">plt.plot(x, y_beta3, label = <span class="string">'0.5'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.savefig(<span class="string">'test.png'</span>, dpi = <span class="number">200</span>)</span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2 id="Momentum动量梯度下降"><a href="#Momentum动量梯度下降" class="headerlink" title="Momentum动量梯度下降"></a>Momentum动量梯度下降</h2><p>实际上，在使用<strong>batch</strong>输入时，因为存在噪音所以每时刻的梯度可能是一个乱七八糟的向量，就和上图的随机数一样。</p>
 <p>但是更希望不学习乱七八糟的随机数，而是减少乱七八糟的震荡，描绘大体的趋势即可，这个时候，就可以借鉴上文的移动加权平均函数，对梯度也做这样的处理。</p>
-<p>$$V_w=\beta V_{w-1}+(1-\beta)w,V_0=0$$</p>
-<p>$$w=w-\alpha V_w$$</p>
-<h3 id="Tensorflow实现"><a href="#Tensorflow实现" class="headerlink" title="Tensorflow实现"></a>Tensorflow实现</h3><p>实际上，tensorflow里面并没有上面的$1-\beta$这一项，tensorflow中的源码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">accumulation = momentum * accumulation + gradient</span><br><span class="line">variable -= learning_rate * accumulation</span><br></pre></td></tr></table></figure>
-
+<script type="math/tex; mode=display">V_w=\beta V_{w-1}+(1-\beta)w,V_0=0</script><script type="math/tex; mode=display">w=w-\alpha V_w</script><h3 id="Tensorflow实现"><a href="#Tensorflow实现" class="headerlink" title="Tensorflow实现"></a>Tensorflow实现</h3><p>实际上，tensorflow里面并没有上面的$1-\beta$这一项，tensorflow中的源码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">accumulation = momentum * accumulation + gradient</span><br><span class="line">variable -= learning_rate * accumulation</span><br></pre></td></tr></table></figure></p>
 <p>创建动量梯度下降优化器：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow <span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">model = keras.Sequential([</span><br><span class="line">    keras.layers.Flatten(input_shape=(<span class="number">28</span>, <span class="number">28</span>)),</span><br><span class="line">    keras.layers.Dense(<span class="number">128</span>, activation=tf.nn.relu),</span><br><span class="line">    keras.layers.Dense(<span class="number">10</span>, activation=tf.nn.softmax)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">beta = <span class="number">0.9</span></span><br><span class="line"></span><br><span class="line">model.compile(optimizer=tf.train.MomentumOptimizer(</span><br><span class="line">                            learning_rate=<span class="number">0.01</span>,</span><br><span class="line">                            momentum=beta,</span><br><span class="line">                            use_locking=<span class="literal">False</span>,</span><br><span class="line">                            name=<span class="string">'Momentum'</span>,</span><br><span class="line">                            use_nesterov=<span class="literal">False</span>),</span><br><span class="line">              loss=<span class="string">'sparse_categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2 id="RMSprop"><a href="#RMSprop" class="headerlink" title="RMSprop"></a>RMSprop</h2><p>为了下文的简便，这里先将上面的$v_w$暂时更换为$s_w$。同上，<strong>RMSprop</strong>只是在<strong>momentum</strong>的基础上改进了一点点：</p>
-<p>$$s_w=\beta_2S_{w-1}+(1-\beta_2)w^2$$</p>
-<p>$$w=w-\alpha\frac{w}{\sqrt{s_w}}$$</p>
-<p>在上面的两个式子中，我们发现当$w$很大时，$s_w$也会很大，当$w$很小时，$s_w$也会很小，这就保持了在$w$更新时较为平稳，减缓不恰当的摆动。</p>
+<script type="math/tex; mode=display">s_w=\beta_2S_{w-1}+(1-\beta_2)w^2</script><script type="math/tex; mode=display">w=w-\alpha\frac{w}{\sqrt{s_w}}</script><p>在上面的两个式子中，我们发现当$w$很大时，$s_w$也会很大，当$w$很小时，$s_w$也会很小，这就保持了在$w$更新时较为平稳，减缓不恰当的摆动。</p>
 <h3 id="Tensorflow简单实现"><a href="#Tensorflow简单实现" class="headerlink" title="Tensorflow简单实现"></a>Tensorflow简单实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">beta2 = <span class="number">0.9</span></span><br><span class="line"></span><br><span class="line">model.compile(optimizer=tf.train.RMSPropOptimizer(</span><br><span class="line">                            learning_rate=<span class="number">0.1</span>,</span><br><span class="line">                            momentum=beta2,</span><br><span class="line">                            epsilon=<span class="number">1e-10</span>,),</span><br><span class="line">              loss=<span class="string">'sparse_categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2 id="Adam优化器"><a href="#Adam优化器" class="headerlink" title="Adam优化器"></a>Adam优化器</h2><p>其实，把<strong>momentum</strong>和<strong>RMSprop</strong>整合一下爱，就得到了Adam优化器：</p>
 <p>首先初始化：</p>
-<p>$$v_w=0,s_w=0,v_b=0,s_b=0$$</p>
-<p>然后加权移动平均：</p>
-<p>$$v_w=\beta_1v_{dw-1}+(1-\beta_1)w \qquad v_b=\beta_1v_{b-1}+(1-\beta_1)b$$</p>
-<p>$$s_w=\beta_2s_{dw-1}+(1-\beta_2)w^2 \qquad s_b=\beta_2s_{b-1}+(1-\beta_2)b^2$$</p>
-<p>根据学习率对参数进行刷新：</p>
-<p>$$w=w-\alpha \frac{v_w}{\sqrt{s_w}} \qquad b=b-\alpha \frac{v_b}{\sqrt{s_b}}$$</p>
-<h3 id="简单的Tensorflow实现"><a href="#简单的Tensorflow实现" class="headerlink" title="简单的Tensorflow实现"></a>简单的Tensorflow实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model.compile(optimizer=tf.train.AdamOptimizer(),</span><br><span class="line">              loss=<span class="string">'sparse_categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
-
+<script type="math/tex; mode=display">v_w=0,s_w=0,v_b=0,s_b=0</script><p>然后加权移动平均：</p>
+<script type="math/tex; mode=display">v_w=\beta_1v_{dw-1}+(1-\beta_1)w \qquad v_b=\beta_1v_{b-1}+(1-\beta_1)b</script><script type="math/tex; mode=display">s_w=\beta_2s_{dw-1}+(1-\beta_2)w^2 \qquad s_b=\beta_2s_{b-1}+(1-\beta_2)b^2</script><p>根据学习率对参数进行刷新：</p>
+<script type="math/tex; mode=display">w=w-\alpha \frac{v_w}{\sqrt{s_w}} \qquad b=b-\alpha \frac{v_b}{\sqrt{s_b}}</script><h3 id="简单的Tensorflow实现"><a href="#简单的Tensorflow实现" class="headerlink" title="简单的Tensorflow实现"></a>简单的Tensorflow实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">model.compile(optimizer=tf.train.AdamOptimizer(),</span><br><span class="line">              loss=<span class="string">'sparse_categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
 <h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>通过这几天的整理，生动形象的诠释了什么叫先看懂数学原理再来抄代码，不然代码的参数，含义都看不懂，<strong>Ctrl c</strong>和<strong>Ctrl v</strong>来的代码没有灵魂，无非是某些培训机构让你快速入门的盈利工具。</p>
 <p>实在是不能再折腾这些乱七八糟的了，得赶紧看高数了，不然考不上研究生了刺激。</p>
 <p>其实还有某些网络的调控方案，梯度消失梯度爆炸的问题，简单描述一下吧。</p>
@@ -374,10 +356,10 @@
       <div class="popular-posts-title"><a href="\2019\02\19\optimizeDL\" rel="bookmark">正则化调教神经网络</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\18\rnn1\" rel="bookmark">循环神经网络的进化</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\18\rnn\" rel="bookmark">循环神经网络</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\18\rnn\" rel="bookmark">循环神经网络</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\18\rnn1\" rel="bookmark">循环神经网络的进化</a></div>
     </li>
   </ul>
 
@@ -574,12 +556,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">686k</span>
+    <span title="站点总字数">679k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:23</span>
+    <span title="站点阅读时长">10:17</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

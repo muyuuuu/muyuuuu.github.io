@@ -288,12 +288,10 @@
       
         <p>继上次了解完<a href="https://muyuuuu.github.io/2020/05/09/entropy/">信息熵</a>后，没想到在对抗训练中又回到了损失函数的分析上。<code>torch</code>实现的有点迷惑，正好趁这次机会，连着代码和公式好好推导下。这种损失的优缺点日后会放上来，主要取决论文进度。</p>
 <a id="more"></a>
-
 <h1 id="一个简单实例"><a href="#一个简单实例" class="headerlink" title="一个简单实例"></a>一个简单实例</h1><p>交叉熵的公式定义耳熟能详了：</p>
 <p>\begin{equation}\label{ce}<br>H(p,q) = -\sum_{x\in X} p(x) \log q(x)<br>\end{equation}</p>
 <p>这里带入一个实例算一下：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># example of calculating cross entropy</span></span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> log2</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span><span class="params">(p, q)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> -sum([p[i] * log2(q[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(len(p))])</span><br><span class="line"></span><br><span class="line"><span class="comment"># define data</span></span><br><span class="line">p = [<span class="number">0.10</span>, <span class="number">0.40</span>, <span class="number">0.50</span>]</span><br><span class="line">q = [<span class="number">0.80</span>, <span class="number">0.15</span>, <span class="number">0.05</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy H(P, Q)</span></span><br><span class="line">ce_pq = cross_entropy(p, q)</span><br><span class="line">print(<span class="string">'H(P, Q): %.3f bits'</span> % ce_pq)  <span class="comment"># H(P, Q): 3.288 bits</span></span><br><span class="line"><span class="comment"># calculate cross entropy H(Q, P)</span></span><br><span class="line">ce_qp = cross_entropy(q, p)</span><br><span class="line">print(<span class="string">'H(Q, P): %.3f bits'</span> % ce_qp)  <span class="comment"># H(Q, P): 2.906 bits</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3 bit 的信息差异</span></span><br></pre></td></tr></table></figure>
-
 <p>需要注意的是，$H(p,q) \neq H(q,p)$。那么再来看深度学习中的定义，其实都一样，只是深度学习中要求真实标签不能是 $\log$ 那一项，因为 $\log$ 的定义域不能取 0。</p>
 <p>\begin{equation}<br>H = -\sum_{c=1}^M y \log \hat{y}<br>\end{equation}</p>
 <p>其中，$y$ 是真实的标签，$M$ 是类别数量，$\hat{y}$ 是自己预测的结果。如果是三分类问题，假设 $y=[1,0,0]$，$\hat{y}=[0.4,0.1,0.5]$，那么此时的交叉熵是 $-\log 0.4$。<strong>因为其它标签取值是 0，即不参与运算</strong>，换句话说，交叉熵的损失只取决于被正确分类的概率，具体缺陷可以公式推导一下。带入上述代码，得到一致的结果。</p>
@@ -530,12 +528,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">686k</span>
+    <span title="站点总字数">679k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:23</span>
+    <span title="站点阅读时长">10:17</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-30T06:02:21.764Z">
+<meta property="og:updated_time" content="2021-06-08T15:02:54.461Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面向长尾目标检测的 Seesaw Loss">
 <meta name="twitter:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-30 14:02:21" itemprop="dateModified" datetime="2021-05-30T14:02:21+08:00">2021-05-30</time>
+                <time title="修改时间：2021-06-08 23:02:54" itemprop="dateModified" datetime="2021-06-08T23:02:54+08:00">2021-06-08</time>
               </span>
 
           
@@ -294,11 +294,10 @@
       
         <p>论文好像是 2020 年底传到 arxiv <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。</p>
 <a id="more"></a>
-
 <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>在现实世界中，只有少部分类有充足的数据，大部分类别其实只有小部分数据，这就是类别数量呈现长尾分布。如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示：</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/28/2FWClj.jpg"></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/28/2FWClj.jpg" alt></p>
 <p>而头部类实例在长尾数据集中占主导地位，这些实例为尾部类提供了大量的负样本。所以正样本和负样本在尾类上的梯度严重不平衡。说人话的意思是，含有尾部类别的样本本是正样本，头部类别的样本是负样本。由于负样本的数量大于正样本，所以负样本对尾部类别的影响大于正样本对尾部类别的影响，具体为啥可以看公式 $\eqref{why}$。由于交叉熵公式的原因，负样本的梯度在学习过程中起到了决定性影响，导致尾部类别被识别为背景或头部类别。如下图所示：</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/28/2FhmQJ.png"></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/28/2FhmQJ.png" alt></p>
 <ul>
 <li>那些鸟明明是正样本，但目标小，类别少，导致不如右侧常见的负样本的梯度大。负样本梯度指：就是负样本对当前类别的惩罚。</li>
 </ul>
@@ -331,16 +330,17 @@
 <p>\begin{equation}<br>\frac{\partial L}{\partial z_j} = S_{ij} \frac{e^z_j}{e^z_i} \hat{\sigma_i}, S_{ij} = M_{ij} \cdot C_{ij}<br>\end{equation}</p>
 <p>$S_{ij}$ 表示一种可调节的因子，表示类别为 $i$ 的正样本对类别 $j$ 的惩罚。其中，$M_{ij}$ 表示头部类别 $i$ 降低对尾部类别 $j$ 的惩罚，$C_{ij}$ 表示增加对类别 $j$ 的惩罚，当类别 $i$ 被误分类为 $j$ 时。</p>
 <h3 id="缓和因子"><a href="#缓和因子" class="headerlink" title="缓和因子"></a>缓和因子</h3><p>seesaw loss 在训练期间，会统计类别 $i$ 的数量为 $N_i$，对于正样本，也就是当前网络正在处理的类别 $i$，通过缓解因子调整对其它类别的惩罚，公式如下：</p>
-<p>\begin{equation}<br>M_{ij} =<br>\begin{cases}<br>    1, &amp; N_i \leq N_j \\<br>    \biggl(\frac{N_j}{N_i}\biggr)^p, &amp; N_i &gt; N_j<br>\end{cases}<br>\end{equation}</p>
+<p>\begin{equation}<br>M_{ij} =<br>\begin{cases}<br>    1, &amp; N_i \leq N_j \\\\<br>    \biggl(\frac{N_j}{N_i}\biggr)^p, &amp; N_i &gt; N_j<br>\end{cases}<br>\end{equation}</p>
 <p>如上述公式，当类别 $i$ 的数量 $N_i$ 远远大于其它类别时，对其它类别的惩罚力度会降低。$p$ 是控制惩罚程度的超参数。需要注意的是，seesaw loss 会在训练期间统计类别数量，而不是事先统计。这样做有两个好处：</p>
 <ul>
 <li>能适应不可见数据集，如训练数据来自流数据</li>
 <li>每个类别的训练样本能被其它类别的数据适度的影响，更加鲁棒。比如当前每个类只有 5 个数据，就算不上谁是尾部，谁是头部，惩罚力度可以都一样，能更加均匀的初始化和光滑的适应真实世界的数据</li>
 </ul>
-<p><img data-src="https://z3.ax1x.com/2021/05/28/2kVrNR.png"></p>
+<p><img data-src="https://z3.ax1x.com/2021/05/28/2kVrNR.png" alt></p>
 <h3 id="补偿因子"><a href="#补偿因子" class="headerlink" title="补偿因子"></a>补偿因子</h3><p>这个计算就和上面的公式类似了，假设当前类别是 $i$ 时，被误分类为 $j$，那么缓和因子的计算公式为：</p>
-<p>\begin{equation}<br>C_{ij} =<br>\begin{cases}<br>    1, &amp; \sigma_j \leq \sigma_j \\<br>    \biggl(\frac{\sigma_j}{\sigma_i}\biggr)^q, &amp; \sigma_j &gt; \sigma_i<br>\end{cases}<br>\end{equation}</p>
+<p>\begin{equation}<br>C_{ij} =<br>\begin{cases}<br>    1, &amp; \sigma_j \leq \sigma_j \\\\<br>    \biggl(\frac{\sigma_j}{\sigma_i}\biggr)^q, &amp; \sigma_j &gt; \sigma_i<br>\end{cases}<br>\end{equation}</p>
 <p>$q$ 仍然是控制惩罚程度的超参数，被误分类的程度越大，补偿惩罚的力度就越大。</p>
+<p><img data-src="https://z3.ax1x.com/2021/05/28/2keIpt.png" alt></p>
 <h3 id="标准化线性层与输入"><a href="#标准化线性层与输入" class="headerlink" title="标准化线性层与输入"></a>标准化线性层与输入</h3><ul>
 <li>对于头部类别 $i$，与其相关的分类参数 $W_i$ 可能会比较大，抑制了其它类别的表达，所以对分类层进行 $L_2$ 正则化处理</li>
 <li>输入也要做正则化处理，我好奇为啥不是标准化</li>
@@ -348,7 +348,6 @@
 <h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>不知道读到现在有没有发现论文的一个明显漏洞。在目标检测领域，从候选框到 ROI Pooling，到处都有背景类的存在，所以背景类会是头部类别，且数量远远大于其它类，对其它类产生抑制。所以，seesaw loss 会减少对<strong>所有</strong>前景类的抑制，但由于采样问题，背景类数量几乎不会低于前景类，所以不会有对前景类的<strong>补偿因子</strong>，这样，可能会将背景识别为前景。</p>
 <p>所以论文的想法是，增加一个前景背景的二分类器，预测目标属于前景的概率 $\sigma_i^{obj}$ 还是背景的概率，背景会被抛弃，前景会被保留。而预测阶段，会保留这个二分类器。最终预测的目标概率就是：</p>
 <p>\begin{equation}<br>\sigma_i = \sigma_i^{obj} \cdot \sigma_i^{class}<br>\end{equation}</p>
-<p><img data-src="https://z3.ax1x.com/2021/05/28/2keIpt.png"></p>
 <h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><p>这篇论文的想法讲真还是不错的。忙猜一下，会有论文说这篇论文的 $p,q$ 是手工设定的不太好，$M_{ij}$ 和 $C_{ij}$ 直接相乘不太好没有道理。然后写篇论文，用神经网络自适应的学习参数 $p,q$ 或 $M_{ij}$，然后说这是改进，性能好了一些。<del>这样的东西我见过太多了，没意思，不过都是为了混一碗饭。</del></p>
 <h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/2008.10032" target="_blank" rel="noopener">Seesaw Loss for Long-Tailed Instance Segmentation 论文</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://tianchi.aliyun.com/competition/entrance/531888/information" target="_blank" rel="noopener">长尾分布图片来源</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
@@ -565,12 +564,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">686k</span>
+    <span title="站点总字数">679k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:23</span>
+    <span title="站点阅读时长">10:17</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
