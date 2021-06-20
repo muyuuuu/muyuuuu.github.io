@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>C++ 的命名空间</title>
+    <url>/2021/06/20/cpp-namespace/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>之前在学 C++ 的时候，第一个例子大概是：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"hello world"</span> &lt;&lt; <span class="built_in">endl</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"hello world"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当时也没多想，<code>std</code> 这个东西是什么。后来在接触了其它库后，发现也需要 <code>std</code> 的配合使用，如 <code>std::sort()</code>。今日来仔细研究下这个东西。</p>
+<a id="more"></a>
+<p>先掏出 cplusplus.com 来看看 <code>&lt;iostream&gt;</code> 是什么东西，官方的定义如下：</p>
+<blockquote>
+<p>Header that defines the standard input/output stream objects. After C++11, including <code>&lt;iostream&gt;</code> automatically includes also <code>&lt;ios&gt;</code>, <code>&lt;streambuf&gt;</code>, <code>&lt;istream&gt;</code>, <code>&lt;ostream&gt;</code> and <code>&lt;iosfwd&gt;</code>.</p>
+</blockquote>
+<p>而对于 <code>std</code> 而言，<code>std</code> 是一个命名空间，<code>::</code> 是域解析符，<code>std::cout</code> 的意思就是使用 <code>std</code> 命名空间中的 <code>cout</code> 标识符，也就是这个对象。而这个对象的定义在 <code>&lt;iostream&gt;</code> 这个标准库文件中，所以要包含这个头文件，才能使用 <code>cout</code> 这个对象。</p>
+<p>除此之外，C++ 标准库中的<strong>函数或对象</strong>都是在命名空间 <code>std</code> 中定义的，所以我们要使用标准函数库中的<strong>函数或对象</strong>都要使用 <code>std</code> 来限定。所以使用 <code>cout</code> 的时候要加上 <code>std::</code> 时，编译器就会明白我们调用的 <code>cout</code> 是名字空间 <code>std</code>中的 <code>cout</code>，而不是其它命名空间中的 <code>cout</code>。</p>
+<p>但是，尽量不要使用 <code>using namespace std</code>，这句话的意思是告诉编辑器我们将要使用空间 <code>std</code> 中的函数或者对象。或者说，能不用就不用，能在大括号里面用就不要在外面用，尤其是在 <code>.h</code> 等头文件中。幻想一下，你写的 <code>.h</code> 文件被其它人使用，你的名字空间和他人的名字空间不一样，但名字空间下面的函数名一样，就会导致冲突。跟 <code>python</code> 中写 <code>from numpy import *</code> 一个道理。</p>
+<p>所以一般来说，<code>std</code> 都是要调用 <code>C++</code> 标准库中的对象或函数时，要加上 <code>std</code> 限定。</p>
+<h1 id="自定义命名空间"><a href="#自定义命名空间" class="headerlink" title="自定义命名空间"></a>自定义命名空间</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// mylib/show_info.h 文件下</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> std1 &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cout</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"first"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> std2 &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cout</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"second"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main.cpp 文件下</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"mylib/show_info.h"</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std1;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>二分搜索的亿点点细节</title>
     <url>/2021/06/18/binary-search/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>不能继续开坑了，得整理一下。最近在刷二分法，思路很简单，细节是魔鬼。时而减一时而不用，仿佛在面向玄学编程，所以特意来整理一下。<a href="https://github.com/labuladong/fucking-algorithm/blob/master/%E7%AE%97%E6%B3%95%E6%80%9D%E7%BB%B4%E7%B3%BB%E5%88%97/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E8%AF%A6%E8%A7%A3.md" target="_blank" rel="noopener">本文参考</a>。</p>
@@ -42,6 +62,9 @@
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">int</span> right = nums.size(); <span class="comment">// 注意</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(nums[mid] == target)</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target)</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target)</span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> nums[left - <span class="number">1</span>] == target ? left - <span class="number">1</span> : <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 0 1 2 3 4 5 6  7  8  9  10</span></span><br><span class="line">    <span class="comment">// 1 3 5 5 8 9 12 23 34 56 84</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v&#123;<span class="number">12</span>, <span class="number">34</span>, <span class="number">23</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">8</span>, <span class="number">56</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">84</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> target = <span class="number">34</span>;</span><br><span class="line">    sort(v.begin(), v.end());</span><br><span class="line">    <span class="keyword">int</span> a = binarySearch(v, target);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="STL-开车"><a href="#STL-开车" class="headerlink" title="STL 开车"></a>STL 开车</h1><p>对于一些高级语言而言，其实都内置了二分搜索。以 <code>C++</code> 为例，搜索数组 <code>1 2 2 2 3</code> 中有几个 2。第一种方案是搜索 2 出现的左边界，而后搜索出现的右边界。但是也可以通过 <code>lower_bound</code> 和 <code>upper_bound</code> 来解决，因为在某些复杂应用下，二分只是一个小点，没必要花费大多精力在不重要的点。</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> target = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::iterator lower, upper;</span><br><span class="line"></span><br><span class="line">    lower = lower_bound(v.begin(), v.end(), target);</span><br><span class="line">    upper = upper_bound(v.begin(), v.end(), target);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(upper - lower) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>DataStructure</tag>
+      </tags>
   </entry>
   <entry>
     <title>一些关于对抗补丁的论文</title>
@@ -9570,6 +9593,46 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -9633,46 +9696,6 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
