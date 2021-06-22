@@ -20,18 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Just for Life.">
-<meta property="og:url" content="https://muyuuuu.github.io/tags/Database/index.html">
+  <meta name="description" content="MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，网络连干净样本都不认识，何谈认识它的对抗样本？ MART 算">
+<meta name="keywords" content="DeepLearning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对抗训练篇：MART 防御算法论文笔记">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/06/22/MART/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+<meta property="og:description" content="MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，网络连干净样本都不认识，何谈认识它的对抗样本？ MART 算">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-06-22T14:25:22.125Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Just for Life.">
-<meta name="twitter:description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+<meta name="twitter:title" content="对抗训练篇：MART 防御算法论文笔记">
+<meta name="twitter:description" content="MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，网络连干净样本都不认识，何谈认识它的对抗样本？ MART 算">
 
-<link rel="canonical" href="https://muyuuuu.github.io/tags/Database/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/06/22/MART/">
 
 
 <script id="page-configurations">
@@ -39,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签云: Database | Just for Life.</title>
+  <title>对抗训练篇：MART 防御算法论文笔记 | Just for Life.</title>
   
 
 
@@ -218,97 +220,207 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">Database
-          <small>标签云</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/06/22/MART/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对抗训练篇：MART 防御算法论文笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-22 21:26:54 / 修改时间：22:25:22" itemprop="dateCreated datePublished" datetime="2021-06-22T21:26:54+08:00">2021-06-22</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+        <p>MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，<strong>网络连干净样本都不认识，何谈认识它的对抗样本？</strong> MART 算法的创新点在于区别对待错分类和正确分类的样本。</p>
+<a id="more"></a>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>MART 防御的仍然是微小扰动的图像，也就是人眼察觉不出来的那种。论文用$p$ 范数满足这一限制：$\Vert x’-x \Vert_p \leq \epsilon$。对抗训练可以视为使用对抗样本进行数据增强，解决的是以下优化问题：</p>
+<p>\begin{equation}<br>\min_\theta \frac{1}{n} \sum_{i=1}^{n} \max_{\Vert x’-x \Vert_p \leq \epsilon} L(h_\theta(x_i’), y_i)<br>\end{equation}</p>
+<p>$n$ 是一个 batch 的大小，$L$ 是分类的损失函数。内部通过最大化损生成对抗样本，外部最小化对抗样本的分类损失来训练更好的 DNN，如 <a href="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/">PGD</a> 就是使用的这种方案。</p>
+<p>而本文的关注点在对抗训练的对抗样本上，其实许多对抗训练算法忽略了一点，有些样本被正确分类，有些样本被错误分类，但无论哪种样本，都在 min-max 中直接制作对抗样本。因此本文也就抛出例如下疑问：</p>
+<blockquote>
+<p>由错分类样本和正确分类的样本产生的对抗样本，对模型的鲁棒性贡献程度是一样的吗？如果不是，如何利用这个差异，来提升模型的鲁棒性？</p>
+</blockquote>
+<p>本文针对这个被忽略的一点做了一些探索，发现被错分类和正确分类的样本对最终模型的鲁棒性的确有不同的影响。</p>
+<p>本文做了这样的实验，在 CIFAR-10 数据集上做白盒攻击，扰动值 $\epsilon=8/255$。使用 PGD-10 算法制作对抗样本，以对抗训练的形式训练得到的网络的准确率是 87%。然后选择被错分类的样本记为 $S^-$，在选择被正确分类的样本记为 $S^+$。之后使用这两类样本，用不同的方式训练上述网络，最后用 PGD-20 算法制作的对抗样本评估最终模型的鲁棒性。结果如下图所示：</p>
+<p><img data-src="https://z3.ax1x.com/2021/06/22/RmVckj.png" alt></p>
+<p>在图 a 中：错分类样本对鲁棒性有明显影响。</p>
+<ol>
+<li>蓝色的线是标准对抗训练的对抗鲁棒性</li>
+<li>绿色的线表示没有对 $S^-$ 制作对抗样本，其它样本仍然是对抗样本，鲁棒性降低很大；</li>
+<li>橙色的线表示没有对 $S^+$ 制作对抗样本，其它样本仍然是对抗样本，鲁棒性变换其实不大。</li>
+</ol>
+<p>图 b 中：为了更深理解『错分类样本和其它样本』的影响是不同的，外部 min 采用交叉熵，内部 max 采用攻击强度很弱的 <a href="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/">FGSM</a> 算法：</p>
+<ol>
+<li>蓝色的线是标准对抗训练的对抗鲁棒性</li>
+<li>绿色的线表示在 $S^-$ 上产生的对抗样本对鲁棒性几乎没有提升。这可以说明不同的 max 方法在 $S^-$ 上会对模型鲁棒性有不同程度的影响。然而，</li>
+<li>橙色的线表示，低强度的攻击算法在 $S^+$ 上制作的对抗样本会使鲁棒性退化。</li>
+</ol>
+<p>图 c 中，内部 max 选择 PGD-10 算法，外部 min 尝试不同的函数。发现对错分类的样本使用不同的 min 方法，对最终鲁棒性的结果影响也很大。</p>
+<ol>
+<li>蓝色的线是，对传统对抗训练，外部 min 使用交叉熵函数</li>
+<li>绿色的线是，对错分类样本添加额外的 KL 散度作为正则化项，鲁棒性有明显的提升</li>
+<li>绿色的线是，将同样的 KL 散度作为正则化项添加到正确分类的样本上，鲁棒性也有提升，但不如绿色的线明显。</li>
+</ol>
+<p>基于以上实验发现，论文考虑了错分类样本对鲁棒性的影响，提出了一个新的防御算法，以一种动态的方式实现对抗训练。主要贡献是：</p>
+<ul>
+<li>研究了错分类和正确分类的样本对『对抗训练』最终鲁棒性的影响，结果表明，在 min-max 框架下，对错分类样本的处理对模型最终鲁棒性的影响佷大，且 min 方法比 max 方法更为关键。</li>
+<li>提出一种正则化的对抗风险，将错误分类的样本做显式区分，作为正则化项添加到损失函数中。</li>
+</ul>
+<h1 id="MART-算法"><a href="#MART-算法" class="headerlink" title="MART 算法"></a>MART 算法</h1><p>临时通知一周后期末考试，去准备期末考试了，考完了回来填坑。其实这个算法的缺陷显而易见，可以尝试往 GAN 那边走一走。</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\04\CW-attack\" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\06\16\GCN\" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+    </li>
+  </ul>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-01-26T14:38:06+08:00"
-              content="2020-01-26">
-          01-26
-        </time>
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
       </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/01/26/alembic/" itemprop="url">
-            <span itemprop="name">数据库系列（三）——Alembic数据库迁移</span>
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
           </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-01-25T21:57:58+08:00"
-              content="2020-01-25">
-          01-25
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/01/25/sqlalchemy-relation/" itemprop="url">
-            <span itemprop="name">数据库系列（二）——建立数据表的关系</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-01-24T12:01:04+08:00"
-              content="2020-01-24">
-          01-24
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/01/24/sqlalchemy/" itemprop="url">
-            <span itemprop="name">数据库系列（一）——SQLAlchemy的使用(CRUD)</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+        </div>
     </div>
   </div>
-  
-  
-  
 
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/22/const-pointer/" rel="prev" title="C++ 中的常量与指针">
+      <i class="fa fa-chevron-left"></i> C++ 中的常量与指针
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -355,6 +467,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MART-算法"><span class="nav-number">2.</span> <span class="nav-text">MART 算法</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -642,9 +755,81 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '73947c654a3dee0f11a51c451ce078b5',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
     </div>
 </body>
