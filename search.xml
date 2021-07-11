@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>python __init__.py 文件的用法</title>
+    <url>/2021/07/11/python-init-file/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>最近 <code>rush</code> 代码遇到一些问题，如一种典型的结构</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">|-main/</span><br><span class="line">|----test1/</span><br><span class="line">|--------module1.py</span><br><span class="line">|----test2/</span><br><span class="line">|--------module2.py</span><br></pre></td></tr></table></figure>
+<p>如上，想在 <code>module2.py</code> 中调用 <code>module1.py</code> 中的某个类，如果在 <code>module2.py</code> 中写：<code>from ..test1 import module1</code>，在 <code>test2</code> 文件夹下执行 <code>python module2.py</code> 会提示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ImportError: attempted relative import with no known parent package</span><br></pre></td></tr></table></figure>
+<p>会遇到这样的错误。那么，如何解决呢？如果你只想看如何解决问题，直接翻到文末即可；网上大概搜了一下，需要 <code>__init__.py</code> 来解决下这个问题，但是网上搜了一圈，没啥写的特别好的教程，实在是烂的可以，特此来填坑。</p>
+<a id="more"></a>
+<h1 id="init-py-是什么-1"><a href="#init-py-是什么-1" class="headerlink" title="__init__.py 是什么 1"></a>__init__.py 是什么 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></h1><p>假设此时的路径结构为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">|-main/</span><br><span class="line">|----__init__.py</span><br><span class="line">|----test1/</span><br><span class="line">|--------__init__.py</span><br><span class="line">|--------module1.py</span><br><span class="line">|----test2/</span><br><span class="line">|--------__init__.py</span><br><span class="line">|--------module2.py</span><br></pre></td></tr></table></figure>
+<p>在 <code>test1</code> 目录下的 <code>__init__.py</code> 中写入：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(<span class="string">'module1 was called'</span>)</span><br></pre></td></tr></table></figure>
+<p>在 <code>test2</code> 目录下的 <code>__init__.py</code> 中写入：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(<span class="string">'module2 was called'</span>)</span><br></pre></td></tr></table></figure>
+<p>在 <code>main</code> 目录下的 <code>__init__.py</code> 中写入：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(<span class="string">'parent package was called'</span>)</span><br><span class="line"><span class="comment"># 导入 [] 里面定义的模块</span></span><br><span class="line">__all__ = [<span class="string">'test1'</span>, <span class="string">'test2'</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>通俗来说，<code>__init__.py</code> 可以将文件封装成包，将多个文件合并到一个逻辑命名空间。但是这么说太突兀了，由浅入深，一点一点来。先来看看文件夹中添加 <code>__init__.py</code> 会发生什么。假设此时的路径为 <code>main</code> 文件夹下，尝试导入模块，会发现上述信息被打印：</p>
+<p><img data-src="https://z3.ax1x.com/2021/07/11/WCmmuT.png" alt></p>
+<p>同理，在 <code>main</code> 文件夹的 <strong>上一级路径</strong> 下执行导入，也会有同样的效果，但是不会导入子模块。</p>
+<p><img data-src="https://z3.ax1x.com/2021/07/11/WCm05d.png" alt></p>
+<p>如果想导入单个子模块，可以 <code>import main.test1</code>，此时会打印 <code>module1 was called</code>；如果再次调用 <code>import main.test1</code>，也就是在模块已经导入的情况下再次导入，则不会打印任何信息。</p>
+<p>如果导入全部子模块，也是可以的。因为声明了 <code>__all__</code>，所以子模块被导入。</p>
+<p><img data-src="https://z3.ax1x.com/2021/07/11/WCmyxP.png" alt></p>
+<p>但是你也许会有疑问，我经常写 <code>import math</code>，而 <code>math.sin</code> 等函数是导入的，且可以使用，为什么这里就不行了呢？如果想行，也是可以的，只需要在 <code>main</code> 目录下的 <code>__init__.py</code> 中写入以下信息就可以了，也就是 <code>import main; main.test1</code> 可用。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">print(<span class="string">'parent package was called'</span>)</span><br><span class="line"><span class="comment"># 删除 __all__</span></span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> test1</span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> test2</span><br></pre></td></tr></table></figure>
+<p>通过以上例子，我们可以看出，<code>__init__.py</code> 会起到以下作用：</p>
+<ul>
+<li>导入模块时初始化一些信息，如 <code>web</code> 项目中，启动 <code>session</code> 等</li>
+<li>在父目录中，导入多个子模块</li>
+</ul>
+<h1 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h1><p>也许你会觉得以上功能比较弱，或者说没啥用。那么来看一些实用的简化工作量的写法 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 。此时的目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">├─ main.py</span><br><span class="line">└─ network</span><br><span class="line">       ├─ __init__.py</span><br><span class="line">       ├─ msg</span><br><span class="line">       │    └─ info</span><br><span class="line">       │           └─ send.py</span><br><span class="line">       └─ parse.py</span><br></pre></td></tr></table></figure>
+<p>在 <code>send.py</code> 中，定义如下函数：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_msg</span><span class="params">(msg)</span>:</span></span><br><span class="line">    print(<span class="string">'send:'</span>, msg)</span><br></pre></td></tr></table></figure>
+<p>如果想在 <code>main.py</code> 中调用这个函数，需要以下写法：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> network.msg.info <span class="keyword">import</span> send</span><br><span class="line">send.send_msg(<span class="string">'hello'</span>)</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="comment"># from network.msg.info.send import send_msg</span></span><br><span class="line"><span class="comment"># send_msg('hello')</span></span><br></pre></td></tr></table></figure>
+<p>但无论那种方法，都要写长长的路径，甚为不便。这个时候，我们可以在 <code>network</code> 文件夹下面创建一个 <code>__init__.py</code> 文件，并在里面填写如下内容：<code>from .msg.info.send import send_msg</code>。而 <code>main.py</code> 文件中的内容可以修改为：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> network <span class="keyword">import</span> send_msg</span><br><span class="line">send_msg(<span class="string">'hello'</span>)</span><br></pre></td></tr></table></figure>
+<p>是不是简短了很多。这是因为，当一个文件夹里面有 <code>__init__.py</code> 以后，这个文件夹就会被 <code>python</code> 作为一个包 <code>package</code> 来处理。此时，对于这个包里面层级比较深的函数、常量、类，我们可以先把它们导入到 <code>__init__.py</code> 中。这样以来，包外面再想导入这些内容时，就可以用 <code>from 包名 import 函数名</code> 来导入了。</p>
+<p>这样做有很多好处，由于调用包的其他模块所在的绝对路径是千变万化的，当有一些代码会在很多地方被使用时，我们可以把这些代码打包起来，作为一个公共的接口提供给其他模块调用，这会方便很多。</p>
+<p>所以在<strong>包的内部</strong>调用自身其他文件中的函数、常量、类，就不应该使用相对路径，而是绝对路径。这里以添加新功能为例，如下所示，在 <code>parse.py</code> 文件中添加以下内容：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 两种都可以</span></span><br><span class="line"><span class="comment"># from .msg.info.send import send_msg</span></span><br><span class="line"><span class="keyword">from</span> . <span class="keyword">import</span> send_msg</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_msg</span><span class="params">(msg)</span>:</span></span><br><span class="line">    print(<span class="string">'parse:'</span>, msg)</span><br><span class="line">    send_msg(msg)</span><br></pre></td></tr></table></figure>
+<p>可以看到，在包里面的一个文件调用这个包里面的另一个文件，只需要知道另一个文件的相对位置就可以了，不用关心这个包被放在哪里。上 面<code>parse.py</code> 中导入 <code>send_msg</code> 函数的代码还可以进一步简化，由于 <code>send_msg</code> 函数已经被导入到了 <code>__init__.py</code> 中，所以我们可以直接从 <code>.</code> 里面导入 <code>send_msg</code> 函数。</p>
+<p>之后在 <code>__init__.py</code> 中追加：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> .parse <span class="keyword">import</span> parse_msg</span><br></pre></td></tr></table></figure>
+<p>此时，<code>main.py</code> 的写法可以如下，可以看到，即使追加了新的模块，<code>main.py</code> 调用起来也会很方便，并不需要知道 <code>parse_msg</code> 这个方法的任何位置信息。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> network <span class="keyword">import</span> parse_msg</span><br><span class="line">parse_msg(<span class="string">'hhh'</span>)</span><br></pre></td></tr></table></figure>
+<p>此外，当一个文件夹里面包含 <code>__init__.py</code> 时，这个文件夹会被 <code>python</code> 认为是一个包 <code>package</code>，此时，包内部的文件之间互相导入可以使用相对导入，并且通过提前把函数、常量、类导入到 <code>__init__.py</code> 中再在其他文件中导入，可以精简代码。</p>
+<h1 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h1><p>既然了解了 <code>__init__.py</code> 的用法，那么去解决文章最开始提到的问题。目录结构如下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">main</span><br><span class="line">├─ main.py</span><br><span class="line">├─ test1</span><br><span class="line">│    ├─ __init__.py</span><br><span class="line">│    └─ m1.py</span><br><span class="line">└─ test2</span><br><span class="line">       └─ m2.py</span><br></pre></td></tr></table></figure>
+<p>实现的想法也很简单，<code>m2.py</code> 调用 <code>m1.py</code> 中的函数。</p>
+<p><code>m1.py</code> 定义如下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send</span><span class="params">(msg)</span>:</span></span><br><span class="line">    print(msg)</span><br></pre></td></tr></table></figure>
+<p><code>m2.py</code> 定义如下：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> test1 <span class="keyword">import</span> m1</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">()</span>:</span></span><br><span class="line">    m1.send(<span class="string">'hello'</span>)</span><br></pre></td></tr></table></figure>
+<p>距离成功只差一步，那就是修改 <code>test1</code> 中的 <code>__init__.py</code> 的内容，把 <code>test1</code> 看成一个 <code>package</code>，暴露其中的 <code>m1</code> 即可。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> test1 <span class="keyword">import</span> m1</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="comment"># from . import m1</span></span><br></pre></td></tr></table></figure>
+<p>这样，在外部的 <code>main</code> 函数中：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> test2.m2 <span class="keyword">as</span> m2</span><br><span class="line">m2.run()</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="comment"># from test2 import m2</span></span><br><span class="line"><span class="comment"># m2.run()</span></span><br></pre></td></tr></table></figure>
+<p>就可以了。</p>
+<h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;">https://zhuanlan.zhihu.com/p/130927618</span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;">https://www.kingname.info/2020/03/23/init-in-python/</span><a href="#fnref:2" rev="footnote"> ↩</a></li></ol></div></div>]]></content>
+      <tags>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>对抗训练篇：MART 防御算法论文笔记</title>
     <url>/2021/06/22/MART/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，<strong>网络连干净样本都不认识，何谈认识它的对抗样本？</strong> MART 算法的创新点在于区别对待错分类和正确分类的样本。</p>
