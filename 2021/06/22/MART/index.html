@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，网络连干净样本都不认识，何谈认识它的对抗样本？ MART 算">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-06-22T14:25:22.125Z">
+<meta property="og:updated_time" content="2021-07-14T05:16:19.242Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对抗训练篇：MART 防御算法论文笔记">
 <meta name="twitter:description" content="MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，网络连干净样本都不认识，何谈认识它的对抗样本？ MART 算">
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-06-22 21:26:54 / 修改时间：22:25:22" itemprop="dateCreated datePublished" datetime="2021-06-22T21:26:54+08:00">2021-06-22</time>
+              <time title="创建时间：2021-06-22 21:26:54" itemprop="dateCreated datePublished" datetime="2021-06-22T21:26:54+08:00">2021-06-22</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-14 13:16:19" itemprop="dateModified" datetime="2021-07-14T13:16:19+08:00">2021-07-14</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>3.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -321,7 +327,30 @@
 <li>研究了错分类和正确分类的样本对『对抗训练』最终鲁棒性的影响，结果表明，在 min-max 框架下，对错分类样本的处理对模型最终鲁棒性的影响佷大，且 min 方法比 max 方法更为关键。</li>
 <li>提出一种正则化的对抗风险，将错误分类的样本做显式区分，作为正则化项添加到损失函数中。</li>
 </ul>
-<h1 id="MART-算法"><a href="#MART-算法" class="headerlink" title="MART 算法"></a>MART 算法</h1><p>临时通知一周后期末考试，去准备期末考试了，考完了回来填坑。其实这个算法的缺陷显而易见，可以尝试往 GAN 那边走一走。</p>
+<h1 id="MART-算法"><a href="#MART-算法" class="headerlink" title="MART 算法"></a>MART 算法</h1><p>临时通知一周后期末考试，去准备期末考试了，考完了回来填坑。其实这个算法的缺陷显而易见，可以尝试往 GAN 那边走一走。考完了，回来填坑。</p>
+<h2 id="前期定义"><a href="#前期定义" class="headerlink" title="前期定义"></a>前期定义</h2><p>对于一个 $K$ 分类问题，给定数据集 $(x_i,y_i)$，深度模型 $h_\theta$，对于每个样本而言，网络的输出如下：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>h_\theta(x_i) &amp;= \arg \max p_k(x_i, \theta) \\<br>p_k(x_i, \theta) &amp;= \exp(z_k(x_i,\theta)) / \sum_{j=1}^K \exp(z_j(x_i,\theta))<br>\end{aligned}<br>\end{equation}</p>
+<p>其中，$z_k(x_i,\theta)$ 是网络的逻辑输出，<code>softmax</code> 后获得类别标签。对抗风险定义为：一个 batch 中被分类错误的样本数除以 batch 数。对抗样本的制作为：</p>
+<p>\begin{eqaution}<br>\hat{x} = \arg\max \mathbb{I}(h_\theta(x_i) \neq y_i)<br>\end{equation}</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><blockquote>
+<p>注，原文第二章写了一些0-1损失，后面又说不用这个，所以我没有写0-1损失</p>
+</blockquote>
+<p>首先将训练样本分为正样本 $S^+_{h\theta}$ 和错样本 $S^-_{h\theta}$，即能被网络正确识别的样本和不能被正确识别的样本。</p>
+<ul>
+<li>对于 $S^-_{h\theta}$ 而言，添加正则化项，使得网络能稳定的防御错分类对抗样本。因为对抗样本的分类需要更强的分类器和更光滑的决策边界，损失函数定义为 $\mathbb{I}(h_\theta(\hat{x_i}) \neq y_i) + \mathbb{I}(h_\theta(x_i) \neq h_\theta(\hat{x_i}))$，意思是，第一项优化的目标是，使对抗样本被分类正确；第二项优化的目标是，使网络认识原始样本和对抗样本。</li>
+<li>对于 $S^+_{h\theta}$ 而言，正则化不会明显提升网络鲁棒性。在这种情况下，已经有 $h_\theta(x_i)=y_i$，因此此时的优化目标是 $\mathbb{I}(h_\theta(x_i) \neq h_\theta(\hat{x}))=\mathbb{I}(h_\theta(\hat{x_i})\neq y_i)$，也就是说，网络将干净样本和对抗样本视为两个类别且对抗样本分类错误的概率。</li>
+<li>其中 $\mathbb{I}$ 是指示函数，意思是，错了损失值为1，正确损失值为0。</li>
+</ul>
+<p>但是这个指示函数难以优化，本文提出 BCE(boosted cross entropy) 损失函数，用于代替 $\mathbb{I}(h(\hat{x} \neq y))$，定义如下：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\text{BCE}(p(\hat{x}, \theta), y_i) &amp;= -\log(p_{y_i}(\hat{x},\theta)) - \log (1-\max_{k\neq y_i}p_k(\hat{x}, \theta))<br>\end{aligned}<br>\end{equation}</p>
+<p>第一项是普通的交叉熵损失函数，第二项用于提升模型决策边界的间隙。</p>
+<p>使用 $KL$ 散度代替 $\mathbb{I}(h_\theta(x) \neq h_\theta(\hat{x}))$，定义如下：</p>
+<p>\begin{equation}<br>\text{KL}(p(x_i,\theta)||p(\hat{x}, \theta))=\sum_{k=1}^K p_k{(x_i,\theta)} \log \frac{p_k(x_i,\theta)}{p_k(\hat{x_i},\theta)}<br>\end{equation}</p>
+<p>对于制作对抗样本使用的指示函数 $\mathbb{I}(h_\theta(x_i) \neq y_i)$，通过 $1-p_{y_i}(x_i, \theta)$ 的形式选择对抗样本。因此，内部最大化的损失定义如下，攻击方式选择 PGD。</p>
+<p>\begin{equation}<br>\hat{x} = \arg \max \text{CE} (p(x_i, \theta), y_i)<br>\end{equation}</p>
+<p>将两中损失结合起来到对抗训练的框架中，最终的损失函数为：</p>
+<p>\begin{equation}<br>L = \text{BCE}(p(\hat{x}, \theta), y_i) + \lambda \text{KL} (p(x_i,\theta)||p(\hat{x}, \theta))(1-p_{y_i}(x_i, \theta))<br>\end{equation}</p>
+<p>$\lambda$ 参数用于平衡两个损失。</p>
 
     </div>
 
@@ -335,10 +364,10 @@
       <div class="popular-posts-title"><a href="\2021\05\04\CW-attack\" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
+      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021\05\07\DNN-data-normal\" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="\2019\02\10\Computer-Vision-opencv\" rel="bookmark">YOLO目标检测</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021\04\26\DNN-safe-basic\" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
@@ -470,7 +499,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MART-算法"><span class="nav-number">2.</span> <span class="nav-text">MART 算法</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MART-算法"><span class="nav-number">2.</span> <span class="nav-text">MART 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前期定义"><span class="nav-number">2.1.</span> <span class="nav-text">前期定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法"><span class="nav-number">2.2.</span> <span class="nav-text">算法</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -540,12 +569,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">698k</span>
+    <span title="站点总字数">700k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:35</span>
+    <span title="站点阅读时长">10:36</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
