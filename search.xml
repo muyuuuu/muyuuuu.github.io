@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>C++ 中的引用</title>
+    <url>/2021/07/15/Cpp-refer/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>引用是 C++ 中一个比较神奇的东西。在这之前或者说 C 语言中，一般是使用指针来减少传参所带来的不必要的开销。如函数传递的参数是数组或结构体时，使用指针会省很多事，毕竟传递的是地址。而 C++ 中引用变量的主要用途也是函数传参，子函数直接操作原始数据，而不是其副本，这样处理大型数据结构也会佷便捷。</p>
+<a id="more"></a>
+<h1 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h1><h2 id="一维数组"><a href="#一维数组" class="headerlink" title="一维数组"></a>一维数组</h2><p>以一维数组为例。众所周知数组名是是数组首元素的地址。因此调用子函数时，主函数传递的是数组首元素的地址，所以子函数接收的是地址，无法预知数组的长度，需要增加额外的参数指明数组元素的数量。</p>
+<p>对于函数，一般用 <code>int arr[]</code> 这样的形式指明 <code>arr</code> 接收的是数组，这样的可读性强；换一种方法，因为传递的是数组首元素的地址，而数组首元素为 <code>int</code> 类型，地址是 <code>int*</code> 类型，因此可以用 <code>int* arr</code> 来接收一个数组，但是这样表意不明确。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        t += arr[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; t;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> arr[<span class="number">4</span>] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;;</span><br><span class="line">    sum(arr, <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二维数组"><a href="#二维数组" class="headerlink" title="二维数组"></a>二维数组</h2><p>升级到二维数组，二维数组的类型本质就是指向『多个 <code>int</code> 组成的数组』的指针，因此参数的形式为 <code>int (*arr)[4]</code>，而不是 <code>int* arr[4]</code>。</p>
+<ul>
+<li>前者是一个『由 4 个指向 int 的指针』组成的数组；即一个数组，数组元素是四个 int 指针；</li>
+<li>后者是一个指向『由 4 个 int 组成数组』的指针；即一个指针，指向 4 个 int 的数组。为了更好的可读性，一般声明如下：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span> arr[][<span class="number">4</span>], <span class="keyword">int</span> len)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">4</span>; j++) &#123;</span><br><span class="line">            t += arr[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; t;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 数组有三个元素，每个元素是数组</span></span><br><span class="line">    <span class="keyword">int</span> arr[<span class="number">3</span>][<span class="number">4</span>] = &#123;&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;, &#123;<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;, &#123;<span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>&#125;&#125;;</span><br><span class="line">    sum(arr, <span class="number">3</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><p>二维数组的指针是不是感觉有点晕？先来看一下简单的引用：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a&#123;<span class="number">11</span>&#125;;</span><br><span class="line"><span class="comment">// 类型是 int&amp;，指向 int 的引用</span></span><br><span class="line"><span class="keyword">int</span>&amp; b = a;</span><br></pre></td></tr></table></figure>
+<p>这样 <code>b</code> 和 <code>a</code> 就指向了相同的值和内存单元，只是名字不一样。此外，引用必须在声明的时候进行初始化，否则这个变量不知道指向哪个内存单元和值，但是指针可以先声明在赋值。</p>
+<p>此外，声明一旦绑定，就无法在修改。可以通过初始化声明来设置引用，不能通过赋值来设置。如下所示的程序，只是对引用 <code>b</code> 进行了赋值，而不是修改引用。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a&#123;<span class="number">11</span>&#125;;</span><br><span class="line"><span class="keyword">int</span>&amp; b = a;</span><br><span class="line"><span class="keyword">int</span> c&#123;<span class="number">32</span>&#125;;</span><br><span class="line">b = c;</span><br></pre></td></tr></table></figure>
+<h2 id="引用传参"><a href="#引用传参" class="headerlink" title="引用传参"></a>引用传参</h2><p>回到主题，一般将引用用做函数传参时。主函数中的变量名是被调用函数中对应变量的别名，在调用时用实参初始化形参，因此引用参数被初始化为：函数调用时传递过来的实参。如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>&amp; a, <span class="keyword">int</span>&amp; b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t;</span><br><span class="line">    t = a;</span><br><span class="line">    a = b;</span><br><span class="line">    b = t;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> n1&#123;<span class="number">12</span>&#125;, n2&#123;<span class="number">21</span>&#125;;</span><br><span class="line">swap(n1, n2);</span><br></pre></td></tr></table></figure>
+<p>此外，传递引用时对类型的限制更加严格，以求和函数为例：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sum</span><span class="params">(<span class="keyword">double</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; n;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> a&#123;<span class="number">12</span>&#125;;</span><br><span class="line"><span class="comment">// 临时变量</span></span><br><span class="line">sum(a);</span><br><span class="line">sum(<span class="number">6.2</span>);</span><br><span class="line"><span class="comment">// 临时变量</span></span><br><span class="line">sum(a + <span class="number">6.3</span>);</span><br></pre></td></tr></table></figure>
+<p>换句话说，当实参和形参的类型不匹配时，将会生成临时变量传给形参。但是引用则不行，限制相对严格，<code>sum(a + 6.3)</code> 会报错，传递的实参是表达式不是变量，而引用不能绑定到表达式上，且此时不会生成临时变量。</p>
+<p>但是当参数为 const 引用时，会创建一个临时的无名变量，临时变量的值初始化为 <code>a + 6.3</code>，而后再将无名变量赋给引用：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sum</span><span class="params">(<span class="keyword">const</span> <span class="keyword">double</span>&amp; len)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; len;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a&#123;<span class="number">10</span>&#125;;</span><br><span class="line">    sum(a + <span class="number">6.3</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也许你会有疑问，这个时候为什么会生成临时变量？<code>const</code> 为什么合理呢？如果引用参数是 <code>const</code>，两种情况会生成临时变量：</p>
+<ul>
+<li>实参类型正确，但不是左值，如 <code>a + 6.3</code> 这样的表达式</li>
+<li>实参类型不正确，但可以转为正确类型，如 <code>int</code> 隐式转换为 <code>double</code>；<code>double</code> 到 <code>int</code> 则错误</li>
+</ul>
+<blockquote>
+<p>左值：左值是可以被引用的数据对象，变量、数组、元素等，非左值有字面常量，多项的表达式等。或者说，可以放在赋值语句左侧 and 能访问地址的就是左值，也就是说，赋值语句左侧是可修改的内存块，const 变量也是左值，只是不可修改。</p>
+</blockquote>
+<p>回到原问题，如果形参加上 <code>const</code> 修饰，意思是函数只使用这个值，不修改这个值。即使因类型不匹配生成了临时变量，引用参数引用这个临时变量，都不会造成任何不好的副作用。但此时就是值传递而不是地址传递，因为要用临时变量来存储数值。所以也推荐尽可能使用 <code>const</code>：</p>
+<ul>
+<li>避免无意修改数据造成结果错误</li>
+<li>能更好的接收实参，生成并使用临时变量</li>
+</ul>
+<h2 id="返回值为引用"><a href="#返回值为引用" class="headerlink" title="返回值为引用"></a>返回值为引用</h2><p>对于传统的调用函数而言，返回结果的这个值被复制到临时位置，也就是产生值的副本，调用程序将使用这个值。如：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span> len)</span> </span>&#123;</span><br><span class="line">    len += <span class="number">10</span>;</span><br><span class="line">    <span class="comment">// len 复制到临时位置</span></span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> a&#123;<span class="number">10</span>&#125;;</span><br><span class="line"><span class="comment">// 从临时位置获取值</span></span><br><span class="line">a = sum(a);</span><br></pre></td></tr></table></figure>
+<p>而返回引用的函数实际上是返回被引用变量的别名。返回引用值时，并不产生值的副本。而是将返回值直接复制给接收函数的变量或对象，言简意赅，当函数返回引用类型时，没有复制返回值创建临时变量，相反，返回的是对象本身，并复制到接收变量那里。</p>
+<p>对于一个大型的数据结构如结构体，将结构体复制到额外的地址的开销会很大；如果返回引用，将返回的引用的结构体直接赋值给接收值，避免额外的开销。</p>
+<p>但是，避免返回指向临时变量的引用，临时变量在执行完毕后会消失，引用会指向乱七八糟的地址，就跟避免指向临时变量的指针一样。有两种解决方法：</p>
+<ul>
+<li>使用 new，将数据放到堆区，不过内存模型的坑准备后续开</li>
+<li>传递一个额外的参数，传递给函数的引用，将该参数返回。因此返回引用时，要求在函数的参数中，包含有以引用方式需要被返回的参数。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> arr[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">double</span> value&#123;<span class="number">0</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 返回变量 t 的引用</span></span><br><span class="line"><span class="function">node&amp; <span class="title">sum</span><span class="params">(<span class="keyword">int</span> len, node&amp; n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        n.value += i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    node t;</span><br><span class="line">    <span class="comment">// a 被 t 的引用给赋值</span></span><br><span class="line">    node a = sum(<span class="number">5</span>, t);</span><br><span class="line">    <span class="comment">// 修改 a 不会修改 t</span></span><br><span class="line">    a.value = <span class="number">13.2</span>;</span><br><span class="line">    <span class="comment">// a 是 t 的引用，修改 a 也会修改 b</span></span><br><span class="line">    <span class="comment">// node&amp; a = sum(5, t);</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; a.value &lt;&lt; <span class="string">" "</span> &lt;&lt; t.value;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此外，非引用函数的返回值类型是右值，这种语句位于表达式的右侧，也无法通过地址访问这个值，也无法放到复制语句的左侧。因为返回值的地址在执行完毕后就消失了，也就是说无法引用。如果一定要引用返回值，将返回值类型声明为引用，这样返回的就是左值，就可以引用。</p>
+<p>总结一下：当返回结果需要做为左值时，就要用引用返回。即重载函数的返回结果需要出现在赋值语句左边时，必须用引用返回。如果不用引用返回，那么重载函数的返回结果会是一个临时变量，临时变量是不能放在赋值语句左边的。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 错误，右值不能在赋值语句左侧</span></span><br><span class="line"><span class="function">node <span class="title">sum</span><span class="params">(<span class="keyword">int</span> len, node&amp; n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        n.value += i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line">sum(<span class="number">5</span>, t).value = <span class="number">12.3</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; t.value;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 正确，返回的引用是左值</span></span><br><span class="line"><span class="function">node&amp; <span class="title">sum</span><span class="params">(<span class="keyword">int</span> len, node&amp; n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        n.value += i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line">sum(<span class="number">5</span>, t).value = <span class="number">12.3</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; t.value;</span><br></pre></td></tr></table></figure>
+<p>如果不想返回的引用被修改，就加 <code>const</code> 修饰：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> arr[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">double</span> value&#123;<span class="number">0</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 返回变量 t 的引用</span></span><br><span class="line"><span class="function"><span class="keyword">const</span> node&amp; <span class="title">sum</span><span class="params">(<span class="keyword">int</span> len, node&amp; n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        n.value += i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    node t;</span><br><span class="line">    <span class="comment">// 将 t 引用的值赋值给 a，所以可以修改 a</span></span><br><span class="line">    node a = sum(<span class="number">5</span>, t);</span><br><span class="line">    a.value = <span class="number">13</span>;</span><br><span class="line">    <span class="comment">// b 引用 t，不可修改</span></span><br><span class="line">    node&amp; b = sum(<span class="number">5</span>, t);</span><br><span class="line">    <span class="comment">// 错误</span></span><br><span class="line">    b.value = <span class="number">14</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>python __init__.py 文件的用法</title>
     <url>/2021/07/11/python-init-file/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>最近 <code>rush</code> 代码遇到一些问题，如一种典型的结构</p>
@@ -9800,6 +9858,46 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       </tags>
   </entry>
   <entry>
+    <title>循环神经网络的进化</title>
+    <url>/2019/02/18/rnn1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
+<p>本文收录内容：</p>
+<ul>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
+</ul>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
+<a id="more"></a>
+<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
+<blockquote>
+<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
+
+</blockquote>
+<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
+<p>此时的网络结构为：</p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
+<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
+<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
+<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
+<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
+<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
+<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
+<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
+<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
+<hr>
+]]></content>
+      <tags>
+        <tag>DeepLearning</tag>
+        <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>循环神经网络</title>
     <url>/2019/02/18/rnn/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
@@ -9863,46 +9961,6 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
-<hr>
-]]></content>
-      <tags>
-        <tag>DeepLearning</tag>
-        <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>循环神经网络的进化</title>
-    <url>/2019/02/18/rnn1/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
-<p>本文收录内容：</p>
-<ul>
-<li>双向循环神经网络</li>
-<li>深层的RNN模型</li>
-<li>序列化与注意力</li>
-</ul>
-<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
-<a id="more"></a>
-<h2 id="双向RNN"><a href="#双向RNN" class="headerlink" title="双向RNN"></a>双向RNN</h2><p>背景描述，来看下面的句子：</p>
-<blockquote>
-<center><span id="inline-blue">The mountain is four kilometers above sea level which named TEST</span></center>
-
-</blockquote>
-<p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
-<p>此时的网络结构为：</p>
-<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
-<p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
-<script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
-<p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
-<p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
-<h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
-<p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
-<script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
-<script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
-<script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
 <hr>
 ]]></content>
       <tags>
