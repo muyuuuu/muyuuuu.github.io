@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="还记得我之前说过布局什么的用Qt Designer就行了，还强力推荐过。用了一段时间后，现在想来，Qt Designer就是个垃圾。布局什么的，还是使用代码进行管理吧，其实也不难。而且也不用分两个文件，一个写QWidget，另一个写QMainWindow了。在QMainWindow中创建一个QWidget的实例，并且加入即可。  本文收录：  如何美化布局，使界面更优美 StackLayout布局">
+<meta name="keywords" content="GUI,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyQt5高级布局与美化">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/10/19/pyqt-layout/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="还记得我之前说过布局什么的用Qt Designer就行了，还强力推荐过。用了一段时间后，现在想来，Qt Designer就是个垃圾。布局什么的，还是使用代码进行管理吧，其实也不难。而且也不用分两个文件，一个写QWidget，另一个写QMainWindow了。在QMainWindow中创建一个QWidget的实例，并且加入即可。  本文收录：  如何美化布局，使界面更优美 StackLayout布局">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-26T14:37:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PyQt5高级布局与美化">
+<meta name="twitter:description" content="还记得我之前说过布局什么的用Qt Designer就行了，还强力推荐过。用了一段时间后，现在想来，Qt Designer就是个垃圾。布局什么的，还是使用代码进行管理吧，其实也不难。而且也不用分两个文件，一个写QWidget，另一个写QMainWindow了。在QMainWindow中创建一个QWidget的实例，并且加入即可。  本文收录：  如何美化布局，使界面更优美 StackLayout布局">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/10/19/pyqt-layout/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>PyQt5高级布局与美化 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/10/19/pyqt-layout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PyQt5高级布局与美化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-19 19:09:29" itemprop="dateCreated datePublished" datetime="2019-10-19T19:09:29+00:00">2019-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-26 14:37:28" itemprop="dateModified" datetime="2020-01-26T14:37:28+00:00">2020-01-26</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>22k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>20 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>还记得我之前说过布局什么的用Qt Designer就行了，还强力推荐过。用了一段时间后，现在想来，Qt Designer就是个垃圾。布局什么的，还是使用代码进行管理吧，其实也不难。而且也不用分两个文件，一个写<code>QWidget</code>，另一个写<code>QMainWindow</code>了。在<code>QMainWindow</code>中创建一个<code>QWidget</code>的实例，并且加入即可。</p>
+<blockquote>
+<p>本文收录：</p>
+<ul>
+<li>如何美化布局，使界面更优美</li>
+<li>StackLayout布局管理，模仿常用软件功能，使界面更人性化</li>
+<li>Qspliter，像一个IDE一个自由拖动</li>
+<li>综合实例，实际开发一个软件，用到以上功能。</li>
+</ul>
+</blockquote>
+<p>软件主体功能：调用天气网的API，爬取数据，将数据放到软件的<code>QTableWidget</code>中，预测未来天气，对天气走向进行绘图<code>pyqtgraph</code>。功能简易，但用到了Qt开发中的大部分控件和常见功能。</p>
+<a id="more"></a>
+<p>软件结果如下图所示：</p>
+<p><img data-src="/2019/10/19/pyqt-layout/1.gif" alt></p>
+<p>代码如下：</p>
+<p><a href="/download/Weather.zip">本文全部代码下载链接，建议在这里下载代码，因为需要辅助文件</a></p>
+<p>天气API参考：<br><a href="https://www.sojson.com/api/weather.html" target="_blank" rel="noopener">https://www.sojson.com/api/weather.html</a></p>
+<h1 id="高级布局管理"><a href="#高级布局管理" class="headerlink" title="高级布局管理"></a>高级布局管理</h1><p><code>QHBoxLayout</code>, <code>QVBoxLayout</code>, <code>QGridLayout</code>, 这几个基本的布局管理的入门教程如下，也是我目前看到过的最好的：<br><a href="https://www.learnpyqt.com/courses/start/layouts/" target="_blank" rel="noopener">https://www.learnpyqt.com/courses/start/layouts/</a></p>
+<p>此外，还有网上盛传的布局美化代码，网上清一色是这个：<br><img data-src="/2019/10/19/pyqt-layout/1.png" alt><br>虽然也不知道谁是原创，只要一搜索：<code>PyQt5美化开发</code>，全部都是这个代码。</p>
+<p>我知道写的美它好，但我不想抄袭。不过从以上网址的代码确实学到了点东西，那就是设立总体布局和子布局，子布局管理控件，总体布局管理子布局，这样布置出来的界面是很好看的。</p>
+<p>接下来，一点一点的写出来我上面那个天气预报的软件。</p>
+<p>需要导入的库如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PyQt5 <span class="keyword">import</span> QtWidgets</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QApplication, QMainWindow, QDesktopWidget, QStyleFactory, QWidget,</span><br><span class="line">                            QGridLayout, QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog,</span><br><span class="line">                            QSlider, QLabel, QLineEdit, QPushButton, QTableWidget)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QPalette, QColor, QBrush</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> Qt</span><br><span class="line"><span class="keyword">from</span> pyqtgraph <span class="keyword">import</span> GraphicsLayoutWidget</span><br><span class="line"><span class="keyword">import</span> pyqtgraph <span class="keyword">as</span> pg </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pyqtgraph.exporters <span class="keyword">as</span> pe</span><br><span class="line"><span class="keyword">import</span> qdarkstyle, requests, sys, time, random, json, datetime, re</span><br></pre></td></tr></table></figure>
+<h2 id="整体布局"><a href="#整体布局" class="headerlink" title="整体布局"></a>整体布局</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainUi</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置绘图背景</span></span><br><span class="line">        pg.setConfigOption(<span class="string">'background'</span>, <span class="string">'#19232D'</span>)</span><br><span class="line">        pg.setConfigOption(<span class="string">'foreground'</span>, <span class="string">'d'</span>)</span><br><span class="line">        pg.setConfigOptions(antialias = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 窗口居中显示</span></span><br><span class="line">        self.center()</span><br><span class="line">  </span><br><span class="line">        self.init_ui()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置城市的编号</span></span><br><span class="line">        self.code = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 多次查询时，查询近5天， 受限于 API 接口提供的数量</span></span><br><span class="line">        self.num = <span class="number">5</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># return request json file</span></span><br><span class="line">        self.rep = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 创建绘图面板</span></span><br><span class="line">        self.plt = []</span><br><span class="line">        <span class="comment"># 控制绘图的文件名称</span></span><br><span class="line">        self.filename = <span class="number">1</span></span><br><span class="line">        <span class="comment"># 默认的状态栏</span></span><br><span class="line">        <span class="comment"># 可以设置其他按钮点击 参考多行文本显示 然而不行 </span></span><br><span class="line">        self.status = self.statusBar()</span><br><span class="line">        self.status.showMessage(<span class="string">"我在主页面～"</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 标题栏</span></span><br><span class="line">        self.setWindowTitle(<span class="string">"天气查询软件"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_ui</span><span class="params">(self)</span>:</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># self.setFixedSize(960,700)</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 创建窗口主部件</span></span><br><span class="line">        self.main_widget = QWidget()  </span><br><span class="line">        <span class="comment"># 创建主部件的网格布局</span></span><br><span class="line">        self.main_layout = QGridLayout()  </span><br><span class="line">        <span class="comment"># 设置窗口主部件布局为网格布局</span></span><br><span class="line">        self.main_widget.setLayout(self.main_layout)  </span><br><span class="line"></span><br><span class="line">        <span class="comment"># 创建左侧部件</span></span><br><span class="line">        self.left_widget = QWidget()  </span><br><span class="line">        self.left_widget.setObjectName(<span class="string">'left_widget'</span>)</span><br><span class="line">        <span class="comment"># 创建左侧部件的网格布局层</span></span><br><span class="line">        self.left_layout = QGridLayout()  </span><br><span class="line">        <span class="comment"># 设置左侧部件布局为网格</span></span><br><span class="line">        self.left_widget.setLayout(self.left_layout) </span><br><span class="line"></span><br><span class="line">        <span class="comment"># 创建右侧部件</span></span><br><span class="line">        self.right_widget = QWidget() </span><br><span class="line">        self.right_widget.setObjectName(<span class="string">'right_widget'</span>)</span><br><span class="line">        self.right_layout = QGridLayout()</span><br><span class="line">        self.right_widget.setLayout(self.right_layout) </span><br><span class="line"></span><br><span class="line">        <span class="comment"># 左侧部件在第0行第0列，占12行5列</span></span><br><span class="line">        self.main_layout.addWidget(self.left_widget, <span class="number">0</span>, <span class="number">0</span>, <span class="number">12</span>, <span class="number">5</span>) </span><br><span class="line">        <span class="comment"># 右侧部件在第0行第6列，占12行7列</span></span><br><span class="line">        self.main_layout.addWidget(self.right_widget, <span class="number">0</span>, <span class="number">5</span>, <span class="number">12</span>, <span class="number">7</span>)</span><br><span class="line">        <span class="comment"># 设置窗口主部件</span></span><br><span class="line">        self.setCentralWidget(self.main_widget) </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        获取桌面长宽</span></span><br><span class="line"><span class="string">        获取窗口长宽</span></span><br><span class="line"><span class="string">        移动</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        screen = QDesktopWidget().screenGeometry()</span><br><span class="line">        size = self.geometry()</span><br><span class="line">        self.move((screen.width() - size.width()) / <span class="number">2</span>, (screen.height() - size.height()) / <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    gui = MainUi()</span><br><span class="line">    gui.show()</span><br><span class="line">    sys.exit(app.exec_())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>现在只能执行出一个小窗口来，没关系，继续下面的东西。</p>
+<p><img data-src="/2019/10/19/pyqt-layout/2.png" alt></p>
+<h2 id="左侧添加控件"><a href="#左侧添加控件" class="headerlink" title="左侧添加控件"></a>左侧添加控件</h2><p>这个时候我们再来添加左边的按钮控件。代码缩进添加至<code>def init_ui(self):</code>中。</p>
+<p>提醒：在布局的时候，<code>button</code>在<code>clicked connect</code>的时候找不到逻辑函数报错，加入逻辑函数就不会错了。逻辑函数在之后会加入。所以，现在只看布局，就别点按钮以至于报错了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># function button </span></span><br><span class="line">self.single_query = QPushButton(<span class="string">"查询今日"</span>)</span><br><span class="line">self.single_query.clicked.connect(self.request_weather)</span><br><span class="line">self.single_query.setEnabled(<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># self.single_query.setFixedSize(400, 30)</span></span><br><span class="line">self.btn_tempa = QPushButton(<span class="string">"温度预测(可绘图)"</span>)</span><br><span class="line">self.btn_tempa.clicked.connect(self.request_weather)</span><br><span class="line">self.btn_tempa.setEnabled(<span class="literal">False</span>)</span><br><span class="line">self.btn_wind = QPushButton(<span class="string">"风力预测(可绘图)"</span>)</span><br><span class="line">self.btn_wind.clicked.connect(self.request_weather)</span><br><span class="line">self.btn_wind.setEnabled(<span class="literal">False</span>)</span><br><span class="line">self.btn_stawea = QPushButton(<span class="string">"综合天气预测"</span>)</span><br><span class="line">self.btn_stawea.clicked.connect(self.request_weather)</span><br><span class="line">self.btn_stawea.setEnabled(<span class="literal">False</span>)  </span><br><span class="line">self.left_layout.addWidget(self.single_query, <span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line">self.left_layout.addWidget(self.btn_tempa, <span class="number">3</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line">self.left_layout.addWidget(self.btn_wind, <span class="number">4</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line">self.left_layout.addWidget(self.btn_stawea, <span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># lineEdit to input a city</span></span><br><span class="line">self.city_line = QLineEdit()</span><br><span class="line">self.city_line.setPlaceholderText(<span class="string">"输入城市回车确认"</span>)</span><br><span class="line">self.city_line.returnPressed.connect(self.match_city)</span><br><span class="line">self.left_layout.addWidget(self.city_line, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># save figure and quit window</span></span><br><span class="line">self.save_fig = QPushButton(<span class="string">"保存绘图"</span>)</span><br><span class="line">self.save_fig.setEnabled(<span class="literal">False</span>)</span><br><span class="line">self.save_fig.clicked.connect(self.fig_save)</span><br><span class="line">self.left_layout.addWidget(self.save_fig, <span class="number">6</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">self.load = QPushButton(<span class="string">"写日记"</span>)</span><br><span class="line">self.left_layout.addWidget(self.load, <span class="number">7</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">self.quit_btn = QPushButton(<span class="string">"退出"</span>)</span><br><span class="line">self.quit_btn.clicked.connect(self.quit_act)</span><br><span class="line">self.left_layout.addWidget(self.quit_btn, <span class="number">8</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/10/19/pyqt-layout/4.png" alt></p>
+<p>添加完按钮控件后，加入<code>QtableWidget</code>控件用于观察数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tablewidgt to view data</span></span><br><span class="line">self.query_result = QTableWidget()</span><br><span class="line">self.left_layout.addWidget(self.query_result, <span class="number">9</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">self.query_result.verticalHeader().setVisible(<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/10/19/pyqt-layout/5.png" alt></p>
+<h2 id="右侧窗口布局"><a href="#右侧窗口布局" class="headerlink" title="右侧窗口布局"></a>右侧窗口布局</h2><p>最后完成右侧窗口的布局即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">self.label = QLabel(<span class="string">"预测天气情况绘图展示区"</span>)</span><br><span class="line">self.right_layout.addWidget(self.label, <span class="number">0</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">self.plot_weather_wind = GraphicsLayoutWidget()</span><br><span class="line">self.plot_weather_temp = GraphicsLayoutWidget()</span><br><span class="line">self.right_layout.addWidget(self.plot_weather_temp, <span class="number">1</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">7</span>)</span><br><span class="line">self.right_layout.addWidget(self.plot_weather_wind, <span class="number">6</span>, <span class="number">6</span>, <span class="number">4</span>, <span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="整体美化"><a href="#整体美化" class="headerlink" title="整体美化"></a>整体美化</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">self.setWindowOpacity(<span class="number">0.9</span>) <span class="comment"># 设置窗口透明度</span></span><br><span class="line">self.main_layout.setSpacing(<span class="number">0</span>)</span><br><span class="line"><span class="comment"># 美化风格</span></span><br><span class="line">self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/10/19/pyqt-layout/7.png" alt></p>
+<h2 id="逻辑函数"><a href="#逻辑函数" class="headerlink" title="逻辑函数"></a>逻辑函数</h2><p>此外，还需要单独引入<code>import read_citycode, get_weather</code>，这两个单独成两个文件，和主文件放在一起。</p>
+<p><code>read_citycode</code>以字典的形式返回每个城市对应的ID。<code>json</code>文件在上面提供的压缩包内，上面提到的天气API网址内也有。</p>
+<p>有的逻辑函数需要引入外部文件，否则会报错。因此，简易使用上文提供的代码下载链接，下载代码执行。直接copy这里的代码是不能执行的，因为需要外部文件的支持。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_code</span><span class="params">(filename)</span>:</span></span><br><span class="line">    city_ = &#123;&#125;</span><br><span class="line">    <span class="keyword">with</span> open(filename, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        temp = json.loads(f.read())</span><br><span class="line">        <span class="keyword">for</span> city <span class="keyword">in</span> temp:</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'city_code'</span> <span class="keyword">in</span> city:</span><br><span class="line">                key = city[<span class="string">'city_name'</span>]</span><br><span class="line">                value = city[<span class="string">'city_code'</span>]</span><br><span class="line">                city_[key] = value</span><br><span class="line"></span><br><span class="line">    sorted(city_.keys())</span><br><span class="line">    <span class="keyword">return</span> city_</span><br></pre></td></tr></table></figure>
+<p><code>get_weather</code>是对网址发送具体城市的天气请求，获取对应的结果，结果形式为<code>json</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(url)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        rep = requests.get(url)</span><br><span class="line">        rep.encoding = <span class="string">'utf-8'</span></span><br><span class="line">        <span class="keyword">return</span> rep</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        print(<span class="string">"network error"</span>)</span><br></pre></td></tr></table></figure>
+<p>以上两份代码分别整理到两个文件中，命名为<code>read_citycode.py</code>和<code>get_weather.py</code>。文件结构图如下：</p>
+<p><img data-src="/2019/10/19/pyqt-layout/3.png" alt></p>
+<p>布局完成之后，开始增加功能，所以我把所有的逻辑函数放上来。因为之前布局的时候，<code>button</code>在<code>clicked connect</code>的时候找不到逻辑函数报错，加入逻辑函数就不会错了。</p>
+<h3 id="退出窗口函数："><a href="#退出窗口函数：" class="headerlink" title="退出窗口函数："></a>退出窗口函数：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 退出按钮</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quit_act</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="comment"># sender 是发送信号的对象</span></span><br><span class="line">    sender = self.sender()</span><br><span class="line">    print(sender.text() + <span class="string">'键被按下'</span>)</span><br><span class="line">    qApp = QApplication.instance()</span><br><span class="line">    qApp.quit()</span><br></pre></td></tr></table></figure>
+<h3 id="窗口居中函数："><a href="#窗口居中函数：" class="headerlink" title="窗口居中函数："></a>窗口居中函数：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">center</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    获取桌面长宽</span></span><br><span class="line"><span class="string">    获取窗口长宽</span></span><br><span class="line"><span class="string">    移动</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    screen = QDesktopWidget().screenGeometry()</span><br><span class="line">    size = self.geometry()</span><br><span class="line">    self.move((screen.width() - size.width()) / <span class="number">2</span>, (screen.height() - size.height()) / <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="获取城市ID函数"><a href="#获取城市ID函数" class="headerlink" title="获取城市ID函数"></a>获取城市ID函数</h3><p>根据json文件，将获得的输入城市转换为ID，完成进一步查询。因为API的url只能传入ID，不可传入城市名。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读取 json 文件, 获得城市的code</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">match_city</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="comment">#　输入城市后才能点击绘图</span></span><br><span class="line">    self.btn_tempa.setEnabled(<span class="literal">True</span>)</span><br><span class="line">    self.btn_wind.setEnabled(<span class="literal">True</span>)</span><br><span class="line">    self.single_query.setEnabled(<span class="literal">True</span>)</span><br><span class="line">    self.btn_stawea.setEnabled(<span class="literal">True</span>)</span><br><span class="line">    <span class="comment"># 在外部json文件中 读取所有城市的 code</span></span><br><span class="line">    city = read_citycode.read_code(<span class="string">"最新_city.json"</span>) </span><br><span class="line">    line_city = self.city_line.text() </span><br><span class="line">    <span class="comment"># code与输入的城市对比, 如果有, 返回code, 如果没有则默认为北京</span></span><br><span class="line">    <span class="keyword">if</span> line_city <span class="keyword">in</span> city.keys():</span><br><span class="line">        self.code = city[line_city]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        self.code = <span class="string">"101010100"</span></span><br><span class="line">        self.city_line.setText(<span class="string">"北京"</span>)</span><br><span class="line">        Qreply = QMessageBox.about(self, <span class="string">"你犯了一个粗误"</span>, <span class="string">"输入城市无效,请示新输入,否则默认为北京"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="请求天气"><a href="#请求天气" class="headerlink" title="请求天气"></a>请求天气</h3><p>在获得城市的ID之后，便能生成url，请求API返回天气。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按照城市的code, 请求一个城市的天气 返回 json 形式</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request_weather</span><span class="params">(self)</span>:</span></span><br><span class="line">    root_url = <span class="string">"http://t.weather.sojson.com/api/weather/city/"</span></span><br><span class="line">    url = root_url + str(self.code)</span><br><span class="line">    self.rep = get_weather.run(url)</span><br><span class="line">    sender = self.sender()</span><br><span class="line">    <span class="keyword">if</span> sender.text() == <span class="string">"查询今日"</span>:</span><br><span class="line">        self.query(<span class="number">1</span>, <span class="number">5</span>, <span class="string">'温度'</span>, <span class="string">'风向'</span>, <span class="string">'风力'</span>, <span class="string">'PM2.5'</span>, <span class="string">'天气描述'</span>)</span><br><span class="line">    <span class="keyword">if</span> sender.text() == <span class="string">"温度预测(可绘图)"</span>:</span><br><span class="line">        self.btn_tempa.setEnabled(<span class="literal">False</span>)</span><br><span class="line">        self.query(self.num, <span class="number">2</span>, <span class="string">'日期'</span>, <span class="string">'温度'</span>)</span><br><span class="line">    <span class="keyword">if</span> sender.text() == <span class="string">"风力预测(可绘图)"</span>:</span><br><span class="line">        self.btn_wind.setEnabled(<span class="literal">False</span>)</span><br><span class="line">        self.query(self.num, <span class="number">2</span>, <span class="string">'日期'</span>, <span class="string">'风力'</span>)</span><br><span class="line">    <span class="keyword">if</span> sender.text() == <span class="string">"综合天气预测"</span>:</span><br><span class="line">        self.query(self.num, <span class="number">4</span>, <span class="string">'温度'</span>, <span class="string">'风向'</span>, <span class="string">'风力'</span>, <span class="string">'天气描述'</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="开始查询"><a href="#开始查询" class="headerlink" title="开始查询"></a>开始查询</h3><p>在得到请求城市的天气后，开始按照查询的需求输出结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询, 可以接受多个参数, 更加灵活的查询</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query</span><span class="params">(self, row_num, col_num, *args)</span>:</span></span><br><span class="line">    <span class="comment"># true value </span></span><br><span class="line">    tempature = self.rep.json()[<span class="string">'data'</span>][<span class="string">'wendu'</span>]</span><br><span class="line">    wind_power = self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][<span class="number">0</span>][<span class="string">'fl'</span>]</span><br><span class="line">    wind_direction = self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][<span class="number">0</span>][<span class="string">'fx'</span>]</span><br><span class="line">    pm = self.rep.json()[<span class="string">'data'</span>][<span class="string">'pm25'</span>]</span><br><span class="line">    type_ = self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][<span class="number">0</span>][<span class="string">'type'</span>]</span><br><span class="line">    <span class="comment"># forecast value</span></span><br><span class="line">    pre_tempature = []</span><br><span class="line">    pre_wind_power = []</span><br><span class="line">    pre_wind_direction = []</span><br><span class="line">    pre_pm = []</span><br><span class="line">    pre_type_ = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(self.num):</span><br><span class="line">        pre_tempature.append(str(self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][i][<span class="string">'low'</span>]))</span><br><span class="line">        pre_wind_power.append(str(self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][i][<span class="string">'fl'</span>]))</span><br><span class="line">        pre_wind_direction.append(str(self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][i][<span class="string">'fx'</span>]))</span><br><span class="line">        pre_type_.append(str(self.rep.json()[<span class="string">'data'</span>][<span class="string">'forecast'</span>][i][<span class="string">'type'</span>]))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置当前查询结果的行列</span></span><br><span class="line">    self.query_result.setRowCount(row_num)  </span><br><span class="line">    <span class="comment"># 否则不会显示</span></span><br><span class="line">    self.query_result.setColumnCount(col_num) </span><br><span class="line">    <span class="comment"># 表头自适应伸缩</span></span><br><span class="line">    self.query_result.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)</span><br><span class="line">    <span class="comment"># 按照 传入的参数设置表头, 因为每次查询的表头都不一样</span></span><br><span class="line">    ls = [i <span class="keyword">for</span> i <span class="keyword">in</span> args]</span><br><span class="line">    self.query_result.setHorizontalHeaderLabels(ls)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> col_num &gt; <span class="number">2</span> <span class="keyword">and</span> row_num == <span class="number">1</span>:</span><br><span class="line">        item = QTableWidgetItem(str(tempature) + <span class="string">"℃"</span>)</span><br><span class="line">        <span class="comment"># 设置单元格文本颜色</span></span><br><span class="line">        item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">        self.query_result.setItem(<span class="number">0</span>, <span class="number">0</span>, item)</span><br><span class="line"></span><br><span class="line">        item = QTableWidgetItem(str(wind_direction))</span><br><span class="line">        item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">        self.query_result.setItem(<span class="number">0</span>, <span class="number">1</span>, item)</span><br><span class="line"></span><br><span class="line">        item = QTableWidgetItem(str(wind_power))</span><br><span class="line">        item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">        self.query_result.setItem(<span class="number">0</span>, <span class="number">2</span>, item)</span><br><span class="line"></span><br><span class="line">        item = QTableWidgetItem(str(pm))</span><br><span class="line">        item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">        self.query_result.setItem(<span class="number">0</span>, <span class="number">3</span>, item)</span><br><span class="line">        </span><br><span class="line">        item = QTableWidgetItem(str(type_))</span><br><span class="line">        item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))                    </span><br><span class="line">        self.query_result.setItem(<span class="number">0</span>, <span class="number">4</span>, item)</span><br><span class="line">            </span><br><span class="line">    <span class="keyword">if</span> col_num &gt; <span class="number">2</span> <span class="keyword">and</span> row_num &gt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">0</span>, self.num):</span><br><span class="line">            item = QTableWidgetItem(<span class="string">"最"</span> + str(pre_tempature[i]))</span><br><span class="line">            <span class="comment"># 设置单元格文本颜色</span></span><br><span class="line">            item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">            self.query_result.setItem(i, <span class="number">0</span>, item)</span><br><span class="line"></span><br><span class="line">            item = QTableWidgetItem(str(pre_wind_direction[i]))</span><br><span class="line">            item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">            self.query_result.setItem(i, <span class="number">1</span>, item)</span><br><span class="line"></span><br><span class="line">            item = QTableWidgetItem(str(pre_wind_power[i]))</span><br><span class="line">            item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))</span><br><span class="line">            self.query_result.setItem(i, <span class="number">2</span>, item)</span><br><span class="line">            </span><br><span class="line">            item = QTableWidgetItem(str(pre_type_[i]))</span><br><span class="line">            item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))                    </span><br><span class="line">            self.query_result.setItem(i, <span class="number">3</span>, item)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> col_num == <span class="number">2</span> <span class="keyword">and</span> row_num &gt; <span class="number">1</span>:</span><br><span class="line">        date = self.get_date(addDays=self.num)</span><br><span class="line">        key = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> date:</span><br><span class="line">            item = QTableWidgetItem(i)</span><br><span class="line">            item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))  </span><br><span class="line">            self.query_result.setItem(key, <span class="number">0</span>, item)</span><br><span class="line">            key += <span class="number">1</span>              </span><br><span class="line">        <span class="keyword">if</span> self.query_result.horizontalHeaderItem(<span class="number">1</span>).text() == <span class="string">'温度'</span>:</span><br><span class="line">            key = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> pre_tempature:</span><br><span class="line">                item = QTableWidgetItem(<span class="string">"最"</span> + i)</span><br><span class="line">                item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))  </span><br><span class="line">                self.query_result.setItem(key, <span class="number">1</span>, item)</span><br><span class="line">                key += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> self.query_result.horizontalHeaderItem(<span class="number">1</span>).text() == <span class="string">'风力'</span>:</span><br><span class="line">            key = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> pre_wind_power:</span><br><span class="line">                item = QTableWidgetItem(i)</span><br><span class="line">                item.setForeground(QBrush(QColor(<span class="number">144</span>, <span class="number">182</span>, <span class="number">240</span>)))  </span><br><span class="line">                self.query_result.setItem(key, <span class="number">1</span>, item)</span><br><span class="line">                key += <span class="number">1</span>               </span><br><span class="line"></span><br><span class="line">    <span class="comment"># 只有两列的时候才可以绘制图像, </span></span><br><span class="line">    <span class="keyword">if</span> col_num &lt; <span class="number">4</span>:</span><br><span class="line">        ls, y = [], []</span><br><span class="line">        x = np.linspace(<span class="number">1</span>, self.num, self.num)</span><br><span class="line">        <span class="comment"># 将 treeview 里面的结果以数字的形式返回到列表中, 用于绘图</span></span><br><span class="line">        <span class="keyword">for</span> row <span class="keyword">in</span> range(self.num):</span><br><span class="line">            str1 = str(self.query_result.item(row, <span class="number">1</span>).text())</span><br><span class="line">            ls.extend(re.findall(<span class="string">r'\d+(?:\.\d+)?'</span>, str1))</span><br><span class="line">        <span class="keyword">if</span> len(ls) == <span class="number">5</span>:</span><br><span class="line">            y = [float(i) <span class="keyword">for</span> i <span class="keyword">in</span> ls]</span><br><span class="line">        <span class="keyword">if</span> len(ls) == <span class="number">10</span>:</span><br><span class="line">            lt = [float(i) <span class="keyword">for</span> i <span class="keyword">in</span> ls]</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">0</span>, len(lt), <span class="number">2</span>):</span><br><span class="line">                y.append((lt[i] + lt[i + <span class="number">1</span>]) / <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">if</span> len(ls) == <span class="number">5</span>:</span><br><span class="line">            y = [float(i) <span class="keyword">for</span> i <span class="keyword">in</span> ls]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            y = [float(i) <span class="keyword">for</span> i <span class="keyword">in</span> ls[<span class="number">0</span>:<span class="number">5</span>]]</span><br><span class="line">        <span class="comment"># 获取 treeview 的标题, 以得到绘图时的标得</span></span><br><span class="line">        <span class="keyword">if</span> self.query_result.horizontalHeaderItem(<span class="number">1</span>).text() == <span class="string">'温度'</span>:</span><br><span class="line">            title_ = <span class="string">"近期一个月温度变化（预测）"</span></span><br><span class="line">        <span class="keyword">if</span> self.query_result.horizontalHeaderItem(<span class="number">1</span>).text() == <span class="string">'风力'</span>:</span><br><span class="line">            title_ = <span class="string">"近期一个月风力变化（预测）"</span></span><br><span class="line">        <span class="comment"># 绘图时先清空面板 否则会新加一列,效果不好 </span></span><br><span class="line">        <span class="comment"># 且 pyqtgraph 的新加一列有bug, 效果不是很好 下次使用 matplotlib</span></span><br><span class="line">        <span class="keyword">if</span> title_ == <span class="string">"近期一个月风力变化（预测）"</span>:</span><br><span class="line">            self.plot_weather_wind.clear()</span><br><span class="line">            bg1 = pg.BarGraphItem(x=x, height=y, width=<span class="number">0.3</span>, brush=QColor(<span class="number">137</span>, <span class="number">232</span>, <span class="number">165</span>))</span><br><span class="line">            self.plt1 = self.plot_weather_wind.addPlot(title = title_)</span><br><span class="line">            self.plt1.addItem(bg1)</span><br><span class="line">        <span class="keyword">if</span> title_ == <span class="string">"近期一个月温度变化（预测）"</span>:</span><br><span class="line">            self.plot_weather_temp.clear()</span><br><span class="line">            self.plt = self.plot_weather_temp.addPlot(title = title_)</span><br><span class="line">            bg2 = pg.BarGraphItem(x=x, height=y, width=<span class="number">0.3</span>, brush=QColor(<span class="number">32</span>, <span class="number">235</span>, <span class="number">233</span>))</span><br><span class="line">            self.plt.addItem(bg2)</span><br><span class="line">        <span class="comment"># 绘图后才可以保存图片</span></span><br><span class="line">        self.save_fig.setEnabled(<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="保存图片与显示日期"><a href="#保存图片与显示日期" class="headerlink" title="保存图片与显示日期"></a>保存图片与显示日期</h3><p>逻辑如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 保存图片成功时的提醒</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pic_messagebox</span><span class="params">(self)</span>:</span></span><br><span class="line">    string = <span class="string">'第'</span> + str(self.filename) + <span class="string">'张图片.png'</span></span><br><span class="line">    Qreply = QMessageBox.information(self, string, <span class="string">"已经成功保存图片到当前目录, 关闭软件后请及时拷贝走"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存图片的设置 pyqtgraph 保存无法设置图片路径</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fig_save</span><span class="params">(self)</span>:</span></span><br><span class="line">    ex = pe.ImageExporter(self.plt.scene())</span><br><span class="line">    filename = <span class="string">'第'</span> + str(self.filename) + <span class="string">'张图片.png'</span></span><br><span class="line">    self.filename += <span class="number">1</span></span><br><span class="line">    ex.export(fileName = filename)</span><br><span class="line">    self.pic_messagebox()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_date</span><span class="params">(self, dateFormat=<span class="string">"%Y-%m-%d"</span>, addDays=<span class="number">0</span>)</span>:</span></span><br><span class="line">    ls = []</span><br><span class="line">    timeNow = datetime.datetime.now()</span><br><span class="line">    key = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> (addDays != <span class="number">0</span>) <span class="keyword">and</span> key &lt; addDays - <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range (addDays):</span><br><span class="line">            anotherTime = timeNow + datetime.timedelta(days = key)</span><br><span class="line">            anotherTime.strftime(dateFormat)</span><br><span class="line">            ls.append(str(anotherTime)[<span class="number">0</span>:<span class="number">10</span>])</span><br><span class="line">            key += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        anotherTime = timeNow</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>  ls</span><br></pre></td></tr></table></figure>
+<p>最终结果如下所示，以上代码见开头下载链接的<code>weather.py</code>文件。</p>
+<p><img data-src="/2019/10/19/pyqt-layout/2.gif" alt></p>
+<p>以上，我们见识到了层次布局管理后，软件的界面效果是可以接受的。</p>
+<p>那么问题来了，我想要像某个IDE或者编辑器，比如Pycharm或者Vscode一样，主界面下的框能拖动自由改变大小。接下来实现这个。</p>
+<h1 id="QSplitter-布局"><a href="#QSplitter-布局" class="headerlink" title="QSplitter 布局"></a>QSplitter 布局</h1><p>这个实现比较容易，需要实例化对象，加入frame，在添加至主布局中即可。参考：<br><a href="http://zetcode.com/gui/pyqt5/widgets2/" target="_blank" rel="noopener">http://zetcode.com/gui/pyqt5/widgets2/</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QWidget, QHBoxLayout, QFrame, </span><br><span class="line">    QSplitter, QStyleFactory, QApplication)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> Qt</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span><span class="params">(QWidget)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        </span><br><span class="line">        self.initUI()</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">initUI</span><span class="params">(self)</span>:</span>      </span><br><span class="line"></span><br><span class="line">        hbox = QHBoxLayout(self)</span><br><span class="line"></span><br><span class="line">        topleft = QFrame(self)</span><br><span class="line">        topleft.setFrameShape(QFrame.StyledPanel)</span><br><span class="line"> </span><br><span class="line">        topright = QFrame(self)</span><br><span class="line">        topright.setFrameShape(QFrame.StyledPanel)</span><br><span class="line"></span><br><span class="line">        bottom = QFrame(self)</span><br><span class="line">        bottom.setFrameShape(QFrame.StyledPanel)</span><br><span class="line"></span><br><span class="line">        splitter1 = QSplitter(Qt.Horizontal)</span><br><span class="line">        splitter1.addWidget(topleft)</span><br><span class="line">        splitter1.addWidget(topright)</span><br><span class="line"></span><br><span class="line">        splitter2 = QSplitter(Qt.Vertical)</span><br><span class="line">        splitter2.addWidget(splitter1)</span><br><span class="line">        splitter2.addWidget(bottom)</span><br><span class="line"></span><br><span class="line">        hbox.addWidget(splitter2)</span><br><span class="line">        self.setLayout(hbox)</span><br><span class="line">        </span><br><span class="line">        self.setGeometry(<span class="number">300</span>, <span class="number">300</span>, <span class="number">300</span>, <span class="number">200</span>)</span><br><span class="line">        self.setWindowTitle(<span class="string">'QSplitter'</span>)</span><br><span class="line">        self.show()</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    </span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    ex = Example()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/10/19/pyqt-layout/3.gif" alt></p>
+<p>之后，在frame里面添加控件，便可以随心所欲的玩耍。</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>代码见本文开头给出的下载链接中的<code>weather1.py</code>。</p>
+<p><img data-src="/2019/10/19/pyqt-layout/4.gif" alt></p>
+<h1 id="StackLayout布局"><a href="#StackLayout布局" class="headerlink" title="StackLayout布局"></a>StackLayout布局</h1><p>脑部网易云音乐的界面，是不是点击左侧的按钮后，右侧的窗口也会跟着改变。而实现这个技术，就需要StackLayout布局的管理。</p>
+<p>一个Demo, <code>stacklayout</code>添加完控件后，会自动设立索引，只需要按照索引访问对应项即可，以下代码实现了最简单的界面切换。</p>
+<p><img data-src="/2019/10/19/pyqt-layout/5.gif" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> PyQt5 <span class="keyword">import</span> QtWidgets</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QApplication, QMainWindow, QDesktopWidget, QStyleFactory, QWidget,</span><br><span class="line">                            QGridLayout, QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog,</span><br><span class="line">                            QStackedLayout, QFrame, QLabel, QLineEdit, QPushButton, QTableWidget, QVBoxLayout,</span><br><span class="line">                            QHBoxLayout, QSplitter)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtGui <span class="keyword">import</span> QPalette, QColor, QBrush</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Color</span><span class="params">(QWidget)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, color, *args, **kwargs)</span>:</span></span><br><span class="line">        super(Color, self).__init__(*args, **kwargs)</span><br><span class="line">        self.setAutoFillBackground(<span class="literal">True</span>)</span><br><span class="line">        </span><br><span class="line">        palette = self.palette()</span><br><span class="line">        palette.setColor(QPalette.Window, QColor(color))</span><br><span class="line">        self.setPalette(palette)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainWindow</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        super(MainWindow, self).__init__(*args, **kwargs)</span><br><span class="line">        </span><br><span class="line">        self.setWindowTitle(<span class="string">"My Awesome App"</span>)</span><br><span class="line"></span><br><span class="line">        pagelayout = QVBoxLayout()</span><br><span class="line">        button_layout = QHBoxLayout()</span><br><span class="line">        layout = QStackedLayout()</span><br><span class="line"></span><br><span class="line">        pagelayout.addLayout(button_layout)</span><br><span class="line">        pagelayout.addLayout(layout)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> n, color <span class="keyword">in</span> enumerate([<span class="string">'red'</span>,<span class="string">'green'</span>,<span class="string">'blue'</span>,<span class="string">'yellow'</span>]):</span><br><span class="line">            btn = QPushButton( str(color) )</span><br><span class="line">            btn.pressed.connect( <span class="keyword">lambda</span> n=n: layout.setCurrentIndex(n) )</span><br><span class="line">            button_layout.addWidget(btn)</span><br><span class="line">            layout.addWidget(Color(color))</span><br><span class="line"></span><br><span class="line">        widget = QWidget()</span><br><span class="line">        widget.setLayout(pagelayout)</span><br><span class="line">        self.setCentralWidget(widget)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    gui = MainWindow()</span><br><span class="line">    gui.show()</span><br><span class="line">    sys.exit(app.exec_())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><p>那么反过来思考以下，如果一个软件要综合Stacklayout，splitter等，要怎么实现呢。以下给一个例子，综合以上所有的内容，实现更加综合的布局管理。（以下代码copy后可以单独运行，不需要外部文件，也没有在上文的下载链接中给出）</p>
+<p>坑 1：整体界面resize前，先要设置splitter的大小，否则无效。<br>坑 2：TreeView和QWebEngineView不能放在同一个layout中，否则QWebEngineView会不显示。具体为啥，我也不知道。</p>
+<p><img data-src="/2019/10/19/pyqt-layout/6.gif" alt></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"><span class="keyword">import</span> sys, hashlib</span><br><span class="line"><span class="keyword">import</span> qdarkstyle</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWidgets <span class="keyword">import</span> (QApplication, QSplitter, QGridLayout, QHBoxLayout, QPushButton, </span><br><span class="line">                            QTreeWidget, QFrame, QLabel, QHBoxLayout, QMainWindow,</span><br><span class="line">                            QStackedLayout, QWidget, QVBoxLayout, QLineEdit, QRadioButton,</span><br><span class="line">                            QTreeWidgetItem, QDesktopWidget)</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtCore <span class="keyword">import</span> Qt, QUrl</span><br><span class="line"><span class="keyword">from</span> PyQt5.QtWebEngineWidgets <span class="keyword">import</span> QWebEngineView</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainWindow</span><span class="params">(QMainWindow)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        super(MainWindow, self).__init__(*args, **kwargs)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 设置窗口名称</span></span><br><span class="line">        self.setWindowTitle(<span class="string">"华北理工数学建模协会比赛查询"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置状态栏</span></span><br><span class="line">        self.status = self.statusBar()</span><br><span class="line">        self.status.showMessage(<span class="string">"我在主页面～"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置初始化的窗口大小</span></span><br><span class="line">        self.resize(<span class="number">600</span>, <span class="number">400</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 最开始窗口要居中显示</span></span><br><span class="line">        self.center()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置窗口透明度</span></span><br><span class="line">        self.setWindowOpacity(<span class="number">0.9</span>) <span class="comment"># 设置窗口透明度</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置窗口样式</span></span><br><span class="line">        self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置整体布局 左右显示</span></span><br><span class="line">        pagelayout = QGridLayout()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 左侧开始布局</span></span><br><span class="line">        <span class="comment"># 创建左侧部件</span></span><br><span class="line">        top_left_frame = QFrame(self)  </span><br><span class="line">        top_left_frame.setFrameShape(QFrame.StyledPanel)</span><br><span class="line">        <span class="comment">#　左边按钮为垂直布局</span></span><br><span class="line">        button_layout = QVBoxLayout(top_left_frame)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 登录按钮</span></span><br><span class="line">        verifyid_btn = QPushButton(top_left_frame)</span><br><span class="line">        verifyid_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), verifyid_btn.setText(<span class="string">"确认身份"</span>)</span><br><span class="line">        button_layout.addWidget(verifyid_btn)</span><br><span class="line">        <span class="comment"># 输入用户名　密码按钮</span></span><br><span class="line">        user_btn = QPushButton(top_left_frame)</span><br><span class="line">        user_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), user_btn.setText(<span class="string">"登录"</span>)</span><br><span class="line">        button_layout.addWidget(user_btn)</span><br><span class="line">        <span class="comment"># 申请账号　按钮</span></span><br><span class="line">        registor_btn = QPushButton(top_left_frame)</span><br><span class="line">        registor_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), registor_btn.setText(<span class="string">"申请帐号"</span>)</span><br><span class="line">        button_layout.addWidget(registor_btn)</span><br><span class="line">        <span class="comment"># 录入信息按钮</span></span><br><span class="line">        input_btn = QPushButton(top_left_frame)</span><br><span class="line">        input_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), input_btn.setText(<span class="string">"录入信息"</span>)</span><br><span class="line">        button_layout.addWidget(input_btn) </span><br><span class="line">        <span class="comment"># 查询按钮</span></span><br><span class="line">        query_btn = QPushButton(top_left_frame)</span><br><span class="line">        query_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), query_btn.setText(<span class="string">"查询信息"</span>)</span><br><span class="line">        button_layout.addWidget(query_btn) </span><br><span class="line">        <span class="comment"># 建模之家　按钮</span></span><br><span class="line">        friend_btn = QPushButton(top_left_frame)</span><br><span class="line">        friend_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), friend_btn.setText(<span class="string">"建模园地"</span>)</span><br><span class="line">        button_layout.addWidget(friend_btn) </span><br><span class="line">        <span class="comment"># 退出按钮</span></span><br><span class="line">        quit_btn = QPushButton(top_left_frame)</span><br><span class="line">        quit_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>), quit_btn.setText(<span class="string">"退出"</span>)</span><br><span class="line">        button_layout.addWidget(quit_btn)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 左下角为空白 必须要有布局，才可以显示至内容中</span></span><br><span class="line">        bottom_left_frame = QFrame(self)</span><br><span class="line">        blank_label = QLabel(bottom_left_frame)</span><br><span class="line">        blank_layout = QVBoxLayout(bottom_left_frame)</span><br><span class="line">        blank_label.setText(<span class="string">"建模学子的博客"</span>)</span><br><span class="line">        blank_label.setFixedHeight(<span class="number">20</span>)</span><br><span class="line">        blank_layout.addWidget(blank_label)</span><br><span class="line">        self.webEngineView = QWebEngineView(bottom_left_frame)</span><br><span class="line">        self.webEngineView.close()</span><br><span class="line">        blank_layout.addWidget(self.webEngineView)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 右侧开始布局 对应按钮布局</span></span><br><span class="line">        right_frame = QFrame(self)</span><br><span class="line">        right_frame.setFrameShape(QFrame.StyledPanel)</span><br><span class="line">        <span class="comment"># 右边显示为stack布局</span></span><br><span class="line">        self.right_layout = QStackedLayout(right_frame)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 确认身份</span></span><br><span class="line">        <span class="comment"># 管理员身份</span></span><br><span class="line">        radio_btn_admin = QRadioButton(right_frame)</span><br><span class="line">        radio_btn_admin.setText(<span class="string">"我是管理员，来输入数据的"</span>)</span><br><span class="line">        <span class="comment"># 游客身份</span></span><br><span class="line">        radio_btn_user = QRadioButton(right_frame)</span><br><span class="line">        radio_btn_user.setText(<span class="string">"我是游客，就来看看"</span>)</span><br><span class="line">        <span class="comment"># 以处置布局管理器管理</span></span><br><span class="line">        radio_btn_layout = QVBoxLayout()  <span class="comment"># 这里没必要在传入frame，已经有布局了</span></span><br><span class="line">        radio_btn_widget = QWidget(right_frame)</span><br><span class="line">        radio_btn_layout.addWidget(radio_btn_admin)</span><br><span class="line">        radio_btn_layout.addWidget(radio_btn_user)</span><br><span class="line">        radio_btn_widget.setLayout(radio_btn_layout)</span><br><span class="line">        self.right_layout.addWidget(radio_btn_widget)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 登录界面</span></span><br><span class="line">        user_line = QLineEdit(right_frame)</span><br><span class="line">        user_line.setPlaceholderText(<span class="string">"输入账号："</span>)</span><br><span class="line">        user_line.setFixedWidth(<span class="number">400</span>)</span><br><span class="line">        password_line = QLineEdit(right_frame)</span><br><span class="line">        password_line.setPlaceholderText(<span class="string">"请输入密码："</span>)</span><br><span class="line">        password_line.setFixedWidth(<span class="number">400</span>)</span><br><span class="line">        login_layout = QVBoxLayout()</span><br><span class="line">        login_widget = QWidget(right_frame)</span><br><span class="line">        login_widget.setLayout(login_layout)</span><br><span class="line">        login_layout.addWidget(user_line)</span><br><span class="line">        login_layout.addWidget(password_line)</span><br><span class="line">        self.right_layout.addWidget(login_widget)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 申请帐号</span></span><br><span class="line">        registor_id = QLineEdit(right_frame)</span><br><span class="line">        registor_id.setPlaceholderText(<span class="string">"请输入新帐号："</span>)</span><br><span class="line">        registor_id.setFixedWidth(<span class="number">400</span>)</span><br><span class="line">        registor_psd = QLineEdit(right_frame)</span><br><span class="line">        registor_psd.setPlaceholderText(<span class="string">"请输入密码："</span>)</span><br><span class="line">        registor_psd.setFixedWidth(<span class="number">400</span>)</span><br><span class="line">        registor_confirm = QLineEdit(right_frame)</span><br><span class="line">        registor_confirm.setPlaceholderText(<span class="string">"请确认密码："</span>)</span><br><span class="line">        registor_confirm.setFixedWidth(<span class="number">400</span>)</span><br><span class="line">        registor_confirm_btn = QPushButton(<span class="string">"确认提交"</span>)</span><br><span class="line">        registor_confirm_btn.setFixedSize(<span class="number">100</span>, <span class="number">30</span>)</span><br><span class="line">        registor_layout = QVBoxLayout()</span><br><span class="line">        register_widget = QWidget(right_frame)</span><br><span class="line">        register_widget.setLayout(registor_layout)</span><br><span class="line">        registor_layout.addWidget(registor_id)</span><br><span class="line">        registor_layout.addWidget(registor_psd)</span><br><span class="line">        registor_layout.addWidget(registor_confirm)</span><br><span class="line">        registor_layout.addWidget(registor_confirm_btn)</span><br><span class="line">        self.right_layout.addWidget(register_widget)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 建模园地 使用 TreeView　水平布局　应该读取数据库</span></span><br><span class="line">        self.friend_tree = QTreeWidget(right_frame)</span><br><span class="line">        self.friend_tree.setColumnCount(<span class="number">3</span>)  <span class="comment"># 一列 </span></span><br><span class="line">        self.friend_tree.setHeaderLabels([<span class="string">'年级'</span>, <span class="string">'人员'</span>, <span class="string">'友情链接'</span>]) <span class="comment"># 设置标题</span></span><br><span class="line">        root = QTreeWidgetItem(self.friend_tree) <span class="comment"># 设置根节点</span></span><br><span class="line">        self.friend_tree.setColumnWidth(<span class="number">2</span>, <span class="number">400</span>) <span class="comment"># 设置宽度</span></span><br><span class="line">        <span class="comment"># 设置子节点</span></span><br><span class="line">        root.setText(<span class="number">0</span>, <span class="string">"年级"</span>) <span class="comment"># 0 表示位置</span></span><br><span class="line">        root.setText(<span class="number">1</span>, <span class="string">"姓名"</span>)</span><br><span class="line">        root.setText(<span class="number">2</span>, <span class="string">"网址"</span>)</span><br><span class="line">        child_16 = QTreeWidgetItem(root)</span><br><span class="line">        child_16.setText(<span class="number">0</span>, <span class="string">"16级"</span>)</span><br><span class="line"></span><br><span class="line">        child_ljw = QTreeWidgetItem(child_16)</span><br><span class="line">        child_ljw.setText(<span class="number">1</span>, <span class="string">"刘佳玮"</span>)</span><br><span class="line">        child_ljw.setText(<span class="number">2</span>, <span class="string">"https://muyuuuu.github.io"</span>)</span><br><span class="line"></span><br><span class="line">        child_17 = QTreeWidgetItem(root)</span><br><span class="line">        child_17.setText(<span class="number">0</span>, <span class="string">"17级"</span>)</span><br><span class="line"></span><br><span class="line">        child_lqr = QTreeWidgetItem(child_17)</span><br><span class="line">        child_lqr.setText(<span class="number">1</span>, <span class="string">"李秋然"</span>)</span><br><span class="line">        child_lqr.setText(<span class="number">2</span>, <span class="string">"https://dgimoyeran.github.io"</span>)</span><br><span class="line"></span><br><span class="line">        friend_widget = QWidget(right_frame)</span><br><span class="line">        friend_layout = QVBoxLayout()</span><br><span class="line">        friend_widget.setLayout(friend_layout)</span><br><span class="line">        friend_layout.addWidget(self.friend_tree)</span><br><span class="line">        self.right_layout.addWidget(friend_widget)</span><br><span class="line"></span><br><span class="line">        self.url = <span class="string">''</span>  <span class="comment">#　后期会获取要访问的url</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 三分界面，可拖动</span></span><br><span class="line">        self.splitter1 = QSplitter(Qt.Vertical)</span><br><span class="line">        top_left_frame.setFixedHeight(<span class="number">250</span>)</span><br><span class="line">        self.splitter1.addWidget(top_left_frame)</span><br><span class="line">        self.splitter1.addWidget(bottom_left_frame)</span><br><span class="line"></span><br><span class="line">        self.splitter2 = QSplitter(Qt.Horizontal)</span><br><span class="line">        self.splitter2.addWidget(self.splitter1)</span><br><span class="line">        <span class="comment">#　添加右侧的布局</span></span><br><span class="line">        self.splitter2.addWidget(right_frame)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 窗口部件添加布局</span></span><br><span class="line">        widget = QWidget()</span><br><span class="line">        pagelayout.addWidget(self.splitter2)</span><br><span class="line">        widget.setLayout(pagelayout)</span><br><span class="line">        self.setCentralWidget(widget)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 函数功能区</span></span><br><span class="line">        verifyid_btn.clicked.connect(self.show_verifyid_page)</span><br><span class="line">        user_btn.clicked.connect(self.show_login_page)</span><br><span class="line">        registor_btn.clicked.connect(self.show_register_page)</span><br><span class="line">        friend_btn.clicked.connect(self.show_friend_page)</span><br><span class="line">        self.friend_tree.clicked.connect(self.show_firend_web)</span><br><span class="line">        quit_btn.clicked.connect(self.quit_act)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 刚开始要管理浏览器，否则很丑</span></span><br><span class="line">        self.webEngineView.close()</span><br><span class="line">        <span class="comment"># 注意先后顺序，resize　在前面会使代码无效</span></span><br><span class="line">        self.splitter1.setMinimumWidth(<span class="number">150</span>)</span><br><span class="line">        self.splitter2.setMinimumWidth(<span class="number">250</span>)</span><br><span class="line">        self.resize(<span class="number">600</span>, <span class="number">400</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># TreeView 的点击事件</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_firend_web</span><span class="params">(self)</span>:</span></span><br><span class="line">        item = self.friend_tree.currentItem()</span><br><span class="line">        <span class="keyword">if</span> item.text(<span class="number">2</span>)[:<span class="number">4</span>] == <span class="string">"http"</span>:</span><br><span class="line">            self.url = item.text(<span class="number">2</span>)</span><br><span class="line">            self.resize(<span class="number">1800</span>, <span class="number">1200</span>)</span><br><span class="line">            self.webEngineView.show()</span><br><span class="line">            self.splitter1.setFixedWidth(<span class="number">1400</span>)</span><br><span class="line">            self.webEngineView.load(QUrl(self.url))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 展示树形结构</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_friend_page</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.init()</span><br><span class="line">        self.center()</span><br><span class="line">        self.right_layout.setCurrentIndex(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 显示注册帐号的页面</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_register_page</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.init()</span><br><span class="line">        self.center()</span><br><span class="line">        self.right_layout.setCurrentIndex(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 显示登录的页面</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_login_page</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.init()</span><br><span class="line">        self.center()</span><br><span class="line">        self.right_layout.setCurrentIndex(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># stacklayout 布局，显示验证身份的页面</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">show_verifyid_page</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.init()</span><br><span class="line">        self.center()</span><br><span class="line">        self.right_layout.setCurrentIndex(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置窗口居中</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">center</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''</span></span><br><span class="line"><span class="string">        获取桌面长宽</span></span><br><span class="line"><span class="string">        获取窗口长宽</span></span><br><span class="line"><span class="string">        移动</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        screen = QDesktopWidget().screenGeometry()</span><br><span class="line">        size = self.geometry()</span><br><span class="line">        self.move((screen.width() - size.width()) / <span class="number">2</span>, (screen.height() - size.height()) / <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 退出按钮 有信息框的提示　询问是否确认退出</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">quit_act</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># sender 是发送信号的对象</span></span><br><span class="line">        sender = self.sender()</span><br><span class="line">        print(sender.text() + <span class="string">'键被按下'</span>)</span><br><span class="line">        qApp = QApplication.instance()</span><br><span class="line">        qApp.quit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app = QApplication(sys.argv)</span><br><span class="line">    w = MainWindow()</span><br><span class="line">    w.show()</span><br><span class="line">    sys.exit(app.exec_())</span><br></pre></td></tr></table></figure>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>PyQt5 这方面的文档，国内的资源很少。而且很单一（因为普遍都在抄袭，或者说没有特意的写出来）。</p>
+<p>出了问题去StackOverflow上或者谷歌一下，能搜出来很多、很有效的解决方案，至少国内的搜索引擎还做不到能快速的搜索出有效的科技文档来。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/10/06/pyqt5-basic/" rel="bookmark">PyQt5的基本控件整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/10/11/pyqt-pit/" rel="bookmark">PyQt5踩坑</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/24/school-start/" rel="bookmark">临近开学的瞎折腾——软件开发(PyQt5)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/11/16/A-Beautiful-PyQt5-Interface/" rel="bookmark">一个好看通用的PyQt5界面</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/02/01/NCSTModel/" rel="bookmark">华北理工大学数学建模协会竞赛信息管理软件</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GUI/" rel="tag"># GUI</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/11/pyqt-pit/" rel="prev" title="PyQt5踩坑">
+      <i class="fa fa-chevron-left"></i> PyQt5踩坑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/16/git-use/" rel="next" title="Git与Github的使用">
+      Git与Github的使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#高级布局管理"><span class="nav-number">1.</span> <span class="nav-text">高级布局管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体布局"><span class="nav-number">1.1.</span> <span class="nav-text">整体布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#左侧添加控件"><span class="nav-number">1.2.</span> <span class="nav-text">左侧添加控件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#右侧窗口布局"><span class="nav-number">1.3.</span> <span class="nav-text">右侧窗口布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#整体美化"><span class="nav-number">1.4.</span> <span class="nav-text">整体美化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑函数"><span class="nav-number">1.5.</span> <span class="nav-text">逻辑函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#退出窗口函数："><span class="nav-number">1.5.1.</span> <span class="nav-text">退出窗口函数：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#窗口居中函数："><span class="nav-number">1.5.2.</span> <span class="nav-text">窗口居中函数：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取城市ID函数"><span class="nav-number">1.5.3.</span> <span class="nav-text">获取城市ID函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求天气"><span class="nav-number">1.5.4.</span> <span class="nav-text">请求天气</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开始查询"><span class="nav-number">1.5.5.</span> <span class="nav-text">开始查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保存图片与显示日期"><span class="nav-number">1.5.6.</span> <span class="nav-text">保存图片与显示日期</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QSplitter-布局"><span class="nav-number">2.</span> <span class="nav-text">QSplitter 布局</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">2.1.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#StackLayout布局"><span class="nav-number">3.</span> <span class="nav-text">StackLayout布局</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例-1"><span class="nav-number">3.1.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">722k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '3a942fa67386633d56a229966b7d7096',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

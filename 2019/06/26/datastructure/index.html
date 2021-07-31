@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="计算机网络的坑还没有填完，于是我决定开个新坑。二刷完了数据结构，来一个粗暴的整理。高能慎入，只是简单的总结，并没有复杂的推导过程和代码。">
+<meta name="keywords" content="DataStructure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/06/26/datastructure/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="计算机网络的坑还没有填完，于是我决定开个新坑。二刷完了数据结构，来一个粗暴的整理。高能慎入，只是简单的总结，并没有复杂的推导过程和代码。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-28T17:19:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据结构">
+<meta name="twitter:description" content="计算机网络的坑还没有填完，于是我决定开个新坑。二刷完了数据结构，来一个粗暴的整理。高能慎入，只是简单的总结，并没有复杂的推导过程和代码。">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/06/26/datastructure/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据结构 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/06/26/datastructure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-26 15:33:56" itemprop="dateCreated datePublished" datetime="2019-06-26T15:33:56+00:00">2019-06-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-28 17:19:40" itemprop="dateModified" datetime="2020-03-28T17:19:40+00:00">2020-03-28</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>643</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>计算机网络的坑还没有填完，于是我决定开个新坑。<br>二刷完了数据结构，来一个粗暴的整理。<br>高能慎入，只是简单的总结，并没有复杂的推导过程和代码。</p>
+<a id="more"></a>
+<h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><p>程序设计 = 算法 + 数据结构。<br><code>数据</code>：描述事物的符号，可以输出计算机并处理。<br><code>数据元素</code>：组成数据的有意义的基本单位。人群中的数据元素就是人。<br><code>数据项</code>：描述数据元素的最小单位，不可切分。<br><code>数据对象</code>：性质相同的数据元素的结合，是数据的子集。<br><code>数据结构</code>：相互之间存在一种或多种特定关系的数据元素的集合。<br><code>数据类型</code>：性质相同的值的集合及定义在上面的操作。<br><code>抽象数据类型</code>：一个数学模型及在上面的操作。</p>
+<p>逻辑结构面向问题，物理结构面向计算机</p>
+<h2 id="逻辑结构"><a href="#逻辑结构" class="headerlink" title="逻辑结构"></a>逻辑结构</h2><p>图、树、集合、线性结构。线性结构中常用的为：队列、栈、线性表。</p>
+<h2 id="物理结构"><a href="#物理结构" class="headerlink" title="物理结构"></a>物理结构</h2><p><code>顺序存储</code>：如数组，逻辑关系和物理关系对应。</p>
+<p><code>链式存储</code>：逻辑关系和物理关系无关，逻辑相邻，物理不相邻。靠存储单元中的指针指向下一个地址。</p>
+<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><h2 id="算法的特性"><a href="#算法的特性" class="headerlink" title="算法的特性"></a>算法的特性</h2><p><code>输入输出</code>：可以没有输入，但至少有一个输出<br><code>有穷性</code>：可接受的时间内求解<br><code>确定性</code>：对于任何输入或相同输入，得到唯一确定的解<br><code>可行性</code>：有限步骤内求解问题</p>
+<h2 id="算法的目标"><a href="#算法的目标" class="headerlink" title="算法的目标"></a>算法的目标</h2><p><code>正确性</code>：算法的输出是正确的，通常用数学的方法证明<br><code>可读性</code>：通俗易懂<br><code>健壮性</code>：面临任何极端输入，都能得到确定的输出<br><code>时间存储</code>：算法执行时间快，需要的存储空间少</p>
+<h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p>算法的渐进增长取决于最高项，执行次数$T(n)$是关于问题规模$n$的函数，$T(n)=O(f(n))$，增长率和$f(n)$相同，称为渐进时间复杂度，也叫时间复杂度，只保留最高项，去除常熟和系数。</p>
+<script type="math/tex; mode=display">1<\log_n<n\log_n<n^2<n^3<2^n<n!<n^n</script><p>最坏情况的时间复杂度是算法的保证，代码中辅助存储空间的空间复杂度一律为$O(1)$。</p>
+<h1 id="线性表"><a href="#线性表" class="headerlink" title="线性表"></a>线性表</h1><p>零个或多个相同类型的数据元素组成的有限序列（一个数据元素可以包括多个数据项）。</p>
+<p><code>顺序结构</code>：存取为$O(1)$，不能为逻辑关系的增加设置额外的存储空间。插入与删除为$O(n)$，主要是元素的移动。难以确定容量，可能会造成内存空间的碎片。</p>
+<p><code>链式结构</code>：头指针指向下一个元素，最后节点的指针为空。存取的复杂度为$O(n)$，并不知道元素的位置在哪里，插入删除的时间复杂都为$O(1)$。整表的删除与创建，头插入，尾插入，需要借助两个指针。</p>
+<p><code>静态链表</code>：数组表示链式线性表。使用数组式结构体，每个数组有两个值，一个表示本节点的值，一个表示下一个节点在数组中的位置。</p>
+<p><code>循环链表</code>：尾指针指向头指针。</p>
+<p><code>双向链表</code>：节点加入前驱后继。</p>
+<h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><p>也属于线性表，只能在表尾进行插入和删除，表尾也是栈顶。顺序存储使用数组，链式存储使用指针，结构体存储指向自己的指针和值。</p>
+<p>两栈共享空间，当两个栈顶指针重合时栈溢出。</p>
+<p>栈的应用，递归。递归易懂，但是迭代不用占用额外的存储空间。</p>
+<p><code>递归</code>, 每次递归都会产生调用栈，不在可执行文件中，在执行时创建。调用栈所在的段为<code>堆栈段</code>，有自己的大小不能越界访问，否则为段错误。每次递归会在<code>调用栈</code>里增加一个栈帧，越界后的错误为栈溢出。</p>
+<p><code>后缀表达式的应用</code>：也称为逆波兰表达式，Reverse Polish Notation。无括号表达式。数字压栈，遇到操作符取出来，后者操作前者。</p>
+<p><code>中缀表达式转后缀</code>：是正常的小学算术的四则运算。1.数字直接输出。2.遇到<code>)</code>，输出遇到第一个<code>(</code>之间所有的符号。3.<code>(</code>直接压栈。4.后来者优先级高则压栈，优先级低，弹两个。完成转后缀表达式。</p>
+<h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><p>一端进，一端出，先进先出。如操作系统的任务序列，键盘输入到记事本的显示同样为队列。简单的顺序存储会造成存储资源的浪费，循环队列可以对空白位置利用。位置计算<code>(rear+1)%QueueSize==front</code>。链式结构同样，先进先出，包括了指针与值。</p>
+<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max{k|p<em>{k+1}=p</em>{j-k+1}}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
+<h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>一对多的层次关系，有限集合，结点$n\geq 0$。根节点下的子树没有交集，不构成环。</p>
+<p><code>节点的度</code>：节点拥有孩子的数量称为节点的<code>度</code>。所有节点中最大的度为树的<code>度</code>。度为0是叶子节点或，度不为0的非根节点是分支节点。<br><code>树的深度</code>：根在第一层，根的孩子是第二层，依次类推到树中的最大层，得到树的深度。<br><code>森林</code>：多个不相交的树的结合。<br><code>节点的关系</code>：节点的子树称为节点的孩子，节点是子树的父亲。</p>
+<p>如果将树中结点的各子树看成从左至右是有次序的，不能互换的，则称该树为有序树，否则称为无序树。</p>
+<p><code>存储方式</code>：树的表示方法多种多样，如一个域存数值，或者一个域存指向父亲的指针，或者一个域指向多个孩子节点，或者有几个孩子就有几个域，然后指针指过去。实现方法多种多样，需要根据实际情况加以调整。</p>
+<h2 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h2><p>二又树（Binary Tree）是$n(n\geq 0)$个结点的有限集合，该集合或者为空集（称为空二叉树）。<br>或者由一个根结点和两棵互不相交的、分别称为根结点的左子树和右子树的二叉树组成。<br>不存在度大于2的节点，左右子树的顺序不能任意交换，交换后不是相同的二叉树，严重区分左右。</p>
+<p><code>五种形态</code>：1.空二叉树。2.只有一个节点。3.只有左子树。4.只有右子树。5.左右子树都有。</p>
+<h2 id="特殊二叉树"><a href="#特殊二叉树" class="headerlink" title="特殊二叉树"></a>特殊二叉树</h2><p><code>斜二叉树</code>：只有左二叉树或只有右二叉树。<br><code>满二叉树</code>：所有分支节点都存在左子树和右子树。所有叶子节点在同一层。同深度的二叉树中，满二叉树的节点数最多。非叶节点度数必须为2。<br><code>完全二叉树</code>：从上到下，从左到右开始编号，和满二叉树完全对应。叶子节点在最下两层。最下层的叶子在左边。不存在只有右孩子而不存在左孩子的情况。</p>
+<h2 id="二叉树的性质"><a href="#二叉树的性质" class="headerlink" title="二叉树的性质"></a>二叉树的性质</h2><p><code>1.</code>二叉树的第$i$层至多有$2^{i-1}$个节点。<br><code>2.</code>深度为$k$的二叉树之多有$2^k-1$个节点，等比序列求和。<br><code>3.</code>二叉树中，终端节点的数量等于节点为2的数量+1。<br><code>4.</code>具有$n$个节点的完全二叉树的深度为$\lfloor \log_2 n\rfloor+1$。<br><code>5.</code>完全二叉树中，从1开始编号，节点乘以2是左节点，乘以2在加1是右节点。</p>
+<h2 id="遍历二叉树"><a href="#遍历二叉树" class="headerlink" title="遍历二叉树"></a>遍历二叉树</h2><p>二叉树的遍历（traversing binary tree）是指从根结点出发，接照某种次序依次访问二叉树中所有结点，使得每个结点被访问一次且仅被访问一次。<br><code>前序遍历</code>：先根节点，然后左子树，然后右子树。<br><code>中序遍历</code>：先左子树，然后根节点，然后右子树。<br><code>后序遍历</code>：先左子树，然后右子树，然后根节点。<br><code>层序遍历</code>：先上后下，先左后右。</p>
+<p><code>线索化二叉树</code>：以某种顺序遍历二叉树，在两端的指针域使得节点直接指向遍历顺序的前驱后继，将二叉树变为线索化二叉树，按照指针的顺序遍历则得到了双向链表。用于经常访问节点的前驱后继时使用。</p>
+<h2 id="树、森林、二叉树的转换"><a href="#树、森林、二叉树的转换" class="headerlink" title="树、森林、二叉树的转换"></a>树、森林、二叉树的转换</h2><p><code>树到二叉树</code>：兄弟节点之间加入连线。去除父节点与所有有孩子的连线。<br><code>森林到二叉树</code>：每个树转为二叉树。右边的树作为左边树的右孩子插入。<br><code>二叉树转为树</code>：父亲节点与所有的右孩子连线。去除原来的父节点与孩子节点的连线。<br><code>二叉树转森林</code>：从根节点开始，删除与右子树的连线。以删除后右子树的根开始，再删除与右子树的连线。得到多个独立的二叉树，这些二叉树在转树。</p>
+<h2 id="哈夫曼树"><a href="#哈夫曼树" class="headerlink" title="哈夫曼树"></a>哈夫曼树</h2><p>带权路径长度最小的二叉树。距离的计算为：从根节点出发(不包括根节点，不带权时包括分支节点，带权时不包括)，达到目标节点的路径长度是经过的节点的数量。如果带有权值就乘上。哈夫曼树的二叉树路径最小。<br>哈夫曼树生成过程，挑选权重最小的两个节点组成新节点。新节点在和其余最小的节点组成新节点，以此类推。<br>哈夫曼编码可以实现文件压缩，按照频率实现哈夫曼树，左0右1。保证一个编码不是另一个编码的前缀。</p>
+<h1 id="图"><a href="#图" class="headerlink" title="图"></a>图</h1><h2 id="图的基本概念"><a href="#图的基本概念" class="headerlink" title="图的基本概念"></a>图的基本概念</h2><p>顶点集合不为空，但有穷，以及顶点之间的边。表示为$G=(V,E)$，$V$表示顶点集合，$E$表示顶点之间边的结合。边表示的是顶点之间的逻辑关系。<br>顶点之间没有方向称为无向边。顶点$v_1$到$v_2$有方向，称为弧，$v_1$是弧尾，$v_2$是弧头。无向边用圆括号记录，弧使用尖括号记录，&lt;弧尾，弧头&gt;。<br><code>简单图</code>：不存在重复的边，不存在自己指向自己的边。<br><code>无向完全图</code>：任意的两个顶点都存在边。共$n\times (n+1)/2$条边。<br><code>有向完全图</code>：任意两点之间存在两条方向相反的弧。共$n\times (n+1)$条边。<br><code>稀疏图</code>：边比较少。反之称为稠密图。<br><code>网</code>：带权图通常称为网。<br><code>子图</code>：对于$G’=(V’,E’)$和$G=(V,E)$有$V’\in V,E’\in E$，称为$G’$是$G$的子图。<br><code>图与顶点之间的关系</code>：无向图中，顶点$v$的度是与顶点$v$相关联的边的数目，边的数量是度数和的一半。有向图中，入度是顶点作为弧头的数量，出度反之，出度=入读=边的数量。<br>路径长度是路径上边的数量。<br>路径中顶点不重复称为简单路径，或者简单环。<br><code>连通图</code>：任意两个顶点是联通的。<br><code>极大连通子图</code>：连通的子图，含有极大顶点数和依赖这些顶点的边。也成为<code>连通分量</code>。<br><code>强连通图</code>：有向图中任意两点存在路径，强连通分量计为其子图。<br><code>生成树</code>：连通图的极小连通子图。含有全部$n$个顶点，足以构成$n-1$条边的树。<br><code>有向树</code>：一个顶点没有入度，其余顶点入度是1。<br><code>有向图的生成森林</code>：若干有向树，全部顶点，若干弧。</p>
+<hr>
+<p><code>存储结构</code>：顶点的邻接点之间不存在次序关系。对于邻接矩阵，矩阵的两个维度都是顶点，以1表示边存在，0表示不存在。是一个对角线为零的对称矩阵，行列可求度。有向图的邻接矩阵中，对角线为0，$\infty$表示不存在。邻接矩阵的时间复杂度为$O(n^2+n+e)$，初始化，读边，读点。<br>降低时间复杂的的操作为<code>邻接表</code>，无论是有向图还是无向图，存储方式都是从顶点出发，一个指针域指向下一个节点。时间复杂度为$O(n+e)$，读点，插边。</p>
+<h2 id="图的结构"><a href="#图的结构" class="headerlink" title="图的结构"></a>图的结构</h2><p>图的遍历指每个节点仅仅被访问一次。深度优先和广度优先，是一个递归的过程。<br>最小生成树算法：Prim：$O(n^2)$，Krsukal：$O(e\log e)$。<br><code>图的拓扑序列</code>：顶点是事件的开始，弧为优先序列，表示为<code>AOV</code>网，将有向图构造为拓扑序列。顺序不存在回路，描述活动的制约关系。<br>边上有权表示为<code>AOE</code>网，无条件制约，但是求路径的权重最大或最小，如网络最大流问题。（建立反向路径）。</p>
+<h1 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h1><p><code>查找表</code>：是同一类型的数据元素构成的集合，一主关键字区分，查找后对应的关键字相等。<br><code>静态查找</code>：只查找，不删除也不插入。<br><code>动态查找</code>：可以考虑改变数据元素的关系改善查找性能。<br>线性表的查找$O(n)$，折半查找$O(\log n)$。<br><code>索引</code>：将关键字与对应的记录关联，索引项可以构成线性结构。<br><code>稠密索引</code>：索引等于数据规模的长度。<br><code>分块索引</code>：块内无序，块间有序，用于数据库，复杂度$O(\sqrt n)$。<br><code>倒排索引</code>：属性值决定记录的位置，用于搜索引擎。<br><code>二叉排序树</code>：中序遍历有序，左子树小于根，右子树大于根。查找时按顺序查找即可，插入时按顺序插入，删除时叶节点直接删除，只有左子树或右子树则子承父业，左右子树都存在时，中序遍历寻找删除节点的直接前驱与后继，代替原来的节点。<br><code>平衡二叉树</code>：平衡因子为BF，左子树深度减去右子树深度即可得到。平衡因子绝对值大于1，用于频繁的插入与删除，插入、删除、查找均为$O(\log n)$。旋转调整时均以失衡点下一个点为中心。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>左左</th>
+<th>右右</th>
+<th>右左</th>
+<th>左右</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>右旋</td>
+<td>左旋</td>
+<td>右旋，左旋</td>
+<td>左旋，右旋</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="多路查找树"><a href="#多路查找树" class="headerlink" title="多路查找树"></a>多路查找树</h2><p><code>2-3树</code>：每个节点有两三个孩子。二节点，一个元素，两个孩子或者没有孩子（左小右大，不能只有一个孩子）。一个三节点，一小一大两个元素，三个孩子或没有孩子。插入与删除的时候，可以有单个叶节点。空树插入为二节点，在插入为三节点。删除时三节点拆分，或者二节点上移。看情况讨论，极为复杂。<br><code>2-3-4树</code>：4节点三个元素，只有四个孩子或者没有孩子。<br><code>B树</code>：平衡的多路查找树，节点最大的孩子数目为B树的阶，非叶节点至少两个孩子。每个非根的分支节点$k$个元素和$k-1$个孩子，每个叶节点有$k-1$个元素，所有叶子节点位于同一层。减少了访问数据块的次数，即IO次数，提高了性能。<br><code>B+树</code>：弥补了B树的缺陷，中序遍历防止多次遍历根节点。所有叶子节点接在一起，即根节点在叶节点中再次出现，自小到大排列好，查找高效$[18,+\infty)$，插入与删除都在叶节点。（因为根节点已经下来了）。</p>
+<h2 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h2><p>也叫哈希。存储位置=f（关键字），对应的存储空间称为哈希表，数据元素没有逻辑关系。适合存储与查找，需要考虑关键字的长度，函数需要的时间，是否分布均匀。函数要求计算简单，可以处理冲突，散列地址分布均匀，如平方取中，数字分析。面临冲突时线性探测或者链式解决。查找的复杂度为$O(1)$。</p>
+<p>散列表的平均查找长度取决于填充因子，填入个数除以总长度，不取决于填入元素的总长度。</p>
+<h1 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h1><p>稳定排序：排序之前$r_1$先于$r_2$，在排序之后$r_1$仍然先于$r_2$。</p>
+<p>给个不错的链接：<a href="https://hit-alibaba.github.io/interview/basic/algo/Sorting.html" target="_blank" rel="noopener">https://hit-alibaba.github.io/interview/basic/algo/Sorting.html</a></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>稳定排序</th>
+<th>不稳定排序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冒泡排序 $O(n^2 )$</td>
+<td>快速排序 $O(n\log n)$</td>
+</tr>
+<tr>
+<td>插入排序 $O(n^2 )$</td>
+<td>堆排序 $O(n \log n)$</td>
+</tr>
+<tr>
+<td>桶排序 $O ( n ) $</td>
+<td>希尔排序 $O(n \log n)$</td>
+</tr>
+<tr>
+<td>归并排序 $O(n \log n)$</td>
+<td>选择排序 $O( n^2 )$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>文字的过程，让思考沉淀。</p>
+<hr>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2018/11/03/AVL-RB-tree/" rel="bookmark">AVL树的Python实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/09/04/PAT/" rel="bookmark">算法笔记</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/02/05/Spiral-matrix/" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/12/Computer-network/" rel="prev" title="计算机网络原理">
+      <i class="fa fa-chevron-left"></i> 计算机网络原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/30/bye/" rel="next" title="归尘">
+      归尘 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑结构"><span class="nav-number">1.1.</span> <span class="nav-text">逻辑结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#物理结构"><span class="nav-number">1.2.</span> <span class="nav-text">物理结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法的特性"><span class="nav-number">2.1.</span> <span class="nav-text">算法的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法的目标"><span class="nav-number">2.2.</span> <span class="nav-text">算法的目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间复杂度"><span class="nav-number">2.3.</span> <span class="nav-text">时间复杂度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线性表"><span class="nav-number">3.</span> <span class="nav-text">线性表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#栈"><span class="nav-number">4.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#队列"><span class="nav-number">5.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#串"><span class="nav-number">6.</span> <span class="nav-text">串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#树"><span class="nav-number">7.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">7.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉树"><span class="nav-number">7.2.</span> <span class="nav-text">二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特殊二叉树"><span class="nav-number">7.3.</span> <span class="nav-text">特殊二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉树的性质"><span class="nav-number">7.4.</span> <span class="nav-text">二叉树的性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遍历二叉树"><span class="nav-number">7.5.</span> <span class="nav-text">遍历二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#树、森林、二叉树的转换"><span class="nav-number">7.6.</span> <span class="nav-text">树、森林、二叉树的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哈夫曼树"><span class="nav-number">7.7.</span> <span class="nav-text">哈夫曼树</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图"><span class="nav-number">8.</span> <span class="nav-text">图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#图的基本概念"><span class="nav-number">8.1.</span> <span class="nav-text">图的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图的结构"><span class="nav-number">8.2.</span> <span class="nav-text">图的结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查找"><span class="nav-number">9.</span> <span class="nav-text">查找</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#多路查找树"><span class="nav-number">9.1.</span> <span class="nav-text">多路查找树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#散列表"><span class="nav-number">9.2.</span> <span class="nav-text">散列表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#排序"><span class="nav-number">10.</span> <span class="nav-text">排序</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">722k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '97cef7abf2f167bec83aa49ddb4e1ae6',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

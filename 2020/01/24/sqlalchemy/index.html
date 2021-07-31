@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前期准备安装MySQL，MySQL忘记密码 python可以通过不同的第三方库去连接各种数据库。但程序可能会使用多个数据库，需要做到一次编写适配不同的DBMS。且直接用python调用SQL的写法并不是很好，容易收到注入攻击，所以有必要使用ORM(Object Relational Mapping)来简化代码和使代码便于维护，而python中最著名的ORM为SQLAlchemy，pip insta">
+<meta name="keywords" content="Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库系列（一）——SQLAlchemy的使用(CRUD)">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/01/24/sqlalchemy/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="前期准备安装MySQL，MySQL忘记密码 python可以通过不同的第三方库去连接各种数据库。但程序可能会使用多个数据库，需要做到一次编写适配不同的DBMS。且直接用python调用SQL的写法并不是很好，容易收到注入攻击，所以有必要使用ORM(Object Relational Mapping)来简化代码和使代码便于维护，而python中最著名的ORM为SQLAlchemy，pip insta">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-02T13:45:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库系列（一）——SQLAlchemy的使用(CRUD)">
+<meta name="twitter:description" content="前期准备安装MySQL，MySQL忘记密码 python可以通过不同的第三方库去连接各种数据库。但程序可能会使用多个数据库，需要做到一次编写适配不同的DBMS。且直接用python调用SQL的写法并不是很好，容易收到注入攻击，所以有必要使用ORM(Object Relational Mapping)来简化代码和使代码便于维护，而python中最著名的ORM为SQLAlchemy，pip insta">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2020/01/24/sqlalchemy/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据库系列（一）——SQLAlchemy的使用(CRUD) | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/01/24/sqlalchemy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库系列（一）——SQLAlchemy的使用(CRUD)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-24 12:01:04" itemprop="dateCreated datePublished" datetime="2020-01-24T12:01:04+00:00">2020-01-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-02 13:45:24" itemprop="dateModified" datetime="2020-02-02T13:45:24+00:00">2020-02-02</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h1><p><a href="https://www.runoob.com/mysql/mysql-install.html" target="_blank" rel="noopener">安装MySQL</a>，<a href="http://yshblog.com/blog/195" target="_blank" rel="noopener">MySQL忘记密码</a></p>
+<p>python可以通过不同的第三方库去连接各种数据库。但程序可能会使用多个数据库，需要做到一次编写适配不同的DBMS。且直接用python调用SQL的写法并不是很好，容易收到注入攻击，所以有必要使用<code>ORM(Object Relational Mapping)</code>来简化代码和使代码便于维护，而python中最著名的ORM为<code>SQLAlchemy</code>，<code>pip install SQLalchemy</code>即可。</p>
+<a id="more"></a>
+<h1 id="前提知识"><a href="#前提知识" class="headerlink" title="前提知识"></a>前提知识</h1><p>什么是注入攻击？如python直接调用数据库并插入数据：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.query.execute(<span class="string">"insert into major values(\"&#123;&#125;\", \"&#123;&#125;\")"</span>.format(major_name, college_name))</span><br></pre></td></tr></table></figure></p>
+<p>但<code>major_name</code>的字符内容为：<code>计算机&quot;self.query.execute(&quot;delete table;&quot;)&quot;</code>，很容易直接删除数据表或停止软件的运行，造成不可描述的后果。即：肯能执行用户的非法输入，而这在<code>Web</code>开发中更为致命，甚至可通过植入javascript代码操控你的浏览器，达到不可描述的行为。</p>
+<p>更详细的数据库攻击、及其避免方式可以参考《Flask Web开发实战 入门、进阶与原理解析》这本书（作者是李辉），算是一本不错的技术书籍。</p>
+<p>也可以粗暴的看看<a href="https://blog.csdn.net/tianjf0514/article/details/8394086" target="_blank" rel="noopener">这篇文章</a>的第一部分，了解为何不能用代码直接操作数据库。</p>
+<h1 id="启动数据库"><a href="#启动数据库" class="headerlink" title="启动数据库"></a>启动数据库</h1><p>我是安装的便携版的<code>MySQL</code>，所以去对应文件的位置，命令行<code>mysql -uroot -p</code>启动即可：</p>
+<p><img data-src="/2020/01/24/sqlalchemy/1.png" alt></p>
+<h1 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h1><p>此部分的代码建议在<code>jupyter-lab</code>这款IDE内编写，因为涉及那种命令行交互的代码较多，就是写一句执行一句，不能从头开始全部执行。</p>
+<p>首先导入必要工具库：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine, Table, Column, Integer, String, MetaData, ForeignKey</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker</span><br></pre></td></tr></table></figure>
+<p>创建数据库<code>test</code>, 命令为：<code>CREATE DATABASE test;</code></p>
+<p>Engine 是访问数据库的入口，通过它连接<code>test</code>数据库：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个连接引擎 </span></span><br><span class="line"><span class="comment"># create_engine("数据库类型+数据库驱动://数据库用户名:数据库密码@IP地址:端口/数据库"，其他参数)</span></span><br><span class="line">engine = create_engine(<span class="string">"mysql+pymysql://root:MyNewPass@localhost:3306/test"</span>)</span><br></pre></td></tr></table></figure>
+<h1 id="定义数据库表的Schema"><a href="#定义数据库表的Schema" class="headerlink" title="定义数据库表的Schema"></a>定义数据库表的Schema</h1><p>如果我们需要一张 users 的表，那么我们可以通过一个 User 类来声明它的元数据。</p>
+<ul>
+<li>primary_key 设置为 true 表示为主键</li>
+<li>unique 设置为 true 后，表示这个字段不能重复</li>
+<li>index 设置为 true ，表示对该字段建立索引</li>
+<li>nullable 默认为 true，表示可空</li>
+<li>default 设置该字段的默认值</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Base = declarative_base()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># __tablename__ 指定在 MySQL 中表的名字</span></span><br><span class="line">    __tablename__ = <span class="string">'users'</span></span><br><span class="line">    <span class="comment"># 每一个类都需要主键</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>)  </span><br><span class="line">    username = Column(String(<span class="number">64</span>), index=<span class="literal">True</span>)</span><br><span class="line">    email = Column(String(<span class="number">64</span>), unique=<span class="literal">True</span>, index=<span class="literal">True</span>)</span><br><span class="line">    location = Column(String(<span class="number">128</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""定义 repr 让输出更加直观优雅"""</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'&lt;User &#123;&#125;&gt;'</span>.format(self.username)</span><br></pre></td></tr></table></figure>
+<p>在代码中创建用户完毕后，将这个表映射到MySql数据库中：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Base.metadata.create_all(bind=engine)</span><br></pre></td></tr></table></figure>
+<p>在MySql中查看创建信息，其中 <code>use test;</code>表示使用当前数据库，<code>show tables;</code>表示查看当前数据库的所有数据表。</p>
+<p><img data-src="/2020/01/24/sqlalchemy/2.png" alt></p>
+<p>此外，SQLAlchemy的数据类型和python的数据类型的对应关系如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>python数据类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Integer</td>
+<td>int</td>
+<td>整型</td>
+</tr>
+<tr>
+<td>String</td>
+<td>str</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>float</td>
+<td>浮点型</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>bool</td>
+<td>布尔型</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>datetime.date</td>
+<td>日期</td>
+</tr>
+<tr>
+<td>DateTime</td>
+<td>datetime.datetime</td>
+<td>日期和时间</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>datetime.time</td>
+<td>时间</td>
+</tr>
+<tr>
+<td>Text</td>
+<td>str</td>
+<td>文本类型</td>
+</tr>
+<tr>
+<td>LongText</td>
+<td>str</td>
+<td>长文本类型</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="增删改查"><a href="#增删改查" class="headerlink" title="增删改查"></a>增删改查</h1><p>众所周知，数据库用户的核心功能就是增删改查这四大金刚，而<code>SQLalchemy</code>也很好的提供了支持。查询是其中最重要的功能，所以，关于SQLAlchemy中查询的官方文档如下：<a href="https://docs.sqlalchemy.org/en/13/orm/query.html" target="_blank" rel="noopener">https://docs.sqlalchemy.org/en/13/orm/query.html</a></p>
+<p>通常情况下会使用<code>session</code>完成数据库的增删改查</p>
+<ul>
+<li>session创建和管理数据库连接的会话 </li>
+<li>model object 通过session对象访问数据库，并把访问到的数据存入（或修改）提交到数据库中。任意数量的model object被创建，并绑定到session中，session会管理这些对象，而一旦session 里面的objects 有变化，便可以commit/rollback提交或者放弃changs。</li>
+<li>rollback 的使用条件是：假如session第一次add了一个对象，第二次又add了<code>同一个</code>对象，此时一定要session.rollback()，直接commit会报错。</li>
+</ul>
+<p>一般来说，session在需要访问数据库的时候创建，在session访问数据库的时候，准确来说，应该是“add/update/delete”数据库的时候，会开启<code>database transaction</code>, 假设没有修改autocommit的默认值(False), 那么，<code>database transaction</code> 一直会保持，只有等到session rolled back, committed, or closed（完成状态）的时候才结束。</p>
+<p>所以一般建议，当<code>database transaction</code>结束的时候，同时close session, 保证，每次发起请求，都创建一个新的session。</p>
+<p>此外需要保证session是一个全局的对象，所以和数据库通信的session在任何时候只有一个，且管理一个session对象远比管理两个对象简单</p>
+<p>推荐做法如下，而不是一个类创建一个session：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThingOne</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">go</span><span class="params">(self, session)</span>:</span></span><br><span class="line">        session.query(FooBar).update(&#123;<span class="string">"x"</span>: <span class="number">5</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThingTwo</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">go</span><span class="params">(self, session)</span>:</span></span><br><span class="line">        session.query(Widget).update(&#123;<span class="string">"q"</span>: <span class="number">18</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run_my_program</span><span class="params">()</span>:</span></span><br><span class="line">    session = Session()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        ThingOne().go(session)</span><br><span class="line">        ThingTwo().go(session)</span><br><span class="line"></span><br><span class="line">        session.commit()</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        session.rollback()</span><br><span class="line">        <span class="keyword">raise</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        session.close()</span><br></pre></td></tr></table></figure>
+<h2 id="session线程安全"><a href="#session线程安全" class="headerlink" title="session线程安全"></a>session线程安全</h2><p>session 不是线程安全的。在保证session object是全局变量时，在多线程的环境中，默认情况下，多个线程将会共享同一个session， 试想一下，假设A线程正在使用session处理数据库，B线程已经执行完成，把session给close了，那么此时A在使用session就会报错。所以必须保证每个线程使用的session都不一样。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> scoped_session</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker</span><br><span class="line"></span><br><span class="line">session_factory = sessionmaker(bind=some_engine)</span><br><span class="line">Session = scoped_session(session_factory)</span><br><span class="line">some_session = Session()</span><br><span class="line">some_other_session = Session()</span><br><span class="line">some_session <span class="keyword">is</span> some_other_session <span class="comment">#True</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用Session()创建的session对象都是一样的，这可以保证代码在多次调用不同的session()依然获得到相同的session 对象。 </li>
+<li>使用Session()创建的session对象 是 Thread-local, session在线程与线程之间没有任何联系。</li>
+</ul>
+<p>那么<code>session.remove()</code>即可关闭此次会话。session创建和管理对数据库的连接，当调用close的时候，注意，sqlalchemy不会关闭与mysql的连接，而是把连接返回到连接池。</p>
+<h2 id="增"><a href="#增" class="headerlink" title="增"></a>增</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">test = User(username=<span class="string">'test'</span>, email=<span class="string">'lanling@gmail.com'</span>, location=<span class="string">'Beijing/China'</span>)</span><br><span class="line">print(test.__dict__)</span><br><span class="line">session = sessionmaker(bind=engine)()</span><br><span class="line">session.add(test)</span><br><span class="line">session.commit()  </span><br><span class="line"></span><br><span class="line">muyu = User(username=<span class="string">'muyu'</span>, email=<span class="string">'muyu@gmail.com'</span>, location=<span class="string">'TangShan/China'</span>)</span><br><span class="line">session.add(muyu)</span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+<h2 id="改"><a href="#改" class="headerlink" title="改"></a>改</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">print(muyu.username)</span><br><span class="line">muyu.username = <span class="string">'muyu1'</span></span><br><span class="line">session.add(muyu)</span><br><span class="line"><span class="comment"># 看到修改的字段</span></span><br><span class="line">session.dirty </span><br><span class="line">session.commit()</span><br><span class="line"><span class="comment"># 输出 muyu1</span></span><br><span class="line">print(muyu.username) </span><br><span class="line"><span class="comment"># 不合法</span></span><br><span class="line">print(muyu1.username)</span><br></pre></td></tr></table></figure>
+<h2 id="删"><a href="#删" class="headerlink" title="删"></a>删</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># muyu1 不合法</span></span><br><span class="line">session.delete(muyu) </span><br><span class="line">session.commit()</span><br></pre></td></tr></table></figure>
+<h2 id="查"><a href="#查" class="headerlink" title="查"></a>查</h2><p>session 接受到query查询语句, 执行的结果或保持或者关联到session中</p>
+<p>首先<code>pip install faker</code>用于生成一些虚假数据。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 faker 这个模块来生成一些假数据</span></span><br><span class="line"><span class="keyword">from</span> faker <span class="keyword">import</span> Faker </span><br><span class="line"></span><br><span class="line">faker = Faker()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fake_data_generate</span><span class="params">(User, session)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">        user = User(username=faker.name(), email=faker.email(), location=faker.address())</span><br><span class="line">        session.add(user)</span><br><span class="line">    session.commit()</span><br><span class="line">fake_data_generate(User, session)</span><br></pre></td></tr></table></figure>
+<p>可以在命令行内<code>select *</code>一下，查看是否生成成功。</p>
+<p><img data-src="/2020/01/24/sqlalchemy/4.png" alt></p>
+<h3 id="返回所有查询结果"><a href="#返回所有查询结果" class="headerlink" title="返回所有查询结果"></a>返回所有查询结果</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session.query(User).all()</span><br></pre></td></tr></table></figure>
+<h3 id="增加查询条件"><a href="#增加查询条件" class="headerlink" title="增加查询条件"></a>增加查询条件</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> text</span><br><span class="line">query = session.query(User).filter(text(<span class="string">"id &gt; 1"</span>))</span><br><span class="line"><span class="comment"># 全部查询结果</span></span><br><span class="line">query.all()</span><br><span class="line"><span class="comment"># 查询结果的第一个</span></span><br><span class="line">query.first()</span><br><span class="line"><span class="comment"># 查询计数</span></span><br><span class="line">session.query(User).count()</span><br><span class="line"><span class="comment"># 查询单个</span></span><br><span class="line">a = session.query(User).filter(User.id == <span class="number">1</span>)</span><br><span class="line">print(a.all())</span><br><span class="line">print(a[<span class="number">0</span>].username)</span><br></pre></td></tr></table></figure>
+<p>注意事项，<code>text</code>模式的查询，更多的用于打印查询命令。我尝试了在python3.8下，这个输出不了查询结果，但是别人的可以，所以我还是不要用<code>text</code>模式的查询了。</p>
+<p><img data-src="/2020/01/24/sqlalchemy/3.png" alt></p>
+<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bob = User(username=<span class="string">'test'</span>, email=<span class="string">'test@gmail.com'</span>, location=<span class="string">'BeiJing/China'</span>)</span><br><span class="line">session.add(bob)</span><br><span class="line">session.rollback()</span><br><span class="line"><span class="keyword">print</span> (blog <span class="keyword">in</span> session) <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
+<p><a href="https://sunnyingit.github.io/book/section_python/SQLalchemy-orm.html" target="_blank" rel="noopener">这里有更多的查询方式</a></p>
+<h1 id="代码链接"><a href="#代码链接" class="headerlink" title="代码链接"></a>代码链接</h1><p><a href="https://github.com/muyuuuu/SQLAlchemy" target="_blank" rel="noopener">https://github.com/muyuuuu/SQLAlchemy</a></p>
+<p>后续的东西实在太多了，决定分开写了。</p>
+<h1 id="本文参考"><a href="#本文参考" class="headerlink" title="本文参考"></a>本文参考</h1><p><a href="https://stackoverflow.com/questions/20353402/access-denied-for-user-testlocalhost-using-password-yes-except-root-user" target="_blank" rel="noopener">Access denied for user ‘test’@’localhost’ (using password: YES) except root user</a><br><a href="https://sunnyingit.github.io/book/section_python/SQLalchemy-session.html" target="_blank" rel="noopener">Session参考</a><br><a href="https://anyisalin.github.io/2017/03/18/python-sqlalchemy/" target="_blank" rel="noopener">SQLAlchemy参考</a><br><a href="https://blog.csdn.net/qianbin3200896/article/details/90180980" target="_blank" rel="noopener">vscode 中一键规范化 python 代码</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/01/26/alembic/" rel="bookmark">数据库系列（三）——Alembic数据库迁移</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/01/25/sqlalchemy-relation/" rel="bookmark">数据库系列（二）——建立数据表的关系</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/01/21/northwest/" rel="prev" title="大漠西北，塞上江南">
+      <i class="fa fa-chevron-left"></i> 大漠西北，塞上江南
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/25/sqlalchemy-relation/" rel="next" title="数据库系列（二）——建立数据表的关系">
+      数据库系列（二）——建立数据表的关系 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前期准备"><span class="nav-number">1.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前提知识"><span class="nav-number">2.</span> <span class="nav-text">前提知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动数据库"><span class="nav-number">3.</span> <span class="nav-text">启动数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#连接数据库"><span class="nav-number">4.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#定义数据库表的Schema"><span class="nav-number">5.</span> <span class="nav-text">定义数据库表的Schema</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#增删改查"><span class="nav-number">6.</span> <span class="nav-text">增删改查</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#session线程安全"><span class="nav-number">6.1.</span> <span class="nav-text">session线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增"><span class="nav-number">6.2.</span> <span class="nav-text">增</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改"><span class="nav-number">6.3.</span> <span class="nav-text">改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删"><span class="nav-number">6.4.</span> <span class="nav-text">删</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查"><span class="nav-number">6.5.</span> <span class="nav-text">查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#返回所有查询结果"><span class="nav-number">6.5.1.</span> <span class="nav-text">返回所有查询结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增加查询条件"><span class="nav-number">6.5.2.</span> <span class="nav-text">增加查询条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回滚"><span class="nav-number">6.6.</span> <span class="nav-text">回滚</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码链接"><span class="nav-number">7.</span> <span class="nav-text">代码链接</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#本文参考"><span class="nav-number">8.</span> <span class="nav-text">本文参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">722k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '99b9c1ec08fb2b8305d5a5d1c38b10c4',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

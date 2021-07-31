@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会git clone。 今日更新的原因是：居然发现专业的好多人不会使用Git和Github，尽管他们大一就开始写代码，写的很好，但不会使用Git就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的Git和Github方法到此。 要声明的是：本文的目标并非对Git和Github一无所知">
+<meta name="keywords" content="Computer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git与Github的使用">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/11/16/git-use/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会git clone。 今日更新的原因是：居然发现专业的好多人不会使用Git和Github，尽管他们大一就开始写代码，写的很好，但不会使用Git就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的Git和Github方法到此。 要声明的是：本文的目标并非对Git和Github一无所知">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-05-01T00:23:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git与Github的使用">
+<meta name="twitter:description" content="突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会git clone。 今日更新的原因是：居然发现专业的好多人不会使用Git和Github，尽管他们大一就开始写代码，写的很好，但不会使用Git就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的Git和Github方法到此。 要声明的是：本文的目标并非对Git和Github一无所知">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/11/16/git-use/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Git与Github的使用 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/11/16/git-use/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git与Github的使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-16 13:54:49" itemprop="dateCreated datePublished" datetime="2019-11-16T13:54:49+00:00">2019-11-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-01 00:23:04" itemprop="dateModified" datetime="2020-05-01T00:23:04+00:00">2020-05-01</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会<code>git clone</code>。</p>
+<p>今日更新的原因是：居然发现专业的好多人不会使用<code>Git</code>和<code>Github</code>，尽管他们大一就开始写代码，写的很好，但不会使用<code>Git</code>就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的<code>Git</code>和<code>Github</code>方法到此。</p>
+<p>要声明的是：本文的目标并非对<code>Git</code>和<code>Github</code>一无所知的小白，纯小白看了本文更加会一头雾水。而是有一定的<code>Git</code>和<code>Github</code>使用经验。适用于：说是小白吧，但有点意思，说是精通吧，但又差点意思。</p>
+<a id="more"></a>
+<p>前提是自己已经安装了<code>Git</code>并测试可以使用，安装方法略。</p>
+<h1 id="日前"><a href="#日前" class="headerlink" title="日前"></a>日前</h1><h2 id="第一次创建"><a href="#第一次创建" class="headerlink" title="第一次创建"></a>第一次创建</h2><p>首先需要在<code>Github</code>上完成的工作，新建一个仓库，不建议勾选初始化<code>README.md</code>文件和创建<code>LICENSE</code>等选项，因为这会和本地的仓库造成冲突。假设我新建的仓库名称为：A Beautiful PyQt5 Interface.</p>
+<p>首先: 创建某个文件夹，里面放上想要提交上去的文件. <code>git init</code> 完成初始化.<br>其次: <code>git add .</code> 添加所有文件，这个时候可以随意的插入readme文件<br>然后: <code>git commit -m &quot;code by LanLing&quot;</code> 添加代码的描述信息<br>之后: <code>git remote add origin https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface.git</code> 不要忘记 <code>.git</code><br>最后: <code>git push -u origin master</code> 完成提交</p>
+<h2 id="以后的更新"><a href="#以后的更新" class="headerlink" title="以后的更新"></a>以后的更新</h2><p>cd 到对应的文件夹</p>
+<p><code>git add .</code><br><code>git commit -m &#39;include some information&#39;</code> 增加修改信息，一定要修改，否则会失效<br><code>git push</code> 即可完成修改</p>
+<h2 id="最终结果"><a href="#最终结果" class="headerlink" title="最终结果"></a>最终结果</h2><p><a href="https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface" target="_blank" rel="noopener">https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface</a></p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>可能这只是暂时的用法，至少目前我还分不清branch还有master的概念，也没有和其他人一起开发大项目的经验，日后可能会作出改变，甚至是一些观念，多走几步看看。就像昨天我还不会用git，但是今天来看，上述的命令我已经记住和熟练使用了。谁知道呢。</p>
+<h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>今日，仔细研读了一番<code>Git</code>的使用方法(<del>人傻就要多学习</del>)，又有了新的收获，遂整理如下(指令的速查手册)。当然，多动手实践才是硬道理。<strong>纸上得来终觉浅，绝知此事要躬行。</strong></p>
+<p><code>Github</code>是<code>Git</code>托管的一种网页端的服务，<code>Git</code>是一种版本管理神器，即使不用<code>Github</code>，也可以考虑使用<code>Git</code>管理自己的代码和文件。管理的好处？太多了：</p>
+<ul>
+<li>是不是遇到过文件忽然丢失，想恢复但恢复不了？<code>Git</code>管理起来就没这个烦恼；</li>
+<li>毫不容易实现了一个功能，老师却要一个月前的代码，好不容易删除改好了老师又要一个月后的代码。<code>Git</code>就可以自由穿梭在任何时间点，复原任何时间段的文件。</li>
+</ul>
+<h1 id="Git-常用指令"><a href="#Git-常用指令" class="headerlink" title="Git 常用指令"></a>Git 常用指令</h1><h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><ul>
+<li><code>git init</code> 初始化本地仓库，生成<code>.git</code>文件，存储管理当前目录的数据。</li>
+<li><code>git status</code> 查看仓库状态，没有可提交文件或未追踪<code>(untracked)</code>文件。</li>
+<li><code>git add</code> 可加文件名或<code>git add .</code> 添加全部文件到暂存区，此时不再显示未追踪文件。</li>
+<li><code>git commit -m &quot;comment&quot;</code> 提交修改，而后显示没有可提交文件的状态。或<code>git commit</code>，打开编辑器(操作类似<code>vim</code>)修改添加内容，<code>#</code>为注释，所以内容不要写在<code>#</code> 后面。会生成<code>commit</code>的<code>hashvalue</code>。</li>
+<li><code>git log</code> 查看提交日志，包括提交时间，提交作者，联系方式和介绍。也可以<code>git log --pretty=short</code>显示简单信息。也可<code>git log filename</code> 也可以查看指定文件的日志。<code>git log -p</code> 查看本次提交与上次提交的区别，<code>git log -p filename</code> 可查看对应文件的前后区别。</li>
+<li><code>git diff</code> 查看当前目录和最新提交之间的差别。在<code>git add .</code>后，<code>git diff</code>显示当前目录和暂存区(<code>.git</code>)的差别，但没有差别。所以此时查看与上一次提交的区别时：<code>git diff HEAD</code>，这里的<code>HEAD</code>是指向当前分支的最新一次提交的指针。</li>
+</ul>
+<h2 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h2><p>用于完成多人开发的并行作业。分支应该集中实现单一主题和功能，除此之外不进行任何作业。即使创建的分支在开发的过程中遇到了BUG，也应该创建新的分支修正。</p>
+<ul>
+<li><code>git branch</code>显示分支列表，<code>*</code>后面为此时所处的分支。默认为<code>master</code>主干分支，没有开发到一半的代码，可随时让人查看。</li>
+<li><code>git branch test</code> 创建<code>test</code>分支。</li>
+<li><code>git checkout test</code> 切换到<code>test</code>分支，在<code>test</code>分支中修改的内容不会显示在<code>master</code>分支中。</li>
+<li><code>git merge</code>合并分支。假设子分支的功能开发完毕，切换到主分支，<code>git merge --no-ff branchname</code>创建合并提交，而后输入提交的信息即可。</li>
+<li><code>git log --graph</code> 以图表的形式查看分支的合并情况。</li>
+<li>当有俩个分支时，主分支有<code>test.md</code>文件，子分支也有<code>test.md</code>文件，这两个文件不同。虽然操作不影响，但在合并分支时会发生冲突，需要手动处理冲突文件然后才能合并。</li>
+</ul>
+<h2 id="更改提交"><a href="#更改提交" class="headerlink" title="更改提交"></a>更改提交</h2><ul>
+<li><code>git reset</code> 回溯历史版本。借助分散仓库(每个人都可以<code>fork</code>，修改自己的仓库不会影响他人的仓库)的优势，可以不影响其他仓库的前提下对历史版本进行操作。根据累计提交的历史记录，可根据目标时间点的哈希值回溯到指定状态，<code>git reset --hard hashvalue</code></li>
+<li><code>git reflog</code>推进历史。即发现回溯过头，可以用<code>git reflog</code>查看操作日志，找出历史时间点的哈希值，<code>git reset --hard hashvalue</code>即可。就像给定一个时间机器的各个时间点，可自由穿梭。这些时间点来源于每次的<code>git commit</code>。</li>
+<li><code>git commit --amend</code>，修改上次提交的内容。如第一次<code>commit</code>时<code>commen</code>填写错误，执行本命令即可。</li>
+<li><code>git rebase -i</code> 压缩历史，第一次<code>git commit</code>提交功能代码，第二次<code>git commit</code>修改了其中文件的错别字等小错误。将修改的提交和上次提交的两次提交合并为一次提交，此时<code>git rebase -i HEAD~2</code>会选定当前分支最新提交和上次提交，删除第二次<code>commit</code>的哈希值，保存并退出。此时第二次提交从历史中抹去，第一次提交的哈希值也会更改。（然后<code>git push -f origin master</code>，<code>origin</code>代表远程仓库标识名，<code>master</code>表示要推送的分支）</li>
+</ul>
+<h2 id="远程仓库使用"><a href="#远程仓库使用" class="headerlink" title="远程仓库使用"></a>远程仓库使用</h2><p><code>Github</code>是<code>Git</code>托管的一种服务，将本地的<code>Git</code>仓库在远程展示。</p>
+<h3 id="推送"><a href="#推送" class="headerlink" title="推送"></a>推送</h3><ol>
+<li>首先在<code>Github</code>上创建仓库；</li>
+<li><code>git remote add origin ....</code>设置为本地仓库的远程仓库，并将远程仓库的名称设置为<code>origin</code>；</li>
+<li><code>git push -u origin master</code>，将当前分支的内容推送给远程仓库<code>origin</code>的<code>master</code>分支，<code>-u</code>参数会使在将来<code>git pull</code>时，本地仓库的当前分支可以直接获取<code>origin</code>的<code>master</code>分支内容，不必费力的设置参数。</li>
+<li><code>git push -u origin branch-test</code>，推送<code>branch-test</code>分支。</li>
+</ol>
+<h3 id="获取"><a href="#获取" class="headerlink" title="获取"></a>获取</h3><ol>
+<li><code>git clone</code> 获取远程仓库，默认处于<code>master</code>分支，将<code>origin</code>设置为远程仓库的标志符；</li>
+<li><code>git pull</code> 克隆后可以拉取远程仓库<code>master</code>分支的最新内容；</li>
+<li><code>git branch -a</code>查看本地仓库和远程仓库的所有分支；</li>
+<li><code>git checkout -b branch-test origin/branch-test</code> 获取远程仓库的子分支，<code>-b</code>为创建本地分支的名称，<code>origin/branch-test</code>为分支来源。</li>
+<li>用户A切换到<code>branch-test</code>分支完成工作后，<code>git push</code>即可推送子分支。</li>
+<li>用户B可以<code>git pull origin branch-test</code>获取对应分支在远程仓库的最新内容，这样用户A,B就完成了协同开发。如果两人修改同一部分的源代码，为减少冲突的发生，应该频繁的<code>push</code>和<code>pull</code>。</li>
+</ol>
+<h1 id="Github-使用"><a href="#Github-使用" class="headerlink" title="Github 使用"></a>Github 使用</h1><ul>
+<li>搜索窗口：输入代码片段或用户，就能搜索到与之相关的信息(也可在<code>Github</code>上整体搜寻)。</li>
+<li><code>Gist</code>：一些没必要录入仓库的小代码，展示小的<code>Demo</code>。</li>
+<li><code>Stars</code>：类似点赞。</li>
+</ul>
+<h2 id="仓库"><a href="#仓库" class="headerlink" title="仓库"></a>仓库</h2><p>首先打开任意的仓库。</p>
+<h3 id="上侧"><a href="#上侧" class="headerlink" title="上侧"></a>上侧</h3><p><img data-src="/2019/11/16/git-use/1.png" alt></p>
+<ul>
+<li><code>star</code>：仓库的点赞人数；</li>
+<li><code>watch</code>：该仓库的相关信息会在<code>All activity</code>中显示；</li>
+<li><code>Fork</code>：<code>Pull request</code>相关，之后叙述。</li>
+<li><code>Code</code>：展示代码。</li>
+<li><code>Issue</code>：用于<code>bug</code>报告、功能添加、方向讨论等，<code>pull request</code>时也会创建<code>Issue</code>。</li>
+<li><code>Pull request</code>：<code>Github</code>重要功能，代码修改和功能讨论都可以在这里进行。</li>
+<li><code>wiki</code>：创建页面，通过<code>markdown</code>语法编写软件的使用文档等。</li>
+<li><code>insights</code>：透视，查看仓库的开发程度和活跃程度等。</li>
+<li><code>settings</code>：设置仓库，私有共有、删除仓库等。</li>
+</ul>
+<h3 id="下侧"><a href="#下侧" class="headerlink" title="下侧"></a>下侧</h3><p><img data-src="/2019/11/16/git-use/2.png" alt></p>
+<ul>
+<li><code>commits</code>：提交次数和提交历史均可查看。</li>
+<li><code>branches</code>：查看仓库的分支列表。</li>
+<li><code>releases</code>：对归档的文档添加标签，也可提供可用的软件。</li>
+<li><code>contributors</code>：对仓库进行提交的程序员的名单，<code>pull request</code>且被采纳。</li>
+<li><code>create new file</code>：网页端创建文件和添加。</li>
+<li><code>clone or download</code>：克隆或者复制，克隆时建议使用<code>SSH</code>协议，此时克隆到本地的仓库会和远程仓库的<code>master</code>分支内容保持一致。</li>
+</ul>
+<h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><p>关于<code>Github</code>仓库内相关文件的操作，打开仓库中的任意一个文件即可。</p>
+<p><img data-src="/2019/11/16/git-use/3.png" alt></p>
+<ul>
+<li><code>raw</code>：直接在浏览器显示内容，对应的<code>URL</code>可通过<code>HTTPS</code>协议下载。</li>
+<li><code>Blame</code>：能够按行显示提交的信息。</li>
+<li><code>History</code>：查看文件的历史提交信息。</li>
+<li>后面的三个按钮，电脑是表示在客户端打开的意思，<code>edit</code>是编辑的文件的意思，最后一个<code>delete</code>是删除当前文件的意思。</li>
+<li>在仓库页面按下<code>t</code>键，输入想要的文件名，可快速查找。</li>
+<li>在文件的<code>URL</code>后添加<code>#L10~L15</code>的标志，会高亮代码的第10到第15行，方便交流代码。</li>
+</ul>
+<h3 id="查看区别"><a href="#查看区别" class="headerlink" title="查看区别"></a>查看区别</h3><p>如果差别过大则不会列出所有区别，某种意义上<code>Github</code>是一款优秀的源代码查看器。</p>
+<ul>
+<li>查看两个分支的区别：将分支名加入对应的<code>URL</code>里即可，<code>/compare/4-stable...3-stable</code>；</li>
+<li>查看与几天前的区别：<code>/compare/master@{7.day.ago}...master</code>，<code>day, year, month, week</code>都可以；</li>
+<li>查看与指定日期的区别：<code>/compare/master@{2013-01-01}...master</code>。</li>
+</ul>
+<h2 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h2><p>跟踪<code>BUG</code>和讨论的专区。用于：</p>
+<ul>
+<li>发现软件的<code>BUG</code>并报告；</li>
+<li>有事情想找软件的作者进行询问，如：如何实现XXX功能；</li>
+<li><strong>事先列出今后准备开发的任务</strong>；</li>
+</ul>
+<p>其编辑为常用的<code>MarkDown</code>语法，上传图片和文件直接拖入即可，在管理软件开发也有独特的应用：</p>
+<ul>
+<li>对仓库有读写权限的可以给每一个<code>Issue</code>添加标签，便于管理；</li>
+<li>添加里程碑(<code>milestones</code>)，距离下一个版本还有几个<code>Issue</code>待解决。</li>
+</ul>
+<p>而在有些专门的仓库中，在提交<code>Issue</code>时会有专门的模板，此时在仓库的根目录下添加<code>CONTRIBUTING.md</code>即可，用于规范问题的提问方法。也支持<code>Tarklist</code>等独有语法生成复选列表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 任务进度</span><br><span class="line">- [ ] 完成前端</span><br><span class="line">- [x] 完成数据库</span><br><span class="line">- [ ] 发布</span><br></pre></td></tr></table></figure>
+<ul>
+<li>且可以选中一句话，然后按击<code>r</code>即可完成引用。</li>
+<li>输入<code>:</code>号，还可以输入表情。</li>
+</ul>
+<h3 id="通过commit操作Issue"><a href="#通过commit操作Issue" class="headerlink" title="通过commit操作Issue"></a>通过commit操作Issue</h3><p><img data-src="/2019/11/16/git-use/4.png" alt></p>
+<p>只需要在<code>commit</code>按照特定格式描述信息，就可以使用<code>bug</code>追踪系统对<code>Issue</code>进行操作。如，首先手动<code>new</code>一个<code>issue</code>，然后记住他的编号，这里假设编号为<code>12</code>。在<code>12</code>这个<code>issue</code>里，输入的大致内容为完成数据的存储功能。那么在编写完数据存储功能后，有两种操作<code>issue</code>的用法：</p>
+<ul>
+<li><code>git commit -m &quot;add subfuntion: select file type when save data #12&quot;</code>，这样在评论中添加<code>issue</code>的编号后，会在<code>issue</code>中添加对应的描述。</li>
+<li><code>git commit - m &quot;fix #12&quot;</code>，会自动关闭<code>12</code>这个<code>issue</code>，这样就可以利用<code>issue</code>驱动项目的开发。</li>
+</ul>
+<h2 id="pull-request"><a href="#pull-request" class="headerlink" title="pull request"></a>pull request</h2><p>用户修改代码后向对方仓库发送请求接纳的功能，也是<code>Github</code>的核心功能。</p>
+<ul>
+<li>可以获取<code>diff</code>和<code>patch</code>格式的文件来处理<code>pull request</code>，此时在<code>URL</code>的末尾添加<code>.diff</code>和<code>.patch</code>即可。</li>
+<li>在<code>URL</code>末尾添加<code>?w=1</code>可以不显示空格的差别。</li>
+<li>将鼠标移动到代码左侧的<code>+</code>号，点击，可以对具体的一行代码添加注释。（查看每次的提交也可以这样）<br><img data-src="/2019/11/16/git-use/8.png" alt></li>
+</ul>
+<h2 id="wiki"><a href="#wiki" class="headerlink" title="wiki"></a>wiki</h2><p>使用简单语法编写文档，<code>new page</code>按钮可以创建新的标签页，也可在页面中的底部和侧部创建侧边栏。<br><img data-src="/2019/11/16/git-use/5.png" alt></p>
+<h2 id="insights"><a href="#insights" class="headerlink" title="insights"></a>insights</h2><p>体现开发的活跃度。</p>
+<ul>
+<li><code>pulse</code>：多少人在开发，有多少<code>issue</code>，有多少<code>pull requests</code>一目了然；</li>
+<li><code>contributors</code>：这个仓库的开发有多少参与者；</li>
+<li><code>community</code>：社区文件，包括一个项目必有的7个部分；</li>
+<li><code>traffic</code>：有多少人浏览了这个项目，有多少人<code>clone</code>了这个项目；<img data-src="/2019/11/16/git-use/6.png" alt></li>
+<li><code>commits</code>：提交历史；</li>
+<li><code>code frequency</code>：该仓库的代码增加量或者删除量</li>
+<li><code>network</code>：以图表的形式显示包括<code>clone</code>仓库在内的所有分支的提交，看出每个人的工作。</li>
+<li><code>fork</code>：有多少人<code>fork</code>了你的代码。</li>
+</ul>
+<h2 id="settings"><a href="#settings" class="headerlink" title="settings"></a>settings</h2><p><img data-src="/2019/11/16/git-use/7.png" alt></p>
+<ul>
+<li><code>settings</code>：设置仓库的默认分支。</li>
+<li><code>features</code>：可以移除<code>issue</code>等选项，则这个仓库的<code>issue</code>将无法启用。</li>
+<li><code>danger zone</code>：删除仓库等危险操作。</li>
+<li><code>collaborators</code>：合作者，邀请他人一起开发。如果是<code>organization</code>，可以创建<code>team</code>对整个团队赋予权限。</li>
+<li><code>webhooks</code>：添加钩子，让<code>github</code>仓库与其他服务集成。</li>
+</ul>
+<h2 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h2><ul>
+<li><code>issue</code>里面的消息不想继续接收可以点击<code>unsubscribe</code>。</li>
+<li><code>notification</code>里面的消息不想继续接收可以点击扩音器那个标志。</li>
+<li><code>github pages</code> 搭建博客。</li>
+<li><code>github API</code>：<code>Web</code>开发者难免调用的。</li>
+<li><code>github Enterprise</code>：无法将代码开源，但又想用<code>github</code>的团队可以考虑。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/06/12/Computer-network/" rel="bookmark">计算机网络原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/02/23/MPI-basics/" rel="bookmark">MPI基础，以 mpi4py 为例（操作系统番外篇）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/01/07/about-qa/" rel="bookmark">关于提问与回答</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Computer/" rel="tag"># Computer</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/19/pyqt-layout/" rel="prev" title="PyQt5高级布局与美化">
+      <i class="fa fa-chevron-left"></i> PyQt5高级布局与美化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/16/A-Beautiful-PyQt5-Interface/" rel="next" title="一个好看通用的PyQt5界面">
+      一个好看通用的PyQt5界面 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#日前"><span class="nav-number">1.</span> <span class="nav-text">日前</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一次创建"><span class="nav-number">1.1.</span> <span class="nav-text">第一次创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以后的更新"><span class="nav-number">1.2.</span> <span class="nav-text">以后的更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终结果"><span class="nav-number">1.3.</span> <span class="nav-text">最终结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束语"><span class="nav-number">1.4.</span> <span class="nav-text">结束语</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更新"><span class="nav-number">2.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git-常用指令"><span class="nav-number">3.</span> <span class="nav-text">Git 常用指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本操作"><span class="nav-number">3.1.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分支操作"><span class="nav-number">3.2.</span> <span class="nav-text">分支操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更改提交"><span class="nav-number">3.3.</span> <span class="nav-text">更改提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#远程仓库使用"><span class="nav-number">3.4.</span> <span class="nav-text">远程仓库使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#推送"><span class="nav-number">3.4.1.</span> <span class="nav-text">推送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取"><span class="nav-number">3.4.2.</span> <span class="nav-text">获取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github-使用"><span class="nav-number">4.</span> <span class="nav-text">Github 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#仓库"><span class="nav-number">4.1.</span> <span class="nav-text">仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#上侧"><span class="nav-number">4.1.1.</span> <span class="nav-text">上侧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下侧"><span class="nav-number">4.1.2.</span> <span class="nav-text">下侧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件"><span class="nav-number">4.1.3.</span> <span class="nav-text">文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看区别"><span class="nav-number">4.1.4.</span> <span class="nav-text">查看区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Issue"><span class="nav-number">4.2.</span> <span class="nav-text">Issue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通过commit操作Issue"><span class="nav-number">4.2.1.</span> <span class="nav-text">通过commit操作Issue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pull-request"><span class="nav-number">4.3.</span> <span class="nav-text">pull request</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wiki"><span class="nav-number">4.4.</span> <span class="nav-text">wiki</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#insights"><span class="nav-number">4.5.</span> <span class="nav-text">insights</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#settings"><span class="nav-number">4.6.</span> <span class="nav-text">settings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Others"><span class="nav-number">4.7.</span> <span class="nav-text">Others</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">722k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'ce620059c873eeb92c1b504fa0adb741',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

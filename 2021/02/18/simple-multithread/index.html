@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
+<meta name="keywords" content="OS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统『二』：简单的多线程编程">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/02/18/simple-multithread/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-04-16T21:57:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="操作系统『二』：简单的多线程编程">
+<meta name="twitter:description" content="继承上文，通过一些极度简单的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2021/02/18/simple-multithread/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>操作系统『二』：简单的多线程编程 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/02/18/simple-multithread/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统『二』：简单的多线程编程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-18 17:34:32" itemprop="dateCreated datePublished" datetime="2021-02-18T17:34:32+00:00">2021-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-16 21:57:16" itemprop="dateModified" datetime="2021-04-16T21:57:16+00:00">2021-04-16</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>继承上文，通过一些<strong>极度简单</strong>的例子来理解多线程、多进程编程，承接理论接触，为后面的同步、死锁打下基础。</p>
+<a id="more"></a>
+<h1 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h1><p>可以考虑python的multiprocessing库来实现多进程。</p>
+<h2 id="进程不共享数据"><a href="#进程不共享数据" class="headerlink" title="进程不共享数据"></a>进程不共享数据</h2><p>众所周知，进程之间是不共享数据的，那么一探究竟。本例程的任务是，创建两个进程实现两个计算任务，完成计算任务1后才能完成计算任务2，这是明显的<strong>循序</strong>。首先，创建了两个子进程p和q，子进程p执行sum1函数，子进程q执行sum2函数。start()方法表示进程开始，join()方法表示等待进程结束。先执行完q进程，修改a和c的值，在执行p进程修改a的值，得到最后a的结果。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 子进程要执行的代码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, b, c</span><br><span class="line">    print(<span class="string">'Run child process %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line">    print(a)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    print(<span class="string">'Run child process %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Process(target=sum1, args=(<span class="string">'a + b'</span>,))</span><br><span class="line">    q = Process(target=sum2, args=(<span class="string">'c + d'</span>,))</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    p.start()</span><br><span class="line">    q.start()</span><br><span class="line">    q.join()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br><span class="line">    print(a)</span><br></pre></td></tr></table></figure>
+<p>执行结果输出如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Parent process 23843.</span><br><span class="line">Child process will start.</span><br><span class="line">Run child process a + b (23844)...</span><br><span class="line">5</span><br><span class="line">Run child process c + d (23845)...</span><br><span class="line">Child process end.</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+<p>最后一条的数据结果表明现在的a是1（主进程的数据），即程序的主进程和创建的两个子进程之间不共享数据，证明了结论。即多进程中，同一个变量，各自有一份拷贝存在于每个进程中，互不影响。那如果就想让进程之间共享数据该如何操作呢？</p>
+<h2 id="进程共享数据"><a href="#进程共享数据" class="headerlink" title="进程共享数据"></a>进程共享数据</h2><p>只需要特殊的声明变量即可，以下是数值类型的变量：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"><span class="keyword">import</span> os, multiprocessing</span><br><span class="line"></span><br><span class="line">a = multiprocessing.Value(<span class="string">"d"</span>, <span class="number">1</span>)</span><br><span class="line">b = multiprocessing.Value(<span class="string">"d"</span>, <span class="number">2</span>)</span><br><span class="line">c = multiprocessing.Value(<span class="string">"d"</span>, <span class="number">3</span>)</span><br><span class="line">d = multiprocessing.Value(<span class="string">"d"</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 子进程要执行的代码</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, b, c</span><br><span class="line">    print(<span class="string">'Run child process %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    a.value = a.value + <span class="number">1</span> + c.value</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    print(<span class="string">'Run child process %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    a.value = a.value + <span class="number">2</span></span><br><span class="line">    c.value = c.value + d.value</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Process(target=sum1, args=(<span class="string">'a + b'</span>,))</span><br><span class="line">    q = Process(target=sum2, args=(<span class="string">'c + d'</span>,))</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    p.start()</span><br><span class="line">    q.start()</span><br><span class="line">    q.join()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br><span class="line">    print(a.value)</span><br></pre></td></tr></table></figure>
+<p>输出结果如下，a的值是7,表明此时多进程以共享数据。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Parent process 23949.</span><br><span class="line">Child process will start.</span><br><span class="line">Run child process a + b (23950)...</span><br><span class="line">Run child process c + d (23951)...</span><br><span class="line">Child process end.</span><br><span class="line">7.0</span><br></pre></td></tr></table></figure>
+<p>顺手给出其他类型的数据共享的方法：</p>
+<ul>
+<li>数组型：<code>num=multiprocessing.Array(&quot;i&quot;,[1,2,3,4,5])</code></li>
+<li>字典：<code>mydict=multiprocessing.Manager().dict()</code></li>
+<li>列表：<code>mylist=multiprocessing.Manager().list(range(5))</code></li>
+</ul>
+<h2 id="多进程性能记录"><a href="#多进程性能记录" class="headerlink" title="多进程性能记录"></a>多进程性能记录</h2><p>在<a href="http://localhost:4000/2020/03/16/multi-process-thread/" target="_blank" rel="noopener">并行计算基础篇</a>提到，将两个进程分配给两个CPU核心，有利于提升程序的执行效率，那么来一探究竟。</p>
+<p>这也要求了函数是<strong>平行</strong>的，即函数的执行没有明显的顺序关系。首先，创建两个进程，在创建两个函数。分别对比顺序执行两个函数和用两个进程执行两个函数的时间，以此来观察多进程是否提升了效率。其中计时函数利用python的<code>time.time()</code>方法，且只记录函数的执行时间。</p>
+<h3 id="顺序执行两个函数"><a href="#顺序执行两个函数" class="headerlink" title="顺序执行两个函数"></a>顺序执行两个函数</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, b, c</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    sum1()</span><br><span class="line">    sum2()</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(end - start)</span><br><span class="line">    print(a)</span><br></pre></td></tr></table></figure>
+<h3 id="两个进程分别执行"><a href="#两个进程分别执行" class="headerlink" title="两个进程分别执行"></a>两个进程分别执行</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"><span class="keyword">import</span> os, multiprocessing</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Process(target=sum1, args=(<span class="string">'a + b'</span>,))</span><br><span class="line">    q = Process(target=sum2, args=(<span class="string">'c + d'</span>,))</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    start = time.time()</span><br><span class="line">    p.start()</span><br><span class="line">    q.start()</span><br><span class="line">    q.join()</span><br><span class="line">    p.join()</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br><span class="line">    print(end - start)</span><br></pre></td></tr></table></figure>
+<p>这两个程序不用对比了，顺序执行的比进程执行的要块的多，顺序执行大约0.00000009秒，线程执行大约0.002秒，根本不在一个数量级。</p>
+<h2 id="修正"><a href="#修正" class="headerlink" title="修正"></a>修正</h2><p>也许你看到这里会疑问，为什么顺序执行会比多进程要快，多进程明明把两个进程分配给了两个核心，并行执行为啥还慢了好几个数量级？</p>
+<p>因为，进程的创建、销毁也有额外的开销啊～当开销时间远远比执行时间少的时候，才能体现多进程的优势。既然这样，就额外增加程序的执行时间即可，让两个函数都延时两秒看看。</p>
+<h3 id="延时的顺序执行"><a href="#延时的顺序执行" class="headerlink" title="延时的顺序执行"></a>延时的顺序执行</h3><p>通过time.sleep(2)方法给每个函数增加两秒的延时：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, b, c</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    start = time.time()</span><br><span class="line">    sum1()</span><br><span class="line">    sum2()</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(end - start)</span><br><span class="line">    print(a)</span><br></pre></td></tr></table></figure>
+<h3 id="延时的多进程"><a href="#延时的多进程" class="headerlink" title="延时的多进程"></a>延时的多进程</h3><p>通过time.sleep(2)方法给每个函数增加两秒的延时：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br><span class="line"><span class="keyword">import</span> os, multiprocessing</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">(name)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Process(target=sum1, args=(<span class="string">'a + b'</span>,))</span><br><span class="line">    q = Process(target=sum2, args=(<span class="string">'c + d'</span>,))</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    start = time.time()</span><br><span class="line">    p.start()</span><br><span class="line">    q.start()</span><br><span class="line">    q.join()</span><br><span class="line">    p.join()</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br><span class="line">    print(end - start)</span><br></pre></td></tr></table></figure>
+<p>我这里的对比结果是：顺序执行的需要4秒，而多进程仅需2秒。证明了多进程的确能有效提高程序的执行效率。</p>
+<h1 id="阻塞-非阻塞"><a href="#阻塞-非阻塞" class="headerlink" title="阻塞/非阻塞"></a>阻塞/非阻塞</h1><p>通过操作系统，我们可以知道进程的状态转换：</p>
+<p><img data-src="https://s3.ax1x.com/2021/02/21/yo7Zfe.png" alt></p>
+<ul>
+<li>新建，分配进程所需资源，在创建进程后，进程将被设为就绪态，所以创建时不可能为其分配CPU去执行</li>
+<li>就绪，进程等待分配处理器，不会到阻塞态</li>
+<li>运行，获取处理器后，指令在执行。中断、时间片用完后为就绪态；等待IO变为阻塞态；</li>
+<li>阻塞，进程等待某个事件发生，事件完成后为就绪，不能到运行态。操作系统会把该线程阻塞起来，避免浪费CPU资源，等到得到了资源，再变成就绪状态，等待CPU调度运行</li>
+<li>终止，进程执行完毕</li>
+</ul>
+<p>阻塞和非阻塞关注的是<strong>程序在等待调用结果时的状态</strong>：</p>
+<ul>
+<li>阻塞调用是指调用结果返回之前，<strong>当前线程会被挂起</strong>。它会一直阻塞着，也就是后面的代码都不会执行了，调用线程只有在得到结果之后才会返回。</li>
+<li>非阻塞调用指在不能立刻得到结果之前，<strong>当前线程并不会阻塞</strong>，无需等待操作彻底完成，也就是后面的程序该执行就执行。</li>
+</ul>
+<p>举个例子，你打电话问书店老板有没有《分布式系统》这本书:</p>
+<ul>
+<li>阻塞式调用，你会一直把自己『挂起』，直到得到这本书有没有的结果；</li>
+<li>如果是非阻塞式调用，你不管老板有没有告诉你，你自己先一边去玩了，当然你也要偶尔过几分钟检查一下老板有没有返回结果。在这里阻塞与非阻塞与是否同步异步无关。跟老板通过什么方式回答你结果无关。</li>
+</ul>
+<blockquote>
+<p>注：阻塞和挂起：阻塞是被动的，比如抢不到资源。挂起是主动的，线程自己调用 suspend() 把自己退出运行态了。</p>
+</blockquote>
+<h1 id="进程池"><a href="#进程池" class="headerlink" title="进程池"></a>进程池</h1><p>可以使用进程池实现对每个进程的管理，即：决定哪些进程可以在进程池内，等待进程池内的所有进程执行完毕才执行下一部分的程序。粗暴的理解：一个大池子，这个池子里有好多进程，通过这个池子实现对进程的统一管理。</p>
+<h2 id="apply-async-方法"><a href="#apply-async-方法" class="headerlink" title="apply_async 方法"></a>apply_async 方法</h2><p>为了体现进程的<strong>并发</strong>，我特意在12个核的CPU内创建了13个进程。意思是：会有一个进程要等待其他进程释放一个CPU资源才能执行。进程池的close()方法会阻止其他进程在进入进程池，join()方法会等待进程池全部的进程执行完毕。创建13个进程，并使每个进程等待2秒观看执行效果：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> os, time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">long_time_task</span><span class="params">(name)</span>:</span></span><br><span class="line">    print(<span class="string">'Run task %s (%s)...'</span> % (name, os.getpid()))</span><br><span class="line">    start = time.time()</span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'Task %s runs %0.2f seconds.'</span> % (name, (end - start)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    print(<span class="string">'Parent process %s.'</span> % os.getpid())</span><br><span class="line">    p = Pool(<span class="number">13</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">14</span>):</span><br><span class="line">    ​    p.apply_async(long_time_task, args=(i,))</span><br><span class="line">    print(<span class="string">'Waiting for all subprocesses done...'</span>)</span><br><span class="line">    <span class="comment"># 不能在增加其他进程</span></span><br><span class="line">    p.close()</span><br><span class="line">    <span class="comment"># Wait for the worker processes to exit.</span></span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'All subprocesses done.'</span>)</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://s3.ax1x.com/2021/02/19/y49YKe.png" alt></p>
+<p>可以看到，第13个进程很晚才创建，在3, 2, 1, 12, 0, 10, 4, 7, 11, 8这几个进程执行完毕后，第13个进程才刚刚创建。</p>
+<p>在这13个进程中，每个进程都有一个主线程。CPU给线程分配时间片(也就是分配给线程的时间)，执行完时间片后会切换都另一个线程（不是时间片也可能是其他的调度算法）。这里的进程池可以阻塞也可以不阻塞：</p>
+<ul>
+<li><code>apply</code>：阻塞执行，同步，池子中第一个进程执行完才会执行第二个</li>
+<li><code>apply_async</code>：阻塞执行，异步，返回的结果是异步的</li>
+<li>由<a href="https://docs.python.org/3/library/multiprocessing.html" target="_blank" rel="noopener">官方文档</a>可知，两者都是阻塞的</li>
+</ul>
+<h2 id="map-方法"><a href="#map-方法" class="headerlink" title="map 方法"></a>map 方法</h2><p>普通的<code>map</code>方法只支持一个可迭代对象。这个方法会将可迭代对象分割为许多块，然后提交给进程池。对于很长的对象，可以使用<code>imap</code> 将 chunksize 设置为一个正整数从而（近似）指定每个块的大小。若想添加额外参数，可以使用 <code>starmap</code> 方法。同样，也都有对应的异步版本。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing <span class="keyword">as</span> mp</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x * x</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line"></span><br><span class="line">    nprocs = mp.cpu_count()</span><br><span class="line">    print(<span class="string">f"Number of CPU cores: <span class="subst">&#123;nprocs&#125;</span>"</span>)</span><br><span class="line"></span><br><span class="line">    pool = mp.Pool(processes=nprocs)</span><br><span class="line"></span><br><span class="line">    result = pool.map(square, range(<span class="number">20</span>))</span><br><span class="line">    print(result)</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br></pre></td></tr></table></figure>
+<h1 id="多线程编程"><a href="#多线程编程" class="headerlink" title="多线程编程"></a>多线程编程</h1><p>假如机器本身安装了多个处理器，那么程序会运行得更快，毋需作出任何特殊的调校。多任务可以由多进程完成，也可以由一个进程内的多线程完成。</p>
+<h2 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time, threading</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loop</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br><span class="line"></span><br><span class="line">print(<span class="string">'thread %s is running...'</span> % threading.current_thread().name)</span><br><span class="line">t = threading.Thread(target=loop, name=<span class="string">'Thread-1'</span>)</span><br><span class="line">t.start()</span><br><span class="line">t.join()</span><br><span class="line">print(<span class="string">'thread %s ended.'</span> % threading.current_thread().name)</span><br></pre></td></tr></table></figure>
+<p>由于任何进程默认就会启动一个线程，我们把该线程称为主线程，主线程又可以启动新的线程。current_thread()函数，它永远返回当前线程的实例。主线程实例的名字叫MainThread，子线程的名字在创建时指定，我们用Thread-1命名子线程。输出结果如下（最后输出的是主进程的结束）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">thread MainThread is running...</span><br><span class="line">thread LoopThread is running...</span><br><span class="line">thread LoopThread ended.</span><br><span class="line">thread MainThread ended.</span><br></pre></td></tr></table></figure>
+<p><code>join()</code>方法会阻塞调用线程，直到当前进程返回结果，所以这是阻塞调用。</p>
+<h2 id="多线程共享数据"><a href="#多线程共享数据" class="headerlink" title="多线程共享数据"></a>多线程共享数据</h2><p>仿照上文中多进程的程序，仿一个多线程的。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">a, b, c, d = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, b, c</span><br><span class="line">    a = a + <span class="number">1</span> + c</span><br><span class="line">    print(a)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> a, c, d</span><br><span class="line">    a = a + <span class="number">2</span></span><br><span class="line">    c = c + d</span><br><span class="line">    print(a)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    p = threading.Thread(target=sum1)</span><br><span class="line">    q = threading.Thread(target=sum2)</span><br><span class="line">    print(<span class="string">'Child process will start.'</span>)</span><br><span class="line">    p.start()</span><br><span class="line">    q.start()</span><br><span class="line">    q.join()</span><br><span class="line">    p.join()</span><br><span class="line">    print(<span class="string">'Child process end.'</span>)</span><br><span class="line">    print(a)</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Child process will start.</span><br><span class="line">5</span><br><span class="line">7</span><br><span class="line">Child process end.</span><br><span class="line">7</span><br></pre></td></tr></table></figure>
+<h2 id="多核线程"><a href="#多核线程" class="headerlink" title="多核线程"></a>多核线程</h2><p>如果你不幸拥有一个多核CPU，你肯定在想，多核应该可以同时执行多个线程。如果写一个死循环的话，会出现什么情况呢？我们可以监控到一个死循环线程会100%占用一个CPU。</p>
+<p>如果有两个死循环线程，在多核CPU中，可以监控到会占用200%的CPU，也就是占用两个CPU核心。要想把N核CPU的核心全部跑满，就必须启动N个死循环线程。</p>
+<p>但python启动与CPU核心数量相同的N个线程跑死循环，在4核CPU上可以监控到CPU占用率仅有102%，也就是仅使用了一核。但是用C、C++或Java来改写相同的死循环，直接可以把全部核心跑满，4核就跑到400%，8核就跑到800%，为什么Python不行呢？</p>
+<p>因为Python的线程虽然是真正的线程，但解释器执行代码时，有一个GIL锁：Global Interpreter Lock。任何Python线程执行前，必须先获得GIL锁，然后，每执行100条字节码，解释器就自动释放GIL锁，让别的线程有机会执行。这个GIL全局锁实际上把所有线程的执行代码都给上了锁，所以，多线程在Python中只能交替执行，即使100个线程跑在100核CPU上，也只能用到1个核。</p>
+<p>GIL最大的问题就是Python的多线程程序并不能利用多核CPU的优势 。在讨论普通的GIL之前，有一点要强调的是GIL只会影响到那些严重依赖CPU的程序（比如计算型的）。 如果你的程序大部分只会涉及到I/O，比如网络交互，那么使用多线程就很合适， 因为它们大部分时间都在等待。实际上，你完全可以放心的创建几千个Python线程， 现代操作系统运行这么多线程没有任何压力，没啥可担心的。</p>
+<p>GIL是Python解释器设计的历史遗留问题，通常我们用的解释器是官方实现的CPython，要真正利用多核，除非重写一个不带GIL的解释器。所以，在Python中，可以使用多线程，但不要指望能有效利用多核。不过，也不用过于担心，Python虽然不能利用多线程实现多核任务，但可以通过多进程实现多核任务。多个Python进程有各自独立的GIL锁，互不影响。</p>
+<h2 id="线程的变量"><a href="#线程的变量" class="headerlink" title="线程的变量"></a>线程的变量</h2><p>不同的线程调用函数，且需要处理一些局部变量时，也可以写成这样不断的传参，只是很麻烦罢了：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_student</span><span class="params">(name)</span>:</span></span><br><span class="line">  std = Student(name)</span><br><span class="line">  <span class="comment"># std是局部变量，但是每个函数都要用它，因此必须传进去：</span></span><br><span class="line">  do_task_1(std)</span><br><span class="line">  do_task_2(std)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_task_1</span><span class="params">(std)</span>:</span></span><br><span class="line">  do_subtask_1(std)</span><br><span class="line">  do_subtask_2(std)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_task_2</span><span class="params">(std)</span>:</span></span><br><span class="line">  do_subtask_2(std)</span><br><span class="line">  do_subtask_2(std)</span><br></pre></td></tr></table></figure>
+<p>在多线程环境下，每个线程都有自己的数据。一个线程使用自己的局部变量比使用全局变量好（不是程序中的局部变量和全局变量，是线程里的局部变量和全局变量）。因为线程的局部变量只有线程自己能看见，不会影响其他线程。可以通过ThreadLocal实现避免局部变量的层层传递的问题：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建全局 ThreadLocal 对象:</span></span><br><span class="line">local_school = threading.local()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_student</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># 获取当前线程关联的 student:</span></span><br><span class="line">    std = local_school.student</span><br><span class="line">    print(<span class="string">'Hello, %s in %s'</span> % (std, threading.current_thread().name))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_thread</span><span class="params">(string)</span>:</span></span><br><span class="line">    <span class="comment"># 绑定 ThreadLocal 的 student:</span></span><br><span class="line">    local_school.student = string</span><br><span class="line">    process_student()</span><br><span class="line"></span><br><span class="line">t1 = threading.Thread(target = process_thread, args=(<span class="string">'Alice'</span>,), name=<span class="string">'Thread-A'</span>)</span><br><span class="line">t2 = threading.Thread(target = process_thread, args=(<span class="string">'Bob'</span>,), name=<span class="string">'Thread-B'</span>)</span><br><span class="line">t1.start()</span><br><span class="line">t2.start()</span><br><span class="line">t1.join()</span><br><span class="line">t2.join()</span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hello, Alice in Thread-A</span><br><span class="line">Hello, Bob in Thread-B</span><br></pre></td></tr></table></figure>
+<p>全局变量local_school就是一个ThreadLocal对象，每个Thread对它都可以读写student属性，但每个线程都只能读写自己线程的独立副本，互不影响。你可以把local_school看成全局变量，但每个属性如local_school.student都是线程的局部变量，可以任意读写而互不干扰，也不用管理锁的问题。ThreadLocal解决了参数在一个线程中各个函数之间互相传递的问题。</p>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>通过多线程计算$\pi$，来演示串行代码和并行代码的时间差，展示并行计算的魅力。</p>
+<script type="math/tex; mode=display">\pi=\int_0^1\frac{4}{1+x^2}\text{d}x</script><h2 id="串行代码"><a href="#串行代码" class="headerlink" title="串行代码"></a>串行代码</h2><p>学过积分应该能根据公式看懂代码吧，耗时大概 3 秒左右。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">nsteps = <span class="number">10000000</span></span><br><span class="line">dx = <span class="number">1.0</span> / nsteps</span><br><span class="line">pi = <span class="number">0.0</span></span><br><span class="line">since = time.time()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(nsteps):</span><br><span class="line">    x = i / nsteps</span><br><span class="line">    pi += <span class="number">4.0</span> / (<span class="number">1.0</span> + x * x)</span><br><span class="line">pi *= dx</span><br><span class="line">end = time.time()</span><br><span class="line">print(pi / nsteps)</span><br><span class="line">print(end - since)</span><br></pre></td></tr></table></figure>
+<h2 id="并行代码"><a href="#并行代码" class="headerlink" title="并行代码"></a>并行代码</h2><p>为了并行串行的代码，我们需要将<code>for</code>循环划分为几个子任务，并将它们分配给多个进程。所以需要提供每个进程的起始点、终止点和步长，且需要防止重复计算。然后把各个进程扔到进程池中，得到最后的返回结果后相加即可。为了使展示代码更清晰，我手动划分了两个进程。执行时间大概一秒左右。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> multiprocessing, time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">calc_pi</span><span class="params">(start, end)</span>:</span></span><br><span class="line">    steps = end - start</span><br><span class="line">    pi = <span class="number">0</span></span><br><span class="line">    dx = <span class="number">1</span> / (end - start)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(steps):</span><br><span class="line">        x = i / steps</span><br><span class="line">        pi += <span class="number">4.0</span> / (<span class="number">1.0</span> + x * x)</span><br><span class="line">    <span class="keyword">return</span> pi * dx</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line"></span><br><span class="line">    num = <span class="number">2</span></span><br><span class="line">    p = multiprocessing.Pool(num)</span><br><span class="line">    inputs = [(<span class="number">1</span>, <span class="number">5000000</span>), (<span class="number">5000000</span>, <span class="number">10000000</span>)]</span><br><span class="line"></span><br><span class="line">    since = time.time()</span><br><span class="line">    multi_result = [p.apply_async(calc_pi, inp) <span class="keyword">for</span> inp <span class="keyword">in</span> inputs]</span><br><span class="line">    p.close()</span><br><span class="line">    p.join()</span><br><span class="line">    end = time.time()</span><br><span class="line">    </span><br><span class="line">    result = [p.get() <span class="keyword">for</span> p <span class="keyword">in</span> multi_result]</span><br><span class="line">    pi = sum(result) / <span class="number">2</span></span><br><span class="line">    </span><br><span class="line">    print(pi)</span><br><span class="line">    print(end - since)</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>从保存线程A的状态到准备切换为线程B时，加载线程B的状态的这个过程就叫上下文切换，而上下切换时会消耗大量的CPU时间。因此，只有在特定的条件下开启多线程才会更合适。不可避免的线程开销包括：</p>
+<ul>
+<li>上下文切换消耗</li>
+<li>线程创建和消亡的开销</li>
+<li>线程需要保存维持线程本地栈，会消耗内存</li>
+</ul>
+<p>对于计算密集型的程序，程序主要为复杂的逻辑判断和复杂的运算，此时CPU的利用率高，不用开太多的线程，开太多线程反而会因为线程切换时切换上下文而浪费资源。计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。</p>
+<p>对于IO密集型的程序，比如磁盘IO(读取文件)和网络IO(网络请求)。因为IO操作会阻塞线程，CPU利用率不高，可以开多点线程，一个线程阻塞时(网络延迟等)可以切换到其他就绪线程，提高CPU的利用率。这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。</p>
+<p>我们介绍了多进程和多线程，这是实现多任务最常用的两种方式。虽然很水，在实际项目中能应用的概率四舍五入为0，但对于理解多线程、多进程还是有一定帮助的。现在，我们来讨论一下这两种方式的优缺点。</p>
+<p>多进程模式最大的优点就是稳定性高，因为一个子进程崩溃了，不会影响主进程和其他子进程。（当然主进程挂了所有进程就全挂了，但是Master进程只负责分配任务，挂掉的概率低）。</p>
+<p>多线程模式致命的缺点就是任何一个线程挂掉都可能直接造成整个进程崩溃，因为所有线程共享进程的内存。在Windows上，如果一个线程执行的代码出了问题，你经常可以看到这样的提示：“该程序执行了非法操作，即将关闭”，其实往往是某个线程出了问题，但是操作系统会强制结束整个进程。</p>
+<p>无论是多进程还是多线程，只要数量一多，效率肯定上不去，为什么呢？</p>
+<p>因为进程或线程的切换是有代价的，操作系统在切换进程或者线程时需要先保存当前执行的现场环境（CPU寄存器状态、内存页等），然后，把新任务的执行环境准备好（恢复上次的寄存器状态，切换内存页等），才能开始执行。这个切换过程虽然很快，但是也需要耗费时间。如果有几千个任务同时进行，操作系统可能就主要忙着切换任务，根本没有多少时间去执行任务了，这种情况最常见的就是硬盘狂响，点窗口无反应，系统处于假死状态。</p>
+<p>所以，多任务一旦多到一个限度，就会消耗掉系统所有的资源，结果效率急剧下降，所有任务都做不好。</p>
+<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>应该是通信、MPI什么的吧，进程死锁、上下文切换开销对比什么的看有没有时间。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/04/16/CPU-context-switch/" rel="bookmark">操作系统『五』：CPU 上下文切换</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/02/23/MPI-basics/" rel="bookmark">MPI基础，以 mpi4py 为例（操作系统番外篇）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/03/16/multi-process-thread/" rel="bookmark">操作系统『一』：进程与线程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/02/20/process-communicate/" rel="bookmark">操作系统『四』：进程通信</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/02/19/process-synchronization/" rel="bookmark">操作系统『三』：进程同步</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/OS/" rel="tag"># OS</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/16/flexible-fiber-optic-network-schedule/" rel="prev" title="弹性光网络选路和频谱分配问题建模">
+      <i class="fa fa-chevron-left"></i> 弹性光网络选路和频谱分配问题建模
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/19/process-synchronization/" rel="next" title="操作系统『三』：进程同步">
+      操作系统『三』：进程同步 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程"><span class="nav-number">1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程不共享数据"><span class="nav-number">1.1.</span> <span class="nav-text">进程不共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程共享数据"><span class="nav-number">1.2.</span> <span class="nav-text">进程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多进程性能记录"><span class="nav-number">1.3.</span> <span class="nav-text">多进程性能记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序执行两个函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">顺序执行两个函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个进程分别执行"><span class="nav-number">1.3.2.</span> <span class="nav-text">两个进程分别执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修正"><span class="nav-number">1.4.</span> <span class="nav-text">修正</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的顺序执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">延时的顺序执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延时的多进程"><span class="nav-number">1.4.2.</span> <span class="nav-text">延时的多进程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#阻塞-非阻塞"><span class="nav-number">2.</span> <span class="nav-text">阻塞/非阻塞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程池"><span class="nav-number">3.</span> <span class="nav-text">进程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#apply-async-方法"><span class="nav-number">3.1.</span> <span class="nav-text">apply_async 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map-方法"><span class="nav-number">3.2.</span> <span class="nav-text">map 方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程编程"><span class="nav-number">4.</span> <span class="nav-text">多线程编程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建线程"><span class="nav-number">4.1.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程共享数据"><span class="nav-number">4.2.</span> <span class="nav-text">多线程共享数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多核线程"><span class="nav-number">4.3.</span> <span class="nav-text">多核线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的变量"><span class="nav-number">4.4.</span> <span class="nav-text">线程的变量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实例"><span class="nav-number">5.</span> <span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#串行代码"><span class="nav-number">5.1.</span> <span class="nav-text">串行代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并行代码"><span class="nav-number">5.2.</span> <span class="nav-text">并行代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后续"><span class="nav-number">7.</span> <span class="nav-text">后续</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">722k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '71a1f7c103ece288fa2a9dd013b1f9a4',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

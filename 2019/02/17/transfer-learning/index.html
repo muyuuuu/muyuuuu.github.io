@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="某天(今天)下午闲的没事干，想起了当初学了一堆的深度学习的数学概念，还看了Keras的官方文档，既然会写(抄)代码和懂了理念，不如自己折腾点东西玩玩。 说干就干.png，本来是想做个OCR系统在写个GUI界面弄个小软件的，因为种种原因放弃(不喜欢那个数据集)，猫狗大战的话数据量太大。挑来挑去选择了迁移学习，使用VGG16的结构去识别MNIST手写文字，怎么感觉有一个好的开始却选择了一个low的实现">
+<meta name="keywords" content="DeepLearning,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Keras玩耍迁移学习(VGG16)">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/02/17/transfer-learning/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="某天(今天)下午闲的没事干，想起了当初学了一堆的深度学习的数学概念，还看了Keras的官方文档，既然会写(抄)代码和懂了理念，不如自己折腾点东西玩玩。 说干就干.png，本来是想做个OCR系统在写个GUI界面弄个小软件的，因为种种原因放弃(不喜欢那个数据集)，猫狗大战的话数据量太大。挑来挑去选择了迁移学习，使用VGG16的结构去识别MNIST手写文字，怎么感觉有一个好的开始却选择了一个low的实现">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-04T22:43:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Keras玩耍迁移学习(VGG16)">
+<meta name="twitter:description" content="某天(今天)下午闲的没事干，想起了当初学了一堆的深度学习的数学概念，还看了Keras的官方文档，既然会写(抄)代码和懂了理念，不如自己折腾点东西玩玩。 说干就干.png，本来是想做个OCR系统在写个GUI界面弄个小软件的，因为种种原因放弃(不喜欢那个数据集)，猫狗大战的话数据量太大。挑来挑去选择了迁移学习，使用VGG16的结构去识别MNIST手写文字，怎么感觉有一个好的开始却选择了一个low的实现">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/02/17/transfer-learning/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Keras玩耍迁移学习(VGG16) | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/17/transfer-learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Keras玩耍迁移学习(VGG16)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-17 15:25:08" itemprop="dateCreated datePublished" datetime="2019-02-17T15:25:08+00:00">2019-02-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-03-04 22:43:10" itemprop="dateModified" datetime="2019-03-04T22:43:10+00:00">2019-03-04</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>某天(今天)下午闲的没事干，想起了当初学了一堆的深度学习的数学概念，还看了Keras的官方文档，既然会写(抄)代码和懂了理念，不如自己折腾点东西玩玩。</p>
+<p>说干就干.png，本来是想做个OCR系统在写个GUI界面弄个小软件的，因为种种原因放弃(不喜欢那个数据集)，猫狗大战的话数据量太大。挑来挑去选择了迁移学习，使用VGG16的结构去识别MNIST手写文字，怎么感觉有一个好的开始却选择了一个low的实现呢？其实也无所谓，重点是实现过程，有了这次过程实现以后的迁移学习就不是问题了。</p>
+<hr>
+<a id="more"></a>
+<p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
+<h2 id="迁移学习"><a href="#迁移学习" class="headerlink" title="迁移学习"></a>迁移学习</h2><p>所谓迁移学习，是在数据样本较少或者没有GPU或者缺钱的情况下，直接使用别人训练好的参数权重而不是自己重新训练，毕竟自己穷的买不起GPU。当然，别人训练好的权重在自己的小数据集里面同样能取得很好的效果，因为前期的权重无非是提取些水平、数值、纹理特征，而这些基本特征与具体的数据集无关。</p>
+<p>比如自己写了十层的网络，可以冻结前九层网络的参数使其不参与训练，在最后添加一层为自己的分类层，将数据带入前九层得到输出$y$，最后一层接收$y$为输入，只训练最后一层的权重预测输出，同时也能得到较好的结果。</p>
+<p><span id="inline-blue"> 同样得到下面的结论： </span></p>
+<blockquote>
+<p>当数据越多，冻结的层数也越少(训练自己的特征)，当有相当可观的数据时，应该从头开始自己训练。</p>
+</blockquote>
+<h2 id="下载数据集"><a href="#下载数据集" class="headerlink" title="下载数据集"></a>下载数据集</h2><p>MNIST数据集的下载和导入：</p>
+<ul>
+<li><a href="https://s3.amazonaws.com/img-datasets/mnist.npz" target="_blank" rel="noopener">下载地址</a></li>
+<li>numpy导入：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">path=<span class="string">'examples/mnist.npz'</span></span><br><span class="line">f = np.load(path)</span><br><span class="line"></span><br><span class="line">x_train1, y_train = f[<span class="string">'x_train'</span>], f[<span class="string">'y_train'</span>]</span><br><span class="line">x_test1, y_test = f[<span class="string">'x_test'</span>], [<span class="string">'y_test'</span>]</span><br><span class="line"></span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="下载VGG16权重"><a href="#下载VGG16权重" class="headerlink" title="下载VGG16权重"></a>下载VGG16权重</h2><p><a href="https://github.com/fchollet/deep-learning-models/releases" target="_blank" rel="noopener">来这里下载VGG16的权重</a></p>
+<p>提示：</p>
+<ul>
+<li>vgg16_weights_tf_dim_ordering_tf_kernels.h5 表示全部VGG16权重。</li>
+<li>vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5 表示不要最后全连接层的权重。</li>
+</ul>
+<p>要下载第二个，因为最后一层是自己要重新定义和训练的，所以不要VGG16原始的最后几层的权重。然而top一共是3层，权重参数的大小就从50MB突变到了500MB。可想最后3层得多少参数。</p>
+<h2 id="执行环境"><a href="#执行环境" class="headerlink" title="执行环境"></a>执行环境</h2><ul>
+<li>python 3.5</li>
+<li>keras 2.2.2</li>
+<li>代码执行的话，一段代码copy进一个jupyter lab的格子里执行就行。像下面那样，怎么总感觉在说废话。。。<br><img data-src="/2019/02/17/transfer-learning/5.png" alt></li>
+</ul>
+<h2 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h2><p><span id="inline-green"> 如果用的是其他数据选择性忽略这里。 </span></p>
+<p>不幸的是VGG16能接受的图片大小至少是48，必须有RGB三通道，奈何MNIST数据集的大小是28，还没有RGB通道，只能使用numpy快速处理一下。</p>
+<p>将图片填充为48 $\times$ 48和三个通道，三个通道就用自己本身复制三次代替，填充值为0。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取数据</span></span><br><span class="line">path=<span class="string">'examples/mnist.npz'</span></span><br><span class="line">f = np.load(path)</span><br><span class="line"></span><br><span class="line">x_train1, y_train = f[<span class="string">'x_train'</span>], f[<span class="string">'y_train'</span>]</span><br><span class="line">x_test1, y_test = f[<span class="string">'x_test'</span>], f[<span class="string">'y_test'</span>]</span><br><span class="line"></span><br><span class="line">f.close()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据填充</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">这段代码写的不是很好，pad三个维度，将shape[0]个数组填充，实在是不会只能用for循环</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">x_train = np.ones((x_train1.shape[<span class="number">0</span>], <span class="number">48</span>, <span class="number">48</span>))</span><br><span class="line">x_test = np.ones((x_test1.shape[<span class="number">0</span>], <span class="number">48</span>, <span class="number">48</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">0</span>, x_train.shape[<span class="number">0</span>]):</span><br><span class="line">    x_train[i] = np.pad(x_train1[i], ((<span class="number">10</span>,<span class="number">10</span>),(<span class="number">10</span>,<span class="number">10</span>)), <span class="string">'constant'</span>, constant_values = (<span class="number">0</span>,<span class="number">0</span>))</span><br><span class="line">    </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">0</span>, x_test1.shape[<span class="number">0</span>]):</span><br><span class="line">    x_test[i] = np.pad(x_test1[i], ((<span class="number">10</span>,<span class="number">10</span>),(<span class="number">10</span>,<span class="number">10</span>)), <span class="string">'constant'</span>, constant_values = (<span class="number">0</span>,<span class="number">0</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将单通道的图像填充为三通道</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gray2rgb</span><span class="params">(array)</span>:</span></span><br><span class="line">    number = array.shape[<span class="number">0</span>]</span><br><span class="line">    height = array.shape[<span class="number">1</span>]</span><br><span class="line">    width = array.shape[<span class="number">2</span>]</span><br><span class="line">    </span><br><span class="line">    array = np.repeat(array, <span class="number">3</span>)</span><br><span class="line">    </span><br><span class="line">    array = array.reshape(number, height, width, <span class="number">3</span>)</span><br><span class="line">    <span class="keyword">return</span> array</span><br><span class="line"></span><br><span class="line">x_train = gray2rgb(x_train)</span><br><span class="line"><span class="comment"># y_train = gray2rgb(y_train)</span></span><br><span class="line">x_test = gray2rgb(x_test)</span><br><span class="line"><span class="comment"># y_test = gray2rgb(y_test)</span></span><br></pre></td></tr></table></figure>
+<p>实际的训练数据有60000，我试了一下导入全部数据结果CPU和内存差点爆炸，因为我穷买不起GPU，所以只能用小部分数据做着玩玩，反正学的是思路，再说了迁移学习适合小数据，我只是选择了小部分数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 100个训练数据</span></span><br><span class="line">x_train = x_train[<span class="number">59900</span>:]</span><br><span class="line">y_train = y_train[<span class="number">59900</span>:]</span><br><span class="line"><span class="comment"># 10个测试数据</span></span><br><span class="line">x_test = x_test[<span class="number">9990</span>:]</span><br><span class="line">y_test = y_test[<span class="number">9990</span>:]</span><br></pre></td></tr></table></figure>
+<h2 id="VGG16迁移"><a href="#VGG16迁移" class="headerlink" title="VGG16迁移"></a>VGG16迁移</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">height, width = x_train.shape[1], x_train.shape[2]</span><br><span class="line">channels = x_train.shape[-1]</span><br><span class="line"></span><br><span class="line">path=&apos;weights/vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5&apos;</span><br><span class="line"></span><br><span class="line">from keras.applications import vgg16</span><br><span class="line">base_model = vgg16.VGG16(weights = path,</span><br><span class="line">                         include_top = False, ## 是否保留顶层的3个全连接网络</span><br><span class="line">                         input_shape = (height, width, channels), ## 输入层的尺寸</span><br><span class="line">                        )</span><br><span class="line">base_model.summary()</span><br></pre></td></tr></table></figure>
+<p>我们发现迁移过来的VGG16是长这样的：最后一层的输出是(1, 1, 512)。那么添加的下一层的全连接层的输入维度就是512。</p>
+<p><img data-src="/2019/02/17/transfer-learning/2.png" alt></p>
+<p><img data-src="/2019/02/17/transfer-learning/3.png" alt></p>
+<h2 id="加入自定义层"><a href="#加入自定义层" class="headerlink" title="加入自定义层"></a>加入自定义层</h2><p>将原始图片导入VGG16得到现在开始加入自己自定义的层，我添加了一个100个节点的全连接层和10个节点的全连接层。记得第一层的输入维度是512哦～</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出VGG16的计算特征</span></span><br><span class="line">train_feature = base_model.predict(x_train, batch_size=<span class="number">32</span>)</span><br><span class="line">print(train_feature.shape)</span><br><span class="line"></span><br><span class="line">x_data = train_feature.copy()</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Activation</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 添加第一层</span></span><br><span class="line">model.add(Dense(<span class="number">100</span>, activation=<span class="string">'relu'</span>, input_dim=<span class="number">512</span>))</span><br><span class="line"><span class="comment"># 添加第二层</span></span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              loss=<span class="string">'categorical_crossentropy'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br></pre></td></tr></table></figure>
+<h2 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h2><p>训练自己的自定义层，相信反向传播，相信优化器。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">x_data = x_data.reshape(100, 512)</span><br><span class="line"></span><br><span class="line">y_label = y_train.reshape(100, 1)</span><br><span class="line"># Sequence模型接受类别的数据类型为one-hot或者词向量，这里只能使用one-hot。</span><br><span class="line">y_one_hot_labels = keras.utils.to_categorical(y_label, num_classes=10)</span><br><span class="line"># 开始训练</span><br><span class="line">model.fit(x_data, y_one_hot_labels, epochs=10, batch_size=32)</span><br></pre></td></tr></table></figure></p>
+<h3 id="训练误差"><a href="#训练误差" class="headerlink" title="训练误差"></a>训练误差</h3><p><img data-src="/2019/02/17/transfer-learning/1.png" alt></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>训练完毕后就是在自己的测试数据上跑一跑，evaluate以下，同样用VGG16计算测试集的输出，将输出带入自定义网络进行预测，和标准数据对比。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">test_feature = base_model.predict(x_test, batch_size=32)</span><br><span class="line"></span><br><span class="line">print(test_feature.shape)</span><br><span class="line"></span><br><span class="line">x_test_feature = test_feature.reshape(10, 512)</span><br><span class="line">y_test_label = keras.utils.to_categorical(y_test, num_classes=10)</span><br><span class="line"></span><br><span class="line">score = model.evaluate(x_test_feature, y_test_label, batch_size=32)</span><br></pre></td></tr></table></figure></p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>实际上socre的得分不是很好，测试集上的准确率只有60%。这说明了什么呢？训练集的误差小，测试集的误差很大，归结下原因：</p>
+<ul>
+<li>对数据集的筛选，导致了训练集和测试集的来源不同，也就是测试集里面的数据网络没见过。</li>
+<li>个人认为不是网络的原因，因为训练集的误差很小。就算是过拟合也是由样本太少导致的。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/10/Computer-Vision-opencv/" rel="bookmark">YOLO目标检测</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/05/19/basic-nlp/" rel="bookmark">从分词到自然语言的世界</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/20/gradient-function/" rel="bookmark">优化梯度函数</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/19/optimizeDL/" rel="bookmark">正则化调教神经网络</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/18/rnn/" rel="bookmark">循环神经网络</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/10/Computer-Vision-opencv/" rel="prev" title="YOLO目标检测">
+      <i class="fa fa-chevron-left"></i> YOLO目标检测
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/02/18/rnn1/" rel="next" title="循环神经网络的进化">
+      循环神经网络的进化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#迁移学习"><span class="nav-number">1.</span> <span class="nav-text">迁移学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载数据集"><span class="nav-number">2.</span> <span class="nav-text">下载数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载VGG16权重"><span class="nav-number">3.</span> <span class="nav-text">下载VGG16权重</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行环境"><span class="nav-number">4.</span> <span class="nav-text">执行环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据预处理"><span class="nav-number">5.</span> <span class="nav-text">数据预处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VGG16迁移"><span class="nav-number">6.</span> <span class="nav-text">VGG16迁移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加入自定义层"><span class="nav-number">7.</span> <span class="nav-text">加入自定义层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型训练"><span class="nav-number">8.</span> <span class="nav-text">模型训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练误差"><span class="nav-number">8.1.</span> <span class="nav-text">训练误差</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试"><span class="nav-number">9.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">10.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">722k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:56</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'e7b21eaf53dc3757d1ea7e08ac8cae2d',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
