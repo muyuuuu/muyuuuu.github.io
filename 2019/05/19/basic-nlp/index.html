@@ -303,7 +303,7 @@
 <a id="more"></a>
 <h1 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h1><p>&emsp;&emsp; 首先，对于一个句子：“燕山大学生”，是分为燕山大学-生呢还是燕山-大学生呢？显然有二义性。二义性的句子还是靠后来的统计模型加以解决。（猜想：是不是现实世界过于灵活的东西都不能加太多的限制规则）。假设有两种分词方法，第一种是$A$，第二种是其他的分词方法$B$。对于两种分词方式，计算其产生句子的概率：$P(A)&gt;P(B)$，那么就认为$A$的分词方法是最好的。</p>
 <p>&emsp;&emsp;如何计算出来生成句子的概率来比较大小呢？当然是统计模型和维特比算法。</p>
-<h2 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h2><p>&emsp;&emsp; 借助马尔可夫性（一个假设，此时刻状态只与上一时刻状态相关，即今天的天气只与昨天的天气有关）。假设一个词$w<em>i$出现的概率只与前一个词$w</em>{i-1}$相关。那么一个句子$S$出现的概率就是$P(S)=P(w<em>1)\cdot P(w_2|w_1)\cdot P(w_3|w_2)\cdots P(w_n|w</em>{n-1})$。现在来看这个联合概率分布$P(w<em>n|w</em>{n-1})$和边缘概率分布$P(w<em>n)$呢？开始统计。当数据量足够大的时候，我们可以认为出现的频率就是事件发生的概率。$P(w_i)$就是$w_i$这个词出现的频率，$P(w_n|w</em>{n-1})$就是这两个词一起出现的频率。既然得到了词出现的概率，在计算句子出现的概率就不难了。之后就能轻易的确定出最好的分词方法。</p>
+<h2 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h2><p>&emsp;&emsp; 借助马尔可夫性（一个假设，此时刻状态只与上一时刻状态相关，即今天的天气只与昨天的天气有关）。假设一个词$w_i$出现的概率只与前一个词$w_{i-1}$相关。那么一个句子$S$出现的概率就是$P(S)=P(w_1)\cdot P(w_2|w_1)\cdot P(w_3|w_2)\cdots P(w_n|w_{n-1})$。现在来看这个联合概率分布$P(w_n|w_{n-1})$和边缘概率分布$P(w_n)$呢？开始统计。当数据量足够大的时候，我们可以认为出现的频率就是事件发生的概率。$P(w_i)$就是$w_i$这个词出现的频率，$P(w_n|w_{n-1})$就是这两个词一起出现的频率。既然得到了词出现的概率，在计算句子出现的概率就不难了。之后就能轻易的确定出最好的分词方法。</p>
 <h2 id="维特比算法"><a href="#维特比算法" class="headerlink" title="维特比算法"></a>维特比算法</h2><p>&emsp; &emsp;但是，不能穷举所有分词情况下每个句子出现的概率，过于复杂。比如一次分词就判断一下，一次分词就判断一下还是很复杂的。这个时候就有维特比算法了，算法的核心思想是动态规划，不过这个算法最初是用来解决通信领域的问题，现在被用在了求最短路径、导航等领域。</p>
 <p>&emsp; &emsp; 算法的核心思想：可能会有多种分词，每次分词导致的结果还不同，就会得到下图的一个网络。每个分词的区域都是一个网络的岔路口。</p>
 <p><img data-src="/2019/05/19/basic-nlp/1.png" alt></p>
@@ -318,7 +318,7 @@
 <p>&emsp;&emsp;这时候如果有个表就好了，在这个表里面每个单词都有自己的300维特征向量。apple有自己的特征向量，orange有自己的特征向量。这两个特征向量距离很近，但是与Iron这个词的特征向量又很远。总之是现实中相似物体词汇的特征向量接近，八杆子打不着的物体词汇的特征向量距离就远。那么就能很轻易的从apple candy推导出orange candy。那么这个表就叫做词嵌入（embedded）表，如何求这个词潜入表呢？目前有多种方案。</p>
 <p>&emsp;&emsp;为什么叫词嵌入呢，因为词嵌入表的作用就是把这个词赋予了一个多维的向量，比如300维，那么这个词就嵌入在一个300维的空间里。</p>
 <h2 id="传统方案"><a href="#传统方案" class="headerlink" title="传统方案"></a>传统方案</h2><p>&emsp;&emsp;首先，记词嵌入表为$E$，假设有1000个词和想生成300维特征，先随机生成$E$，维度是$300\times 1000$。则对于一个one-hot编码，$E\cdot O=e$，即嵌入表乘以一个词的one-hot得到这个词的特征向量，而所有词的特征向量组成嵌入词表。此时一个只能推断的任务：I want a glass orange <u>candy</u>，candy是需要推断的内容。</p>
-<p>&emsp;&emsp;那么我们先把 I， want， a， glass， orange的$e$给求出来（glass 的 $e$ 求法为：$E\cdot O<em>{\mathrm{glass}}$，$O</em>{glass}$是glass的one-hot编码）。把5个$e$扔给一个softmax单元，希望的输出为juice。反向传播，训练这个网络直到误差逐渐的减小，最后得到想要的$E$。</p>
+<p>&emsp;&emsp;那么我们先把 I， want， a， glass， orange的$e$给求出来（glass 的 $e$ 求法为：$E\cdot O_{\mathrm{glass}}$，$O_{glass}$是glass的one-hot编码）。把5个$e$扔给一个softmax单元，希望的输出为juice。反向传播，训练这个网络直到误差逐渐的减小，最后得到想要的$E$。</p>
 <p>&emsp;&emsp;这个时候把orange换成apple，因为apple和orange的$e$很接近，很容易从orange candy 推导出 apple candy了。</p>
 <h2 id="Skip-Gram"><a href="#Skip-Gram" class="headerlink" title="Skip Gram"></a>Skip Gram</h2><p>&emsp;&emsp; 给定一个句子：”<em>Black Widow</em> is a playable character in Lego Marvel’s Avengers, voiced by Scarlett Johansson.”从中选择一个单词作为上下文context，在正负五个单词内选择target， 建立一个监督学习的模型，建立从context到target的映射，这个网络的规模就会比上一个算法的规模小一点。</p>
 <script type="math/tex; mode=display">O\rightarrow E\rightarrow e\rightarrow \mathrm{softmax}\rightarrow \hat{y}</script><p>&emsp;&emsp;交叉熵计算误差时还是使用的one-hot编码。</p>
@@ -330,7 +330,7 @@
 <p>&emsp;&emsp;只要还有类似的评论，就很快的能从评分数量的角度来数字量化好坏程度。</p>
 <h1 id="类比推理"><a href="#类比推理" class="headerlink" title="类比推理"></a>类比推理</h1><p>&emsp;&emsp;继续，man相对与doctor， 等于woman相当于什么。我们只需要在选择一个向量$e_x$，使下式成立：</p>
 <script type="math/tex; mode=display">e_{man}-e_{doctor}=e_{woman}-e_x</script><p>&emsp;&emsp;然后把这个$x$向量求出来即可。但是，为了消除性别歧视，doctor相对于man，那么woman的结果也应该是doctor。所以在训练结束后，形如性别类、种族类的词汇还需要进一步处理。比如对于性别而言，需要消除在性别方向上的差异。</p>
-<p>&emsp;&emsp;形如，我们知道了男人的特征向量$e<em>{man}$和女人的特征向量$e</em>{woman}$，将这两个向量相减，可以认为差异最大的那一维有性别的成分。然后平均一下那个温度上的差异就可以啦。</p>
+<p>&emsp;&emsp;形如，我们知道了男人的特征向量$e_{man}$和女人的特征向量$e_{woman}$，将这两个向量相减，可以认为差异最大的那一维有性别的成分。然后平均一下那个温度上的差异就可以啦。</p>
 <p><img data-src="/2019/05/19/basic-nlp/3.jpg" alt></p>
 <hr>
 
@@ -498,7 +498,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -552,12 +552,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

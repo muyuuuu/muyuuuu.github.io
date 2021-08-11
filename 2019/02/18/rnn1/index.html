@@ -318,7 +318,7 @@
 <p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
 <h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
 <p>也就是，附近单词的注意力权重大，而距离越远的单词注意力权重越小。而且每个单词和每个单词所用的权重也是不一样的。</p>
-<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha<em>{11}$到$\alpha</em>{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
+<p>通俗理解：对每一个单词设立权重$\alpha$，对第一个单词而言，第一个单词与另外所有的单词$t$应该满足$\alpha_{11}$到$\alpha_{1t}$的和是1，然后第一次的记忆信息$c_1$为：</p>
 <script type="math/tex; mode=display">c_1=\sum_t \alpha_{1t} a_t</script><p>为了满足记忆力的权重之和为1，借鉴softmax的处理方式，以$t$表示第$t$个输入的单词，$T$表述输入单词的长度，以$x$表示第$t$个单词和另外$x$个单词之间的联系：</p>
 <script type="math/tex; mode=display">\alpha_{t,x}=\frac{\mathrm{exp}(e_{t,x})}{\sum_t^T \mathrm{exp}(e_{t,x})}</script><p>而$\mathrm{exp}(e_{t,x})$是由另外的全连接层$F$训练而来，$F$的输入为上时刻隐藏层的未激活值，即$\hat{y}$之前的值，和这一层的信息值$a_t$。即：</p>
 <script type="math/tex; mode=display">e_{t,x}=f(s_{t-1};a_x)</script><p>在不断的训练后，计算出权重$\alpha_{t,x}$之后，就可以为所欲为啦～</p>
@@ -488,7 +488,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -542,12 +542,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

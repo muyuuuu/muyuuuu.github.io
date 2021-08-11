@@ -295,7 +295,7 @@
         <p>经过几天连续的开坑和读源代码，对 mmdetection 的配置流程了解的差不多了。考虑一个实例应用，尝试着将 <code>FGSM</code> 攻击算法的制作的对抗样本植入目标检测中，企图增加网络的鲁棒性，也就是一个自定义输出处理 <code>Pipeline</code> 的实际流程。之后会尝试自定义损失函数，支持简单的对抗训练，如 MART 算法等 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>。</p>
 <a id="more"></a>
 <h1 id="对抗攻击之植入-mmdetection"><a href="#对抗攻击之植入-mmdetection" class="headerlink" title="对抗攻击之植入 mmdetection"></a>对抗攻击之植入 mmdetection</h1><p>众所周知，攻击算法基于原始样本制作一种含有梯度的扰动信息，将扰动信息叠加至原始样本，就得到了对抗样本。因此，对抗样本应该添加在数据处理的 pipeline 中，而不是网络层。首先实现最简单的对抗训练：</p>
-<p>\begin{equation}<br>\min<em>\theta \biggl( \max \Bigl( l \bigl(T</em>\theta(x’), y_i \bigl) \Bigr) \biggr)<br>\end{equation}</p>
+<p>\begin{equation}<br>\min_\theta \biggl( \max \Bigl( l \bigl(T_\theta(x’), y_i \bigl) \Bigr) \biggr)<br>\end{equation}</p>
 <p>内部的对抗样本 $x’$ 企图最大化模型的分类误差，外部的训练企图最小化对抗样本带来的误差。查看训练数据的 pipeline，我们发现是在最后一步转为 tensor，而攻击算法是在tensor上进行操作的。所以，对抗攻击应该加在最后一步之后或之前。我们查看返回 tensor 的源代码。此部分代码在 <code>mmdet/datasets/pipelines</code> 目录下。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, results)</span>:</span></span><br><span class="line">    <span class="string">"""Call function to transform and format common fields in results.</span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        results (dict): Result dict contains the data to convert.</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        dict: The result dict contains the data that is formatted with \</span></span><br><span class="line"><span class="string">            default bundle.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="string">'img'</span> <span class="keyword">in</span> results:</span><br><span class="line">        img = results[<span class="string">'img'</span>]</span><br><span class="line">        <span class="comment"># add default meta keys</span></span><br><span class="line">        results = self._add_default_meta_keys(results)</span><br><span class="line">        <span class="keyword">if</span> len(img.shape) &lt; <span class="number">3</span>:</span><br><span class="line">            img = np.expand_dims(img, <span class="number">-1</span>)</span><br><span class="line">        img = np.ascontiguousarray(img.transpose(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">        results[<span class="string">'img'</span>] = DC(to_tensor(img), stack=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> [<span class="string">'proposals'</span>, <span class="string">'gt_bboxes'</span>, <span class="string">'gt_bboxes_ignore'</span>, <span class="string">'gt_labels'</span>]:</span><br><span class="line">        <span class="keyword">if</span> key <span class="keyword">not</span> <span class="keyword">in</span> results:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        results[key] = DC(to_tensor(results[key]))</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'gt_masks'</span> <span class="keyword">in</span> results:</span><br><span class="line">        results[<span class="string">'gt_masks'</span>] = DC(results[<span class="string">'gt_masks'</span>], cpu_only=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'gt_semantic_seg'</span> <span class="keyword">in</span> results:</span><br><span class="line">        results[<span class="string">'gt_semantic_seg'</span>] = DC(</span><br><span class="line">            to_tensor(results[<span class="string">'gt_semantic_seg'</span>][<span class="literal">None</span>, ...]), stack=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> results</span><br></pre></td></tr></table></figure>
 <p>而对抗攻击只关注图像与标签，所以，只关注图像与标签，而这部分一目了然。所以，开始写自己的对抗样本：</p>
@@ -373,7 +373,7 @@
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/25/Mask-R-CNN/" rel="bookmark">分割篇：Mask R-CNN</a></div>
+      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
     </li>
   </ul>
 
@@ -515,7 +515,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -569,12 +569,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

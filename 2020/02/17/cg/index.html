@@ -418,7 +418,7 @@
 </ul>
 <p><strong>DDA算法</strong></p>
 <p>重要的思想为增量思想。设单位步长为一个像素。</p>
-<script type="math/tex; mode=display">y_i=kx_i+b \Longrightarrow y_{i+1}=kx_{i+1}+b</script><script type="math/tex; mode=display">y_{i+1}=k(x_i+1)+b = kx_i+b+k = y_i+k</script><p>即：$y<em>{i+1}=y_i+k$，$k$是增量。$y_i$加$k$得到$y</em>{i+1}$，取消了乘法。当$|k|\leq 1$时，一切正常。参考下列例题。</p>
+<script type="math/tex; mode=display">y_i=kx_i+b \Longrightarrow y_{i+1}=kx_{i+1}+b</script><script type="math/tex; mode=display">y_{i+1}=k(x_i+1)+b = kx_i+b+k = y_i+k</script><p>即：$y_{i+1}=y_i+k$，$k$是增量。$y_i$加$k$得到$y_{i+1}$，取消了乘法。当$|k|\leq 1$时，一切正常。参考下列例题。</p>
 <p><strong>例题</strong></p>
 <p>DDA算法扫描转换连接两点$P_0(0, 0)$，$P_1(5, 3)$的直线段。</p>
 <p>$k=\frac{3-0}{5-0}=0.6$</p>
@@ -470,7 +470,7 @@
 </ol>
 <p><img data-src="/2020/02/17/cg/midpoint2.png" alt></p>
 <ul>
-<li>在点$M<em>0$处，$d_0=F(x</em>{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
+<li>在点$M_0$处，$d_0=F(x_{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
 <li>在点$M_1$处，$d_1=A(x_i+2) + B(y_i+1.5) + C=d_0+A+B$</li>
 </ul>
 <ol>
@@ -478,7 +478,7 @@
 </ol>
 <p><img data-src="/2020/02/17/cg/midpoint3.png" alt></p>
 <ul>
-<li>在点$M<em>0$处，$d_0=F(x</em>{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
+<li>在点$M_0$处，$d_0=F(x_{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
 <li>在点$M_1$处，$d_1=A(x_i+2) + B(y_i+0.5) + C=d_0+A$</li>
 </ul>
 <p>于是得到$d$的递推公式：</p>
@@ -517,7 +517,7 @@
 <p>以数值扫描为例，按照扫描的顺序，求与多边形相交的区间，对区间内部的像素点进行颜色填充。同样，坐标点需要四舍五入为整数。</p>
 <p><img data-src="/2020/02/17/cg/scan-fill.png" alt></p>
 <p>需要以$x$递增的排列顺序得到$x$的坐标，也就是要在$[2,4],[7,9]$两个区间内填充。</p>
-<p>如果图形中，$y<em>{\mathrm{min}}$值为$1$，$y</em>{\mathrm{max}}$值为$12$，一共需要$12$条扫描线从下向上扫描，其他线不考虑。在$y\in [y<em>{\mathrm{min}},y</em>{\mathrm{max}}]$中，对每一条扫面线的扫描结果进行填充，步骤为：</p>
+<p>如果图形中，$y_{\mathrm{min}}$值为$1$，$y_{\mathrm{max}}$值为$12$，一共需要$12$条扫描线从下向上扫描，其他线不考虑。在$y\in [y_{\mathrm{min}},y_{\mathrm{max}}]$中，对每一条扫面线的扫描结果进行填充，步骤为：</p>
 <ul>
 <li>求交点</li>
 <li>升序对$x$的坐标进行排序</li>
@@ -690,10 +690,10 @@
 <ul>
 <li>$p_1,p_2$全部在窗口内，保留直线</li>
 <li>完全在窗口外，抛弃<ul>
-<li>$x<em>1\leq x</em>{\text{left}} \&amp; x<em>2\leq x</em>{\text{left}}$</li>
-<li>$x<em>1\geq x</em>{\text{right}} \&amp; x<em>2\geq x</em>{\text{right}}$</li>
-<li>$y<em>1\geq y</em>{\text{top}} \&amp; y<em>2\geq y</em>{\text{top}}$</li>
-<li>$y<em>1\geq y</em>{\text{bottom}} \&amp; y<em>2\geq y</em>{\text{bottom}}$</li>
+<li>$x_1\leq x_{\text{left}} \&amp; x_2\leq x_{\text{left}}$</li>
+<li>$x_1\geq x_{\text{right}} \&amp; x_2\geq x_{\text{right}}$</li>
+<li>$y_1\geq y_{\text{top}} \&amp; y_2\geq y_{\text{top}}$</li>
+<li>$y_1\geq y_{\text{bottom}} \&amp; y_2\geq y_{\text{bottom}}$</li>
 </ul>
 </li>
 <li>与窗口相交，则按照交点分段，抛弃一部分，保留窗口内的线段。</li>
@@ -886,10 +886,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/06/12/Computer-network/" rel="bookmark">计算机网络原理</a></div>
@@ -1040,7 +1040,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1094,12 +1094,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

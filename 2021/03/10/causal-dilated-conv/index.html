@@ -295,9 +295,9 @@
         <p>之前一直在看他们用『<strong>因果扩张卷积</strong>』这个东西，当时我只看到了一张图，大概了解了那是个什么东西。今天，在某次比赛中用到了这个模型，顺手看了下源代码，来做个整理。</p>
 <a id="more"></a>
 <p>在时序序列的预测问题中，很容易想到LSTM等循环神经网络。给定序列数据，预测下一时刻的输出，如翻译、问答等。</p>
-<p>\begin{equation}<br>p(x)=\prod<em>{t=1}^T P(x_t|x</em>{t-1},…,x_1)<br>\end{equation}</p>
+<p>\begin{equation}<br>p(x)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1)<br>\end{equation}</p>
 <p>当然也可以有隐藏状态：</p>
-<p>\begin{equation}<br>p(x|h)=\prod<em>{t=1}^T P(x_t|x</em>{t-1},…,x_1, h)<br>\end{equation}</p>
+<p>\begin{equation}<br>p(x|h)=\prod_{t=1}^T P(x_t|x_{t-1},…,x_1, h)<br>\end{equation}</p>
 <p>时至今日，也可以用 CNN 来代替这一过程，卷积的输入是历史数据，产生一个时刻的输出。且，相对而言 CNN 的参数要少很多，也可以叠加 CNN 层。需要注意的是，因果扩张卷积包括因果卷积和扩张卷积两部分。</p>
 <h1 id="扩张卷积"><a href="#扩张卷积" class="headerlink" title="扩张卷积"></a>扩张卷积</h1><p>扩张卷积是为了增大卷积核感受野而设计的一种东西，看图就知道了：</p>
 <p><img data-src="https://s3.ax1x.com/2021/03/10/6JPvCt.gif" alt></p>
@@ -477,7 +477,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -531,12 +531,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

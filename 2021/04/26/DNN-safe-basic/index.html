@@ -303,7 +303,7 @@
 <li>无目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与原标注无关，即只要攻击成功就好，对抗样本的最终属于哪一类不做限制。</li>
 <li>有目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与目标标注完全一致，即不仅要求攻击成功，还要求生成的对抗样本属于特定的类。</li>
 </ul>
-<h1 id="基于梯度的攻击算法"><a href="#基于梯度的攻击算法" class="headerlink" title="基于梯度的攻击算法"></a>基于梯度的攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert<em>\inf &lt; \epsilon$。事实上，常说的 $l</em>\inf-\text{ball}$ 就是这个意思。</p>
+<h1 id="基于梯度的攻击算法"><a href="#基于梯度的攻击算法" class="headerlink" title="基于梯度的攻击算法"></a>基于梯度的攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert_\inf &lt; \epsilon$。事实上，常说的 $l_\inf-\text{ball}$ 就是这个意思。</p>
 <p>考虑输入层对对抗样本的线性变换：</p>
 <p>\begin{equation}<br>w^Tx’=w^Tx+w^T\eta<br>\end{equation}</p>
 <p>如果假设 $\eta = \text{sign} (w)$，$w$ 是一个 $n$ 维的矩阵，每一维的模长是 $m$，那么经过线性映射后，输入将增大 $\epsilon mn$。尽管 $\Vert \eta \Vert_\inf$ 不会变换，但随着维度的升高、矩阵权重的变换和非线性激活，回导致最终结果变化很大。这也就是为什么对抗样本与原始样本相差无几，但却产生了不同的输出。</p>
@@ -317,9 +317,9 @@
 <li>如何产生强有效的对抗样本，只需要一点点扰动就可以欺骗神经网络？</li>
 <li>如何训练模型，使得没有对抗样本轻易能欺骗网络？</li>
 </ol>
-<p>在论文中，为了防止网络只能抵御某一特定类型的攻击，应该保证模型有足够的对抗鲁棒性，接下来，使用一种方法来训练模型，达到这种保证。在传统的网络中，损失函数通常是优化网络参数 $\theta$，使得损失函数达到最小：$\mathbb{E}<em>{x\sim D}[L(x,y,\theta)]$。但是，对于对抗样本而言，就是要误导神经网络的输出。同样，这篇论文中，对抗样本的扰动范围也限制在 $l</em>\inf-\text{ball}$ 内。</p>
+<p>在论文中，为了防止网络只能抵御某一特定类型的攻击，应该保证模型有足够的对抗鲁棒性，接下来，使用一种方法来训练模型，达到这种保证。在传统的网络中，损失函数通常是优化网络参数 $\theta$，使得损失函数达到最小：$\mathbb{E}_{x\sim D}[L(x,y,\theta)]$。但是，对于对抗样本而言，就是要误导神经网络的输出。同样，这篇论文中，对抗样本的扰动范围也限制在 $l_\inf-\text{ball}$ 内。</p>
 <p>但是在训练损失函数$\mathbb{E}_{x\sim D}[L]$之前，先考虑对抗样本的扰动，所以先不把干净样本 $x$ 输入到网络，而是用对抗样本作为网络的输入。所以论文的公式将攻击和防御放入统一框架内，对抗训练就是在一个马鞍面内求鞍点。</p>
-<p>\begin{equation}<br>\min \mathbb{E}<em>{x\sim D} \big[ \max</em>{\sigma\in S} L(\theta, x, y) \big]<br>\end{equation}</p>
+<p>\begin{equation}<br>\min \mathbb{E}_{x\sim D} \big[ \max_{\sigma\in S} L(\theta, x, y) \big]<br>\end{equation}</p>
 <p>其中的 $S$ 表示球面限制，即无穷范数不能超过 $S$。这个统一的框架包括了内部最大化和外部最小化，因此可以视为鞍点问题，也清晰的描述了鲁棒模型应该达到的目标。内部最大化的期望是，寻找最优的对抗样本达到很高的损失；外部最小化的期望是，寻找模型参数，能抵抗对抗样本的攻击。所以，最终训练得到的模型也具有稳定的对抗鲁棒性。</p>
 <p>在攻击部分，对抗样本的制作方法为：</p>
 <p>\begin{equation}<br>x+\epsilon \text{sign} \big( \nabla_x L(\theta, x, y) \big)<br>\end{equation}</p>
@@ -538,7 +538,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -592,12 +592,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

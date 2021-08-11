@@ -322,20 +322,20 @@
 <h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><p>反向传播是一种以梯度下降为基础，对误差进行反馈，并调节相关参数的方法，因网络文章普遍都是公式较为晦涩，因此这里以数学计算为主，给出反向传播的实例，供读者理解。(因此期待看数学公式的可以移步了)。以MLP为例，首先构建结构如下图所示的网络：</p>
 <p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/4.png" alt></p>
 <p>然后完成参数的初始化，且激活函数均采用Sigmoid($f(x)=\frac{1}{1 + e ^{-x}}$)</p>
-<p>$x=2,w<em>{11}=1,w</em>{12}=-1,b<em>1=3,w</em>{21}=2,w{22}=1,b<em>2=0,y</em>{true}=1,\alpha=0.2$</p>
+<p>$x=2,w_{11}=1,w_{12}=-1,b_1=3,w_{21}=2,w{22}=1,b_2=0,y_{true}=1,\alpha=0.2$</p>
 <h2 id="前向计算"><a href="#前向计算" class="headerlink" title="前向计算"></a>前向计算</h2><ol>
 <li>隐藏层第一个神经元：$x\times w_{11} + b_1 = 5$，激活后的输出为0.99</li>
 <li>隐藏层第二个神经元：$x\times w_{12} + b_1 = 1$，激活后的输出为0.73</li>
-<li>输出层的预测输出为：$y<em>{temp}=0.99\times w</em>{21} + 0.73\times w_{22} + b_2=2.71$，激活后的输出为0.93</li>
-<li>计算Loss：$E=\frac{1}{2}(y<em>{true}-y</em>{pred})^2$ (选用这类型是是因为求导方便，绝对值函数不一定可导)</li>
+<li>输出层的预测输出为：$y_{temp}=0.99\times w_{21} + 0.73\times w_{22} + b_2=2.71$，激活后的输出为0.93</li>
+<li>计算Loss：$E=\frac{1}{2}(y_{true}-y_{pred})^2$ (选用这类型是是因为求导方便，绝对值函数不一定可导)</li>
 </ol>
 <h2 id="反向传播-1"><a href="#反向传播-1" class="headerlink" title="反向传播"></a>反向传播</h2><ol>
 <li>补充一下对$\text{Sigmoid}$函数求导的结果为：$\frac{1}{1+e^{-x}}’=\frac{e^x}{e^{2x}+2e^x+1}$</li>
-<li>$E$对输出层求导：$\frac{\partial E}{\partial y<em>{pred}}=y</em>{pred}-y_{true}=-0.07$</li>
-<li>而$y<em>{pred}=\text{Sigmoid}(y</em>{temp})$，$\frac{\partial y<em>{pred}}{\partial y</em>{temp}}=\frac{e^{2.71}}{e^{5.42}+2e^{2.71}+1}=0.058$</li>
-<li>而计算$y<em>{temp}$对$w</em>{21}$这个参数的偏导值：$\frac{y<em>{temp}}{w</em>{21}}=0.99$ (求偏导时无关变量视为常量)</li>
-<li>通过链式法则求误差$E$对参数$w<em>{21}$的梯度：$\frac{\partial E}{\partial w</em>{21}}=\frac{\partial E}{\partial y<em>{pred}}\times \frac{\partial y</em>{pred}}{\partial y<em>{temp}} \times \frac{\partial y</em>{temp}}{\partial w_{21}}=-0.004$</li>
-<li>$w<em>{21}$沿着梯度下降即可：$w</em>{21}=w<em>{21} + \alpha \times -0.004=2+0.2\times -0.004=1.9992$，这样，参数$w</em>{21}$就得到了更新。(同上文的梯度下降方法)</li>
+<li>$E$对输出层求导：$\frac{\partial E}{\partial y_{pred}}=y_{pred}-y_{true}=-0.07$</li>
+<li>而$y_{pred}=\text{Sigmoid}(y_{temp})$，$\frac{\partial y_{pred}}{\partial y_{temp}}=\frac{e^{2.71}}{e^{5.42}+2e^{2.71}+1}=0.058$</li>
+<li>而计算$y_{temp}$对$w_{21}$这个参数的偏导值：$\frac{y_{temp}}{w_{21}}=0.99$ (求偏导时无关变量视为常量)</li>
+<li>通过链式法则求误差$E$对参数$w_{21}$的梯度：$\frac{\partial E}{\partial w_{21}}=\frac{\partial E}{\partial y_{pred}}\times \frac{\partial y_{pred}}{\partial y_{temp}} \times \frac{\partial y_{temp}}{\partial w_{21}}=-0.004$</li>
+<li>$w_{21}$沿着梯度下降即可：$w_{21}=w_{21} + \alpha \times -0.004=2+0.2\times -0.004=1.9992$，这样，参数$w_{21}$就得到了更新。(同上文的梯度下降方法)</li>
 </ol>
 <p>以此类推，通过不断的迭代，参数会逐渐修改，最终的结果是模型能有效的对输入进行预测或者分类。其他参数的更新同理。对于经常变成的小伙伴，会发现训练过程经常使用batch，此时最终的误差为这个bacth的总误差，需要对总误差求均值或求和等操作：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">loss = tf.keras.losses.sparse_categorical_crossentropy(y_true=y, y_pred=y_pred)</span><br><span class="line">loss = tf.reduce_mean(loss)</span><br></pre></td></tr></table></figure>
@@ -509,7 +509,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -563,12 +563,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

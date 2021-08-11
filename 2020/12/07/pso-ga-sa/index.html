@@ -298,15 +298,15 @@
 <h1 id="粒子群算法"><a href="#粒子群算法" class="headerlink" title="粒子群算法"></a>粒子群算法</h1><p>对于一个目标函数，随机生成几个解视为粒子。将这几个粒子（数学意义为决策变量的取值）代入目标函数中，根据公式不断的迭代粒子的位置和速度参数，模仿鸟类觅食的行为来求出目标函数的最优解。</p>
 <h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p><img data-src="https://static01.imgkr.com/temp/56609f049fc147fa8846b417236f846f.gif" alt></p>
 <h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>假设此时要优化的目标为：</p>
-<p>\begin{cases}<br>\min \Bigl( (x - 2)^2 - 6x + \frac{12\sin x}{x} - 9x \cos x \Bigr) \<br>\text{s.t.} -4 \leq x \leq 4<br>\end{cases}</p>
+<p>\begin{cases}<br>\min \Bigl( (x - 2)^2 - 6x + \frac{12\sin x}{x} - 9x \cos x \Bigr) \\<br>\text{s.t.} -4 \leq x \leq 4<br>\end{cases}</p>
 <p>粒子的更新只有以下两个公式：</p>
-<p>\begin{cases}<br>x<em>i(t+1)=x_i(t)+v_i(t+1) \<br>v_i(t+1)=wv_i(t)+c_1r</em>{1t}\bigl(\text{pbest}-x<em>i(t)\bigl)+c_2r</em>{2t}\bigl(\text{gbest}-x_i(t)\bigl)<br>\end{cases}</p>
+<p>\begin{cases}<br>x_i(t+1)=x_i(t)+v_i(t+1) \\<br>v_i(t+1)=wv_i(t)+c_1r_{1t}\bigl(\text{pbest}-x_i(t)\bigl)+c_2r_{2t}\bigl(\text{gbest}-x_i(t)\bigl)<br>\end{cases}</p>
 <ul>
 <li>$x_i(t)$，表示$t$时刻第$i$个粒子的位置，$0$时刻随机初始化即可；</li>
 <li>$v_i(t)$，表示$t$时刻第$i$个粒子的移动速度，$0$时刻随机初始化即可；</li>
 <li>$w$，权重。取值大时，速度也大，具有较强的搜索能力；反之搜索能力较差；</li>
 <li>$c_1,c_2$，常数，表示例子向局部最优和全局最优移动的能力；</li>
-<li>$r<em>{1t}, r</em>{2t}$，是一个在$[0,1]$区间的常数，每次迭代都要重新生成；</li>
+<li>$r_{1t}, r_{2t}$，是一个在$[0,1]$区间的常数，每次迭代都要重新生成；</li>
 <li>$\text{pbest}$，$t$时刻的局部最优解，含义为某一点决策变量的取值，非目标函数值，该决策变量对应的目标函数值局部最小；</li>
 <li>$\text{gbest}$，从开始迭代至今得到的全局最优解，含义为某一点决策变量的取值，非目标函数值，该决策变量对应的目标函数值全局最优；</li>
 </ul>
@@ -477,7 +477,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -531,12 +531,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

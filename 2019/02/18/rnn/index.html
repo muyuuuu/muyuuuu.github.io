@@ -317,7 +317,7 @@
 <p>然后来解释下网络是如何运行的，参数的含义：</p>
 <p>首先，$T_x$表示一个样本中单词的数量，$\hat{y}^{<1>}$表示对样本中第一个单词的预测，$a$就是个中间变量，图上画得一个方框加四个圈表示计算过程。$X^{<1>}$会经过one-hot编码处理，假设样本数据库共有10000个单词，$X^{<1>}$为第一个单词，假设在词典排序中的位置为7893，那么$X^{<1>}$就是一个长度为10000，只有第7893个位置是1的零向量，其余单词也是经过one-hot处理数值化。Keras中使用序列模型进行分类时，通常都会对类别进行one-hot编码：</1></1></1></1></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> keras</span><br><span class="line">y_labels = keras.utils.to_categorical(y_label, num_classes=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
-<p>$a^{<0>}$是个初始化的零向量，推算$a^{<1>}$和$\hat{y}^{<1>}$的方式为：<br>\begin{equation}<br>a^{<1>}=g(W<em>{aa}a^{<0>}+W</0></em>{ax}X^{<1>}+b<em>a)<br>\end{equation}<br>$g$表示某种激活函数如RELU，$W</em>{aa}$为和$a$相乘的参数，$W<em>{ax}$表示和样本输入相乘的参数。输出的$a^{<1>}$为下一层的输入。<br>\begin{equation}<br>\hat{y}^{<1>}=f(W</1></1></em>{ya}a^{<1>}+b<em>y)<br>\end{equation}<br>$f$表示某种激活函数如RELU，$W</em>{ya}$为另外的和$a$相乘的参数。此外，在循环神经网络中参数是共享的以减少计算复杂度，对于之后每个输入的单词，$W<em>{ya},W</em>{ax},W_{aa}$都是一样的。</1></1></1></1></1></0></p>
+<p>$a^{<0>}$是个初始化的零向量，推算$a^{<1>}$和$\hat{y}^{<1>}$的方式为：<br>\begin{equation}<br>a^{<1>}=g(W_{aa}a^{<0>}+W_{ax}X^{<1>}+b_a)<br>\end{equation}<br>$g$表示某种激活函数如RELU，$W_{aa}$为和$a$相乘的参数，$W_{ax}$表示和样本输入相乘的参数。输出的$a^{<1>}$为下一层的输入。<br>\begin{equation}<br>\hat{y}^{<1>}=f(W_{ya}a^{<1>}+b_y)<br>\end{equation}<br>$f$表示某种激活函数如RELU，$W_{ya}$为另外的和$a$相乘的参数。此外，在循环神经网络中参数是共享的以减少计算复杂度，对于之后每个输入的单词，$W_{ya},W_{ax},W_{aa}$都是一样的。</1></1></1></1></0></1></1></1></0></p>
 <p>推广到一般形式，第$t$个输入的单词(第$t$个时间步)的计算为：</p>
 <p><img data-src="/2019/02/18/rnn/3.png" alt></p>
 <p>这样，有几个单词就有几个$X$，这个网络就走几次，输入结束的话也就停止。在训练时，方向传播成本函数$y$与$\hat{y}$的交叉熵来梯度下降，最终达到预测的目标。</p>
@@ -519,7 +519,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -573,12 +573,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

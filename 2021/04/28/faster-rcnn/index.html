@@ -320,12 +320,12 @@
 <li>对于第一个并联的全连接而言，只需要和真实标签进行交叉熵<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>即可，<strong>分类损失</strong>记为 $L_1$；</li>
 </ul>
 <p>接下来重点讲输出目标边界框的部分，如何使输出的目标框越来越接近真实的目标框呢？对于边界框回归器，也就是第二个并联的全连接，输出 <code>N+1</code> 个类别候选边界框的回归参数 $(d_x,d_y,d_w,d_h)$，共输出 $4(N+1)$ 个参数。我们设当前 SS 算法得到候选框的<strong>中心点坐标</strong>和宽高为 $(P_x,P_y,P_w,P_h)$，最终预测的边界框的参数 $(G_x, G_y, G_w, G_h)$ 为：</p>
-<p>\begin{equation}<br>    \begin{aligned}<br>        G_x &amp;= P_wd_x + P_x \<br>        G_y &amp;= P_hd_y + P_y \<br>        G_w &amp;= P_w \exp{(d_w)} \<br>        G_h &amp;= P_h \exp{(d_h)}<br>    \end{aligned}<br>\end{equation}</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>        G_x &amp;= P_wd_x + P_x \\<br>        G_y &amp;= P_hd_y + P_y \\<br>        G_w &amp;= P_w \exp{(d_w)} \\<br>        G_h &amp;= P_h \exp{(d_h)}<br>    \end{aligned}<br>\end{equation}</p>
 <p>可视化一下得到的最终预测的坐标 $(G_x, G_y, G_w, G_h)$ ，也就是，红色框是之前的候选框 $(P_x,P_y,P_w,P_h)$；绿色框是标注的候选框；经过神经网络的输出 $(d_x,d_y,d_w,d_h)$ 后，移动到蓝色框位置，也就是 $(G_x, G_y, G_w, G_h)$。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gipoqA.png" alt></p>
 <p>在计算完候选框之后，现在就要计算损失反向传播了。假设此时真实的类别标签是 $u$，第 $u$ 个类别的目标边界框的输出为 $(d_x^u,d_y^u,d_w^u,d_h^u)$，真实目标边界框的参数为 $(v_x,v_y,v_w,v_h)$。</p>
 <p><strong>边界框损失</strong>的损失为：</p>
-<p>\begin{equation}<br>    \begin{aligned}<br>    L<em>2 &amp;= \sum</em>{i\in{x,y,w,h}}\text{smooth}(t_i^u-v_i) \<br>    \text{smooth}(x) &amp;=<br>        \begin{cases}<br>        0.5 x^2 &amp; |x| &lt; 1 \<br>        |x| - 0.5 &amp; \text{other}<br>        \end{cases}<br>    \end{aligned}<br>\end{equation}</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>    L_2 &amp;= \sum_{i\in{x,y,w,h}}\text{smooth}(t_i^u-v_i) \\<br>    \text{smooth}(x) &amp;=<br>        \begin{cases}<br>        0.5 x^2 &amp; |x| &lt; 1 \\<br>        |x| - 0.5 &amp; \text{other}<br>        \end{cases}<br>    \end{aligned}<br>\end{equation}</p>
 <p>这个损失在绝对差值大于1时不求平方，可以避免梯度爆炸。大部分回归问题都可以适用，尤其是数值比较大的时候。此时，最终的损失函数为：</p>
 <p>\begin{equation}<br>L = L_1 + \lambda[\mu\geq 1]L_2<br>\end{equation}</p>
 <p>$[u\geq 1]$ 表示爱佛森括号，意思是，当 $u\geq 1$ 时，$[u\geq 1] = 1$，否则 $[u\geq 1] = 0$；$u=0$时，表示当前是背景，背景是没有边界框的，也就没有边界框回归损失这一项。$\lambda$ 是权重。好滴，Fast R-CNN 记录完毕。Faster RCNN 就相对简单点了，只是在 Fast R-CNN 的基础上使用 RPN 替换了 SS 算法。</p>
@@ -395,10 +395,10 @@
       <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
   </ul>
 
@@ -540,7 +540,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -594,12 +594,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

@@ -307,14 +307,14 @@
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gzptwd.png" alt></p>
 <p>这个过程佷繁琐不易理解，但其实并不难，可以来这篇博客看下动图。<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gziG9I.gif" alt></p>
-<h1 id="Mask-损失"><a href="#Mask-损失" class="headerlink" title="Mask 损失"></a>Mask 损失</h1><p>Mask R-CNN 的分支由三部分组成，其中 $L<em>{\text{cls}}$ 和 $L</em>{\text{box}}$ 与 Faster R-CNN 没有本质区别，所以重点是 $ L_{\text{mask}}$，它是平均二分类交叉熵损失。</p>
-<p>\begin{equation}<br>L = L<em>{\text{cls}} + L</em>{\text{box}} + L_{\text{mask}}<br>\end{equation}</p>
+<h1 id="Mask-损失"><a href="#Mask-损失" class="headerlink" title="Mask 损失"></a>Mask 损失</h1><p>Mask R-CNN 的分支由三部分组成，其中 $L_{\text{cls}}$ 和 $L_{\text{box}}$ 与 Faster R-CNN 没有本质区别，所以重点是 $ L_{\text{mask}}$，它是平均二分类交叉熵损失。</p>
+<p>\begin{equation}<br>L = L_{\text{cls}} + L_{\text{box}} + L_{\text{mask}}<br>\end{equation}</p>
 <p>假设一共有 $K$ 个类别，则 Mask 分割分支的输出维度是 $K m m$。所以对于 $m\times m$ 中的每个点，都会输出 $K$ 个二值 Mask（每个类别使用 <code>sigmoid</code> 输出）。这里与 FCN 的做法不同，FCN 在每个像素点上应用 softmax 函数，整体采用多任务交叉熵，这样会导致类间竞争（class competition），最终导致分割效果差。其实上文也能看到，分割效果的确很差。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gzgnb9.png" alt></p>
 <blockquote>
 <p>在 Faster RCNN 做 object detection 的时候，已经把某一块 RoI 识别为汽车，但这个 RoI 内可能存在其他物体的一部分，因此分割的 mask 中，除了要将汽车分割出来外，还要把另外那个物体也分割出来。这就导致这样的情况，在 object detection 的分支中，这块 RoI 整体被识别为汽车，但在 segmentation 的时候，这块 RoI 一部分被识别为汽车，一部分又要当作其他物体。如此一来，这两个分支回传到前面的梯度多少存在冲突，而前面的特征提取网络可是共享的，结果网络在学习的时候就可能出现左右为难的情况。</p>
 </blockquote>
-<p>那么来考虑二分类。To this we apply a per-pixel sigmoid, and define $L<em>{\text{mask}}$ as the average binary cross-entropy loss. For an RoI associated with ground-truth class $k$, $L</em>{\text{mask}}$ is only defined on the $k$-th mask (other mask outputs do not contribute to the loss). 也就是，只考虑一种类别，如果 ground truth 中标记了这个 bounding box 中是个人的话，那我们就只针对人的 mask 进行分割，而对这个 bounding box 中其他可能存在的物体一律忽视。如下图所示。这里画图的思想参考了这篇文章 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>。</p>
+<p>那么来考虑二分类。To this we apply a per-pixel sigmoid, and define $L_{\text{mask}}$ as the average binary cross-entropy loss. For an RoI associated with ground-truth class $k$, $L_{\text{mask}}$ is only defined on the $k$-th mask (other mask outputs do not contribute to the loss). 也就是，只考虑一种类别，如果 ground truth 中标记了这个 bounding box 中是个人的话，那我们就只针对人的 mask 进行分割，而对这个 bounding box 中其他可能存在的物体一律忽视。如下图所示。这里画图的思想参考了这篇文章 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gzRBjS.png" alt></p>
 <p>在测试阶段，通过分类分支预测的类别来选择相应的 Mask 预测。这样，Mask 预测和分类预测就彻底解耦了。</p>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><ol>
@@ -340,10 +340,10 @@
       <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
   </ul>
 
@@ -485,7 +485,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -539,12 +539,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

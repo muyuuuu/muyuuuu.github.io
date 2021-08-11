@@ -324,7 +324,7 @@
 <hr>
 <h2 id="人脸识别"><a href="#人脸识别" class="headerlink" title="人脸识别"></a>人脸识别</h2><p>比如面临传闻的亚洲四大邪术P图，数据库里可能只有你的一个图片，怎么判断新的图片是不是一个人呢？把新的图片导入神经网络重新训练？醒醒，这么浪费money的操作，你会被开除的。</p>
 <p>首先呢，还是需要一批数据集合，数据集里面有一个人的多个图片，同时也有好多人。怎么办呢？</p>
-<p>对于一个人$A$，我们假设$A$的其余照片为$A<em>1,A_2,…,A</em>{10}$，即只有同一个人的10张图片，那么就想尽办法使得这几个元素：$A_1,A_2,…,A_10$的卷积神经网络的softmax单元输出很接近，而$A$和$B，C,…,Z$(其他人)的输出很远，那么这个网络就会提取特征，使得同一个人的输出接近，而不同人的输出增加。</p>
+<p>对于一个人$A$，我们假设$A$的其余照片为$A_1,A_2,…,A_{10}$，即只有同一个人的10张图片，那么就想尽办法使得这几个元素：$A_1,A_2,…,A_10$的卷积神经网络的softmax单元输出很接近，而$A$和$B，C,…,Z$(其他人)的输出很远，那么这个网络就会提取特征，使得同一个人的输出接近，而不同人的输出增加。</p>
 <p>当需要识别的时候，记待识别的人为：$X$，如果$X$和数据库里面的任何人输出都很远，那么判断这个人是外人，不是公司里面的人，不能让他进来；反之和某个人的输出误差很小时，认为他是内人，让他进来。</p>
 <p>这个优化函数称为三元组优化(triple)，$\mathrm{dis}=d(A,A_n)-d(A,B,…,Z)+\alpha$，$\alpha$是修正参数，一般取0.2，然后$\mathrm{max}(\mathrm{dis}, 0)$，当达到理想目标时，损失函数就是0，如果识别的很烂，那么损失值就会很大，所以不断的使损失值减小，就达到了目标。</p>
 <p>此外，还可以把同一个人所有照片的激活输出放到一个二分类里面，让分类器输出0或1来判断也不是不可以，只是近似的问题转化。</p>
@@ -504,7 +504,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -558,12 +558,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

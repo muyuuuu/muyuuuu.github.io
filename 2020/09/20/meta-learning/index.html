@@ -317,15 +317,15 @@
 <p>首先列出损失函数：</p>
 <p>\begin{equation}<br>L(\phi)=\sum_{i=1}^N l^n (\theta^n)<br>\end{equation}</p>
 <p>初始化参数 $\phi$ 的更新方式为（全局）：</p>
-<p>\begin{equation}<br>\phi<em>t = \phi</em>{t-1}-\eta \nabla<em>\phi L(\phi), \; \nabla</em>\phi L(\phi)=\sum<em>{i=1}^n\nabla</em>\phi l^n(\theta^n)<br>\end{equation}</p>
+<p>\begin{equation}<br>\phi_t = \phi_{t-1}-\eta \nabla_\phi L(\phi), \; \nabla_\phi L(\phi)=\sum_{i=1}^n\nabla_\phi l^n(\theta^n)<br>\end{equation}</p>
 <p>其中，$\nabla_\phi l^n(\theta^n)$的展开式为：</p>
-<p>\begin{bmatrix}<br>\partial l_1/\partial\phi_1 &amp; \partial l_2/\partial\phi_1 &amp; \ldots &amp; \partial l_n/\partial\phi_1\<br>\partial l_1/\partial\phi_2 &amp; \partial l_2/\partial\phi_2 &amp; \ldots &amp; \partial l_n/\partial\phi_2\<br>\partial l_1/\partial\phi_3 &amp; \partial l_2/\partial\phi_3 &amp; \ddots &amp; \partial l_n/\partial\phi_3\<br>\partial l_1/\partial\phi_n &amp; \partial l_2/\partial\phi_n &amp; \ldots &amp; \partial l_n/\partial\phi_n\<br>\end{bmatrix}</p>
+<p>\begin{bmatrix}<br>\partial l_1/\partial\phi_1 &amp; \partial l_2/\partial\phi_1 &amp; \ldots &amp; \partial l_n/\partial\phi_1\\<br>\partial l_1/\partial\phi_2 &amp; \partial l_2/\partial\phi_2 &amp; \ldots &amp; \partial l_n/\partial\phi_2\\<br>\partial l_1/\partial\phi_3 &amp; \partial l_2/\partial\phi_3 &amp; \ddots &amp; \partial l_n/\partial\phi_3\\<br>\partial l_1/\partial\phi_n &amp; \partial l_2/\partial\phi_n &amp; \ldots &amp; \partial l_n/\partial\phi_n\\<br>\end{bmatrix}</p>
 <p>因为一个 $\phi$ 对应很多 $\theta$，所以由链式求偏导法则我们可以知道下图的关系式（以上面矩阵中单个元素为例，所以 $l$ 就不带任何角标了）：</p>
-<p>\begin{equation}<br>\frac{\partial l}{\partial \phi<em>i} = \sum</em>{j}\frac{\partial l \partial \theta_j}{\partial \theta_j \partial \phi_i}<br>\end{equation}</p>
+<p>\begin{equation}<br>\frac{\partial l}{\partial \phi_i} = \sum_{j}\frac{\partial l \partial \theta_j}{\partial \theta_j \partial \phi_i}<br>\end{equation}</p>
 <p>而在每一个任务中，参数 $\theta$ 的更新方式为（单个任务）：</p>
-<p>\begin{equation}<br>\theta<em>j=\phi_j-\epsilon\nabla</em>\phi l(\phi_j)=\phi_j-\epsilon\frac{\partial l(\phi_j)}{\partial \phi}<br>\end{equation}</p>
+<p>\begin{equation}<br>\theta_j=\phi_j-\epsilon\nabla_\phi l(\phi_j)=\phi_j-\epsilon\frac{\partial l(\phi_j)}{\partial \phi}<br>\end{equation}</p>
 <p>所以：</p>
-<p>\begin{cases}<br>\frac{\partial \theta_j}{\partial \phi_i}=-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 0 &amp; i \neq j \<br>\frac{\partial \theta_j}{\partial \phi_i}=1-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 1 &amp; i = j<br>\end{cases}</p>
+<p>\begin{cases}<br>\frac{\partial \theta_j}{\partial \phi_i}=-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 0 &amp; i \neq j \\<br>\frac{\partial \theta_j}{\partial \phi_i}=1-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 1 &amp; i = j<br>\end{cases}</p>
 <p>取消第二项的二次微分时：</p>
 <p>\begin{equation}<br>\frac{\partial l}{\partial \phi_i} \approx \frac{\partial l}{\partial \theta_i}<br>\end{equation}</p>
 <p>以上公式是我看懂and抄下来，真佩服能手推公式的。这样，参数如何更新的就讲完了。MAML的主要目标也是更新参数。</p>
@@ -528,7 +528,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -582,12 +582,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

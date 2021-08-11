@@ -316,7 +316,7 @@
 <p><code>后缀表达式的应用</code>：也称为逆波兰表达式，Reverse Polish Notation。无括号表达式。数字压栈，遇到操作符取出来，后者操作前者。</p>
 <p><code>中缀表达式转后缀</code>：是正常的小学算术的四则运算。1.数字直接输出。2.遇到<code>)</code>，输出遇到第一个<code>(</code>之间所有的符号。3.<code>(</code>直接压栈。4.后来者优先级高则压栈，优先级低，弹两个。完成转后缀表达式。</p>
 <h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><p>一端进，一端出，先进先出。如操作系统的任务序列，键盘输入到记事本的显示同样为队列。简单的顺序存储会造成存储资源的浪费，循环队列可以对空白位置利用。位置计算<code>(rear+1)%QueueSize==front</code>。链式结构同样，先进先出，包括了指针与值。</p>
-<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max{k|p<em>{k+1}=p</em>{j-k+1}}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
+<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max\{k|p_{k+1}=p_{j-k+1}\}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
 <h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>一对多的层次关系，有限集合，结点$n\geq 0$。根节点下的子树没有交集，不构成环。</p>
 <p><code>节点的度</code>：节点拥有孩子的数量称为节点的<code>度</code>。所有节点中最大的度为树的<code>度</code>。度为0是叶子节点或，度不为0的非根节点是分支节点。<br><code>树的深度</code>：根在第一层，根的孩子是第二层，依次类推到树中的最大层，得到树的深度。<br><code>森林</code>：多个不相交的树的结合。<br><code>节点的关系</code>：节点的子树称为节点的孩子，节点是子树的父亲。</p>
 <p>如果将树中结点的各子树看成从左至右是有次序的，不能互换的，则称该树为有序树，否则称为无序树。</p>
@@ -553,7 +553,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -607,12 +607,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">732k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:01</span>
+    <span title="站点阅读时长">11:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
