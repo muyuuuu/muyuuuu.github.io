@@ -312,7 +312,7 @@
 <li>使服务器辨别不出来是人在看他的网页还是机器在看他的网页。</li>
 <li>触发<code>Ajax</code>，使浏览器自动加载剩下的内容，而不用使人去手动翻阅加载。如下图所示：</li>
 </ul>
-<p><img data-src="/2020/01/11/resptile/1.png" alt></p>
+<p><img data-src="resptile/1.png" alt></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">driver = webdriver.Chrome(<span class="string">r'D:/chromedriver.exe'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">scroll_down</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (num):</span><br><span class="line">        <span class="comment"># 向下翻阅1000个像素单位</span></span><br><span class="line">        driver.execute_script(<span class="string">"window.scrollBy(0,1000)"</span>)</span><br><span class="line">        <span class="comment">#　停两秒在向下翻阅 等他加载</span></span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 翻阅10次</span></span><br><span class="line">scroll_down(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 <p><code>(0, 1000)</code>中的<code>0</code>表示水平翻阅0个像素点，<code>1000</code>表示向下翻阅1000个像素点。还记得屏幕的分辨率是<code>1920X1080</code>吗，1080就是指竖直方向排列的像素点的数量。记住这段代码，一会儿配合其他任务一起用。</p>
 <h1 id="设置页面等待"><a href="#设置页面等待" class="headerlink" title="设置页面等待"></a>设置页面等待</h1><h2 id="隐性等待"><a href="#隐性等待" class="headerlink" title="隐性等待"></a>隐性等待</h2><p>官方文档永远是第一：<br><a href="https://selenium-python-zh.readthedocs.io/en/latest/waits.html" target="_blank" rel="noopener">https://selenium-python-zh.readthedocs.io/en/latest/waits.html</a></p>
@@ -560,12 +560,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">732k</span>
+    <span title="站点总字数">735k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:05</span>
+    <span title="站点阅读时长">11:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

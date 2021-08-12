@@ -306,7 +306,7 @@
 <h1 id="开始修改"><a href="#开始修改" class="headerlink" title="开始修改"></a>开始修改</h1><h2 id="主题的配置文件"><a href="#主题的配置文件" class="headerlink" title="主题的配置文件"></a>主题的配置文件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: <span class="literal">true</span></span><br><span class="line">  total_visitors: <span class="literal">true</span></span><br><span class="line">  total_visitors_icon: user</span><br><span class="line">  total_views: <span class="literal">true</span></span><br><span class="line">  total_views_icon: eye</span><br><span class="line">  post_views: <span class="literal">true</span></span><br><span class="line">  post_views_icon: eye</span><br></pre></td></tr></table></figure>
 <p>可是这样丝毫没用，还是不显示。没有浏览人数和浏览量的博客没有灵魂，于是决定在线Debug查找问题所在。</p>
 <h2 id="修复总访问量和总访问人数"><a href="#修复总访问量和总访问人数" class="headerlink" title="修复总访问量和总访问人数"></a>修复总访问量和总访问人数</h2><p>在网页中按下<code>F12</code>这个键，点击图中的鼠标，定位到要显示总访客人的地方。不要因为界面很复杂就感觉自己不会，在这之前我啥也不会，在这之后我还是不会。</p>
-<p><img data-src="/2019/11/22/busuanzi-notdisplay/1.png" alt></p>
+<p><img data-src="busuanzi-notdisplay/1.png" alt></p>
 <p>定位后，发现不蒜子的东西是有的，span还有数量都有，可就是不显示。再次定位到页脚访问人数那里，看看不蒜子的<code>span id</code>里是否有<code>style = &quot;display: none&quot;</code>这句话，如果有，去掉后面的<code>style = &quot;display: none&quot;</code>才可以正常显示（纯属巧合发现，我没学过前端嘛），我也不知道开发者明明开发出了显示，为啥还要加这句话使开发出来的东西不显示，我想不通。</p>
 <p>两种去除方法：</p>
 <ol>
@@ -335,10 +335,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/10/13/blog-two-years/" rel="bookmark">博客两年了</a></div>
+      <div class="popular-posts-title"><a href="/2020/03/12/blog-optimize/" rel="bookmark">一些不常见的进阶博客优化</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/12/blog-optimize/" rel="bookmark">一些不常见的进阶博客优化</a></div>
+      <div class="popular-posts-title"><a href="/2020/10/13/blog-two-years/" rel="bookmark">博客两年了</a></div>
     </li>
   </ul>
 
@@ -534,12 +534,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">732k</span>
+    <span title="站点总字数">735k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:05</span>
+    <span title="站点阅读时长">11:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

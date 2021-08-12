@@ -297,7 +297,7 @@
 <h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>字符串 <code>APPAPT</code> 中包含了两个单词 <code>PAT</code>，其中第一个 PAT 是第 2 位(P)，第 4 位(A)，第 6 位(T)；第二个 PAT 是第 3 位(P)，第 4 位(A)，第 6 位(T)。那么可以类比到：<code>PPPAAATTT</code>有27个<code>PAT</code>。现给定字符串，问一共可以形成多少个 <code>PAT</code>？由于结果可能比较大，只输出对 1000000007 取余数的结果。</p>
 <h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><script type="math/tex; mode=display">(a+b)\%c = a \% c + b \% c</script><p>如 $101 \% 100 + 50 \% 100 = (100 + 51) \% 100 = 51$</p>
 <h2 id="错解思路"><a href="#错解思路" class="headerlink" title="错解思路"></a>错解思路</h2><p>当时的思路记不太清，我现在的想法是使用遍历的方法，先寻找<code>P</code>，在寻找<code>A</code>，在寻找<code>T</code>，当前字符不满足就跳到下一个字符，一条路走不通就走下一条路。以<code>APPAPT</code>第二位的<code>P</code>为例。从<code>P</code>开始，依次向后遍历字符，遇到错误的字符跳过，遇到正确的字符+1，如下图所示。</p>
-<p><img data-src="/2020/02/23/substring-match/1.png" alt></p>
+<p><img data-src="substring-match/1.png" alt></p>
 <p>第二位的<code>P</code>处理完毕后开始第三位<code>P</code>的处理，也很容易看出来，查找3个字符，复杂度为$O(n^3)$，查找4个字符，复杂度为$O(n^4)$，且代码维护不易容易超时。粗糙的代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (s[i] != <span class="string">'P'</span>)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; s.length(); j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">'A'</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">1</span>; j &lt; s.length(); k++)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (s[k] == <span class="string">'T'</span>)&#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="正解"><a href="#正解" class="headerlink" title="正解"></a>正解</h1><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>既然容易超时，得想办法把时间复杂度给降下来，争取一次遍历在时间复杂度为$O(n)$内把问题解决掉。既然假设只能遍历一次，那么也可以理解为最终的个数是：有序字符<code>P,A,T</code>的排列组合数。</p>
@@ -328,10 +328,10 @@
       <div class="popular-posts-title"><a href="/2018/11/03/AVL-RB-tree/" rel="bookmark">AVL树的Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
+      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
+      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/09/04/PAT/" rel="bookmark">算法笔记</a></div>
@@ -533,12 +533,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">732k</span>
+    <span title="站点总字数">735k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:05</span>
+    <span title="站点阅读时长">11:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
