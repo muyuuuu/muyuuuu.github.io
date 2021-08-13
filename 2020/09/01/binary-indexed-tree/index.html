@@ -316,7 +316,7 @@
 <li>对第$i$组数据,首先输出“Case i:”和回车；</li>
 <li>对于每个Query询问，输出一个整数并回车，表示询问的段中的总人数，这个数保持在int以内。</li>
 </ol>
-<h1 id="树状数组"><a href="#树状数组" class="headerlink" title="树状数组"></a>树状数组</h1><h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p><img data-src="binary-indexed-tree/1.png" alt="树状数组"></p>
+<h1 id="树状数组"><a href="#树状数组" class="headerlink" title="树状数组"></a>树状数组</h1><h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p><img data-src="/2020/09/01/binary-indexed-tree/1.png" alt="树状数组"></p>
 <p>树状数组就长上面那个样子，数组 <code>C</code> 就是树状数组，<code>A</code> 是原数组。这里需要注意的是：</p>
 <ol>
 <li>传统的树都有左孩子右孩子，树状数组是没有这些的，只是这个数组的形状像一个树；所以这样的树就不必创建成结点、指针那样的动态树形结构；</li>
@@ -387,7 +387,7 @@
 </ul>
 <p>那么，$2^k$是我们想要的，如何计算呢？这是有公式的：</p>
 <p>\begin{equation}<br>\text{lowbit}(i)=2^k，\text{lowbit}(i) = i \&amp; (-i)<br>\end{equation}</p>
-<h2 id="单点更新"><a href="#单点更新" class="headerlink" title="单点更新"></a>单点更新</h2><p><img data-src="binary-indexed-tree/2.png" alt="树状数组"></p>
+<h2 id="单点更新"><a href="#单点更新" class="headerlink" title="单点更新"></a>单点更新</h2><p><img data-src="/2020/09/01/binary-indexed-tree/2.png" alt="树状数组"></p>
 <p>我们在数组 <code>C</code> 每个元素的右下角标注这个元素代表了几个数组 <code>A</code> 中的元素（就是绿色圆圈内的数字）。假设此时我们修改 <code>A[1]</code>，来分析对数组 <code>C</code> 的影响，显而易见，<code>C[1], C[2], C[4], C[8]</code> 的值都要发生改变：</p>
 <ul>
 <li>对于 <code>C[1]</code>，$\text{lowbit}(1)=1, 1+\text{lowbit}(1)=2$，得到 <code>C[1]</code> 的父节点索引值 2；</li>
@@ -423,7 +423,7 @@
 <p>Sample Output:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Invalid</span><br><span class="line">Invalid</span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">2</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">4</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">3</span><br><span class="line">Invalid</span><br></pre></td></tr></table></figure>
 <h2 id="常见思路"><a href="#常见思路" class="headerlink" title="常见思路"></a>常见思路</h2><p>题目很简单，最简单的想法是：创建数组，压栈弹栈，并排序求出中位数，但显而易见的是，用常见的方法去操作绝对超时（别试了，我试过了）。</p>
-<p><img data-src="binary-indexed-tree/te.png" alt></p>
+<p><img data-src="/2020/09/01/binary-indexed-tree/te.png" alt></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span> &lt;<span class="keyword">int</span>&gt; v, m;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">        <span class="keyword">if</span> (s[<span class="number">1</span>] == <span class="string">'o'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (v.empty())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">cout</span> &lt;&lt; <span class="string">"Invalid"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">cout</span> &lt;&lt; v.back() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">                v.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (s[<span class="number">1</span>] == <span class="string">'u'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> a;</span><br><span class="line">            <span class="built_in">cin</span> &gt;&gt; a;</span><br><span class="line">            v.push_back(a);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (s[<span class="number">1</span>] == <span class="string">'e'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (v.empty())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">cout</span> &lt;&lt; <span class="string">"Invalid"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                m.<span class="built_in">clear</span>();</span><br><span class="line">                m.assign(v.<span class="built_in">begin</span>(), v.<span class="built_in">end</span>());</span><br><span class="line">                sort(m.<span class="built_in">begin</span>(), m.<span class="built_in">end</span>());</span><br><span class="line">                <span class="keyword">if</span> (v.<span class="built_in">size</span>() % <span class="number">2</span> == <span class="number">0</span>) <span class="built_in">cout</span> &lt;&lt; m[v.<span class="built_in">size</span>() / <span class="number">2</span> - <span class="number">1</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">                <span class="keyword">else</span> <span class="built_in">cout</span> &lt;&lt; m[(v.<span class="built_in">size</span>() + <span class="number">1</span>) / <span class="number">2</span> - <span class="number">1</span>] &lt;&lt; <span class="built_in">endl</span>;   </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="使用树状数组"><a href="#使用树状数组" class="headerlink" title="使用树状数组"></a>使用树状数组</h2><p>先理顺下思路，要知道这道题最难的不是压栈和弹栈，而是求出栈内元素的中位数。我们知道了题目的最大长度，那么用 0 初始化对应长度的数组 <code>C</code> 。（注意：数组初始化时不能用变量而应该用常量），初始化代码如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn = <span class="number">100005</span>;</span><br><span class="line"><span class="keyword">int</span> c[maxn];</span><br></pre></td></tr></table></figure>
@@ -450,10 +450,10 @@
       <div class="popular-posts-title"><a href="/2018/11/03/AVL-RB-tree/" rel="bookmark">AVL树的Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
+      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
+      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/09/04/PAT/" rel="bookmark">算法笔记</a></div>
@@ -601,7 +601,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">183</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -655,12 +655,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">735k</span>
+    <span title="站点总字数">745k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:08</span>
+    <span title="站点阅读时长">11:18</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

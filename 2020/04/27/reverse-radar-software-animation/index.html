@@ -299,7 +299,7 @@
 <p>之后，再将场景添加到窗口中即可，伪代码如下：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">g = GraphicsView()</span><br><span class="line"><span class="comment"># g.setFixedSize(450, 550)</span></span><br><span class="line">self.car = g.rect</span><br><span class="line">self.scene = g.scene</span><br><span class="line"></span><br><span class="line"><span class="comment"># print(self.scene.x())</span></span><br><span class="line">layout.addWidget(g)</span><br></pre></td></tr></table></figure>
 <p>因初始化位置为(0, 0)，所以车辆在左上角，效果如下所示。<a href="https://github.com/muyuuuu/Reversing-radar-on-Arduino/tree/master/code/Reverse-radar" target="_blank" rel="noopener">完整代码，car_test.py</a></p>
-<p><img data-src="reverse-radar-software-animation/1.jpg" alt></p>
+<p><img data-src="/2020/04/27/reverse-radar-software-animation/1.jpg" alt></p>
 <h1 id="物体移动"><a href="#物体移动" class="headerlink" title="物体移动"></a>物体移动</h1><p>最初的想法是：设定一组位置，通过time.sleep()设置移动速度来达到缓慢移动的效果，但这并不是可行的思路，错误的伪代码如下：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">x, y = <span class="number">100</span>, <span class="number">100</span></span><br><span class="line">i, j = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">move</span><span class="params">(self)</span>:</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    car.setpos(i, j)</span><br><span class="line">    <span class="keyword">if</span> i &lt; x <span class="keyword">and</span> j &lt; y:</span><br><span class="line">        i += <span class="number">10</span>, j += <span class="number">10</span></span><br></pre></td></tr></table></figure>
 <p>但实际是，物体会直接移动到(100, 100)，并没有中间的过程。在Qt的开发中，一定不能使用time.sleep这种方法，因为它会阻塞事件的循环，导致窗口冻结，从而阻止了GUI的重新绘制。所以在Qt中，必须使用事件来执行操作，如：分为显示事件和工作事件，显示事件负责GUI的显示，工作事件负责刷新物体的位置。如：每次触发计时器的计时时，计算物体的位置，而后显示事件负责更新。</p>
@@ -308,9 +308,9 @@
 <p>而后设置计时器及时触发即可：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">btn_start.clicked.connect(self.run)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">move_pos</span><span class="params">(self, scene)</span>:</span></span><br><span class="line">    Left = [<span class="number">40</span>]</span><br><span class="line">    Center = [<span class="number">40</span>]</span><br><span class="line">    <span class="keyword">for</span> it <span class="keyword">in</span> scene.items():</span><br><span class="line">        self.item = it</span><br><span class="line">        <span class="keyword">for</span> left, center <span class="keyword">in</span> zip(Left, Center):</span><br><span class="line">            pos = QPointF(left, center)</span><br><span class="line">            <span class="keyword">if</span> hasattr(it, <span class="string">'move_smooth'</span>):</span><br><span class="line">                it.move_smooth(pos, <span class="number">500</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self, distance)</span>:</span></span><br><span class="line">    <span class="comment"># 偏函数传入函数和参数</span></span><br><span class="line">    wrapper = partial(self.move_pos, self.scene)</span><br><span class="line">    timer = QTimer(interval=<span class="number">5000</span>, timeout=wrapper)</span><br><span class="line">    timer.start()</span><br><span class="line">    wrapper()</span><br></pre></td></tr></table></figure>
 <p>实现效果如下，此时可以完美的时间光滑移动。<a href="https://github.com/muyuuuu/Reversing-radar-on-Arduino/blob/master/code/Reverse-radar/remove_test.py" target="_blank" rel="noopener">完整代码</a></p>
-<p><img data-src="reverse-radar-software-animation/2.gif" alt></p>
+<p><img data-src="/2020/04/27/reverse-radar-software-animation/2.gif" alt></p>
 <h1 id="物体旋转"><a href="#物体旋转" class="headerlink" title="物体旋转"></a>物体旋转</h1><p>我摸索了两种旋转方案，如下图所示：</p>
-<p><img data-src="reverse-radar-software-animation/3.png" alt></p>
+<p><img data-src="/2020/04/27/reverse-radar-software-animation/3.png" alt></p>
 <ul>
 <li>第一种旋转方案是以左上角的顶点为中心，逆时针旋转</li>
 <li>第二种旋转方案是以矩形的中心为旋转点，逆时针旋转</li>
@@ -328,7 +328,7 @@
 <p>因此，不难得到旋转的代码：(旋转点的计算不够严谨)</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">self.angle_left = <span class="number">5</span></span><br><span class="line">self.angle_right = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 以车辆中心为旋转点</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rorate_right</span><span class="params">(self)</span>:</span></span><br><span class="line">    pos = self.car.scenePos()</span><br><span class="line">    x = pos.x() + <span class="number">120</span></span><br><span class="line">    y = pos.y() + <span class="number">150</span></span><br><span class="line">    <span class="comment"># 设置旋转点</span></span><br><span class="line">    self.car.setTransformOriginPoint(QPointF(x, y))</span><br><span class="line">    self.car.setRotation(<span class="number">360</span> - self.angle_right)</span><br><span class="line">    self.angle_right += <span class="number">5</span></span><br><span class="line">    self.angle_left -= <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rorate_left</span><span class="params">(self)</span>:</span></span><br><span class="line">    pos = self.car.scenePos()</span><br><span class="line">    x = pos.x() + <span class="number">120</span></span><br><span class="line">    y = pos.y() + <span class="number">150</span></span><br><span class="line">    self.car.setTransformOriginPoint(QPointF(x, y))</span><br><span class="line">    self.car.setRotation(self.angle_left)</span><br><span class="line">    self.angle_left += <span class="number">5</span></span><br><span class="line">    self.angle_right -= <span class="number">5</span></span><br></pre></td></tr></table></figure>
 <p>实现的效果如下。<a href="https://github.com/muyuuuu/Reversing-radar-on-Arduino/blob/master/code/Reverse-radar/rotation_test.py" target="_blank" rel="noopener">完整代码</a></p>
-<p><img data-src="reverse-radar-software-animation/4.gif" alt></p>
+<p><img data-src="/2020/04/27/reverse-radar-software-animation/4.gif" alt></p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>而接下来的就是读取车辆倒车时与后方障碍物的距离，根据距离信息更新动画中车辆的位置。这涉及了多线程的东西，将在下文给出实现方案。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
 <ol>
@@ -500,7 +500,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">183</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -554,12 +554,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">735k</span>
+    <span title="站点总字数">745k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:08</span>
+    <span title="站点阅读时长">11:18</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
