@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在做对抗样本的时候，我发现对抗防御和 GAN 在某种程度上很像：  对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击； GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。  所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自这里。">
+  <meta name="description" content="在做对抗样本的时候，我发现对抗防御和 GAN 在某种程度上很像：  对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击； GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。  所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自这里。警告：里面有大量数学公式的推导，而我就不一样了，不仅有公式推导还有代码。">
 <meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="花样繁多的GAN">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/08/11/GAN-basic/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="在做对抗样本的时候，我发现对抗防御和 GAN 在某种程度上很像：  对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击； GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。  所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自这里。">
+<meta property="og:description" content="在做对抗样本的时候，我发现对抗防御和 GAN 在某种程度上很像：  对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击； GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。  所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自这里。警告：里面有大量数学公式的推导，而我就不一样了，不仅有公式推导还有代码。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-12T16:11:00.795Z">
+<meta property="og:updated_time" content="2021-08-13T16:35:18.453Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="花样繁多的GAN">
-<meta name="twitter:description" content="在做对抗样本的时候，我发现对抗防御和 GAN 在某种程度上很像：  对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击； GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。  所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自这里。">
+<meta name="twitter:description" content="在做对抗样本的时候，我发现对抗防御和 GAN 在某种程度上很像：  对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击； GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。  所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自这里。警告：里面有大量数学公式的推导，而我就不一样了，不仅有公式推导还有代码。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/08/11/GAN-basic/">
 
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-12 16:11:00" itemprop="dateModified" datetime="2021-08-12T16:11:00+00:00">2021-08-12</time>
+                <time title="修改时间：2021-08-13 16:35:18" itemprop="dateModified" datetime="2021-08-13T16:35:18+00:00">2021-08-13</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>7.5k</span>
+              <span>7.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -297,7 +297,7 @@
 <li>对抗防御：内部生成对抗样本攻击分类器，分类器更新参数防御攻击；</li>
 <li>GAN：生成器 $G$ 生成样本欺骗判别器，判别器更新防御 $G$ 的欺骗。</li>
 </ul>
-<p>所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自<a href="https://www.bilibili.com/video/BV1JE411g7XF?from=search&amp;seid=17206901754423397958" target="_blank" rel="noopener">这里</a>。</p>
+<p>所以说，这俩在某种程度上真的很像，所以决定整理一下 GAN 的知识，开拓一下思路，视频内容来自<a href="https://www.bilibili.com/video/BV1JE411g7XF?from=search&amp;seid=17206901754423397958" target="_blank" rel="noopener">这里</a>。警告：里面有大量数学公式的推导，而我就不一样了，<del>不仅有公式推导</del>还有代码。</p>
 <a id="more"></a>
 <h1 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h1><p>我发现我在看论文或者别人的博客的时候，经常发现数据分布、概率分布等，然而时间长了竟然不知道所谓的分布是什么，这里来提前说一下：</p>
 <ul>
