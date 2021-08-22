@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，本文常规的思路总结了一些常见的对抗样本去噪算法，就相当于写个类似的综述了。优缺点仅是个人分析，其实论文读多了，总会有一些想法。">
+  <meta name="description" content="忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，或者说叫对抗样本提纯。本文总结了一些近几年的、思路还行结果也还好的对抗样本去噪算法，就相当于写个类似的综述了，注意，并非详解。优缺点仅是个人分析，其实论文读多了或者看了代码，总会有一些想法。包含以下论文：  Comdefend: An efficient image compression model to de">
 <meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一些对抗样本的去噪算法">
+<meta property="og:title" content="一些对抗样本去噪算法">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/08/05/some-adversarial-sample-denoise/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，本文常规的思路总结了一些常见的对抗样本去噪算法，就相当于写个类似的综述了。优缺点仅是个人分析，其实论文读多了，总会有一些想法。">
+<meta property="og:description" content="忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，或者说叫对抗样本提纯。本文总结了一些近几年的、思路还行结果也还好的对抗样本去噪算法，就相当于写个类似的综述了，注意，并非详解。优缺点仅是个人分析，其实论文读多了或者看了代码，总会有一些想法。包含以下论文：  Comdefend: An efficient image compression model to de">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-05T15:11:11.336Z">
+<meta property="og:updated_time" content="2021-08-22T13:24:05.593Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一些对抗样本的去噪算法">
-<meta name="twitter:description" content="忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，本文常规的思路总结了一些常见的对抗样本去噪算法，就相当于写个类似的综述了。优缺点仅是个人分析，其实论文读多了，总会有一些想法。">
+<meta name="twitter:title" content="一些对抗样本去噪算法">
+<meta name="twitter:description" content="忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，或者说叫对抗样本提纯。本文总结了一些近几年的、思路还行结果也还好的对抗样本去噪算法，就相当于写个类似的综述了，注意，并非详解。优缺点仅是个人分析，其实论文读多了或者看了代码，总会有一些想法。包含以下论文：  Comdefend: An efficient image compression model to de">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/08/05/some-adversarial-sample-denoise/">
 
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>一些对抗样本的去噪算法 | Just for Life.</title>
+  <title>一些对抗样本去噪算法 | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          一些对抗样本的去噪算法
+          一些对抗样本去噪算法
         </h1>
 
         <div class="post-meta">
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-08-05 13:45:59 / 修改时间：15:11:11" itemprop="dateCreated datePublished" datetime="2021-08-05T13:45:59+00:00">2021-08-05</time>
+              <time title="创建时间：2021-08-05 13:45:59" itemprop="dateCreated datePublished" datetime="2021-08-05T13:45:59+08:00">2021-08-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-22 21:24:05" itemprop="dateModified" datetime="2021-08-22T21:24:05+08:00">2021-08-22</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
+              <span>5.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -286,12 +292,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，本文常规的思路总结了一些常见的对抗样本去噪算法，就相当于写个类似的综述了。优缺点仅是个人分析，<del>其实论文读多了，总会有一些想法</del>。</p>
+        <p>忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，或者说叫对抗样本提纯。本文总结了一些近几年的、思路还行结果也还好的对抗样本去噪算法，就相当于写个类似的综述了，注意，并非详解。优缺点仅是个人分析，<del>其实论文读多了或者看了代码，总会有一些想法</del>。包含以下论文：</p>
+<ol>
+<li>Comdefend: An efficient image compression model to defend adversarial examples, CVPR 2019</li>
+<li>Feature denoising for improving adversarial robustness, CVPR 2019</li>
+<li>Defense against adversarial attacks using high-level representation guided denoiser, CVPR 2018</li>
+<li>A Self-supervised Approach for Adversarial Robustness, CVPR 2020</li>
+<li>Denoised Smoothing: A Provable Defense for Pretrained Classifiers, NIPS 2020</li>
+<li>Stochastic Security: Adversarial Defense Using Long-Run Dynamics of Energy-Based Models, ICLR 2021</li>
+<li>Online Adversarial Purification based on Self-Supervision, ICLR 2021</li>
+<li>Adversarial Purification with Score-based Generative Models, ICML 2021</li>
+</ol>
 <a id="more"></a>
 <h1 id="ComDefend"><a href="#ComDefend" class="headerlink" title="ComDefend"></a>ComDefend</h1><p>来自论文：Comdefend: An efficient image compression model to defend adversarial examples, CVPR 2019。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hpM6XR.png" alt></p>
 <ul>
 <li>核心思想，在目标模型之前训练一个编码器和解码器，编码器的目标是提取图像的结构信息，移除冗余信息；解码器的目标是重构输入的图像，移除扰动信息。</li>
-<li>损失函数，对于编码器，使用更多的 0 来编码图像，因此损失为 $\lambda \Vert Com(\theta_1, x) \Vert^2$，使其尽可能的小；对于解码器要尽可能的重构原始图像，因此损失为 $\Vert Rec(\theta_2, Com(\theta_1, x)+\phi) -x \Vert^2$，$\phi$ 是高斯噪音。最终的损失是两者相加，两个模型的参数是同时训练和更新的。但是我在复现的时候，发现 $\lambda = 0.0001$，也能看出这篇论文的大概效果。</li>
+<li>损失函数，对于编码器，使用更多的 0 来编码图像，因此损失为 $\lambda \Vert Com(\theta_1, x) \Vert^2$，使其尽可能的小；对于解码器要尽可能的重构原始图像，因此损失为 $\Vert Rec(\theta_2, Com(\theta_1, x)+\phi) -x \Vert^2$，$\phi$ 是高斯噪音。最终的损失是两者相加，两个模型的参数是同时训练和更新的。但是我在复现的时候，发现 $\lambda = 0.0001$，也能猜出这篇论文的大概效果。</li>
 </ul>
 <p><strong>对抗样本在输入层的扰动其实只是很小的一部分，微小的扰动会在模型隐层无限放大。这篇论文只是在输入层去除对抗样本的扰动信息，没有考虑在模型隐层去除扰动信息。</strong></p>
 <h1 id="Feature-Denoising"><a href="#Feature-Denoising" class="headerlink" title="Feature Denoising"></a>Feature Denoising</h1><p>来自论文 Feature denoising for improving adversarial robustness, CVPR 2019。如下图所示，论文注意到了对抗样本在模型高层的巨大差异信息，所以，选择了在模型的高层对数据进行去噪，而不是输入层。</p>
@@ -300,20 +317,51 @@
 <p>\begin{equation}<br>y_i=\frac{1}{C(x)}\sum_{j \in L} f(x_i, x_j) \cdot x_j<br>\end{equation}</p>
 <p>其中，$f(x)$ 有多种选择，论文中给出了：高斯函数、内积、和一些滤波器。</p>
 <h1 id="HGD"><a href="#HGD" class="headerlink" title="HGD"></a>HGD</h1><p>来自论文：Defense against adversarial attacks using high-level representation guided denoiser, CVPR 2018。</p>
-<p>核心思想，基于干净样本和对抗样本在模型高维的差异来指导去噪器的训练。设 $x$ 为干净样本，$x^\star$ 为对抗样本，$\hat{x}$ 为对抗样本去噪后的样本。论文选择 U-Net 结构对样本进行去噪，输入为 $x^\star$，输出为同等大小的 $-d\hat{x}$，那么 $\hat{x}=x^\star - d\hat{x}$，使用 $L_1$ 范数作为 $\hat{x}$ 和 $x$ 的损失。第二个损为 $f_l(x)$ 与 $f_l(\hat{x})$ 的 $L_1$ 范数，即去噪样本和干净样本在模型第 $l$ 层的差异应尽可能接近。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hpQS3Q.png" alt></p>
+<p>核心思想：基于干净样本和对抗样本在模型高维的差异来指导去噪器的训练。设 $x$ 为干净样本，$x^\star$ 为对抗样本，$\hat{x}$ 为对抗样本去噪后的样本。论文选择 U-Net 结构对样本进行去噪，输入为 $x^\star$，输出为同等大小的 $-d\hat{x}$，那么 $\hat{x}=x^\star - d\hat{x}$，使用 $L_1$ 范数作为 $\hat{x}$ 和 $x$ 的损失。第二个损为 $f_l(x)$ 与 $f_l(\hat{x})$ 的 $L_1$ 范数，即去噪样本和干净样本在模型第 $l$ 层的差异应尽可能接近。</p>
 <p>我觉得这篇论文的思想是不错的，所以在我的工作中也借鉴了这篇论文的思想。分别在模型的输入层和隐层对对抗样本进行去噪，不过其他内容则不一样了。</p>
-<h1 id="NRP"><a href="#NRP" class="headerlink" title="NRP"></a>NRP</h1><p>来自论文：A Self-supervised Approach for Adversarial Robustness, CVPR 2020。这篇论文我也<a href="https://github.com/muyuuuu/NRP-pytorch-reimplement" target="_blank" rel="noopener">复现</a>了，讲真复现结果很差。一方面是论文中给出的参数不合理，一方面是论文并没有对一些东西解释清楚，最重要的是不仅没给代码，还没说怎么实现他的代码，所以我只能按照论文描述来实现代码了。那为什么还要写呢？因为这篇论文借鉴 GAN 的思想来去除扰动，还是感觉有一点点新意的。</p>
-<p>作者定义一个提纯网络 $P$ 用于去除噪音，定义判别网络 $C$ 来判断当前样本是对抗样本还是干净样本，定义 backbone $F$ 来提取对抗样本和干净样本的特征差异生成子监督扰动，将扰动叠加至干净样本生成对抗样本，作为 $P$ 的训练数据，$P$ 去噪后传送给 $C$，以此来定义 $P$ 去除扰动的好坏。损失函数由三个部分组成，最终带权相加组成最终的损失函数：</p>
+<h1 id="NRP"><a href="#NRP" class="headerlink" title="NRP"></a>NRP</h1><p>来自论文：A Self-supervised Approach for Adversarial Robustness, CVPR 2020。这篇论文我也<a href="https://github.com/muyuuuu/Paper-ReImplement" target="_blank" rel="noopener">复现</a>了，讲真复现结果很差。一方面是论文中给出的参数不合理，一方面是论文并没有对一些东西解释清楚，最重要的是不仅没给代码，还没说怎么实现他的代码，也没有说某些实验参数，所以我只能按照论文描述来实现代码了。那为什么还要写呢？因为这篇论文借鉴 GAN 的思想来去除扰动，还是感觉有一点点新意的。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hpQ3E6.png" alt></p>
+<p>作者定义一个提纯网络 $P$ 用于去除噪音，定义判别网络 $C$ 来判断当前样本是对抗样本还是干净样本，定义 backbone $F$ 来提取对抗样本和干净样本的特征差异生成自监督扰动，将扰动叠加至干净样本生成对抗样本，作为 $P$ 的训练数据。$P$ 去噪后传送给 $C$，以此来定义 $P$ 去除扰动的好坏。损失函数由三个部分组成，最终带权相加组成最终的损失函数：</p>
 <ul>
 <li>对抗损失是 $P(\hat{x})$ 和 $x$ 在判别网络 $C$ 上的相似度</li>
 <li>特征损失为 $F(x)$ 和 $F(\hat{x})$ 的欧式距离</li>
 <li>像素损失为 $P(\hat{x})$ 和 $x$ 的欧氏距离</li>
 </ul>
 <h1 id="Denoised-smoothing"><a href="#Denoised-smoothing" class="headerlink" title="Denoised smoothing"></a>Denoised smoothing</h1><p>这篇论文来自 Denoised Smoothing: A Provable Defense for Pretrained Classifiers, NIPS 2020。</p>
-<p>写这篇论文并不是因为这个论文发表的等级高、时间新。而是因为，我发现一些对抗去噪采纳了集成的思想，这篇论文就是其一。通过训练多个去噪器，最终通过投票的形式来决定当前类别。三个臭皮匠，赛过诸葛亮，何况分类器呢？</p>
-<p>如果你对集成感兴趣，可以考虑沿着这个方向做下去。但是呢，我是比较反感堆叠模型这样的方案的，另外我也没这样大规模的算力。</p>
+<p>写这篇论文并不是因为这个论文发表的等级高、时间新。而是因为，我发现一些对抗去噪采纳了集成的思想，这篇论文就是其一。<strong>借助多个分类器的投票结果指导去噪器的训练</strong>，三个臭皮匠，赛过诸葛亮，何况分类器呢？如果你对集成感兴趣，可以考虑沿着这个方向做下去。这个论文还算是集成思想中比较保守的了。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hpQ6PS.png" alt></p>
+<p>但是呢，我是比较反感堆叠模型这样的方案的，这就相当于应该花 3 年去准备高考，而你花了 21 年去准备，效果虽然好，但是成本太大了。应该设计算法去提高一个模型的准确度，而不是多个模型投机取巧，另外我也没这样大规模的算力。</p>
+<p>这篇论文写了一个单独的<a href="https://www.microsoft.com/en-us/research/blog/denoised-smoothing-provably-defending-pretrained-classifiers-against-adversarial-examples/" target="_blank" rel="noopener">博客</a>，也给出了<a href="https://github.com/microsoft/denoised-smoothing" target="_blank" rel="noopener">程序</a>，思路还是比较清晰的，在损失函数上，先用去噪后的图像和原始图像的 MSE 作为损失，再用去噪后的图像和原始图像在高维的差异作为损失微调。</p>
+<h1 id="EBM-defense"><a href="#EBM-defense" class="headerlink" title="EBM-defense"></a>EBM-defense</h1><p>论文来自 Stochastic Security: Adversarial Defense Using Long-Run Dynamics of Energy-Based Models, ICLR 2021。模型啥的也比较简单，但是我比较反感堆叠模型的操作，丑拒这样的 idea。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/21/fze1BD.png" alt></p>
+<h1 id="SOAP"><a href="#SOAP" class="headerlink" title="SOAP"></a>SOAP</h1><p>来自论文 Online Adversarial Purification based on Self-Supervision, ICLR 2021。这篇论文在模型、算法还是有一定创新度的，也是我重点复现的论文之一。不过这篇论文虽然有对抗样本提纯的概念，但严格意义来说，属于对抗训练的论文，应为这个算法会修改目标模型的参数。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hplmIf.png" alt></p>
+<ul>
+<li>在训练阶段，设计两个损失，第一个损失是目标模型的分类损失，第二个损失是子监督扰动的损失，企图网络能够去除自监督扰动，以此抵御对抗样本的攻击。</li>
+<li>在推理阶段，通过子监督扰动损失的指导，去除对抗样本的扰动信息，之后再进行推理。（具体可以看代码）</li>
+</ul>
+<p>论文的目标损失是：</p>
+<p>\begin{equation}<br>\min_\theta L_{\text{cls}}((g\circ f)(x;\theta_{\text{enc}}, \theta_{\text{cls}}), y) + \alpha L_{\text{aux}}((h\circ f)(x;\theta_{\text{enc}}, \theta_{\text{aux}}))<br>\end{equation}</p>
+<p>$g$ 是分类器的前部分，$h$是辅助分支的模型，不过实际代码中这俩被合二为一了，也就是，一个神经网络有两个损失。</p>
+<p>对于 $L_{\text{aux}}$ 损失，论文给出了三种选择，在实现时选择其中的一种即可。</p>
+<ol>
+<li>叠加噪音，即图像叠加噪音后，还是之前的图像。这里的损失使用了叠加噪音前后的 MSE 差异。</li>
+<li>图像旋转，即图像旋转后，还是之前的图像。这里的损失使用了旋转后图像与真实标签的交叉熵作为损失。</li>
+<li>标签持续性，即图像经过两种数据增强后，这两组图像的标签一致。这里的损失是两种数据增强后的 MSE 差异。</li>
+</ol>
+<p>在去噪阶段，论文提出了多部去噪，一定程度弥补了之前单步去噪的缺陷：</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hptNng.png" alt></p>
+<h1 id="ADP"><a href="#ADP" class="headerlink" title="ADP"></a>ADP</h1><p>来自论文 Adversarial Purification with Score-based Generative Models, ICML 2021。我复现了这篇论文，训练缓慢、预测缓慢，且不提供训练代码只提供预测代码，预测代码和论文算法描述不一致。前面的模型是别人的，如果没看到这一点，我都不知道怎么复现论文。如果一定有评价的话，那就是：呵，tui。</p>
+<p>模型来自「Improved techniques for training score-based generative models」这篇发表在 NIPS 2020 的论文，所以网络结构直接看这篇论文的代码即可。损失函数的设计如下（前面那堆推导没啥用）：</p>
+<p>\begin{equation}<br>L(\theta, \sigma) = \mathbb{E}_{q(\tilde{x}|x)p_{\text{data}}(x)}[\frac{1}{2\sigma^2} \Vert \tilde{x} + \sigma^2 s_\theta(\tilde{x}) -x \Vert^2]<br>\end{equation}</p>
+<p>$q(\tilde{x}|x)$ 是以 $x$ 为中心，以 $\sigma$ 为均方差生成的噪音样本。这个损失的意思是，期望 $s_{\theta}$ 能够有效去除 $\tilde{x}$ 上含有的噪音信息，并且和原始图像差不多，以此来抵御对抗样本的攻击。</p>
+<p>预测阶段极度风骚，来看伪码：</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/22/hpYaJx.png" alt></p>
+<p>一步去噪不到位，居然用多步去噪……这样与其他算法对比并不公平，这就像之前举的参加高考的例子。当然这不是最离谱的，最离谱的是，代码和这个算法毫不相关。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(max_iter):</span><br><span class="line">    labels = torch.ones(x_pur.shape[<span class="number">0</span>], device=x_pur.device)</span><br><span class="line">    labels = labels.long().to(config.device.ebm_device)</span><br><span class="line">    grad = network_ebm(x_pur, labels) <span class="comment"># Get gradients</span></span><br><span class="line">    <span class="comment"># Get adaptive step size</span></span><br><span class="line">    x_eps = x_pur + lr_min*grad</span><br><span class="line">    <span class="comment">#print(torch.mean(torch.norm(grad.view(grad.shape[0],-1), p=2,dim=1)).item(), flush=True)</span></span><br><span class="line">    grad_eps = network_ebm(x_eps, labels)</span><br><span class="line">    z1 = torch.bmm(grad.view(grad.shape[<span class="number">0</span>], <span class="number">1</span>, <span class="number">-1</span>), grad_eps.view(grad_eps.shape[<span class="number">0</span>], <span class="number">-1</span>, <span class="number">1</span>))</span><br><span class="line">    z2 = torch.bmm(grad.view(grad.shape[<span class="number">0</span>], <span class="number">1</span>, <span class="number">-1</span>), grad.view(grad.shape[<span class="number">0</span>], <span class="number">-1</span>, <span class="number">1</span>))</span><br><span class="line">    z = torch.div(z1, z2)</span><br><span class="line">    <span class="keyword">if</span> mode==<span class="string">"attack"</span>:</span><br><span class="line">        step_lambda = config.attack.attack_lambda</span><br><span class="line">    <span class="keyword">elif</span> mode==<span class="string">"purification"</span>:</span><br><span class="line">        step_lambda = config.purification.purification_lambda</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line">    step_size = torch.clamp(step_lambda*lr_min/(<span class="number">1.</span>-z), min=min_step_lr, max=min_step_lr*<span class="number">10000.</span>).view(<span class="number">-1</span>)</span><br><span class="line">    cont_purification = torch.logical_and(cont_purification, (step_size&gt;config.purification.stopping_alpha))</span><br><span class="line">    <span class="keyword">if</span> torch.sum(cont_purification)==<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    step_size *= cont_purification</span><br><span class="line">    x_pur_t = x_pur.clone().detach()</span><br><span class="line">    x_pur = torch.clamp(transform_ebm_to_raw(x_pur_t+grad*step_size[:, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>]), <span class="number">0.0</span>, <span class="number">1.0</span>)</span><br><span class="line">    step_sizes.append(step_size)</span><br><span class="line">    images.append(x_pur)</span><br></pre></td></tr></table></figure>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>当然，还有一系列的其他算法，如 Feature squeezing, JPEG Compressionm，TVM 等算法，我感觉不如之前的论文有意思，所以没有详细的写，读者有兴趣的话可以自己去看一看。</p>
-<p>接下来，会看一些攻击方向的经典论文而后复现，大概一周吧，之后会转入全新的领域：对抗训练。</p>
+<p>接下来，会看一些攻击方向的经典论文而后复现，大概一周吧，之后会转入全新的领域：对抗训练，偏数据分布的处理，如果有兴趣欢迎联系（是妹子就更好了（误。</p>
 
     </div>
 
@@ -462,7 +510,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ComDefend"><span class="nav-number">1.</span> <span class="nav-text">ComDefend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Feature-Denoising"><span class="nav-number">2.</span> <span class="nav-text">Feature Denoising</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HGD"><span class="nav-number">3.</span> <span class="nav-text">HGD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NRP"><span class="nav-number">4.</span> <span class="nav-text">NRP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Denoised-smoothing"><span class="nav-number">5.</span> <span class="nav-text">Denoised smoothing</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ComDefend"><span class="nav-number">1.</span> <span class="nav-text">ComDefend</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Feature-Denoising"><span class="nav-number">2.</span> <span class="nav-text">Feature Denoising</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HGD"><span class="nav-number">3.</span> <span class="nav-text">HGD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NRP"><span class="nav-number">4.</span> <span class="nav-text">NRP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Denoised-smoothing"><span class="nav-number">5.</span> <span class="nav-text">Denoised smoothing</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EBM-defense"><span class="nav-number">6.</span> <span class="nav-text">EBM-defense</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SOAP"><span class="nav-number">7.</span> <span class="nav-text">SOAP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ADP"><span class="nav-number">8.</span> <span class="nav-text">ADP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">9.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -532,12 +580,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">745k</span>
+    <span title="站点总字数">749k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:18</span>
+    <span title="站点阅读时长">11:21</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
