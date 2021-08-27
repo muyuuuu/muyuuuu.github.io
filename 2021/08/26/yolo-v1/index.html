@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="忙里偷闲，写一篇长文，从 YOLO 的 v1 到 v3，下一次应该是 v4 到 x 了。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了">
+  <meta name="description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
 <meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="YOLO目标检测，从 V1 到 V3">
-<meta property="og:url" content="https://muyuuuu.github.io/2019/02/10/yolo-v1-v3/index.html">
+<meta property="og:title" content="YOLO目标检测从 V1 开始，细读代码">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/08/26/yolo-v1/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="忙里偷闲，写一篇长文，从 YOLO 的 v1 到 v3，下一次应该是 v4 到 x 了。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了">
+<meta property="og:description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-26T13:08:48.214Z">
+<meta property="og:updated_time" content="2021-08-27T09:08:20.217Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="YOLO目标检测，从 V1 到 V3">
-<meta name="twitter:description" content="忙里偷闲，写一篇长文，从 YOLO 的 v1 到 v3，下一次应该是 v4 到 x 了。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了">
+<meta name="twitter:title" content="YOLO目标检测从 V1 开始，细读代码">
+<meta name="twitter:description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2019/02/10/yolo-v1-v3/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/08/26/yolo-v1/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>YOLO目标检测，从 V1 到 V3 | Just for Life.</title>
+  <title>YOLO目标检测从 V1 开始，细读代码 | Just for Life.</title>
   
 
 
@@ -227,7 +227,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/10/yolo-v1-v3/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/08/26/yolo-v1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          YOLO目标检测，从 V1 到 V3
+          YOLO目标检测从 V1 开始，细读代码
         </h1>
 
         <div class="post-meta">
@@ -250,14 +250,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-02-10 19:06:48" itemprop="dateCreated datePublished" datetime="2019-02-10T19:06:48+08:00">2019-02-10</time>
+              <time title="创建时间：2021-08-26 19:06:48" itemprop="dateCreated datePublished" datetime="2021-08-26T19:06:48+08:00">2021-08-26</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-26 21:08:48" itemprop="dateModified" datetime="2021-08-26T21:08:48+08:00">2021-08-26</time>
+                <time title="修改时间：2021-08-27 17:08:20" itemprop="dateModified" datetime="2021-08-27T17:08:20+08:00">2021-08-27</time>
               </span>
 
           
@@ -273,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.6k</span>
+              <span>4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -292,7 +292,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>忙里偷闲，写一篇长文，从 YOLO 的 v1 到 v3，下一次应该是 v4 到 x 了。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了。</p>
+        <p>忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了。</p>
 <hr>
 <a id="more"></a>
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
@@ -303,12 +303,12 @@
 <p>YOLO v1 将目标检测定义为回归问题，直接读入全部图像，回归出边界框和分类概率。与同时期的 Faster RCNN 对比，算法快了不少，也没有 RPN 以及后处理，也避免里滑动窗口这样的暴力检测。所以能用到一些实时系统中，也是我花精力看这一些列论文的原因。</p>
 <p>但是对于 v1 的 YOLO 存在一些缺陷，作者在论文中也进行了阐述：准确率低、定位不准尤其是小目标的定位。</p>
 <h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>首先将图片分为 $S\times S$ 个网格，论文中 $S=7$，如果一个物体的中心落入这个格子中，那么这个格子负责预测这个目标。设每个格子负责预测 $B$ 个物体的盒子参数和置信度得分，盒子参数指明物体的位置，置信度表示盒子含有目标且预测准确的可信程度。即对于图片的每个格子，会输出 $B$ 个 $(x,y,w,h,c)$，论文中 $B=2$。</p>
-<p>既然有了输出，那么就需要 label 进行损失计算。$(x,y,w,h)$ 是人工标注的数据，并没有 $c$，为了回归出置信度，论文定义的置信度标签是一个分段函数，如果格子没有目标，置信度是 0；如果有目标，置信度是预测框和真实框的 IOU 值，公式描述为 $\text{Pr(Object)} * \text{IOU}_{\text{pred}}^\text{truth}$。</p>
-<p>目标检测和分类是分不开的，为了达到分类的目的，每个格子也会输出 $C$ 个类别的概率，公式表述为 $\text{Pr(Class}_i|\text{Object})$，即格子里面得是个目标，才能计算分类的概率。论文设定每个格子只能预测一个类，尽管有 $B$ 个输出，即论文假定一个格子只含有一个类。</p>
+<p>既然有了输出，那么就需要 label 进行损失计算。$(x,y,w,h,c)$ 是人工标注的数据，$c$ 初始化为 1。论文定义网络输出的置信度标签是一个分段函数，如果格子没有目标，置信度是 0；如果有目标，置信度是预测框和真实框的 IOU 值，公式描述为 $\text{Pr(Object)} * \text{IOU}_{\text{pred}}^\text{truth}$。</p>
+<p>目标检测和分类是分不开的，为了达到分类的目的，每个格子也会输出 $C$ 个类别的概率，公式表述为 $\text{Pr(Class}_i|\text{Object})$，即格子里面得是个目标，才能计算分类的概率和损失。而每个格子输出 $B$ 组<a href="https://github.com/motokimura/yolo_v1_pytorch/blob/master/detect.py#L203-L206" target="_blank" rel="noopener">预测</a>，所以每个格子最多预测 $B$ 个类，这就限制了网络的表达。</p>
 <p>在测试阶段，类别置信度的分数就是分类概率和置信度相乘，即盒子中「有这个类别的概率」和「网络预测这个类别的概率」的乘积：</p>
 <p>\begin{equation}<br>\text{Pr(Class}_i|\text{Object})*\text{Pr(Object)}*\text{IOU}_{\text{pred}}^\text{truth}=\text{Pr(Class}_i) * \text{IOU}_{\text{pred}}^\text{truth}<br>\end{equation}</p>
-<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>这种东西还是代码清楚：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">YOLOv1</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, features, num_bboxes=<span class="number">2</span>, num_classes=<span class="number">20</span>, bn=True)</span>:</span></span><br><span class="line">        super(YOLOv1, self).__init__()</span><br><span class="line"></span><br><span class="line">        self.feature_size = <span class="number">7</span></span><br><span class="line">        self.num_bboxes = num_bboxes</span><br><span class="line">        self.num_classes = num_classes</span><br><span class="line"></span><br><span class="line">        self.features = features</span><br><span class="line">        self.conv_layers = self._make_conv_layers(bn)</span><br><span class="line">        self.fc_layers = self._make_fc_layers()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_conv_layers</span><span class="params">(self, bn)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> bn:</span><br><span class="line">            net = nn.Sequential(</span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>),</span><br><span class="line"></span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>)</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            net = nn.Sequential(</span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.BatchNorm2d(<span class="number">1024</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.BatchNorm2d(<span class="number">1024</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>),</span><br><span class="line"></span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.BatchNorm2d(<span class="number">1024</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">                nn.Conv2d(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                nn.BatchNorm2d(<span class="number">1024</span>),</span><br><span class="line">                nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>)</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> net</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_make_fc_layers</span><span class="params">(self)</span>:</span></span><br><span class="line">        S, B, C = self.feature_size, self.num_bboxes, self.num_classes</span><br><span class="line"></span><br><span class="line">        net = nn.Sequential(</span><br><span class="line">            Flatten(),</span><br><span class="line">            nn.Linear(<span class="number">7</span> * <span class="number">7</span> * <span class="number">1024</span>, <span class="number">4096</span>),</span><br><span class="line">            nn.LeakyReLU(<span class="number">0.1</span>, inplace=<span class="literal">True</span>),</span><br><span class="line">            <span class="comment"># is it okay to use Dropout with BatchNorm?</span></span><br><span class="line">            nn.Dropout(<span class="number">0.5</span>, inplace=<span class="literal">False</span>),</span><br><span class="line">            nn.Linear(<span class="number">4096</span>, S * S * (<span class="number">5</span> * B + C)),</span><br><span class="line">            nn.Sigmoid()</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> net</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        S, B, C = self.feature_size, self.num_bboxes, self.num_classes</span><br><span class="line"></span><br><span class="line">        x = self.features(x)</span><br><span class="line">        x = self.conv_layers(x)</span><br><span class="line">        x = self.fc_layers(x)</span><br><span class="line"></span><br><span class="line">        x = x.view(<span class="number">-1</span>, S, S, <span class="number">5</span> * B + C)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>这种东西还是代码清楚，只放了最关键的检测输出：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nn.Linear(<span class="number">4096</span>, S * S * (<span class="number">5</span> * B + C))</span><br><span class="line">nn.Sigmoid()</span><br><span class="line">x.view(<span class="number">-1</span>, S, S, <span class="number">5</span> * B + C)</span><br></pre></td></tr></table></figure>
 <h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>\begin{aligned}<br>{ } &amp; \lambda_{coord} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{obj}} [(x_i-\hat{x}_i)^2 + (y_i-\hat{y}_i)^2] \\<br>{ } &amp;+ \lambda_{coord} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{obj}} [(\sqrt{w_i}-\sqrt{\hat{w}_i})^2+(\sqrt{h_i}-\sqrt{\hat{h}_i})^2] \\<br>{ } &amp;+ \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{obj}} (C_i - \hat{C}_i)^2 \\<br>{ } &amp;+ \lambda_{noobj} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{noobj}} (C_i - \hat{C}_i)^2 \\<br>{ } &amp;+ \sum_{i=0}^{S^2} \mathbb{I}_{ij}^{\text{obj}} \sum_{c\in classes} (p_i(c)-\hat{p}_i(c))^2<br>\end{aligned}</p>
 <ul>
 <li>$\lambda_{coord}$ 是前景的权重，$\mathbb{I}_{ij}^{\text{obj}}$ 是指示函数，取值只有 0 和 1</li>
@@ -319,55 +319,24 @@
 </ul>
 <h2 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h2><ol>
 <li>每个网格只能检测一个类别和两个目标，类间竞争严重，网络表达受限，对于密集群体的检测性能会下降；</li>
-<li>定位不准确，因为网络直接预测 bounding box 的坐标，一开始的偏移可能会很大，导致定位不准确；</li>
+<li>定位不准确，因为网络直接预测 bounding box 的坐标，一开始的偏移可能会很大，导致定位不准确，读完代码能深刻理解这里的缺陷；</li>
 <li>对于检测问题而言，大多情况背景居多，前景居少，也就是样本不均衡。YOLO v1 的损失中，并没有计算背景的 bound box 损失，只计算了前景的，YOLO v1 回避了样本不均衡的问题，这会影响网络的稳定性与背景的识别。</li>
 </ol>
-<h1 id="YOLO-v2"><a href="#YOLO-v2" class="headerlink" title="YOLO v2"></a>YOLO v2</h1><p>论文地址：<a href="https://arxiv.org/abs/1612.08242" target="_blank" rel="noopener">https://arxiv.org/abs/1612.08242</a><br>代码地址（值得一读）：<a href="https://github.com/longcw/yolo2-pytorch" target="_blank" rel="noopener">https://github.com/longcw/yolo2-pytorch</a></p>
-<p>作者基于之前的 YOLO v1，提出了一些改进的策略，快速的同时准确率也大幅度提升。训练检测网络的同时，在 ImageNet 数据集上进行训练，提升了网络的分类能力。文章的一开始，作者指出了检测存在的几个问题：</p>
+<h1 id="程序解析"><a href="#程序解析" class="headerlink" title="程序解析"></a>程序解析</h1><p>「如果对算法有疑问，就去读代码吧」这一经验帮助我理解了很多算法的困惑之处，不仅仅是 YOLO。如果要看懂一个深度学习的算法，核心有三要素，首先是网络模型，理解输入、输出和结构；其次是数据与损失，理解加载什么格式的数据，理解网络预测数据和加载的数据如何计算损失，所以这俩常常放在一起；最后是细枝末节，即数据增强、学习率策略、整体训练流程等。所以接下来整理网络模型和损失。<del>训练策略那些不是 YOLO 的重点。</del></p>
+<h2 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h2><p>我们知道网络的输出是 <code>x.view(-1, S, S, 5 * B + C)</code> 这种类型的格式，这是预测数据，即 $S \times S $ 组 $5 \times B + C$ 这样的数据，$C$ 是类别数量。那么可想而知，在训练阶段，同样需要提供同等尺寸大小的标签数据。</p>
+<h2 id="数据与损失"><a href="#数据与损失" class="headerlink" title="数据与损失"></a>数据与损失</h2><p>YOLO 处理目标时，使用的是目标中心点的坐标相对图像大小的占比。如果一张图像的大小是 224 X 224，目标中心点位于 112 X 112，那么中心点的坐标是 $(0.5,0.5)$。这有两点好处：</p>
 <ol>
-<li>小目标检测能力受限</li>
-<li>目标检测数据集的类别远远小于分类数据集的类别，且，不可能对检测数据集进行标注。所以能不能使用多个分类的数据集提升网络能识别的类别数呢？</li>
+<li>如果一个图像的尺寸是 1920 X 1080，目标中心点的坐标是 1000 X 1000，直接输出 1000 对于网络来说难以把控，会造成梯度爆炸的现象。而占比只需要输出 [0,1] 之间的小数，不会导致梯度爆炸。</li>
+<li>方便图像的标准化处理。网络常常使用多个 batch 进行训练，每个 batch 的数据要求大小统一，对于不同尺寸的图像应选择 <code>resize</code>。如果直接用坐标，<code>resize</code> 后会导致坐标错位，而如果用占比，位于之前图像 (0.5, 0.5) 处的点在 <code>resize</code> 后的坐标仍然是 (0.5, 0.5)。</li>
 </ol>
-<h2 id="Better"><a href="#Better" class="headerlink" title="Better"></a>Better</h2><p>作者进行了一些尝试来提升网络的性能：</p>
-<ul>
-<li>Batch Normalization，在卷积层后、激活层前加入 BN 层，大约提升了 2%。BN 层帮助网络实现正则化，能移除之前的 droupout层。</li>
-<li>提高分辨率，将 v1 的 224 尺寸变为 448 尺寸，并先在 ImageNet 上训练 10 次，使得网络适应高分辨率，而后在检测任务中进行微调。</li>
-<li>使用 Anchor Box 提升定位精准度，预测相对 anchor box 的坐标偏移，预测偏移相对直接预测坐标会简单些。这样提升了网络的召回率。</li>
-<li>为了设置合适的 Anchor Box 的大小，对数据集的盒子进行 K-means 聚类，筛选出合适的 bounding box 大小。K-means 没有使用 欧拉距离，而是 $1-\text{IOU(box, center)}$，即盒子的 IOU 越大，距离越小。</li>
-</ul>
-<p>以上都是微小的改进，下面的三点改进是比较大的。</p>
-<h3 id="Direct-location-prediction"><a href="#Direct-location-prediction" class="headerlink" title="Direct location prediction"></a>Direct location prediction</h3><p>作者使用 Anchor Box 的时候发现早期的网络不稳定，原因来自 $(x,y)$ 的预测。在 RPN 网络中，预测出 $t_x$ 和 $t_y$，$(x,y)$ 的计算为：</p>
-<p>\begin{aligned}<br>x &amp;= (t_x * w_a) + x_a \\<br>y &amp;= (t_y * h_a) + y_a \\<br>\end{aligned}</p>
-<p>由于 $t_x,t_y$ 的输出值不受限制，$(x,y)$ 能忽略 Anchor Box 的存在而而满天飞。所以网络增加了 sigmoid 函数限制 $t_x,t_y$ 的取值在 0 到 1 之间。具体一点，就是更改网络的输出为 $(t_x, t_y, t_w, t_h, t_o)$。由于 YOLO 的预测的尺寸、中心点的坐标都是相对图片的占比，比如一个目标位于图片的正中心，那么 $(x,y)=(0.5,0.5)$ 。如果当前格子相对图片的偏移是 $(c_x,c_y)$，Anchor Box 之前的宽和高是 $(p_w,p_h)$，那么预测的 bounding box 输出为：</p>
-<p><img data-src="https://z3.ax1x.com/2021/08/26/hncDq1.png" alt></p>
-<p>此外，置信度的输出替换为 $\sigma (t_o)$。</p>
-<h3 id="Fine-Grained-Features"><a href="#Fine-Grained-Features" class="headerlink" title="Fine-Grained Features"></a>Fine-Grained Features</h3><p>为了提升小目标的检测精度，增加了 passthrough layer，用类似残差连接的方式传递前几层的特征到网络后面，堆叠高层特征和低层特征到不同通道上。</p>
-<p><img data-src="https://z3.ax1x.com/2021/08/26/huFwqg.jpg" alt></p>
-<h3 id="Multi-Scale-Training"><a href="#Multi-Scale-Training" class="headerlink" title="Multi-Scale Training"></a>Multi-Scale Training</h3><p>为了使模型适应不同的尺寸，不再单一的固定单张图片的大小。而是在网络迭代 10 个 batch 后，网络通过下采样来产生新的输入尺寸来读取图像。这样简单的操作，使得模型适应不同尺寸的图像。</p>
-<h2 id="Faster"><a href="#Faster" class="headerlink" title="Faster"></a>Faster</h2><p>这里的快是为了保证准确率而尽可能快，所以未必会比 YOLO v1 快。作者提出了 DarkNet-19 （黑暗网络，好中二的名称）作为模型的 backbone，相比 VGG16 还是比较快的。之后：</p>
+<p>由于 YOLO 最初设计的方案是：物体中心落到哪个格子，就由这个格子预测这个目标，这一观点需要仔细阅读代码才能理解。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 和网络输出同等大小的标签</span></span><br><span class="line">target = torch.zeros(S, S, N)</span><br><span class="line"><span class="comment"># S=7，表示每个格子的占比</span></span><br><span class="line">cell_size = <span class="number">1.0</span> / float(S)</span><br><span class="line"><span class="comment"># 计算宽度和高度</span></span><br><span class="line">boxes_wh = boxes[:, <span class="number">2</span>:] - boxes[:, :<span class="number">2</span>]</span><br><span class="line"><span class="comment"># x,y 的中心点坐标，此时已经除以图像大小</span></span><br><span class="line">boxes_xy = (boxes[:, <span class="number">2</span>:] + boxes[:, :<span class="number">2</span>]) / <span class="number">2.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对于 b 和 batch 的盒子进行处理</span></span><br><span class="line"><span class="keyword">for</span> b <span class="keyword">in</span> range(boxes.size(<span class="number">0</span>)):</span><br><span class="line">    xy, wh, label = boxes_xy[b], boxes_wh[b], int(labels[b])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算中心点位于哪个格子</span></span><br><span class="line">    ij = (xy / cell_size).ceil() - <span class="number">1.0</span></span><br><span class="line">    <span class="comment"># 取出 i j，用于 SXS 的填充</span></span><br><span class="line">    i, j = int(ij[<span class="number">0</span>]), int(ij[<span class="number">1</span>])</span><br><span class="line">    <span class="comment"># 格子左上角的坐标</span></span><br><span class="line">    x0y0 = ij * cell_size</span><br><span class="line">    <span class="comment"># 相对格子左上角的坐标</span></span><br><span class="line">    <span class="comment"># 除以 cell_size 没啥用，这人代码写的有问题，后面损失计算的时候又乘了回来</span></span><br><span class="line">    xy_normalized = (xy - x0y0) / cell_size</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 开始填充</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> range(B):</span><br><span class="line">        s = <span class="number">5</span> * k</span><br><span class="line">        target[j, i, s  :s+<span class="number">2</span>] = xy_normalized <span class="comment"># 坐标</span></span><br><span class="line">        target[j, i, s+<span class="number">2</span>:s+<span class="number">4</span>] = wh            <span class="comment"># 大小</span></span><br><span class="line">        target[j, i, s+<span class="number">4</span>    ] = <span class="number">1.0</span>           <span class="comment"># 置信度</span></span><br><span class="line">    target[j, i, <span class="number">5</span>*B + label] = <span class="number">1.0</span>           <span class="comment"># 类别标签</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> target</span><br></pre></td></tr></table></figure>
+<p>在损失计算阶段，代码真的太长了不便展示，这里只记录核心要素：</p>
 <ol>
-<li>ImageNet 预训练 160 个 epoch，训练期间使用了随机裁剪、旋转、颜色变换等增强方式；</li>
-<li>ImageNet 的尺寸是 224，为了适应高分辨率的图像，将输入层的尺寸调为 448，再次在 ImageNet 上训练 10 个 epoch；</li>
-<li>更改网络结构，移除分类层添加检测头。对于 VOC 数据集而言，每个格子输出 5 组参数，也就是预先有 5 个 Anchor Box，每组参数是 20 个类别的得分 5 个盒子参数，所以每个盒子一共 125 个参数。而后 passthrough layer 预测小目标的输出。</li>
+<li>对于有目标计算损失，无目标忽略这一点，是通过对真实标签进行掩码处理实现的，只取出真实标签中置信度为 1 的标签记录维度，并在 predict 中取出同维度的数据就算损失，其余数据忽略。假设这一步保留了 $X$ 个盒子。</li>
+<li>对于 $X$ 个盒子中的 $B$ 组数据继续处理，对于每组数据而言，选择和真实标签 IOU 最大的盒子计算损失，其余盒子忽略，也就是没有正负样本的概念。这里需要注意，如果网络初期计算到 IOU 为 0，那么默认第一个盒子和真实标签进行损失计算。</li>
 </ol>
-<p>用检测数据进行训练时，训练了 160 个 epoch ，也使用了随机裁剪、旋转、颜色变换等增强方式。</p>
-<h2 id="Stronger"><a href="#Stronger" class="headerlink" title="Stronger"></a>Stronger</h2><p>数据比模型更重要。那么有没有办法把 classification 数据集也利用起来？毕竟它们虽然没有提供坐标信息，但是也提供了类别信息，这部分类别信息能够显著拓展检测的类别数。当输入是 detection 数据时，按照正常的训练过程进行反向传播；当输入的是 classification 数据时，只计算和更新类别对应的 loss 和网络参数。</p>
-<p>与 Faster 训练方式不同的是，将分类数据集和检测数据集进行联合训练。此时存在的问题是，分类数据集和检测数据集不是同一个数据集，如果检测数据集的标签是「狗」，那么分类数据集的标签很可能是「泰迪、田园犬」等，所以要合并这些标签。论文采用树的结构融合这些标签，得到具有 1396 个节点的树。针对每一个 anchor，预测出长度为 1396 的矢量，对该矢量按照层级关系进行同层级的 softmax 得到条件概率，根据全概率公式连乘即可得到所属类别的条件概率。</p>
-<p><img data-src="https://z3.ax1x.com/2021/08/26/hnHwtJ.png" alt></p>
-<p>经过这种弱监督式的融合数据集训练后，YOLO v2得以检测超过9000种类别，因此得名为YOLO 9000。</p>
-<h1 id="YOLO-v3"><a href="#YOLO-v3" class="headerlink" title="YOLO v3"></a>YOLO v3</h1><p>论文地址（这篇论文写的是真的随意）：<a href="https://arxiv.org/abs/1804.02767" target="_blank" rel="noopener">https://arxiv.org/abs/1804.02767</a><br>程序地址：<a href="https://github.com/ultralytics/yolov3" target="_blank" rel="noopener">https://github.com/ultralytics/yolov3</a></p>
-<p>YOLO 发展到这里，大多是一些工程上的优化了，吸取别人的经验，做了一些操作使网络更好，准确率更高。</p>
-<h2 id="样本优化"><a href="#样本优化" class="headerlink" title="样本优化"></a>样本优化</h2><p>还记得之前样本不平衡，且没有对背景进行损失优化吗？YOLO v3 尝试着解决了这一问题。</p>
-<p>如果 bounding box 与 Ground Truth 目标比其他目标重叠多，则相应的目标性得分应为 1；对于重叠大于等于 0.5 的其他边界框忽略，不计算损失；每个 GT 目标仅与一个先验边界框相关联。如果 bounding box 没有分配到 Ground Truth ，则不会导致分类和定位损失，只会有置信度损失。</p>
-<ul>
-<li>正样本：与 GT 的 IOU 最大的框。</li>
-<li>负样本：与 GT 的 IOU&lt;0.5 的框。</li>
-<li>忽略的样本：与 GT 的 IOU&gt;0.5 但不是最大的框。</li>
-</ul>
-<h2 id="分类优化"><a href="#分类优化" class="headerlink" title="分类优化"></a>分类优化</h2><p>在之前的代码中，对每组输出进行 softmax ，即当前格子只能属于一类，但这对密集目标的检测不是很友好，类间竞争严重。作者提出使用多标签分类来解决这一限制，使用独立的 logistic 分类器，每个 bbox 使用多标签分类来预测其可能包含的标签类别，损失就是二分类损失。softmax 给数据集强加了一个默认的约束，即所有的标签是完全互斥的。</p>
-<h2 id="模型优化"><a href="#模型优化" class="headerlink" title="模型优化"></a>模型优化</h2><p><img data-src="https://z3.ax1x.com/2021/08/26/huDXPe.png" alt></p>
-<p>作者在网络的不同位置进行了输出，分多个尺度对目标进行检测，提升对小目标的检测能力。</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>你也许会对正负样本划分、格子、bounding box、anchor box 的概念已经搞混了，其实我也是，并不清楚网络的流程。所以 YOLO v4,v5 和 x 的内容等下一篇博客了。论文里不会写这些细节，所以我会花段时间去读代码，Faster RCNN 里面也有这些概念，现在回想起来，网络流程说不清楚实在不合适。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>我已经正负样本划分、格子、bounding box、anchor box 的概念已经搞混了，论文里不会写这太细节的东西，不然我也不会来读代码。毕竟整理理论知识太简单了，也容易自欺欺人，并不清楚网络的流程。所以 YOLO v2, v3, v4, v5 和 x 的内容等下几篇博客了。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
 <li><a href="https://zhuanlan.zhihu.com/p/183261974" target="_blank" rel="noopener">你一定从未看过如此通俗易懂的YOLO系列(从v1到v5)模型解读</a></li>
 <li><a href="https://fengweiustc.github.io/paper-reading/2020/06/17/yolo/" target="_blank" rel="noopener">YOLO v1/v2/v3/v4</a></li>
@@ -385,16 +354,16 @@
       <div class="popular-posts-title"><a href="/2021/05/04/CW-attack/" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/04/26/DNN-safe-basic/" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
   </ul>
 
@@ -454,13 +423,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/02/10/computer-vision/" rel="prev" title="卷积神经网络">
-      <i class="fa fa-chevron-left"></i> 卷积神经网络
+    <a href="/2021/08/12/cpp-thread-safe/" rel="prev" title="C++ 多线程">
+      <i class="fa fa-chevron-left"></i> C++ 多线程
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/02/17/transfer-learning/" rel="next" title="Keras玩耍迁移学习(VGG16)">
-      Keras玩耍迁移学习(VGG16) <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -520,7 +486,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v1"><span class="nav-number">1.</span> <span class="nav-text">YOLO v1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络结构"><span class="nav-number">1.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数"><span class="nav-number">1.3.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺陷"><span class="nav-number">1.4.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v2"><span class="nav-number">2.</span> <span class="nav-text">YOLO v2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Better"><span class="nav-number">2.1.</span> <span class="nav-text">Better</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Direct-location-prediction"><span class="nav-number">2.1.1.</span> <span class="nav-text">Direct location prediction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fine-Grained-Features"><span class="nav-number">2.1.2.</span> <span class="nav-text">Fine-Grained Features</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Scale-Training"><span class="nav-number">2.1.3.</span> <span class="nav-text">Multi-Scale Training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster"><span class="nav-number">2.2.</span> <span class="nav-text">Faster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stronger"><span class="nav-number">2.3.</span> <span class="nav-text">Stronger</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v3"><span class="nav-number">3.</span> <span class="nav-text">YOLO v3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#样本优化"><span class="nav-number">3.1.</span> <span class="nav-text">样本优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分类优化"><span class="nav-number">3.2.</span> <span class="nav-text">分类优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型优化"><span class="nav-number">3.3.</span> <span class="nav-text">模型优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v1"><span class="nav-number">1.</span> <span class="nav-text">YOLO v1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络结构"><span class="nav-number">1.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数"><span class="nav-number">1.3.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺陷"><span class="nav-number">1.4.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序解析"><span class="nav-number">2.</span> <span class="nav-text">程序解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络模型"><span class="nav-number">2.1.</span> <span class="nav-text">网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据与损失"><span class="nav-number">2.2.</span> <span class="nav-text">数据与损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -590,12 +556,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">750k</span>
+    <span title="站点总字数">748k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:22</span>
+    <span title="站点阅读时长">11:20</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -875,7 +841,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '05a379e1476f194d91d7add714618015',
+      id          : '65958125464fe896fb966a1796189c5e',
         language: 'zh-CN',
       distractionFreeMode: true
     });
