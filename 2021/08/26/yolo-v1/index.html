@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-27T09:08:20.217Z">
+<meta property="og:updated_time" content="2021-08-27T13:01:52.837Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YOLO目标检测从 V1 开始，细读代码">
 <meta name="twitter:description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-27 17:08:20" itemprop="dateModified" datetime="2021-08-27T17:08:20+08:00">2021-08-27</time>
+                <time title="修改时间：2021-08-27 21:01:52" itemprop="dateModified" datetime="2021-08-27T21:01:52+08:00">2021-08-27</time>
               </span>
 
           
@@ -293,7 +293,6 @@
 
       
         <p>忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了。</p>
-<hr>
 <a id="more"></a>
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
 <h1 id="YOLO-v1"><a href="#YOLO-v1" class="headerlink" title="YOLO v1"></a>YOLO v1</h1><ul>
@@ -304,7 +303,7 @@
 <p>但是对于 v1 的 YOLO 存在一些缺陷，作者在论文中也进行了阐述：准确率低、定位不准尤其是小目标的定位。</p>
 <h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>首先将图片分为 $S\times S$ 个网格，论文中 $S=7$，如果一个物体的中心落入这个格子中，那么这个格子负责预测这个目标。设每个格子负责预测 $B$ 个物体的盒子参数和置信度得分，盒子参数指明物体的位置，置信度表示盒子含有目标且预测准确的可信程度。即对于图片的每个格子，会输出 $B$ 个 $(x,y,w,h,c)$，论文中 $B=2$。</p>
 <p>既然有了输出，那么就需要 label 进行损失计算。$(x,y,w,h,c)$ 是人工标注的数据，$c$ 初始化为 1。论文定义网络输出的置信度标签是一个分段函数，如果格子没有目标，置信度是 0；如果有目标，置信度是预测框和真实框的 IOU 值，公式描述为 $\text{Pr(Object)} * \text{IOU}_{\text{pred}}^\text{truth}$。</p>
-<p>目标检测和分类是分不开的，为了达到分类的目的，每个格子也会输出 $C$ 个类别的概率，公式表述为 $\text{Pr(Class}_i|\text{Object})$，即格子里面得是个目标，才能计算分类的概率和损失。而每个格子输出 $B$ 组<a href="https://github.com/motokimura/yolo_v1_pytorch/blob/master/detect.py#L203-L206" target="_blank" rel="noopener">预测</a>，所以每个格子最多预测 $B$ 个类，这就限制了网络的表达。</p>
+<p>目标检测和分类是分不开的，为了达到分类的目的，每个格子也会输出 $C$ 个类别的概率，公式表述为 $\text{Pr(Class}_i|\text{Object})$，即格子里面得是个目标，才能计算分类的概率和损失。而每个格子输出一组<a href="https://github.com/motokimura/yolo_v1_pytorch/blob/master/detect.py#L203-L206" target="_blank" rel="noopener">预测</a>，即使输出了 $B$ 组数据，这就限制了网络的表达。</p>
 <p>在测试阶段，类别置信度的分数就是分类概率和置信度相乘，即盒子中「有这个类别的概率」和「网络预测这个类别的概率」的乘积：</p>
 <p>\begin{equation}<br>\text{Pr(Class}_i|\text{Object})*\text{Pr(Object)}*\text{IOU}_{\text{pred}}^\text{truth}=\text{Pr(Class}_i) * \text{IOU}_{\text{pred}}^\text{truth}<br>\end{equation}</p>
 <h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>这种东西还是代码清楚，只放了最关键的检测输出：</p>
@@ -354,10 +353,10 @@
       <div class="popular-posts-title"><a href="/2021/05/04/CW-attack/" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/04/26/DNN-safe-basic/" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/04/26/DNN-safe-basic/" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
@@ -426,7 +425,10 @@
     <a href="/2021/08/12/cpp-thread-safe/" rel="prev" title="C++ 多线程">
       <i class="fa fa-chevron-left"></i> C++ 多线程
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/08/28/vim-learn/" rel="next" title="Vim 学习记录">
+      Vim 学习记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -502,7 +504,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">184</span>
+          <span class="site-state-item-count">185</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -515,7 +517,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
