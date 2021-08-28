@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解重参数到底是什么，一般都用在什么背景下。">
+  <meta name="description" content="还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。">
 <meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="重参数技巧">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/10/05/reparametrization-tricks/index.html">
+<meta property="og:title" content="YOLO V2，细读代码">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/08/28/yolo-v2/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解重参数到底是什么，一般都用在什么背景下。">
+<meta property="og:description" content="还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-10-05T15:33:00.000Z">
+<meta property="og:updated_time" content="2021-08-28T14:33:55.481Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="重参数技巧">
-<meta name="twitter:description" content="今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解重参数到底是什么，一般都用在什么背景下。">
+<meta name="twitter:title" content="YOLO V2，细读代码">
+<meta name="twitter:description" content="还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/10/05/reparametrization-tricks/">
+<link rel="canonical" href="https://muyuuuu.github.io/2021/08/28/yolo-v2/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>重参数技巧 | Just for Life.</title>
+  <title>YOLO V2，细读代码 | Just for Life.</title>
   
 
 
@@ -227,7 +227,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/10/05/reparametrization-tricks/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/08/28/yolo-v2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          重参数技巧
+          YOLO V2，细读代码
         </h1>
 
         <div class="post-meta">
@@ -251,7 +251,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-05 13:55:35 / 修改时间：23:33:00" itemprop="dateCreated datePublished" datetime="2020-10-05T13:55:35+08:00">2020-10-05</time>
+              <time title="创建时间：2021-08-28 22:16:45 / 修改时间：22:33:55" itemprop="dateCreated datePublished" datetime="2021-08-28T22:16:45+08:00">2021-08-28</time>
             </span>
 
           
@@ -267,14 +267,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>3.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -286,32 +286,57 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>今天读小样本的论文又遇到了重参数技巧，记得之前在 VAE 中也看到了它。遂来做一个归纳整理，了解<strong>重参数</strong>到底是什么，一般都用在什么背景下。</p>
+        <p>还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。</p>
 <a id="more"></a>
-<h1 id="VAE-中重参数生成高斯分布"><a href="#VAE-中重参数生成高斯分布" class="headerlink" title="VAE 中重参数生成高斯分布"></a>VAE 中重参数生成高斯分布</h1><p>在 VAE 中，需要从 $p(Z|X)$ 中采样得到样本，但采样的过程本身是不可逆的，就导致整个过程无法反向传播。我们已经知道 $P(Z|X)$ 是服从正态分布的，也知道均值和方差，那么如何产生数据呢？这个时候就是重采样技术了。</p>
-<p>我们首先生成一个均值为0, 标准差为1的高斯分布 $N\sim (0,1)$。在这个分布中中采样数据 $\epsilon$，经过一个变换后得到目标分布：$Z=\mu + \sigma \epsilon$。$\mu$为均值，$\sigma$为方差，由网络计算得出。伪代码如下：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reparametrization</span><span class="params">(z_mean, z_log_var)</span>:</span></span><br><span class="line">    epsilon = K.random_normal(shape=K.shape(z_mean))</span><br><span class="line">    <span class="keyword">return</span> z_mean + z_log_var * epsilon</span><br></pre></td></tr></table></figure>
-<p>此时，返回的变量就具有了梯度，而采样的过程在整个计算图之外，采样的 $\epsilon$ 就是一个常量，此时便可以梯度下降。</p>
-<h1 id="Gumbel-Softmax"><a href="#Gumbel-Softmax" class="headerlink" title="Gumbel Softmax"></a>Gumbel Softmax</h1><p><a href="https://static01.imgkr.com/temp/8798f13886ad45d78ed32dbdccdb0386.png" target="_blank" rel="noopener">https://static01.imgkr.com/temp/8798f13886ad45d78ed32dbdccdb0386.png</a></p>
-<p>上图在 DARTS 算法中表示为一个 Cell。每个 Cell 由多个 Node 组成，Node 和 Node 之间有多条边，每条边代表的操作不一样，比如可能是CNN，可能是RNN，可能是 maxpool。每条边都有一个权重 $\alpha$，权重是可以学习的。根据权重来选择每条边到底执行什么操作。</p>
-<p>假设每条边上有三条操作。如果只是简单地选择权重最大的操作，那么<code>[0.2,0.3,0.5]</code>和<code>[0.1,0.2,0.7]</code>并没有本质的区别了，而且这样一来可能第一个和第二个操作根本就没有机会得到更新，但从概率上来说这两个权重分布差别是巨大的，所以需要一种方法不仅选出动作，而且遵从概率的含义。</p>
-<p>所以一个很自然的想法就是我们希望以 0.1 的概率选择第一个操作，0.2 的概率选择第二个操作，0.7 的概率选择第三个操作。实现起来很简单，按照概率选择就好。但问题又来了，这个过程没有办法梯度下降。所以需要借助重采样技术。</p>
-<ul>
-<li>生成均匀分布 $U(0,1)$，从中采样得到样本 $\epsilon$；</li>
-<li>计算 $G$，$G=-\log(-\log(\epsilon))$；</li>
-<li>计算新的权重向量：$w=[w_1+G_1, w_2+G_2, \cdots, w_n+G_n]$；</li>
-<li>softmax一下，使得每个操作都能以一定的概率被选中，所以gumbel softmax成功地引入了随机性：<br>\begin{equation}<br>w’=\frac{\exp (w/\tau)}{\sum_{i=1}^n\exp(w_i/\tau)}<br>\end{equation}</li>
-</ul>
-<p>$\tau$控制着softmax的程度，温度越高，生成的分布越平滑（接近这里的均匀分布）；温度越低，生成的分布越接近离散的one-hot分布。因此，训练时可以逐渐降低温度，以逐步逼近真实的离散分布，且保留了梯度信息。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>大概可以发现，有两种情况会使用重参数：</p>
+<h1 id="YOLO-v2"><a href="#YOLO-v2" class="headerlink" title="YOLO v2"></a>YOLO v2</h1><p>论文地址：<a href="https://arxiv.org/abs/1612.08242" target="_blank" rel="noopener">https://arxiv.org/abs/1612.08242</a><br>提供两个代码地址：第一个适合看模型、损失和多尺度训练，第二个适合看 anchor box 如何用到模型中，但是需要注意的是有 bug，但写的比第一个容易理解。</p>
 <ol>
-<li>需要对某一分布的数据进行采样；</li>
-<li>需要保留梯度信息用于反向传播。</li>
+<li><a href="https://github.com/longcw/yolo2-pytorch" target="_blank" rel="noopener">https://github.com/longcw/yolo2-pytorch</a></li>
+<li><a href="https://github.com/uvipen/Yolo-v2-pytorch/tree/master" target="_blank" rel="noopener">https://github.com/uvipen/Yolo-v2-pytorch/tree/master</a></li>
 </ol>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li>VAE：<a href="https://kexue.fm/archives/5253" target="_blank" rel="noopener">https://kexue.fm/archives/5253</a></li>
-<li>Gumbel Softmax：<a href="https://www.cnblogs.com/marsggbo/p/13227992.html" target="_blank" rel="noopener">https://www.cnblogs.com/marsggbo/p/13227992.html</a></li>
+<p>作者基于之前的 YOLO v1，提出了一些改进的策略，快速的同时准确率也大幅度提升。训练检测网络的同时，在 ImageNet 数据集上进行训练，提升了网络的分类能力。文章的一开始，作者指出了检测存在的几个问题：</p>
+<ol>
+<li>小目标检测能力受限</li>
+<li>目标检测数据集的类别远远小于分类数据集的类别，且，不可能对检测数据集进行标注。所以能不能使用多个分类的数据集提升网络能识别的类别数呢？</li>
 </ol>
+<h2 id="Better"><a href="#Better" class="headerlink" title="Better"></a>Better</h2><p>作者进行了一些尝试来提升网络的性能：</p>
+<ul>
+<li>Batch Normalization，在卷积层后、激活层前加入 BN 层，大约提升了 2%。BN 层帮助网络实现正则化，能移除之前的 droupout层。</li>
+<li>提高分辨率，将 v1 的 224 尺寸变为 448 尺寸，并先在 ImageNet 上训练 10 次，使得网络适应高分辨率，而后在检测任务中进行微调。</li>
+<li>使用 Anchor Box 提升定位精准度，预测相对 anchor box 的坐标偏移，预测偏移相对直接预测坐标会简单些。这样提升了网络的召回率。此外，图片的 Ground Truth 一般都是正方形，1:2 的长方形或者 2:1 的长方形，预先准备几个几率比较大的 bounding box，再以它们为基准进行预测。</li>
+<li>为了设置合适的 Anchor Box 的大小，对数据集的盒子进行 K-means 聚类，筛选出合适的 bounding box 大小。K-means 没有使用 欧拉距离，而是 $1-\text{IOU(box, center)}$，即盒子的 IOU 越大，距离越小。</li>
+</ul>
+<p>以上都是微小的改进，下面的三点改进是比较大的。</p>
+<h3 id="Direct-location-prediction"><a href="#Direct-location-prediction" class="headerlink" title="Direct location prediction"></a>Direct location prediction</h3><p>作者使用 Anchor Box 的时候发现早期的网络不稳定，原因来自 $(x,y)$ 的预测。在 RPN 网络中，预测出 $t_x$ 和 $t_y$，$(x,y)$ 的计算为：</p>
+<p>\begin{aligned}<br>x &amp;= (t_x * w_a) + x_a \\<br>y &amp;= (t_y * h_a) + y_a \\<br>\end{aligned}</p>
+<p>由于 $t_x,t_y$ 的输出值不受限制，$(x,y)$ 能忽略 Anchor Box 的存在而而满天飞。所以网络增加了 sigmoid 函数限制 $t_x,t_y$ 的取值在 0 到 1 之间。具体一点，就是更改网络的输出为 $(t_x, t_y, t_w, t_h, t_o)$。由于 YOLO 的预测的尺寸、中心点的坐标都是相对图片的占比，比如一个目标位于图片的正中心，那么 $(x,y)=(0.5,0.5)$ 。如果当前格子相对图片的偏移是 $(c_x,c_y)$，Anchor Box 之前的宽和高是 $(p_w,p_h)$，那么预测的 bounding box 输出为：</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/26/hncDq1.png" alt></p>
+<p>此外，置信度的输出替换为 $\sigma (t_o)$。</p>
+<h3 id="Fine-Grained-Features"><a href="#Fine-Grained-Features" class="headerlink" title="Fine-Grained Features"></a>Fine-Grained Features</h3><p>为了提升小目标的检测精度，增加了 passthrough layer，用类似残差连接的方式传递前几层的特征到网络后面，堆叠高层特征和低层特征到不同通道上。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/26/huFwqg.jpg" alt></p>
+<h3 id="Multi-Scale-Training"><a href="#Multi-Scale-Training" class="headerlink" title="Multi-Scale Training"></a>Multi-Scale Training</h3><p>为了使模型适应不同的尺寸，不再单一的固定单张图片的大小。而是在网络迭代 10 个 batch 后，网络通过下采样来产生新的输入尺寸来读取图像。这样简单的操作，使得模型适应不同尺寸的图像。</p>
+<h2 id="Faster"><a href="#Faster" class="headerlink" title="Faster"></a>Faster</h2><p>这里的快是为了保证准确率而尽可能快，所以未必会比 YOLO v1 快。作者提出了 DarkNet-19 （黑暗网络，好中二的名称）作为模型的 backbone，相比 VGG16 还是比较快的。之后：</p>
+<ol>
+<li>ImageNet 预训练 160 个 epoch，训练期间使用了随机裁剪、旋转、颜色变换等增强方式；</li>
+<li>ImageNet 的尺寸是 224，为了适应高分辨率的图像，将输入层的尺寸调为 448，再次在 ImageNet 上训练 10 个 epoch；</li>
+<li>更改网络结构，移除分类层添加检测头。对于 VOC 数据集而言，每个格子输出 5 组参数，也就是预先有 5 个 Anchor Box，每组参数是 20 个类别的得分 5 个盒子参数，所以每个盒子一共 125 个参数。而后 passthrough layer 预测小目标的输出。</li>
+</ol>
+<p>用检测数据进行训练时，训练了 160 个 epoch ，也使用了随机裁剪、旋转、颜色变换等增强方式。</p>
+<h2 id="Stronger"><a href="#Stronger" class="headerlink" title="Stronger"></a>Stronger</h2><p>数据比模型更重要。那么有没有办法把 classification 数据集也利用起来？毕竟它们虽然没有提供坐标信息，但是也提供了类别信息，这部分类别信息能够显著拓展检测的类别数。当输入是 detection 数据时，按照正常的训练过程进行反向传播；当输入的是 classification 数据时，只计算和更新类别对应的 loss 和网络参数。</p>
+<p>与 Faster 训练方式不同的是，将分类数据集和检测数据集进行联合训练。此时存在的问题是，分类数据集和检测数据集不是同一个数据集，如果检测数据集的标签是「狗」，那么分类数据集的标签很可能是「泰迪、田园犬」等，所以要合并这些标签。论文采用树的结构融合这些标签，得到具有 1396 个节点的树。针对每一个 anchor，预测出长度为 1396 的矢量，对该矢量按照层级关系进行同层级的 softmax 得到条件概率，根据全概率公式连乘即可得到所属类别的条件概率。</p>
+<p><img data-src="https://z3.ax1x.com/2021/08/26/hnHwtJ.png" alt></p>
+<p>经过这种弱监督式的融合数据集训练后，YOLO v2得以检测超过9000种类别，因此得名为YOLO 9000。</p>
+<h1 id="code"><a href="#code" class="headerlink" title="code"></a>code</h1><h2 id="模型部分"><a href="#模型部分" class="headerlink" title="模型部分"></a>模型部分</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 anchor 个 [类别，x, y, w, h] 这样的数据</span></span><br><span class="line">out_channels = cfg.num_anchors * (cfg.num_classes + <span class="number">5</span>)</span><br><span class="line">self.conv5 = net_utils.Conv2d(c4, out_channels, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对 x 和 y 激活处理，学习偏移量</span></span><br><span class="line">xy_pred = F.sigmoid(global_average_pool_reshaped[:, :, :, <span class="number">0</span>:<span class="number">2</span>])</span><br><span class="line"><span class="comment"># 对 w 和 h 进行映射，用来乘以之前 anchor 的宽和高，得到预测的宽和高</span></span><br><span class="line">wh_pred = torch.exp(global_average_pool_reshaped[:, :, :, <span class="number">2</span>:<span class="number">4</span>])</span><br><span class="line">bbox_pred = torch.cat([xy_pred, wh_pred], <span class="number">3</span>)</span><br><span class="line"><span class="comment"># IOU 预测，YOLO V1 中是置信度</span></span><br><span class="line">iou_pred = F.sigmoid(global_average_pool_reshaped[:, :, :, <span class="number">4</span>:<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 类别预测，共 anchor 个类别</span></span><br><span class="line">score_pred = global_average_pool_reshaped[:, :, :, <span class="number">5</span>:].contiguous()</span><br><span class="line">prob_pred = F.softmax(score_pred.view(<span class="number">-1</span>, score_pred.size()[<span class="number">-1</span>])).view_as(score_pred)</span><br></pre></td></tr></table></figure>
+<h2 id="数据与损失"><a href="#数据与损失" class="headerlink" title="数据与损失"></a>数据与损失</h2><p>对于加载数据部分，由于是多尺度训练，所以先要把图像 <code>resize</code> 到指定的输入尺寸，而后对标签中的宽度、中心点进行放缩，而后返回盒子、类别标签即可。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">batch[<span class="string">'images'</span>].append(images)</span><br><span class="line">batch[<span class="string">'gt_boxes'</span>].append(gt_boxes)</span><br><span class="line">batch[<span class="string">'gt_classes'</span>].append(classes)</span><br><span class="line">batch[<span class="string">'dontcare'</span>].append(dontcare)</span><br><span class="line">batch[<span class="string">'origin_im'</span>].append(origin_im)</span><br></pre></td></tr></table></figure>
+<p>众所周知，对于卷积神经网络而言，输入图像的尺寸大小不同，输出的图像尺寸也不会一样。而网络超参数始终是固定的，适应多尺度训练是在损失函数中进行的，将标签数据的尺寸适配到网络输出的尺寸，这样就实现了多尺度训练。而后开始计算损失和反向传播，也就是<a href="https://github.com/longcw/yolo2-pytorch/blob/17056ca69f097a07884135d9031c53d4ef217a6a/darknet.py#L40" target="_blank" rel="noopener">这个函数</a>所做的。</p>
+<p>之后就是损失函数部分了，重点是来看看是如何基于 <code>anchor box</code> 进行预测的，不过仍然可以确定的是，不管是分类损失，还是 IOU 损失或 bounding box 损失，使用的都是 MSE 损失函数。</p>
+<p>对于标签数据而言，重要的是看懂<a href="https://github.com/uvipen/Yolo-v2-pytorch/blob/9589413b5dce0476eb9cccc41945cf30cf131b34/src/loss.py#L89-L145" target="_blank" rel="noopener">这里</a>的流程：</p>
+<ol>
+<li>遍历当前的 batch size，处理每一个 batch；</li>
+<li>对预测输出和真实标签进行 IOU 计算，筛选出大于阈值的 bounding box 作为正样本，其余样本忽略；</li>
+<li>筛选出与真实标签大小最为接近的 anchor box，基于 anchor box 计算和真实框的偏移量。anchor box 是预先设置的，anchor box 没有位置的概念，不是基于某个框生成的，anchor box 在整个训练期间是不变的。假设是第 2 个 anchor box 最接近。由于标签数据的维度和网络输出的维度相同，将标签数据的第 2 维填充为对应标签。这样，其余数据回被忽略。这一部分<a href="https://github.com/uvipen/Yolo-v2-pytorch/blob/9589413b5dce0476eb9cccc41945cf30cf131b34/src/loss.py#L89-L145" target="_blank" rel="noopener">代码</a>。</li>
+</ol>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>这一部分代码还是耐心读吧……我也读了一晚上。也确实没发现网上有哪篇博客写的比代码还要详细清晰。读完了代码，我也知道了代码中如何实现多尺度训练和使用 anchor box。据说 YOLO v3/v4/v5 都是一些工程上的 trick 了。应该只会读那些具有创新点的代码，其他代码会选择性了略过了。</p>
 
     </div>
 
@@ -394,13 +419,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/09/27/begin-postgraduate-life/" rel="prev" title="研究生生活伊始">
-      <i class="fa fa-chevron-left"></i> 研究生生活伊始
+    <a href="/2021/08/28/vim-learn/" rel="prev" title="Vim 学习记录">
+      <i class="fa fa-chevron-left"></i> Vim 学习记录
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/10/09/few-shot-paper-notes/" rel="next" title="2020年左右小样本问题顶会论文笔记">
-      2020年左右小样本问题顶会论文笔记 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -460,7 +482,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#VAE-中重参数生成高斯分布"><span class="nav-number">1.</span> <span class="nav-text">VAE 中重参数生成高斯分布</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gumbel-Softmax"><span class="nav-number">2.</span> <span class="nav-text">Gumbel Softmax</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v2"><span class="nav-number">1.</span> <span class="nav-text">YOLO v2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Better"><span class="nav-number">1.1.</span> <span class="nav-text">Better</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Direct-location-prediction"><span class="nav-number">1.1.1.</span> <span class="nav-text">Direct location prediction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fine-Grained-Features"><span class="nav-number">1.1.2.</span> <span class="nav-text">Fine-Grained Features</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Scale-Training"><span class="nav-number">1.1.3.</span> <span class="nav-text">Multi-Scale Training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster"><span class="nav-number">1.2.</span> <span class="nav-text">Faster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stronger"><span class="nav-number">1.3.</span> <span class="nav-text">Stronger</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#code"><span class="nav-number">2.</span> <span class="nav-text">code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型部分"><span class="nav-number">2.1.</span> <span class="nav-text">模型部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据与损失"><span class="nav-number">2.2.</span> <span class="nav-text">数据与损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -815,7 +837,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : 'a3c58ecceddc743c60564d4952e7a366',
+      id          : '3448f268aac64c5316d3d5f633c6882f',
         language: 'zh-CN',
       distractionFreeMode: true
     });
