@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="学习 vim 的时候曾经4进4出一直没学会，这次下定决心要学一下了，也不求一口吃个胖子，每天学习一点点。首先从基础操作开始练习，先不要配置插件，也不管高亮和编程。IDE是人类退步的阶梯，沃茨基说的。 这个是我参考的 vim 的学习笔记，感觉写的还是不错的：https://coolshell.cn/articles/5426.html  当然，这份文档不一定包含所有命令，只是教学的目的，遇到没有涵盖">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-31T02:22:24.957Z">
+<meta property="og:updated_time" content="2021-09-01T02:42:11.857Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vim 学习记录">
 <meta name="twitter:description" content="学习 vim 的时候曾经4进4出一直没学会，这次下定决心要学一下了，也不求一口吃个胖子，每天学习一点点。首先从基础操作开始练习，先不要配置插件，也不管高亮和编程。IDE是人类退步的阶梯，沃茨基说的。 这个是我参考的 vim 的学习笔记，感觉写的还是不错的：https://coolshell.cn/articles/5426.html  当然，这份文档不一定包含所有命令，只是教学的目的，遇到没有涵盖">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 10:22:24" itemprop="dateModified" datetime="2021-08-31T10:22:24+08:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 10:42:11" itemprop="dateModified" datetime="2021-09-01T10:42:11+08:00">2021-09-01</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.8k</span>
+              <span>3.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -340,7 +340,7 @@
 <p>大概昨天尝试了一下使用 <code>vim</code> 安装插件，不得不说真香。我选择的插件管理器是 <code>vim-plug</code>，记得配置 <code>git</code> 的 <code>ssh</code> 和 <code>https</code> 代理，否则下载不下来。先装了一个 <a href="https://github.com/vim-airline/vim-airline" target="_blank" rel="noopener"><code>vim-airline</code></a> 还不错。之后等时间长了，配置一些编程用的插件。</p>
 <p>而后是 <code>vim</code> 的配置文件，用户自己的配置文件位于 <code>~/.vimrc</code>，系统的配置文件位于 <code>/etc/.vimrc</code>。而后可以网上查一查如何配置，比如显示行号、设置缩进、显示文件名等。我的 <code>vim</code> 配置放到了我的 github 上：<a href="https://github.com/muyuuuu/my-vim-config" target="_blank" rel="noopener">https://github.com/muyuuuu/my-vim-config</a> 。</p>
 <p>回到正题，今天额外学一些光标移动的操作，我也是使用了一段事件后才发现快速定位到某个位置真的是太有用了。</p>
-<p>在配置文件中开启行号设置后，可以知道文件位于哪一行。在 <code>normal</code> 模式下，可以使用 <code>NG</code> 移动到第 <code>N</code> 行，<code>N</code> 是数字；<code>G</code> 是移动到最后一行。或者在 <code>command</code> 模式下，<code>:112</code> 会移动到 112 行。</p>
+<p>在配置文件中开启行号设置后，可以知道文件位于哪一行。在 <code>normal</code> 模式下，可以使用 <code>NG</code> 移动到第 <code>N</code> 行，<code>N</code> 是数字；<code>G</code> 是移动到最后一行。或者在 <code>command</code> 模式下，<code>:112</code> 会移动到 112 行。<code>ctrl+f</code> 向下翻页，<code>ctrl+b</code> 向上翻页；<code>ctrl+e</code> 逐行向下翻页；<code>ctrl+y</code> 逐行向上翻页。 </p>
 <p>之后再来看一下行内的移动：</p>
 <ul>
 <li><code>w</code> 到下一个单词的开头，<code>b</code> 移动到上一个单词的开头，<code>e</code> 到当前单词的结尾。</li>
@@ -379,6 +379,25 @@
 <li><code>dw</code>，剪切光标后面的单词，含空格</li>
 </ul>
 <p>今天学习内容结束，大概还差区域选择、块操作、宏录制和可视化选择；在之后就会尝试把 vim 打造成 IDE 了，一去不复返。</p>
+<h1 id="第五天"><a href="#第五天" class="headerlink" title="第五天"></a>第五天</h1><p>我又额外补充了一些插件换了主题来提升效率。<code>wakatime</code> 记录编程时间，<code>nerdtree</code> 显示工作目录，<code>startify</code> 显示近期打开的文件，<code>onehalfdark</code> 作为主题。</p>
+<p>在服务器上体验了一把裸敲 <code>vim</code> 的快感，首先补充一些光标移动的东西，快速定位到想要的位置，这玩意太重要了。</p>
+<ul>
+<li><code>fa</code> 移动到下一个为 <code>a</code> 的字符处；<code>3fa</code> 移动到第三个 <code>a</code> 的位置；<code>F</code> 与 <code>f</code> 的查找顺序刚好相反。</li>
+<li><code>t,</code> 到逗号前的一个字符，这里暂不支持中文字符 <del>难道以后我写文档要用英文符号了？</del></li>
+</ul>
+<p>此外，在编程时候会常用块操作，比如注释某个函数，或者 <code>python</code> 中的某段内容全部缩进，就需要块操作来实现。</p>
+<ul>
+<li>光标定位到要操作的地方；</li>
+<li>ctrl+v` 进入「可视块」模式，选取要操作的行；</li>
+<li><code>shift+i</code> 输入要插入的内容；</li>
+<li><code>esc</code> 按两次，会在每行的选定的区域出现插入的内容。</li>
+</ul>
+<p>另外的内容是区域选择，命令为 <code>&lt;action&gt;a&lt;object&gt;</code> 或者 <code>&lt;action&gt;i&lt;object&gt;</code>，两者的区别是，前者会选中 <code>object</code>，后者则不会。给定字符串 <code>((a) + (&quot;b+c&quot;)</code>。</p>
+<ul>
+<li>光标位于 <code>b</code>，<code>vi&quot;</code> 会选中 <code>b+c</code>，<code>va&quot;</code> 会选中 <code>&quot;b+c&quot;</code>；</li>
+<li>光标位于 <code>b</code>，<code>v2i)</code> 会选中 <code>(a) + (&quot;b+c&quot;)</code>，<code>v2a)</code> 会选中全部</li>
+</ul>
+<p>今天的学习内容到此结束，其实很多时候都在查漏不缺，每次都要花很多时间联系，所以虽然内容很少，但是内容很多（误。</p>
 
     </div>
 
@@ -509,7 +528,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一天"><span class="nav-number">1.</span> <span class="nav-text">第一天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二天"><span class="nav-number">2.</span> <span class="nav-text">第二天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入"><span class="nav-number">2.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#光标移动"><span class="nav-number">2.2.</span> <span class="nav-text">光标移动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拷贝"><span class="nav-number">2.3.</span> <span class="nav-text">拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件读取"><span class="nav-number">2.4.</span> <span class="nav-text">文件读取</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三天"><span class="nav-number">3.</span> <span class="nav-text">第三天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四天"><span class="nav-number">4.</span> <span class="nav-text">第四天</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一天"><span class="nav-number">1.</span> <span class="nav-text">第一天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二天"><span class="nav-number">2.</span> <span class="nav-text">第二天</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#插入"><span class="nav-number">2.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#光标移动"><span class="nav-number">2.2.</span> <span class="nav-text">光标移动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拷贝"><span class="nav-number">2.3.</span> <span class="nav-text">拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件读取"><span class="nav-number">2.4.</span> <span class="nav-text">文件读取</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三天"><span class="nav-number">3.</span> <span class="nav-text">第三天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四天"><span class="nav-number">4.</span> <span class="nav-text">第四天</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五天"><span class="nav-number">5.</span> <span class="nav-text">第五天</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -579,7 +598,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">754k</span>
+    <span title="站点总字数">755k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
