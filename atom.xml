@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2021-09-04T12:43:35.038Z</updated>
+  <updated>2021-09-08T14:11:45.687Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -17,17 +17,40 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>基于数据分布的对抗防御和攻击</title>
+    <link href="https://muyuuuu.github.io/2021/09/07/data-dis-attack-defense/"/>
+    <id>https://muyuuuu.github.io/2021/09/07/data-dis-attack-defense/</id>
+    <published>2021-09-07T12:20:30.000Z</published>
+    <updated>2021-09-08T14:11:45.687Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>在做对抗训练的时候，我时常在想一个问题：PGD、CW 这些攻击算法都会设置迭代步长和阈值，如果模型固定、数据固定，那么每次生成的对抗样本也会是一样的。如果使用 min-max 的方式进行对抗训练，那么模型可能会只认识在某一设置下的数据，如果面对新的分布攻击样本，如 ZOO, UAP, Deepfool 等，岂不是不能很好耳朵防御？</p><p>这就又会回到小样本问题，总不能对所有的攻击算法都生成对抗样本来训练模型，而应该生成分布尽可能广泛的对抗样本来训练模型？既然提到生成，就不得不考虑 GAN，所以搜了些相关论文，并作整理。注意，所有论文我没看代码，所以不评价好与坏，在不久的将来，如果我要发论文，肯定还会做对比算法，到时候回来评价各个算法。</p><a id="more"></a><h1 id="advFlow"><a href="#advFlow" class="headerlink" title="advFlow"></a>advFlow</h1><p>AdvFlow: Inconspicuous Black-box Adversarial Attacks using Normalizing Flows, NIPS 2020。</p><p>这篇论文提出使用 normal flow 模型来生成对抗样本实现内部的 max，生成的对抗扰动能捕获图片信息，换句话说，可以根据图片信息来生成对抗扰动。</p><p><img data-src="https://z3.ax1x.com/2021/09/07/hozhMq.png" alt></p><p>首先预训练一个神经网络 $f$，这个网络是可逆的：</p><ul><li>输入为一随机分布 $z$，而后产生 $x$;</li><li>输入为干净样本 $x$，输入是随机分布 $z$</li></ul><p>整个流程如下：</p><p>输入干净样本，经过 $f^{-1}$ 得到噪音，将噪音经过 $f$ 得到对抗样本，将对抗样本输入目标模型，以此来实现对抗训练。其中的损失、网络细节我没有看。</p><h1 id="ADT"><a href="#ADT" class="headerlink" title="ADT"></a>ADT</h1><p>Adversarial Distributional Training for Robust Deep Learning, NIPS 2020。</p><p>这篇论文和我的关注点一样，果然发顶会手要快。作者认为：对抗训练可不可以理解为数据增强？单个攻击算法并不能代表全部的对抗样本，所以作者提出了 ADT，通过增加熵正则化项，来获取潜在的分布在干净样本周围的对抗样本。以此来作为内部最大化，好的攻击算法才能产生更好的鲁棒性。</p><p>由于单个攻击算法不能覆盖全部的扰动，为了避免这个问题，应该找到干净样本附近的对抗样本的分布，而不是单纯的找到一个对抗样本。</p><p><img data-src="https://z3.ax1x.com/2021/09/07/hTCI1J.png" alt></p><p>如上图所示，蓝色点是 PGD 产生的对抗样本，黄色点是 ADT 产生的对抗样本。为了使对抗样本的分布具有多样性，增加了熵作为模型损失的一部分，众所周知，熵能衡量系统的稳定性，熵越大越不稳定。也就是，对抗样本的产生方式为：</p><p>\begin{equation}<br>E[L(f(x+\delta), y)] + \lambda H(p(\delta))<br>\end{equation}</p><p>$\delta$ 是对抗扰动，由某噪音分布并经过 $\text{tanh}$ 函数映射而来。相对于单个攻击算法，上述公式能更好的探索对抗扰动的分布。</p><h1 id="AGAT"><a href="#AGAT" class="headerlink" title="AGAT"></a>AGAT</h1><p>Attribute-Guided Adversarial Training for Robustness to Natural Perturbations，发表在 AAAI 2021。</p><p>在许多情况下，并不能获得全部的对抗样本，如果预测的对抗样本和训练的对抗样本没有来自同一分布，就会导致鲁棒性的下降。所以本文提出的对抗训练算法中，在内部最大化期间，通过生成新的样本使分类器最大限度地暴露属性空间的变化，这样训练出来的模型更具鲁棒性。</p><p>这里的属性空间是：翻转算一个属性空间，颜色变化又算另一个属性空间。</p><p>本文使用的扰动是自然扰动，如图片尺寸和颜色的改变；缩放、旋转、腐蚀等。传统算法的扰动有时会不满足 $\Vert x-x’ \Vert \leq \epsilon$ 的限制，由于 $\epsilon$ 太大太小都不好，太小了没扰动效果，太大了图像会失真。但是本文的算法能有效的处理自然的扰动，使用 DNN 来生成扰（看后文的意思是，输入图像，输出对抗样本）。</p><p>这篇论文好多话写的我也不明所以，只能说大概流程是：前 N 个 epoch 训练干净样本，后面几个 epoch 训练对数据以迭代的形式进行扰动增强，而扰动增强这里我感觉很玄学。损失为最小化图像的分类损失、最大化干净样本与对抗样本在隐层的差异，通过 $L_2$ 范数限制扰动 $\alpha$ 的范围。</p><h1 id="advGAN"><a href="#advGAN" class="headerlink" title="advGAN"></a>advGAN</h1><p>Generating Adversarial Examples with Adversarial Networks，发表在 IJCAI 2018，使用 GAN 来生成对抗样本。</p><p>通过 GAN 来生成围绕着原始实例的高质量扰动来产生对抗样本，判别器来把关生成图像的质量。</p><p><img data-src="https://z3.ax1x.com/2021/09/08/hbA4bQ.png" alt></p><p>这个图已经把论文的含义表达的差不多了，思路也是简洁明了，输入原始图像，生成扰动并叠加至干净样本。和我最开始的构思一样，可惜被别人发表了。损失函数由三部分组成，一部分是对抗样本的分类损失，一部分是 GAN 的生成和判别损失，一部分是对抗扰动的范围损失，希望扰动范围越大越好。</p><h1 id="advGAN-1"><a href="#advGAN-1" class="headerlink" title="advGAN++"></a>advGAN++</h1><p>AdvGAN++ : Harnessing latent layers for adversary generation 发表在 ICCV 2019，是基于 advGAN 的改进，之前的 advGAN 是读取全部图像生成对抗扰动，这篇论文发现读取图像的隐层表示生成的对抗扰动会更好，就这样改进了一下。</p><p><img data-src="https://z3.ax1x.com/2021/09/08/hbEcdJ.png" alt></p><h1 id="RobGAN"><a href="#RobGAN" class="headerlink" title="RobGAN"></a>RobGAN</h1>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在做对抗训练的时候，我时常在想一个问题：PGD、CW 这些攻击算法都会设置迭代步长和阈值，如果模型固定、数据固定，那么每次生成的对抗样本也会是一样的。如果使用 min-max 的方式进行对抗训练，那么模型可能会只认识在某一设置下的数据，如果面对新的分布攻击样本，如 ZOO, UAP, Deepfool 等，岂不是不能很好耳朵防御？&lt;/p&gt;
+&lt;p&gt;这就又会回到小样本问题，总不能对所有的攻击算法都生成对抗样本来训练模型，而应该生成分布尽可能广泛的对抗样本来训练模型？既然提到生成，就不得不考虑 GAN，所以搜了些相关论文，并作整理。注意，所有论文我没看代码，所以不评价好与坏，在不久的将来，如果我要发论文，肯定还会做对比算法，到时候回来评价各个算法。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="DeepLearning" scheme="https://muyuuuu.github.io/tags/DeepLearning/"/>
+    
+  </entry>
+  
+  <entry>
     <title>神经网络常见问题</title>
     <link href="https://muyuuuu.github.io/2021/09/04/DNN-issue/"/>
     <id>https://muyuuuu.github.io/2021/09/04/DNN-issue/</id>
     <published>2021-09-04T12:36:07.000Z</published>
-    <updated>2021-09-04T12:43:35.038Z</updated>
+    <updated>2021-09-05T13:02:20.894Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。</p><a id="more"></a><ol><li>神经网络处理数据时不进行<a href="https://muyuuuu.github.io/2021/05/07/DNN-data-normal/">标准化</a>，准确率会下降很多；</li><li>神经网络的学习率至关重要，batch 大而学习率小，batch 小而学习率大，都会导致不收敛问题。此外，学习率衰减很重要，能有效提升<a href="https://github.com/bearpaw/pytorch-classification" target="_blank" rel="noopener">卡在瓶颈</a>中的神经网络的准确率。</li><li>复现去噪器时，噪音数据在损失函数<a href="https://github.com/muyuuuu/Paper-ReImplement/tree/main/ADP-ICML-2021" target="_blank" rel="noopener">内部生成</a>。如果在损失外部生成噪音并输入网络，会导致网络的误差恒定为噪音的方差。</li></ol><h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>本文持续整理中。</p>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。</p><p>比如：为何网络的误差一直是一个定值？为何同样的网络、同样的优化器和学习率，训练得到的准确率比别人低 20% ？</p><a id="more"></a><ol><li>神经网络处理数据时不进行<a href="https://muyuuuu.github.io/2021/05/07/DNN-data-normal/">标准化</a>，准确率会下降很多；</li><li>神经网络的学习率至关重要，batch 大而学习率小，batch 小而学习率大，都会导致不收敛问题。此外，学习率衰减很重要，能有效提升<a href="https://github.com/bearpaw/pytorch-classification" target="_blank" rel="noopener">卡在瓶颈</a>中的神经网络的准确率。</li><li>复现去噪器时，噪音数据在损失函数<a href="https://github.com/muyuuuu/Paper-ReImplement/tree/main/ADP-ICML-2021" target="_blank" rel="noopener">内部生成</a>。如果在损失外部生成噪音并输入网络，会导致网络的误差恒定为噪音的方差。</li></ol><h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>本文持续整理中。</p>]]></content>
     
     <summary type="html">
     
       &lt;p&gt;写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。&lt;/p&gt;
+&lt;p&gt;比如：为何网络的误差一直是一个定值？为何同样的网络、同样的优化器和学习率，训练得到的准确率比别人低 20% ？&lt;/p&gt;
     
     </summary>
     
@@ -119,9 +142,9 @@
     
     
     
-      <category term="C++" scheme="https://muyuuuu.github.io/tags/C/"/>
-    
       <category term="OS" scheme="https://muyuuuu.github.io/tags/OS/"/>
+    
+      <category term="C++" scheme="https://muyuuuu.github.io/tags/C/"/>
     
   </entry>
   
@@ -434,27 +457,6 @@
     <summary type="html">
     
       &lt;p&gt;论文好像是 2020 年底传到 arxiv &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="CV" scheme="https://muyuuuu.github.io/tags/CV/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>可变形卷积 DCN，从 V1 到 V2</title>
-    <link href="https://muyuuuu.github.io/2021/05/26/Deform-CNN/"/>
-    <id>https://muyuuuu.github.io/2021/05/26/Deform-CNN/</id>
-    <published>2021-05-26T12:42:34.000Z</published>
-    <updated>2021-05-27T17:17:54.000Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>之前了解到，可变形卷积 DCN（Deformable Convolutional Networks）是上分常用小技巧，所以把论文找来读了一下，V1 和 V2 两个版本都读了一下，个人感觉以及他人复现的结果显示 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> ，V1写的很好且够用，V2 写的实在是晕头转向。感觉还挺有创意，后期准备复现后，以后可能会用到。</p><a id="more"></a><h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>传统的 CNN 在建模时，几何变化能力受限，感受野都是规则的相邻矩形。于是，提出了可变形卷积，通过无监督的形式学习额外的偏移参数，加强模型的几何变换能力。也就是说，有了偏移参数，此时的卷积核读取的输入不再是规则的矩阵。且像传统 CNN 一样，支持端到端训练和反向传播，可以通过插拔的形式替换传统模型中的 CNN 。</p><ul><li>偏移参数是在输入的特征图上增加额外的网络分支，自己学出来的，所以这是一种自适应的方式</li><li>在 ROI 时，也可以学习这种偏移参数，自适应的定位到感兴趣区域</li><li>两者都是通过添加额外的网络分支实现的，但计算量不大</li></ul><p>其实这种形式挺重要的，尤其是算法部署到真实世界，是无法提前预知目标和图像的大小的。而如果模型有这种自适应感知目标区域大小和调节感受野的能力则再好不过。如下图所示，DCN 相比 CNN 而言，能更好的感知目标区域。</p><p><img data-src="https://z3.ax1x.com/2021/05/27/2P4Q1J.png" alt></p><h1 id="变形卷积算法"><a href="#变形卷积算法" class="headerlink" title="变形卷积算法"></a>变形卷积算法</h1><p>首先定义区域 $R$ 是输入特征图 $x$ 中的规则矩形，卷积核的权重是 $w$，区域 $R$ 中的元素的含义为横坐标的偏移与纵坐标的偏移量，所以可以通过 $R$ 了解到卷积核的大小和扩张大小。</p><p>\begin{equation}<br>R = \bigl( (-1, 1), (-1, 0), \cdots, (0,1), (1,1) \bigr)<br>\end{equation}</p><p>上面公式中，卷积核的大小就是 3，元素数量是 9，扩张大小为 1。以 $y$ 表示输出特征图，那么 $y$ 在 $p_0$ 位置的取值为 ：</p><p>\begin{equation}<br>y(p_0) = \sum_{p_n \in R} w(p_n) x (p_0 + p_n)<br>\label{traditional}<br>\end{equation}</p><p>$(p_0 + p_n)$ 的意思是偏移到目标像素 $p_n$，原文没有解释，我看了半天才看懂。这也就是传统的卷积。如果我们对 $R$ 中的每一个位置的元素都有一个通过神经网络学习得来的偏移量 $(\Delta p_n | n=1,\cdots,N)$，那么公式 $\eqref{traditional}$ 可以改写为：</p><p>\begin{equation}<br>y(p_0) = \sum_{p_n \in R} w(p_n) x (p_0 + p_n + \Delta p_n)<br>\end{equation}</p><p>此时的卷积可视化如下图中的 b c d 部分，a 是标准的卷积。</p><p><img data-src="https://z3.ax1x.com/2021/05/27/2Py8mD.png" alt></p><p>因为 $p_n + \Delta p_n$ 可能是一个小数，所以需要使用双线性插值来对坐标取整，用 $p$ 来表示 $p_0 + p_n + \Delta p_n$，公式如下：</p><p>\begin{equation}<br>x(p) = \sum_{q} G(q,p)x(q)<br>\end{equation}</p><p>$q$ 是输入特征图中的像素，其实只用到了和 $p$ 相邻的一部分。而 $G$ 是一个二维的双线性插值核函数，可以用两部分表示：</p><p>\begin{equation}<br>G(q,p) = g(q_x,p_x) \cdot g(q_y,p_y)<br>\end{equation}</p><p>其中，$g(a,b) = \max(0, 1- |a-b|)$，所以这里也能看出来，如果 $a,b$ 相差很大，取值会为 0，所以每次计算取 $q$ 时，其实只用到了和 $p$ 相邻的一部分。</p><h1 id="变形卷积训练流程"><a href="#变形卷积训练流程" class="headerlink" title="变形卷积训练流程"></a>变形卷积训练流程</h1><p><img data-src="https://z3.ax1x.com/2021/05/27/2Pg4jP.png" alt></p><p>如上图所示，假设 $R$ 中卷积核的元素数量是 $N$，比如 $3\times 3$ 卷积核的元素数量就是 9。那么就增加一个旁路卷积，这个卷积的通道数就是 $2N$，且卷积前后尺寸不变。这样做的原因是，计算 $x$ 方向和 $y$ 方向共两个方向的偏移量。取前两个通道，就是当前卷积核处理像素点的横坐标偏移和纵坐标偏移。</p><h1 id="变形-ROI-Pooling"><a href="#变形-ROI-Pooling" class="headerlink" title="变形 ROI Pooling"></a>变形 ROI Pooling</h1><p>其实道理也和上面一样了，假设此时在目标检测中将特征图 ROI pool 到 $k\times k$ 的矩阵中，以平均池化为例，输出 $y$ 中第 $(i,j)$ 个元素的取值就是</p><p>\begin{equation}<br>y(i,j)=\sum_{p\in bin(i,j)} x(p + p_0) / n_{ij}<br>\end{equation}</p><p>$bin$ 表示要被池化的区域，$n_{ij}$ 是对应区域中的像素点的数量。而此时，可以学习一个偏移量参数 $\Delta p_{ij}$，新的 ROI Pooling 公式就是</p><p>\begin{equation}<br>y(i,j)=\sum_{p\in bin(i,j)} x(p + p_0 + \Delta p_{ij}) / n_{ij}<br>\end{equation}</p><p>双线性取整部分就和之前的一样了。不过论文中注明了一点，网络学习到的是 $\Delta \hat{p}_{ij}$，如下图所示，使用全连接计算每个像素点的偏移量。</p><p><img data-src="https://z3.ax1x.com/2021/05/27/2PhOOI.png" alt></p><p>而 $\Delta p_{ij} = \gamma \cdot \Delta \hat{p}_{ij} \circ (w,h)$，$\gamma$ 的取值是 0.1，$(w,h)$ 是 ROI Pooling 之前的特征图的宽度和高度，$\circ$ 运算是什么，文中没有声明。</p><h1 id="V2"><a href="#V2" class="headerlink" title="V2"></a>V2</h1><p>DCN V2 看的我属实头晕，不过大体贡献还是能看清的，集中改进了两点：</p><ul><li>采样时，如果采到了背景区域，会对目标分类与检测造成影响，所以要抑制背景区域的贡献</li><li>训练一个教师网络，类似判别器，用于指导检测网络的检测，文中称为特征模仿（feature mimicking），没读懂这个和前文改进的联系，唯一的相似点是摘要中指出的：提高模型捕获特征的能力，但我感觉这里是重点</li></ul><p>以可变形卷积为例，原有 DCN 的输出通道是 $2N$，那么作者将输出通道改为 $2N+1$，最后一个维度用 sigmoid 激活到 (0, 1) ，表示为符号 $\Delta m_k$ ，含义为当前像素点的贡献程度，如果是背景噪音，那么贡献会趋于 0。所以此时可变形卷积的公式为：</p><p>\begin{equation}<br>y(p_0) = \sum_{p_n \in R} w(p_n) x (p_0 + p_n + \Delta p_n) \cdot \Delta m_k<br>\end{equation}</p><p>至于 ROI Pooling 也是一个道理了。</p><h2 id="特征模仿"><a href="#特征模仿" class="headerlink" title="特征模仿"></a>特征模仿</h2><p>而另一个创新点是特征模仿，在主干网络 RPN 后，将得到的题夷旷送到另一个 RCNN 分支，两个分支的输出的相似性做对比作为损失，相似度越高，损失越小，相似度越低，损失越大。相似度是用 $\cos$ 函数计算的。</p><ul><li>测试时，不适用右侧的 RCNN分支</li><li>两个分支的 bacbone 部分共享参数</li><li>三个损失一起反向传播</li></ul><p><img data-src="https://z3.ax1x.com/2021/05/27/2PTMUx.png" alt></p><h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;">https://github.com/open-mmlab/mmdetection/tree/master/configs/dcn</span><a href="#fnref:1" rev="footnote"> ↩</a></li></ol></div></div>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;之前了解到，可变形卷积 DCN（Deformable Convolutional Networks）是上分常用小技巧，所以把论文找来读了一下，V1 和 V2 两个版本都读了一下，个人感觉以及他人复现的结果显示 &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; ，V1写的很好且够用，V2 写的实在是晕头转向。感觉还挺有创意，后期准备复现后，以后可能会用到。&lt;/p&gt;
     
     </summary>
     
