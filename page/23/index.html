@@ -749,7 +749,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/18/rnn/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/18/rnn1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -763,7 +763,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/02/18/rnn/" class="post-title-link" itemprop="url">循环神经网络</a>
+            <a href="/2019/02/18/rnn1/" class="post-title-link" itemprop="url">循环神经网络的进化</a>
         </h2>
 
         <div class="post-meta">
@@ -780,7 +780,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-03-05 06:43:46" itemprop="dateModified" datetime="2019-03-05T06:43:46+08:00">2019-03-05</time>
+                <time title="修改时间：2019-03-05 06:42:58" itemprop="dateModified" datetime="2019-03-05T06:42:58+08:00">2019-03-05</time>
               </span>
 
           <br>
@@ -789,14 +789,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -808,14 +808,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>趁寒假看完了DeepLearning的前生今世之后，用了一个下午自己推导了一番，想来还是留下个电子版的整理，供他人交流和日后查阅。（其实是我纸质版整理的太丑了）。</p>
+          <p>感觉一篇博客写太长也不是很好，所以把RNN拆成了两部分，在描述了经典的RNN结构之后，再来看看为了满足实际应用，RNN结构所作出的变化和适应。</p>
 <p>本文收录内容：</p>
 <ul>
-<li>循环神经网络的基本概念</li>
-<li>循环网络的经典结构</li>
-<li>LSTM与GRU的keras实现，自行查阅keras文档喽</li>
+<li>双向循环神经网络</li>
+<li>深层的RNN模型</li>
+<li>序列化与注意力</li>
 </ul>
-<p>重点是对于这些概念的理解，尽力写下人能看懂的公式描述，知道在什么背景下调用和背后的数学观念就可以啦。</p>
+<p>还是在实际的背景下对于这些概念的理解，或者说是为了满足实际背景而产生了这些观念，学会变通和利用已有的知识进行问题转换。</p>
           <!--noindex-->
           <!--/noindex-->
         
