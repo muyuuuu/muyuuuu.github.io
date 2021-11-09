@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2021-09-24T07:29:53.099Z</updated>
+  <updated>2021-11-09T12:00:18.710Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://muyuuuu.github.io/2021/09/22/some-attack-methods/"/>
     <id>https://muyuuuu.github.io/2021/09/22/some-attack-methods/</id>
     <published>2021-09-22T07:15:31.000Z</published>
-    <updated>2021-09-24T07:29:53.099Z</updated>
+    <updated>2021-11-09T12:00:18.710Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，<del>早日毕业吧</del>。</p><a id="more"></a><h1 id="Natural-ADV"><a href="#Natural-ADV" class="headerlink" title="Natural ADV"></a>Natural ADV</h1><p>GENERATING NATURAL ADVERSARIAL EXAMPLES，发表在 ICLR 2018。众所周知，神经网络的输入层含有的信息和和隐层含有的信息是不同的，且常见攻击算法生成的对抗样本并不具有语义特征。所以这篇论文尝试生成 natural 的对抗样本。</p><p>与传统算法不同的是：传统算法在输入空间搜索对抗样本，而本文的算法尝试在隐空间进行搜索。即输入的为干净样本的分布 $P(x)$，搜索一个 $z^\star$，并通过生成器将其映射回 $x^\star$，并期望对抗样本是合法且和原始输入较为接近。</p><p>为了达到这个目标，作者选用 WGAN 作为生成器。首先训练一个 $G$，可以由 $z$ 生成 $x$；同时训练一个与 $G$ 相反的 $I$，由 $x$ 生成 $z$。通过最小化重构 $x$ 和 $z$ 与 $I(G(z))$ 的误差作为损失函数训练模型。</p><p><img data-src="https://z3.ax1x.com/2021/09/22/4US1kF.png" alt></p><p>之后便是对抗样本的生成方法，使用生成器来判断当前的噪音是否能欺骗分类器，即在 $f(G(z’)) \neq f(x)$ 的情况下，选择一个 $z’$，这个 $z’$ 和 $I(x)$ 最为接近，那么对抗样本就是 $x^\star=G(z’)$。那么问题来了，如何搜索 $z’$ 呢？论文提出了两种搜索算法，都是直接在干净样本对应的隐向量 $z$ 上增加扰动，如果扰动可以成功的攻击分类器，那么就认为搜索到了 $z’$。</p><p><img data-src="https://z3.ax1x.com/2021/09/22/4U9gdf.png" alt></p>]]></content>
     
@@ -163,9 +163,9 @@
     
     
     
-      <category term="C++" scheme="https://muyuuuu.github.io/tags/C/"/>
-    
       <category term="OS" scheme="https://muyuuuu.github.io/tags/OS/"/>
+    
+      <category term="C++" scheme="https://muyuuuu.github.io/tags/C/"/>
     
   </entry>
   
