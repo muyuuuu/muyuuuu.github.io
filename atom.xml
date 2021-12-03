@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2021-11-09T12:00:18.710Z</updated>
+  <updated>2021-12-03T15:50:27.727Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>工程开发经验总结：上</title>
+    <link href="https://muyuuuu.github.io/2021/12/03/project-experience-1/"/>
+    <id>https://muyuuuu.github.io/2021/12/03/project-experience-1/</id>
+    <published>2021-12-03T15:41:41.000Z</published>
+    <updated>2021-12-03T15:50:27.727Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>托更了俩个月，不知道是最近无事发生还是之前太能写了，这期间发生了很多事，现实与虚幻并存，度过目前的难关以后再慢慢吐槽吧。决定更新一篇工程开发经验的文章。</p><p>亿点点项目总结。大概是第一次接这么正规的项目，从代码要求、提交规范、开发流程、开发需求、测试流程到文档撰写，虽然其中有不尽人意的地方，但也算正规。按时间流程说吧。</p><a id="more"></a><h1 id="明确需求"><a href="#明确需求" class="headerlink" title="明确需求"></a>明确需求</h1><p>首先是明确需求，也就是说知道自己从开始到结束要干什么。开始很简单，配置环境，登陆远程服务期，clone 源代码；中间的过程由甲方提供，对我而言就是实现 <code>sspaddmm</code> 算子，并且通过单元测试和性能测试；在开发实现后，需要提交程序、撰写文档和完成适配，这也就是知道自己要干什么。</p><p>不尽人意的地方是：甲方说哪里不明白直接去 github new issue，我也照做了，可惜直到半个月后才回复我。反而直接微信找他聊天反馈更快，这样问题、分析和解答都是私有的，得不到积累和分享，不利于后来者的查阅以及项目的进展。</p><h1 id="开发流程"><a href="#开发流程" class="headerlink" title="开发流程"></a>开发流程</h1><p>这个对于乙方是重点，那么重点来谈一下。</p><h2 id="关于读文档"><a href="#关于读文档" class="headerlink" title="关于读文档"></a>关于读文档</h2><p>配置环境、clone 源代码就不用说了，都是基础操作。重点是开发，按着文档一步一步来，先写哪个文件，在写哪个文件，不得不说，甲方文档写的好丑。</p><p>如果期间遇到函数的疑问，可以翻阅文档，也可以查阅相关代码的 API，但是建议查阅代码的 API，为什么呢？文档不是更好吗？我遇到的情况并不是的，众所周知，代码的更新速度是要比文档更新速度快的，代码写完就可以提交，文档要等代码写完后才能写，甚至懒得写。程序员最讨厌的四件事：写文档、写注释、别人不写文档、别人不写注释。</p><p>这就导致了一个问题，文档滞后于程序，我就发现，文档的描述和程序的功能不符，这会造成一定的时间浪费，具体表现在：用户读文档，结果写到一半发现错了，需要重写；用户不读文档，直接读代码 API 的难度系数又可想而知。</p><p>尽管难度系数大，但也要能读代码，为什么呢？还是回到懒这一话题，工程中很多 API 并没有记录在文档中，换句话说，文档中没有描述的操作，工程含有的 API 也许支持。找到相关类的定义，可以粗糙的见名知意来了解函数的用途。这一流程的确帮了我一个大忙。简而言之：我在程序实现的时候必须新开辟空间，修改传入的指针指向的地址，程序结束后，指针还在那里，但不能指向实现中开辟的空间，因为变量是被封装的，不是修改指针指向那么简单。</p><p>困惑的时候，发现工程有 API 可以实现获取修改数据的地址，万事大吉。</p><h2 id="关于实现"><a href="#关于实现" class="headerlink" title="关于实现"></a>关于实现</h2><h3 id="关于参考"><a href="#关于参考" class="headerlink" title="关于参考"></a>关于参考</h3><p>而对于刚接手工程而言，以飞快的速度吃透原理、架构和各个类的各个功能是不现实的，毕竟代码过于庞大。那么这个时候就建议先看工程中有没有类似的实现，做一个参考。这会节省很多的时间，包括 API 阅读、实现逻辑和类设计这三个角度。</p><p>除此之外，还可以参考已有程序，避免造轮子。举个例子，<code>sspaddmm</code> 是要对标 <code>torch.sspaddmm</code> 的，那么就先可以参考 <code>torch.sspaddmm</code> 是如何实现的。借鉴前人千锤百炼的代码，我们能更好的出发。</p><h3 id="关于开发"><a href="#关于开发" class="headerlink" title="关于开发"></a>关于开发</h3><p>无论如何，都会回到具体的程序开发中。这个时候，我推荐的是<strong>迭代式开发</strong>，不要一次性做到尽善尽美，这样后面 debug 的压力会很大，没有任何一个程序员可以保证一次性写千行左右的程序而不报错，我自己说的。</p><p>这个时候写一个最小的程序版，感觉对即可。由于大型工程项目的编译和运行并不像平时点按钮就能运行那么简单。因此，在调试困难的情况下，写完最小程序版通过编译即可，不必关心程序运行结果的正确与否。与此同时，做好 <code>info</code> 的输出，也就是说，在执行各个子模块时，在前面加一句 <code>std::cout &lt;&lt; &quot;run module X&quot; &lt;&lt; std::endl</code>，这样方便定位程序哪里出了问题。</p><h2 id="关于测试"><a href="#关于测试" class="headerlink" title="关于测试"></a>关于测试</h2><h3 id="关于单元测试"><a href="#关于单元测试" class="headerlink" title="关于单元测试"></a>关于单元测试</h3><p>在开发中，由于我们没有保证程序的逻辑正确性，这一点在测试时完成。因为程序上线之前必须经过严格的测试，测试样例尽可能广泛、极端，保证程序的行覆盖率。生成测试样例和期望输出后，就可以对自己写的程序正确与否进行校对了。</p><p>如果不对，确切而言，99.99% 的情况都是不对的。我是通过缩小单元测试样例的数量和数据量，比如只有一个测试样例，这个测试样例的数据很小，毕竟通过常见用例再去测其他广泛的用例。在凭借 <code>std::cout</code> 一步一步的 debug 后，程序基本没问题了，其中的技术细节就不在这里详谈了，技术内容会单独写到其他文章中。这里需要注意的是，每次编译运行都比较耗时间，因此多加几个 <code>std::cout</code>，之加一个每次 debug 一小段，太浪费时间。</p><p>单元测试通过后，就可以进行编译部署，将自己的程序部署到工程中。这个时候，我不建议提交代码，因为性能测试还会发现程序的问题，程序还会面临修改，这是其一；其二是：有些人自以为是贪功冒进，写一点代码就提交，也不管正确与否，这样别人在 pull 时会拉取到错误的代码，编译时不会通过，这种行为令人做呕。</p><h3 id="关于性能测试"><a href="#关于性能测试" class="headerlink" title="关于性能测试"></a>关于性能测试</h3><p>性能测试就不多说了，生成不同批量大小的数据，测试执行时间，与甲方要求的性能进行对比即可。我当时在这里遇到了很多问题，具体来说一下：</p><p>首先是甲方工程的报错信息不够人性化，说不支持 int 类型，不支持 int 类型你咋不上天呢？后来发现，是性能测试配置文件中有的内容由脚本生成，有的内容直接写到配置文件中。由于数据量大，数据字段由脚本生成，类型字段我直接写到配置文件了，所以报一个「不支持 int 类型的错误」，我不理解。别问我是怎么发现这个错误的，呵呵。</p><p>之后发现性能测试报错，其报错信息提示「不支持输入类型」，我吐了，已经有了前车之鉴，我知道真正的错误不会是不支持数据类型，后来发现是：数据格式排列错误，比如 [2] 应该写成 [1, 2]，这些是小错误，可以通过阅读代码来解决。那么大错误呢？比如直接告诉我运行超时，但不可能是运行超时，如何解决？</p><p>一个万能的方案是，看日志。其实写到这里，虽然吐槽甲方程序的缺点，但是能把自定义类型、类的设计、架构设计、各种极端情况的应对 API、单元测试模块、性能测试模块、整合调用第三方库、报错信息和日志收集做的如此系统，虽然有瑕疵，但也可圈可点，这其中使用了多少设计模式，细思极恐。也不知道什么时候我才能有这么强的工程能力，成为一个工程的总设计师得多厉害。</p><p>回到看日志这一话题，我发现导致超时的原因是：core dumped，一个喜闻乐见的错误。再次回到实现部分的代码加上 <code>std::cout</code> 进行 debug。结果发现是开辟内存空间出错了，怀疑单元测试和性能测试用的链接库不是同一个。换成更加安全的内存开辟方法，bug 解决了。</p><p>但是发现性能比 <code>pytorch</code> 弱了不少，这个时候继续迭代开发。给程序增加多线程功能，读到这里，也许你就明白了：「为什么不要急着提交程序」，你以为的程序正确，但也只是你以为的，后期还有很大概率要完善和修改。修改完毕后，记得回头去测单元测试，修改代码后很可能无法通过单元测试。</p><p>增加多线程的时候，回顾操作系统，多线程访问变量的弊端，因此很轻松能确定什么时候加多线程，什么时候不加。至此，程序开发的东西告以段落，前前后后花费了大约 20 天的时间，也收获了不少东西，做此记录。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;托更了俩个月，不知道是最近无事发生还是之前太能写了，这期间发生了很多事，现实与虚幻并存，度过目前的难关以后再慢慢吐槽吧。决定更新一篇工程开发经验的文章。&lt;/p&gt;
+&lt;p&gt;亿点点项目总结。大概是第一次接这么正规的项目，从代码要求、提交规范、开发流程、开发需求、测试流程到文档撰写，虽然其中有不尽人意的地方，但也算正规。按时间流程说吧。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="Design" scheme="https://muyuuuu.github.io/tags/Design/"/>
+    
+  </entry>
   
   <entry>
     <title>一些攻击算法</title>
@@ -163,9 +185,9 @@
     
     
     
-      <category term="OS" scheme="https://muyuuuu.github.io/tags/OS/"/>
-    
       <category term="C++" scheme="https://muyuuuu.github.io/tags/C/"/>
+    
+      <category term="OS" scheme="https://muyuuuu.github.io/tags/OS/"/>
     
   </entry>
   
@@ -442,27 +464,6 @@
     
     
       <category term="DataStructure" scheme="https://muyuuuu.github.io/tags/DataStructure/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>对抗攻击篇：一些关于对抗补丁的论文</title>
-    <link href="https://muyuuuu.github.io/2021/06/13/adversial-patch/"/>
-    <id>https://muyuuuu.github.io/2021/06/13/adversial-patch/</id>
-    <published>2021-06-13T06:32:14.000Z</published>
-    <updated>2021-06-22T21:28:48.000Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>在对抗攻击中，有人尝试着去用对抗样本攻击目标检测的网络。但是，检测网络与分类网络不同，检测网络还有检测器，存在 RPN、ROI-Align 以及边界框回归器等。而分类接受的图像来自检测器的输出，并不是原始的输入。所以只在图片上产生细微的扰动很可能不起做作用 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>。所以衍生出了一些基于 patch （补丁）的攻击。</p><a id="more"></a><h1 id="Adversial-Patch"><a href="#Adversial-Patch" class="headerlink" title="Adversial Patch"></a>Adversial Patch</h1><p>这篇论文 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 是最开始的，创建一些通用的小 patch，可以放到任何场景下去干扰分类，使得网络忽略真实的物体，而输出诱导的错误分类。传统的对抗攻击，都是在输入上叠加一些微小的扰动，人眼察觉不出来的那种，但需要修改图像中的每一个像素，对于 $1000\times 1000$ 的像素点，需要操作一百万个像素点，在现实世界难以应用。</p><p>而本文中，不在满足这一约束，而是生成一个独立于任何场景（光照、角度）的 patch 放到图片的任何位置，相反，这个 patch 大于只有 $20\times 20$ 的大小，所以这个计算量是可以在现实世界应用的。这个 patch 很容易被网络看到，但仍然可以导致网络错误的输出。当 patch 使用了很大的扰动，传统的防御算法只能防御小扰动的样本，对大扰动的样本鲁棒性反而很差，毕竟数据分布不同。如下所示：</p><p><img data-src="https://z3.ax1x.com/2021/06/13/2IOvY4.png" alt></p><p>所以，这个补丁攻击的仍然是分类网络。</p><h2 id="训练方式"><a href="#训练方式" class="headerlink" title="训练方式"></a>训练方式</h2><p>在全部数据集上进行训练，对 patch 进行各种各样的转换、缩放、旋转，这个 patch 允许被设置为任何形状。对于给定图像 $x$，patch $p$，位置 $l$，变换 $t$，定义一个补丁操作 $A(p,x,l,t)$，将 $t$ 应用到 $p$ 上，在把 $p$ 放到 $x$ 的 $l$ 位置。</p><p>而 patch 是经过训练的，以诱导网络输出错误的标签 $\hat{y}$，这个训练过程为：</p><p>\begin{equation}<br>p = \arg \max_p \mathbb{E}_{x\sim X,t\sim T, l\sim L}[\log P(\hat{y}|A(p,x,l,t))]<br>\end{equation}</p><p>$X$ 是训练数据的分布，$T$ 是 patch 变换的分布，$L$ 是位置。通过这个公式，生成的 patch 会忽略背景，所以生成的 patch 通用性较强。而为了伪装 patch，使得最终的 patch 不太离谱，加入了一个限制 $|p-p_{orig}|_\inf &lt; \epsilon$。</p><h1 id="DPATCH"><a href="#DPATCH" class="headerlink" title="DPATCH"></a>DPATCH</h1><p>这个补丁 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> 就正儿八经的攻击目标检测的网络了。不同于上一个补丁只误导分类器，同时也攻击边界框回归器，以产生错误的定位。其实目标检测是很难攻击的，毕竟有很多 anchor 和候选框，样本不一定能被选中。攻击目标检测的网络时，与传统分类不同的是，需要定位到不同大小的目标及其位置。</p><p>在无目标攻击中，让检测器不能检测到物体的位置，所以最大化真实类别和边界框回归器的损失，这里的类别 $y$ 是背景类。也就是，通过放置补丁，让网络的将真实的目标视为背景。</p><p>\begin{equation}<br>P_u=\arg \max_P \mathbb{E} [L(A(x,s,P);y;B)]<br>\end{equation}</p><p>在有目标攻击中，目标是只能检测到 patch 而忽略其它真正的目标。所以需要最小化 patch 的类别损失和边界损失，类别是自己选择的误导类别。也就是，让网络将补丁视为目标。</p><p>\begin{equation}<br>P_t=\arg \min_P \mathbb{E} [L(A(x,s,P);y_t;B_t)]<br>\end{equation}</p><p>$A(x,s,P)$ 表示将补丁 $P$ 通过变换 $s$ 添加到图像 $x$ 上。在补丁进入网络前，首先先添加一个随机噪音，而后定义 patch 的边界框。训练流程如下：</p><p><img data-src="https://z3.ax1x.com/2021/06/13/2Ijf2j.png" alt></p><ul><li>为了分析不同位置下 DPATCH 的影响，随机对 DPATCH 的位置进行变换，而保持像素点数值不变，在每轮训练时候都随机初始化变换 $s$</li><li>为了分析不同类别下 DPATCH 的影响，将 DAPTCH 的类别都设置为人，随机指定了四个类别</li><li>为了分析不同大小的 DPATCH 的影响，所以做了一些实验，分别分析 20 40 80 大小的 DPATCH 对结果的影响</li></ul><p>实验结果大概证明了，DAPTCH 在可以出现在图片的任何位置，更大的 DAPTCH 攻击性更强。</p><p>DPATCH 起作用的原因：DPATCH 的攻击目标就是目标检测网络，使得 ROI 提取到的区域被 DPATCH 覆盖，所以提取到的 ROI 区域，将会忽略其它目标。如果攻击成功了，许多提取到的 ROI 应该会有 DPATCH 的存在。为此，统计每个区域被提取为 ROI 的次数，也发现那里正好是 DPATCH 出现的地方。故此验证了攻击成功的原因是：DPATCH 欺骗了检测器，使得 ROI 含有 DPATCH，而不是正常目标，如下图所示：</p><p><img data-src="https://z3.ax1x.com/2021/06/13/2IvWTK.png" alt></p><h1 id="物理世界的补丁"><a href="#物理世界的补丁" class="headerlink" title="物理世界的补丁"></a>物理世界的补丁</h1><p>这篇论文 <sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup> 做了一个演示<a href="https://youtu.be/WXnQjbZ1e7Y" target="_blank" rel="noopener">视频</a>。与之前不同的是，不需要 patch 放到图像上误导分类和检测，而是设计了一个 patch 抑制其它目标的表达。所以可以 patch 到任何地点甚至是远离目标的地点。而且不需要训练位置参数，且不需要修改场景中的目标。</p><p>本文构造一个物理上的 patch，放到图像中，抑制其它目标的表达。寻找与制作 patch 的方式也很简单：</p><p>\begin{equation}<br>\arg \max_{\delta} \mathbb{E}_{(x, y) \sim D, t\sim T} [L(h_\theta(A(\delta, x, t)), y)]<br>\end{equation}</p><p>其中 $\delta$ 是补丁，$D$ 是数据分布，$T$ 是变换分布，$A$ 是将补丁 $\delta$ 经过 $t$ 变换放到 $x$ 上。但是，对 $\delta$ 的最大期望可能会超出预期，所以不够通用。所以像 PGD 一样，让扰动朝着其它目标移动：</p><p>\begin{equation}<br>\delta := \delta - \alpha \nabla_\delta [L(h_\theta(A(\delta, x, t)), \hat{y})]<br>\end{equation}</p><p>但是事实证明这种做法很差。所以尝试最大化与真实目标的损失，不对补丁设置任何的边界框和目标类别，而是直接抑制检测的其它类别：</p><p>\begin{equation}<br>\delta := clip_{[0,1]} (\delta + \alpha \nabla_\delta [L(h_\theta(A(\delta, x, t)), y)])<br>\end{equation}</p><p>这种方法成功的原因和上述的 DPATCH 是一样的，提取到的 ROI 还有 PATCH。作者和 DPATCH 做了对比，分析 DPatch 之所以时好时差，是因为它将 patch 放到了 ground truth box 的周围，patch 最终驻留在一个单一的单元中。这意味着损失由『负责』该单元的 rpn 控制。只要补丁被识别，模型在预测所有其他对象时受到的惩罚就很小，且边界框或类标签上不会受到惩罚。所以在实践中，补丁经常被检测到，但是，<strong>并没有抑制其他目标被检测</strong>。反而言之，一旦 patch 没被检测到，网络还是能识别到目标。</p><p>而在本文的方法中，patch 可以置于任何位置，当 patch 与任何一个 ground truth box 重叠都会造成损失，也就是，当前目标检测失败。当模型不能预测任何 ground truth box 时，损失增加最多。</p><h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1712.02494" target="_blank" rel="noopener">为什么难以攻击目标检测网络</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1712.09665" target="_blank" rel="noopener">Adversial Patch</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1806.02299" target="_blank" rel="noopener">DPATCH</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1906.11897" target="_blank" rel="noopener">物理世界的补丁</a></span><a href="#fnref:4" rev="footnote"> ↩</a></li></ol></div></div>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在对抗攻击中，有人尝试着去用对抗样本攻击目标检测的网络。但是，检测网络与分类网络不同，检测网络还有检测器，存在 RPN、ROI-Align 以及边界框回归器等。而分类接受的图像来自检测器的输出，并不是原始的输入。所以只在图片上产生细微的扰动很可能不起做作用 &lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;。所以衍生出了一些基于 patch （补丁）的攻击。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="DeepLearning" scheme="https://muyuuuu.github.io/tags/DeepLearning/"/>
     
   </entry>
   
