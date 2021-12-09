@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="拖更了两个月，不知道是最近无事发生还是之前太能写了，这期间发生了很多事，现实与虚幻并存，度过目前的难关以后再慢慢吐槽吧。决定更新一篇工程开发经验的文章，无技术细节。 亿点点项目总结。大概是第一次接这么正规的项目，从代码要求、提交规范、开发流程、开发需求、测试流程到文档撰写，虽然其中有不尽人意的地方，但也算正规。按时间流程说吧。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-12-04T03:07:36.605Z">
+<meta property="og:updated_time" content="2021-12-09T11:47:30.523Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="工程开发经验总结：上">
 <meta name="twitter:description" content="拖更了两个月，不知道是最近无事发生还是之前太能写了，这期间发生了很多事，现实与虚幻并存，度过目前的难关以后再慢慢吐槽吧。决定更新一篇工程开发经验的文章，无技术细节。 亿点点项目总结。大概是第一次接这么正规的项目，从代码要求、提交规范、开发流程、开发需求、测试流程到文档撰写，虽然其中有不尽人意的地方，但也算正规。按时间流程说吧。">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-04 11:07:36" itemprop="dateModified" datetime="2021-12-04T11:07:36+08:00">2021-12-04</time>
+                <time title="修改时间：2021-12-09 19:47:30" itemprop="dateModified" datetime="2021-12-09T19:47:30+08:00">2021-12-09</time>
               </span>
 
           
@@ -316,7 +316,7 @@
 <p>一个万能的方案是，看日志。其实写到这里，虽然吐槽甲方程序的缺点，但是能把自定义类型、类的设计、架构设计、各种极端情况的应对 API、单元测试模块、性能测试模块、整合并调用第三方库、报错信息提示和日志收集做的如此系统，虽然有瑕疵，但也可圈可点，这其中使用了多少设计模式，细思极恐。也不知道什么时候我才能有这么强的工程能力，成为一个工程的总设计师得多厉害。</p>
 <p>回到看日志这一话题，我发现导致超时的原因是：core dumped，一个喜闻乐见的错误。再次回到实现部分的代码加上 <code>std::cout</code> 进行 debug。结果发现是开辟内存空间出错了，怀疑单元测试和性能测试用的链接库不是同一个。换成更加安全的内存开辟方法，bug 解决了。</p>
 <p>但是发现性能比 <code>pytorch</code> 弱了不少，这个时候继续迭代开发。给程序增加多线程功能，读到这里，也许你能更好的明白：「为什么不要急着提交程序」，你以为的程序正确，但也只是你以为的，后期还有很大概率要完善和修改。修改完毕后，记得回头去执行单元测试，因为修改代码后很可能导致单元测试无法通过。</p>
-<p>增加多线程的时候，回顾操作系统，多线程访问变量的弊端，因此很轻松能确定什么时候加多线程，什么时候不加。至此，程序开发的东西告以结束，性能比 <code>pytorch</code> 快了两倍。前前后后花费了大约 20 天的时间，也收获了不少东西，做此记录。</p>
+<p>增加多线程的时候，回顾操作系统，多线程访问变量的弊端，因此很轻松能确定什么时候加多线程，什么时候不加。因为只能使用被封装的多线程库，不能自己手写，所以有些地方不方便加锁。至此，程序开发的东西告以结束，性能比 <code>pytorch</code> 快了两倍。前前后后花费了大约 20 天的时间，也收获了不少东西，做此记录。</p>
 
     </div>
 
@@ -328,6 +328,9 @@
   <ul class="popular-posts">
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/03/26/cluster-monitor-and-taskAssignment/" rel="bookmark">集群资源监控与任务调度</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/12/09/project-experience-2/" rel="bookmark">工程开发经验总结：中</a></div>
     </li>
   </ul>
 
@@ -390,7 +393,10 @@
     <a href="/2021/09/22/some-attack-methods/" rel="prev" title="一些攻击算法">
       <i class="fa fa-chevron-left"></i> 一些攻击算法
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/09/project-experience-2/" rel="next" title="工程开发经验总结：中">
+      工程开发经验总结：中 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -466,7 +472,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">190</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -520,12 +526,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">762k</span>
+    <span title="站点总字数">764k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:33</span>
+    <span title="站点阅读时长">11:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
