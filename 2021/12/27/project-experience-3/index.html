@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="今天来写什么呢？准备整理一些多线程的东西，虽然多线程相对很熟悉了，可每次工程中都会有新的收获。这次不谈多线程的理论问题，毕竟计算机专业都懂多线程的理论并写过相关程序，也了解其使用的背景。之前使用多线程的时候，总是看一看加速比和结果是否准确就完了，那么这次以多线程使用者和多线程设计者的角度出发，来谈一谈如何更好的使用和设计多线程。">
+<meta name="keywords" content="Design">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工程开发经验总结三，以 sspaddmm 为例，再来谈一谈并行加速">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/12/27/project-experience-3/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="今天来写什么呢？准备整理一些多线程的东西，虽然多线程相对很熟悉了，可每次工程中都会有新的收获。这次不谈多线程的理论问题，毕竟计算机专业都懂多线程的理论并写过相关程序，也了解其使用的背景。之前使用多线程的时候，总是看一看加速比和结果是否准确就完了，那么这次以多线程使用者和多线程设计者的角度出发，来谈一谈如何更好的使用和设计多线程。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-12-27T15:15:35.225Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="工程开发经验总结三，以 sspaddmm 为例，再来谈一谈并行加速">
+<meta name="twitter:description" content="今天来写什么呢？准备整理一些多线程的东西，虽然多线程相对很熟悉了，可每次工程中都会有新的收获。这次不谈多线程的理论问题，毕竟计算机专业都懂多线程的理论并写过相关程序，也了解其使用的背景。之前使用多线程的时候，总是看一看加速比和结果是否准确就完了，那么这次以多线程使用者和多线程设计者的角度出发，来谈一谈如何更好的使用和设计多线程。">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2021/12/27/project-experience-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>工程开发经验总结三，以 sspaddmm 为例，再来谈一谈并行加速 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/12/27/project-experience-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工程开发经验总结三，以 sspaddmm 为例，再来谈一谈并行加速
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-12-27 23:07:29 / 修改时间：23:15:35" itemprop="dateCreated datePublished" datetime="2021-12-27T23:07:29+08:00">2021-12-27</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>今天来写什么呢？准备整理一些多线程的东西，虽然多线程相对很熟悉了，可每次工程中都会有新的收获。这次不谈多线程的理论问题，毕竟计算机专业都懂多线程的理论并写过相关程序，也了解其使用的背景。之前使用多线程的时候，总是看一看加速比和结果是否准确就完了，那么这次以多线程使用者和多线程设计者的角度出发，来谈一谈如何更好的使用和设计多线程。</p>
+<a id="more"></a>
+<h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>给定一个 2D 的稀疏矩阵，稀疏矩阵的采用 COO 格式的表示，如下图所示：</p>
+<p><img data-src="https://s4.ax1x.com/2021/12/27/Treg5d.png" alt></p>
+<p>稀疏矩阵由三部分组成，包括 <code>Indices, Values, Shapes</code>。具体而言，这是一个 100 X 100 的二维稀疏矩阵，索引的第一行表示行，第二行表示列，行列对应的索引处为具体的数值，初次之前全部是 0。比如，<code>sparse[1][0]=0.6</code>，注意：其中的索引是可以重复的，比如有两个 <code>[2,1]</code>。</p>
+<p>现在的问题是，稀疏矩阵乘以稠密矩阵，既然是矩阵乘法，很容易想到并行。不过在此之前，还是简单说一下矩阵乘法的流程：</p>
+<p>假设稀疏矩阵第 $r_1$ 行和第 $c_1$ 列的值为 $v_1$，假设稠密矩阵由 $C$ 列，那么乘法就是：将 $v_1$ 与稠密矩阵中第 $c_1$ 行对应的所有的列的值相乘，结果的索引是 $(r_1, 1), (r_1, 2), \cdots, (r_1, C)$。举个例子：</p>
+<p><img data-src="https://s4.ax1x.com/2021/12/27/TreoqS.png" alt></p>
+<p>如上的例子中，稀疏矩阵乘以稠密矩阵，将单个系数矩阵元素相乘的结果，直接以 <code>+=</code> 的形式放到对应的位置中，既然画图了，那么也就能看出来并行的点：</p>
+<ol>
+<li>方案 1：乘以稠密矩阵要遍历其所有的列，所以在取列的时候并行，这样不会有冲突</li>
+<li>方案 2：稀疏矩阵并行，以上图为例，直接拿那两个的稀疏矩阵的元素去乘以稠密矩阵的列。不过这里会有冲突，比如稀疏矩阵中有多个行相同的索引，比如上图的稀疏矩阵 <code>[1,0], [1, 2]</code> 这样的，在 <code>+=</code> 的时候不加锁，多线程会出问题。</li>
+</ol>
+<p>以下，<code>mat1</code> 表示稀疏矩阵，<code>mat2</code> 表示稠密矩阵，且 <code>sspaddmm</code> 函数<strong>要求返回稀疏矩阵</strong>而不是稠密矩阵，上面的图只是为了便于理解。此外，能使用的并行工具有限，这取决于所在的工程，这个没办法，有点戴着镣铐跳舞的意思，高中老师经常用戴着镣铐跳舞来 PUA 我们，即：你必须听话，在听话的范围内做到很好，不能越界。</p>
+<h2 id="并行-API"><a href="#并行-API" class="headerlink" title="并行 API"></a>并行 API</h2><p>API 是这样的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对矩阵中每个元素自增 10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 串行</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">  arr[i] += <span class="number">10</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> shared = [&amp;](uint start, uint end) &#123;</span><br><span class="line">  <span class="keyword">for</span> (uint i = start; i &lt; end; i++) &#123;</span><br><span class="line">  arr[i] += <span class="number">10</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">parallelfor(<span class="number">10000</span>, <span class="number">10000</span> / n_threads, shared);</span><br></pre></td></tr></table></figure>
+<p>其中 <code>parallelfor</code> 的第一个元素是任务总数，<code>n_threads</code> 是线程的数量，最后传入定义的匿名函数，在匿名函数中，默认从 0 开始，到任务总数结束，并划分对应的 <code>start</code> 和 <code>end</code> 区间，比如 1 到 5000 为一组，5000 到 10000 为另一组。</p>
+<h1 id="串行版本"><a href="#串行版本" class="headerlink" title="串行版本"></a>串行版本</h1><p>矩阵的串行乘法比较容易理解，写出串行程序来，也就知道了如何写并行程序。先遍历第一个矩阵，在遍历第二个矩阵，相乘即可：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> cnt&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mat1_nums; i++) &#123;</span><br><span class="line">  <span class="keyword">int</span> row1 = mat1_indices[i][<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">int</span> col1 = mat1_indices[i][<span class="number">1</span>];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; mat2_col; j++) &#123;</span><br><span class="line">  output_val[cnt] += mat1_val[i] * mat2_val[col1][j];</span><br><span class="line">  output_idx[cnt][<span class="number">0</span>] = row1;</span><br><span class="line">  output_idx[cnt][<span class="number">1</span>] = j;</span><br><span class="line">  cnt++;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="使用方案-1"><a href="#使用方案-1" class="headerlink" title="使用方案 1"></a>使用方案 1</h1><p>方案 1 的并行似乎很简单，可真的是这样吗？看上文的串行程序，我们发现做完一次乘法，就将结果直接写到 <code>output</code> 对应的地址中，写完一次，<code>cnt++</code>，为下一次写出数据做准备。那么问题来了，<code>parallelfor</code> 不提供锁，那么变量在没被保护的情况下的自增就会错误，如何解决呢？</p>
+<p>既然读写会出现错误，而多线程的读是没有问题的，那么就想办法去掉写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> cnt&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>, <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; idx_map_cnt;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mat1_nums; i++) &#123;</span><br><span class="line">  <span class="keyword">int</span> row1 = mat1_indices[i][<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; mat2_col; j++) &#123;</span><br><span class="line">  idx_map_cnt[row1][j] = cnt++;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mat1_nums; i++) &#123;</span><br><span class="line">  <span class="keyword">int</span> row1 = mat1_indices[i][<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">int</span> col1 = mat1_indices[i][<span class="number">1</span>];</span><br><span class="line">  <span class="keyword">auto</span> shared = [&amp;](uint start, uint end) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = start; j &lt; end; j++) &#123;</span><br><span class="line">    <span class="keyword">int</span> idx = idx_map_cnt[row1][j];</span><br><span class="line">    output_val[idx] += mat1_val[i] * mat2_val[col1][j];</span><br><span class="line">    output_idx[idx][<span class="number">0</span>] = row1;</span><br><span class="line">    output_idx[idx][<span class="number">1</span>] = j;</span><br><span class="line">  &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  parallelfor(<span class="number">10000</span>, <span class="number">10000</span>/n_threads, shared);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你看，在时间复杂度不变的情况下，借助一个额外的映射表就实现了并行，因为是针对 mat2 进行了并行，mat1 部分仍然是串行，也就是说，不会同时出现两个 <code>row1</code> 相等的情况，因此多线程中的 <code>+=</code> 是安全的。</p>
+<h1 id="使用方案-2"><a href="#使用方案-2" class="headerlink" title="使用方案 2"></a>使用方案 2</h1><p>如果明白了方案 1 的并行思路，那么问题又来了，假设 mat1 有 2000 个元素，mat2 的列也是 20，那么此时我们应该针对 mat1 进行并行，而不是 mat2。但是 mat1 并行会出乱子，因为使用多线程访问上述程序中的 <code>row1</code>，可能会用重复的结果，那么多线程中的 <code>+=</code> 就是不安全的。如何解决呢？反而言之，多线程访问 mat1，如何保证每个线程拿到的 <code>row1</code> 是不一样的。我和师弟提出了两种思路：</p>
+<ol>
+<li>先来看思路 1。设计一个数据结构，这个数据结构每次从 mat1_indices 中抽取出不重复的行，因为行是不同的，那么这样就可以并行了。举个例子，mat1 中的行是 <code>[1, 2, 1, 2, 3, 4, 5, 5, 6, 7]</code>，那么我第一次选择 <code>[1, 2, 3, 4, 5, 6, 7]</code> 去并行，第二次选择 <code>[1, 2, 5]</code> 去运算，每次选择的元素不会有重复，这样多线程的 <code>+=</code> 就安全了。可视化一下这样的结构：</li>
+</ol>
+<p><img data-src="https://s4.ax1x.com/2021/12/27/Trm9ZF.png" alt></p>
+<p>来看如何实现这样的数据结构，也就是下文中的 <code>unrepeated</code>，因为映射的 <code>key</code> 是唯一的，所以使用 <code>key</code> 来记录不同的索引，选择的时候，也是选择其中的 <code>key</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; unrepeated;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int64_t</span> i = <span class="number">0</span>; i &lt; mat1_num; i++) &#123;</span><br><span class="line">  <span class="keyword">int</span> _row = mat1_indices[i][<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">int</span> _col = mat1_indices[i][<span class="number">1</span>];</span><br><span class="line">  unrepeated[_row].push_back(_col);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; res;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; tmp</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (unrepeated.size()) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> it = unrepeated.begin(); it != unrepeated.end(); it++) &#123;</span><br><span class="line">  <span class="keyword">if</span> (unrepeated[it-&gt;first].size() == <span class="number">1</span>) &#123;</span><br><span class="line">    res.push_back(&#123;it-&gt;first, it-&gt;second.back()&#125;);</span><br><span class="line">    tmp.push_back(it-&gt;first);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    res.push_back(&#123;it-&gt;first, it-&gt;second.back()&#125;);</span><br><span class="line">    it-&gt;second.pop_back();</span><br><span class="line">  &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> i : tmp) &#123;</span><br><span class="line">  unrepeated.erase(i);</span><br><span class="line">  &#125;</span><br><span class="line">  tmp.clear();</span><br><span class="line">  <span class="keyword">int</span> n = res.size();</span><br><span class="line">  <span class="keyword">auto</span> shared = [&amp;](uint start, uint end) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">    <span class="keyword">int</span> row1 = res[i][<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> col1 = res[i][<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &gt; mat2_col; j++) &#123;</span><br><span class="line">    <span class="keyword">int</span> idx = idx_map_cnt[row1][j];</span><br><span class="line">    output_val[idx] += mat1_val[i] * mat2_val[col1][j];</span><br><span class="line">    output_idx[idx][<span class="number">0</span>] = row1;</span><br><span class="line">    output_idx[idx][<span class="number">1</span>] = j;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  parallelfor(res.size(), res.size()/n_threads, shared);</span><br><span class="line">  res.clear();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有没有发现问题？我猜一定没有，因为不会有人盯着一段非必须的程序仔细的看。还是直接说把，上述程序中的 <code>mat1_val[i]</code> 不是合法的，因为并行化以后，我们期望拿到索引对应的数值，i 对应的是 <code>res.size()</code> 的某个元素，而不是 <code>mat1_values</code> 的第 i 个数值。怎么办呢？再加一个映射呗，把索引映射为数值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>, <span class="built_in">std</span>::<span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&gt; co_map_idx;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int64_t</span> i = <span class="number">0</span>; i &lt; mat1_vals_num; i++) &#123;</span><br><span class="line">  <span class="keyword">int</span> _row = mat1_indices[i][<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">int</span> _col = mat1_indices[i][<span class="number">1</span>];</span><br><span class="line">  unrepeated[_row].push_back(_col);</span><br><span class="line">  co_map_idx[_row][_col].push_back(mat1_val_addr[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> shared = [&amp;](uint start, uint end) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">  <span class="keyword">int</span> row1 = res[i][<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">int</span> col1 = res[i][<span class="number">1</span>];</span><br><span class="line">  <span class="keyword">double</span> val = co_map_idx[row_mat1][row_mat2].back();</span><br><span class="line">  co_map_idx[row_mat1][row_mat2].pop_back();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &gt; mat2_col; j++) &#123;</span><br><span class="line">    <span class="keyword">int</span> idx = idx_map_cnt[row1][j];</span><br><span class="line">    output_val[idx] += val * mat2_val[col1][j];</span><br><span class="line">    output_idx[idx][<span class="number">0</span>] = row1;</span><br><span class="line">    output_idx[idx][<span class="number">1</span>] = j;</span><br><span class="line">  &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>但是根据实际运行的结果来看中，这是一种很烂的方案，每次都要选择不重复元素、清空和删除，这会带来不必要的开销，时间会很慢。那么再来看二种并行思路：我们已经有了 <code>unrepeated</code> 这样的数据结构，那么直接对 <code>unrepeated</code> 直接分组不是更好吗？</p>
+<p><img data-src="https://s4.ax1x.com/2021/12/27/TrmesK.png" alt></p>
+<p>直接对 <code>unrepeated</code> 的 <code>key</code> 进行分组计算，这样就不会出现重复的 <code>key</code>，不过为了拿到不同的 <code>key</code>，仍然需要一些预处理。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> it = unrepeated.begin(); it != unrepeated.end(); it++)</span><br><span class="line">  res.push_back(it-&gt;first)</span><br><span class="line"><span class="keyword">auto</span> multi = [&amp;](<span class="keyword">uint32_t</span> start, <span class="keyword">uint32_t</span> end) &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">uint32_t</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">  <span class="comment">// get val</span></span><br><span class="line">    <span class="keyword">auto</span> row_mat1 = res[i];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> row_mat2 : unrepeated[row_mat1]) &#123;</span><br><span class="line">        <span class="keyword">double</span> val = co_map_idx[row_mat1][row_mat2].back();</span><br><span class="line">        co_map_idx[row_mat1][row_mat2].pop_back();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">uint32_t</span> j = <span class="number">0</span>; j &lt; mat2_col; j++) &#123;</span><br><span class="line">            <span class="comment">// get val</span></span><br><span class="line">        <span class="keyword">uint32_t</span> idx = idx_map_cnt[row_mat1][j];</span><br><span class="line">        *(out_val_addr + idx) +=</span><br><span class="line">        val * mat2_val_addr[row_mat2 * mat2_col + j];</span><br><span class="line">        out_idx_addr[idx] = row_mat1;</span><br><span class="line">        out_idx_addr[idx + out_num] = j;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>看，方法总比困难多，问题被完美解决。在这之后，我尝试了各种并行方案，以及双重并行，上述代码是性能最好的一个，但性能与其他库比仍然查了很多。为什么呢？来分析原因。当矩阵规模很小的时候会执行串行乘法，而串行乘法的效率会远远好于其他库，这就说明乘法的思路没问题，我觉得是并行 <code>API</code> 设计的不够好，它只支持一维的并行，且不支持额外的自定义，这就导致了这个接口的应用受限，甚至为了使用这个 API 还要执行很多其他的辅助。如果一定要在矩阵乘法中套两次并行，效率会极度低下。</p>
+<h1 id="如何设计多线程-API？"><a href="#如何设计多线程-API？" class="headerlink" title="如何设计多线程 API？"></a>如何设计多线程 API？</h1><p>既然 <code>parallelfor</code> 这么难用，那如果我们是工程师，该如何设计这个接口呢？首先我们要知道，多线程的使用场景多种多样变化无穷，以计算为例，可以以行为单位进行并行，也可以以列为单位，甚至可以以数据块为单位。我想了很久，并没有想出一个很好的方案。也许，我要是能想出来，甲方也不至于提供 <code>parallelfor</code> 这样的 API 。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/03/26/cluster-monitor-and-taskAssignment/" rel="bookmark">集群资源监控与任务调度</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/12/03/project-experience-1/" rel="bookmark">工程开发经验总结一，如何参与开发？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/12/09/project-experience-2/" rel="bookmark">工程开发经验总结二，如果我是甲方，该如何外包？</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Design/" rel="tag"># Design</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/09/project-experience-2/" rel="prev" title="工程开发经验总结二，如果我是甲方，该如何外包？">
+      <i class="fa fa-chevron-left"></i> 工程开发经验总结二，如果我是甲方，该如何外包？
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并行-API"><span class="nav-number">1.1.</span> <span class="nav-text">并行 API</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#串行版本"><span class="nav-number">2.</span> <span class="nav-text">串行版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用方案-1"><span class="nav-number">3.</span> <span class="nav-text">使用方案 1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用方案-2"><span class="nav-number">4.</span> <span class="nav-text">使用方案 2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何设计多线程-API？"><span class="nav-number">5.</span> <span class="nav-text">如何设计多线程 API？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">192</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">771k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">11:41</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '822870fac6cc9c4a0eb801d9fbdbd579',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
