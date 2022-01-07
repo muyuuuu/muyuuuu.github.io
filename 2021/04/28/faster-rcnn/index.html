@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-25T17:40:34.000Z">
+<meta property="og:updated_time" content="2022-01-03T12:02:52.445Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="目标检测篇：Faster R-CNN 系列">
 <meta name="twitter:description" content="又来开计算机视觉的坑了，这次一定做好整理和记录，包括算法内容和程序。做好训练、保存和推理的框架，下次需要的时候直接用。做目标检测的东西，于是决定从 Fast R-CNN 重头来过了。其中，Fast R-CNN 只有理论，Faster-RCNN 部分含有代码，不过会在下一篇博客了。 既然是目标检测，就需要做两件事情，目标在哪，目标是什么。对于目标在哪的问题，可以让网络生成一个目标框，目标框有四部分组">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-26 01:40:34" itemprop="dateModified" datetime="2021-05-26T01:40:34+08:00">2021-05-26</time>
+                <time title="修改时间：2022-01-03 20:02:52" itemprop="dateModified" datetime="2022-01-03T20:02:52+08:00">2022-01-03</time>
               </span>
 
           
@@ -273,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.3k</span>
+              <span>6.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -330,7 +330,7 @@
 <p>\begin{equation}<br>L = L_1 + \lambda[\mu\geq 1]L_2<br>\end{equation}</p>
 <p>$[u\geq 1]$ 表示爱佛森括号，意思是，当 $u\geq 1$ 时，$[u\geq 1] = 1$，否则 $[u\geq 1] = 0$；$u=0$时，表示当前是背景，背景是没有边界框的，也就没有边界框回归损失这一项。$\lambda$ 是权重。好滴，Fast R-CNN 记录完毕。Faster RCNN 就相对简单点了，只是在 Fast R-CNN 的基础上使用 RPN 替换了 SS 算法。</p>
 <h1 id="Faster-RCNN"><a href="#Faster-RCNN" class="headerlink" title="Faster-RCNN"></a>Faster-RCNN</h1><p>Faster-RCNN = Fast R-CNN + RPN<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup> 结构，用 RPN 生成特征候选框，将生成的候选框投影到特征图上得到特征矩阵，即代替了之前的 SS 操作，也就是，让 RPN 网络自己去寻找哪里可能有目标。</p>
-<p>RPN 网络，输入为 backbone 后的 features map，用于生成 region proposal，该层为 features map 上每个像素生成若干个 anchors（9个），随后通过 softmax 判断每个 anchor 是属于 foreground（目标）或者 background（背景），再利用边界框回归器修正 anchors 获得精确的 proposal 位置。</p>
+<p>RPN 网络，输入为 backbone 后的 features map，用于生成 region proposal，在 features map 上每个像素生成若干个 anchors（比如9个），随后通过 softmax 判断每个 anchor 是属于 foreground（目标）或者 background（背景），再利用边界框回归器修正，获得精确的 proposal 位置。（anchors 是固定的，全程不动）。</p>
 <p>而后，Roi Pooling 层则利用 RPN 提供的 proposals 以及 backbone 后的 feature maps，提取 proposal feature 送入后续全连接网络，再之后的操作和 Fast R-CNN 就一样了。所以重点来看 RPN，网络结构如下。</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/28/gif0ER.png" alt></p>
 <h2 id="RPN-网络"><a href="#RPN-网络" class="headerlink" title="RPN 网络"></a>RPN 网络</h2><p>在 backbone 得到特征图后，使用一个卷积核继续提纯，在 features map 上进行滑动，且通过 padding 保证滑动前的特征矩阵和滑动后的特征矩阵尺寸一致。每滑动到一个位置就生成一个一维向量，图中 256 的意思是 channel，所以单个卷积核会生成一个一维向量。</p>
@@ -363,6 +363,26 @@
 </li>
 <li>近似联合训练，RPN 和 Fast R-CNN 整合到一个网络里一起训练。前向传递生成 region proposal，在训练 Fast R-CNN 检测器将这看作是固定的、预计算的 proposal。反向传播像往常一样进行，其中对于共享层，组合来自 RPN 损失和 Fast R-CNN 损失的反向传播信号。这个解决方案很容易实现。但是这个解决方案忽略了关于 proposal 边界框的坐标的导数，因此是近似的。由 RPN 预测的边界框也是输入的参数，Fast R-CNN 中的 RoI 池化层接受卷积特征以及预测的边界框作为输入，所以理论上有效的反向传播求解器也应该包括关于边界框坐标的梯度。在上述近似联合训练中，这些梯度被忽略。</li>
 </ul>
+<h1 id="Faster-RCNN-源码阅读"><a href="#Faster-RCNN-源码阅读" class="headerlink" title="Faster RCNN 源码阅读"></a>Faster RCNN 源码阅读</h1><h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>不读代码 <sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup> 怎么能说自己学会了呢。读代码建议读别人注释好的，用代码建议用经得住时间检验的，比如 torch 或 mmdetection。</p>
+<p>首先是模型的 backbone，这个没啥好说的，就是把 resnet 这样的网络筛掉最后一个分类层就得到了 backbone。之后模型就剩下 RPN 和 Head 两部分了，先来看 RPN。</p>
+<p>RPN 由两部分组成，一部分是卷积之类的网络模型，一部分是 anchor 相关的东西。</p>
+<ol>
+<li>首先生成不同大小不同比例的 anchor，比如 3 种大小，3种比例，那么 anchor 的大小就是 $9\times 4$。 </li>
+<li>之后是卷积模型，conv1 对特征图进行卷积，产生输出。loc 对输出进行卷积，得到位置参数，$9\times 4$ 大小的输出，9 是 anchors 的数量，4 表示 4 个位置参数。score 对输出进行卷积，得到 $9\times 2$ 大小的输出，因为只有前景和背景两个类。</li>
+<li>最后是 proposal_layer，这个不是神经网络，只是单纯的选择 roi 区域，如何选择呢？生成布满特征图的 anchor,大概一万多个，然后遍历 RPN 的每一个输出（位置和分数）：基于 anchor 和 loc 生成候选框，参考公式 1。筛选掉溢出图像的候选框，过滤掉很小的候选框，选择出的分较高的候选框，在进行 nms 抑制，得到最终的候选框。</li>
+</ol>
+<p>Head 由两部分组成，一个是 ROI-Pooling，另一个是网络，输出分数和定位。将 RPN 得到的 roi 区域映射到特征图上，然后对他也征途进行 ROI-Pooling，取出对应的 roi，将 Pooling 后的结果送入后面的网络，计算位置和的分就可以了。</p>
+<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>对于图片 RPN 生成的每一个候选区域，选出正负样本：</p>
+<ol>
+<li>计算 RPN 阶段生成的那一万多个 anchor 与真实目标框的 iou，选出与 anchor iou 最大的真实框 $a$、iou 值，在选择与每个真实框 iou 最大的 anchor $b$。然后遍历 $b$，将 $a$ 对应的 anchor 设置为 $b$，这样，至少保证每个真实框都存在对应的 anchor。</li>
+<li>iou 小于阈值的设为负样本，大于阈值的设为正样本。</li>
+<li>选择对应样本的盒子，并计算这个盒子对应 anchor 的偏移量，用于预测。</li>
+<li>计算 RPN 的定位损失，筛选出正样本，计算位置损失；计算分类损失，单纯的判断有无目标。</li>
+<li>将 RPN 得到的 roi 计算与真实框的 iou，选择与 roi 最对应的真实框，根据 iou 筛选正负样本</li>
+<li>将保留下来的 roi 和 backbone 抽取的特征送入 Head，计算定位损失和分类损失</li>
+</ol>
+<h2 id="预测阶段"><a href="#预测阶段" class="headerlink" title="预测阶段"></a>预测阶段</h2><p>在得到网络的检测结果后，返回 Head 检测的框、得分以及 RPN 的检测框，利用classifier网络的预测结果对建议框进行调整获得预测框，将框归一化到 0-1 之间，筛选出分类概率大于阈值的框并进行非极大值抑制，得到最终的预测结果。</p>
+<p>不得不说，代码量是真的大，如非必要场景，还是用别人写好的吧。</p>
 <h1 id="扩展到-Cascade-RCNN"><a href="#扩展到-Cascade-RCNN" class="headerlink" title="扩展到 Cascade RCNN"></a>扩展到 Cascade RCNN</h1><p>至于经常听闻的 Cascade RCNN，只是 Faster RCNN 的一个变体，只是在 ROI head 预测部分增加了几个串联的网络，IOU 逐步提升，从不太 mismatch 的 0.5 开始，逐步提升目标框的质量。</p>
 <ol>
 <li>detector 在训练阶段和推理阶段面对的数据分布是不一样的，训练阶段 proposal 都是经过 IOU 采样的，正样本含有目标；推理阶段不知道哪个 proposal 为正样本，只能认为所有 proposal 都是正样本，但这样得到的 proposal 的 IOU 都很低，所以推理结果不太好；</li>
@@ -376,7 +396,7 @@
 <li><a href="https://zhuanlan.zhihu.com/p/42553957" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/42553957</a></li>
 <li><a href="https://linzhenyuyuchen.github.io/2019/12/05/Cascade-R-CNN/" target="_blank" rel="noopener">https://linzhenyuyuchen.github.io/2019/12/05/Cascade-R-CNN/</a> （个人认为写的最好）</li>
 </ol>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast R-CNN</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></span><a href="#fnref:4" rev="footnote"> ↩</a></li></ol></div></div>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://zhuanlan.zhihu.com/p/39927488" target="_blank" rel="noopener">selective search 算法</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/pdf/1504.08083.pdf" target="_blank" rel="noopener">Fast R-CNN</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">交叉熵损失</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1506.01497" target="_blank" rel="noopener">Faster RCNN</a></span><a href="#fnref:4" rev="footnote"> ↩</a></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/bubbliiiing/faster-rcnn-pytorch" target="_blank" rel="noopener">pytorch 代码</a></span><a href="#fnref:5" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
     
@@ -389,10 +409,10 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇：开山之作 FCN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇：开山之作 FCN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
@@ -524,7 +544,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fast-R-CNN"><span class="nav-number">1.</span> <span class="nav-text">Fast R-CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">1.1.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正样本与负样本"><span class="nav-number">1.1.1.</span> <span class="nav-text">正样本与负样本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROI-pooling"><span class="nav-number">1.1.2.</span> <span class="nav-text">ROI-pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预测输出与反向传播"><span class="nav-number">1.1.3.</span> <span class="nav-text">预测输出与反向传播</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Faster-RCNN"><span class="nav-number">2.</span> <span class="nav-text">Faster-RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-网络"><span class="nav-number">2.1.</span> <span class="nav-text">RPN 网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#anchor-box"><span class="nav-number">2.2.</span> <span class="nav-text">anchor box</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正负样本"><span class="nav-number">2.3.</span> <span class="nav-text">正负样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-损失函数"><span class="nav-number">2.4.</span> <span class="nav-text">RPN 损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster-RCNN-1"><span class="nav-number">2.5.</span> <span class="nav-text">Faster-RCNN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展到-Cascade-RCNN"><span class="nav-number">3.</span> <span class="nav-text">扩展到 Cascade RCNN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fast-R-CNN"><span class="nav-number">1.</span> <span class="nav-text">Fast R-CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">1.1.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正样本与负样本"><span class="nav-number">1.1.1.</span> <span class="nav-text">正样本与负样本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROI-pooling"><span class="nav-number">1.1.2.</span> <span class="nav-text">ROI-pooling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预测输出与反向传播"><span class="nav-number">1.1.3.</span> <span class="nav-text">预测输出与反向传播</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Faster-RCNN"><span class="nav-number">2.</span> <span class="nav-text">Faster-RCNN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-网络"><span class="nav-number">2.1.</span> <span class="nav-text">RPN 网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#anchor-box"><span class="nav-number">2.2.</span> <span class="nav-text">anchor box</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正负样本"><span class="nav-number">2.3.</span> <span class="nav-text">正负样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPN-损失函数"><span class="nav-number">2.4.</span> <span class="nav-text">RPN 损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster-RCNN-1"><span class="nav-number">2.5.</span> <span class="nav-text">Faster-RCNN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Faster-RCNN-源码阅读"><span class="nav-number">3.</span> <span class="nav-text">Faster RCNN 源码阅读</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络结构"><span class="nav-number">3.1.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数"><span class="nav-number">3.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预测阶段"><span class="nav-number">3.3.</span> <span class="nav-text">预测阶段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展到-Cascade-RCNN"><span class="nav-number">4.</span> <span class="nav-text">扩展到 Cascade RCNN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -585,7 +605,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="user"></i>
   </span>
@@ -594,12 +614,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">775k</span>
+    <span title="站点总字数">776k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:44</span>
+    <span title="站点阅读时长">11:45</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
