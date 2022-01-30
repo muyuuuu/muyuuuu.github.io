@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://muyuuuu.github.io/"/>
-  <updated>2022-01-03T08:45:41.381Z</updated>
+  <updated>2022-01-30T12:21:34.647Z</updated>
   <id>https://muyuuuu.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>半监督浅显入门</title>
+    <link href="https://muyuuuu.github.io/2022/01/30/semi-intro/"/>
+    <id>https://muyuuuu.github.io/2022/01/30/semi-intro/</id>
+    <published>2022-01-30T12:15:16.000Z</published>
+    <updated>2022-01-30T12:21:34.647Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>寒假开始前还是把在学校里遗留的工作先搞完，所接项目的目标是实现半监督语义分割。既然是半监督，就先来看一下半监督的经典论文，我选了经典的、结构相似的三篇论文。</p><p>第一篇是：NIPS 2017 的 Mean teachers are better role models: Weight-averaged consistency targets improve semi-supervised deep learning results，因为我发现伪标签相关的论文或多或少有它的影子。</p><p>第二篇是：ICCV 2021 的 End-to-End Semi-Supervised Object Detection with Soft Teacher，微软出品的半监督目标检测，质量上还是比较让人相信的，且语义分割也可以借鉴目标检测的东西。</p><p>第三篇是：ECCV 2021 的 Semi-supervised Semantic Segmentation via Strong-weak Dual-branch Network，因为搜半监督语义分割，最新的进展论文就是它了。</p><p>文章最后有代码实现。<del>才发现好久没更新博客了。</del></p><a id="more"></a><h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>因为现实世界标注数据比较昂贵，但无标注的数据很容易获得，那么基于少量标注数据和大量无标注数据的训练，也就是半监督训练也成为了研究的热门。简单来说，半监督分为两类：</p><ul><li>伪标签，用有标签数据训练一个分类器，然后用这个分类器对无标签数据进行分类，这样就会产生伪标签(<code>pseudo label</code>)，挑选其中认为分类正确的无标签样本，把选出来的无标签样本用来训练分类器，这样就使用了无标签数据。</li><li>协同训练，假设每个数据可以从不同的视角（对应到 <code>torch</code> 的话，就是不同的 <code>torchvision.transform</code>）进行分类。不同视角可以训练出不同的分类器，分类器对不同视角的图片分类结果应该相同。然后用这些从不同视角训练出来的分类器对无标签样本进行分类，再选出认为可信的无标签样本加入训练集中。由于这些分类器从不同视角训练出来的，可以形成一种互补，而提高分类精度，就如同从不同视角可以更好地理解事物一样。</li></ul><h1 id="半监督图像分类"><a href="#半监督图像分类" class="headerlink" title="半监督图像分类"></a>半监督图像分类</h1><p>这篇论文还是很简单的：</p><p><img data-src="https://s4.ax1x.com/2022/01/30/HC2TpQ.png" alt></p><p>但论文中的训练过程写的不是很清楚，看了<a href="https://github.com/CuriousAI/mean-teacher/tree/546348ff863c998c26be4339021425df973b4a36/pytorch" target="_blank" rel="noopener">代码</a>了解了完整的训练流程：</p><ul><li>有标签输入学生的预测输出和 <code>one-hot label</code> 进行对比，这个是分类损失；和教师的输出使用 <code>consistency cost</code> 进行对比，论文中用的是两个模型输出的二阶范数，代码提供了 <code>mse</code> 和 <code>kl</code> 散度两个损失。第二个 <code>loss</code> 根据 <code>epoch</code> 调整权重，<code>epoch</code> 越大，权重越大。</li><li>两个权重相加，反向传播更新学生的模型，<code>exponential moving average (EMA)</code> 更新教师模型，能在每个 <code>batch</code> 后聚合信息而不是每个 <code>epoch</code> 后才聚合信息，这样能获取更好的表示。</li><li>最后使用教师模型进行预测。</li></ul><p>至于<a href="https://github.com/CuriousAI/mean-teacher/blob/546348ff863c998c26be4339021425df973b4a36/pytorch/mean_teacher/data.py#L72-L79" target="_blank" rel="noopener">无标签数据部分</a>，就是一批数据作两次变换，第一组视为有标签，第二组数视为无标签。</p><p>这篇论文的思想可以总结为：作为教师，用来产生学生学习时的目标；作为学生，则利用教师模型产生的目标来进行学习。</p><h1 id="半监督目标检测"><a href="#半监督目标检测" class="headerlink" title="半监督目标检测"></a>半监督目标检测</h1><p>如果说分类图像的数据难以标注，那么目标检测的数据更加难以标注。</p><p>半监督目标检测的重点是：提升伪标签质量，伪标签质量好了也利于后续的训练。传统的半监督目标检测是多阶段方法：使用标签数据训练一个检测器，之后对无标签数据生成伪标签，再次训练检测器。但是也很容易受到限制：如何保证伪标签的质量？标签数据和无标签数据分布不一致怎么办？且不是端到端的，多年前写 <code>MTCNN</code> 的时候就感觉不是端到端就很不方便。</p><p>同样类似 <code>mean teacher</code> 的结构，创建两个模型，并使用 <code>EMA</code> 更新教师模型。教师模型指导学生模型的训练，而不是简单的提供伪标签就结束了。在获取学生模型生成的预测后，得分大于某个阈值的视为前景，以此保证伪标签的质量，但即使这样仍然有很多预测结果是背景，后文会给出解决方案。</p><p>对于无标签数据，控制标签数据和无标签数据在一个 <code>batch</code> 中的比率，从 <code>0.5</code> 开始，衰减到最后的 <code>epoch</code> 为 0。</p><p><img data-src="https://s4.ax1x.com/2022/01/30/HC2bXn.png" alt></p><p>在图里可以看到：教师模型对无标签数据进行弱数据增强，并生成盒子的伪标签和类别的伪标签。学生模型读入有标签数据，得到一个损失 $L_u$ ，对无标签数据使用强数据增强，预测结果和教师模型生成的伪标签对比，又得到一个损失 $L_s$ 。最后的损失为 $L_s + \alpha L_u$。</p><p>对于 $L_u$ 的分类部分，与半监督分类的一致性分布损失相反，目标检测的伪标签相对复杂，无标签数据上能检测出上千个盒子，即使 <code>NMS</code> 之后也会留下很多盒子，所以选择前景分数大于某个阈值的作为盒子，但是阈值高导致召回率低，也就是说，学习模型的前景被匹配为背景。为了避免这个问题，在得到学生模型计算出的前景和背景后，前景直接和伪标签进行对比，背景使用可靠性分数进行加权。</p><p>对于 $L_u$ 的盒子部分，前景得分并没有提供很好的定位信息，也就是说使用得分作为阈值筛选教师提供的盒子伪标签没啥用，那么如何使盒子的定位信息更加可靠呢？论文是这么做的，在教师生成的标签盒子周围附近进行随机采样，再次得到预测的盒子，重复这个过程$N$（实验部分取 10）次得到多个盒子，计算这些盒子的标准差，标准茶大于 0.5 的才视为前景的盒子。</p><p>代码是用 mmdetection 写的，几年前我用过这个东西，暂时不考虑精读代码，这个并不是大众用户的东西，暂时不考虑精读代码。</p><h1 id="半监督语义分割"><a href="#半监督语义分割" class="headerlink" title="半监督语义分割"></a>半监督语义分割</h1><p><img data-src="https://s4.ax1x.com/2022/01/30/HC2xtU.png" alt></p><p>这篇论文的结构和上面两篇论文的结构很像，在这一瞬间仿佛世界线收束了，虽然这个论文没提供代码，但个人感觉这个方法是靠谱的。</p><p>它在语义分割的时候分为有标签样本和弱标签样本，弱标签样本是用别的方法生成的，我没有细看生成的方法。因为我准备在这篇论文的结构上在加一个教师网络，用教师网络生成伪标签，剩下的东西和半监督图像分类差不多了。</p><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>代码用的 <code>segmentation model pytorch</code>，我看了下代码，魔改成半监督的话还是比较简单的，思路有了，代码都好说。会在不久的将来开源程序和结果，预计三月初。</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://zhuanlan.zhihu.com/p/437754834" target="_blank" rel="noopener">半监督目标检测 MMdetection 实现</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;寒假开始前还是把在学校里遗留的工作先搞完，所接项目的目标是实现半监督语义分割。既然是半监督，就先来看一下半监督的经典论文，我选了经典的、结构相似的三篇论文。&lt;/p&gt;
+&lt;p&gt;第一篇是：NIPS 2017 的 Mean teachers are better role models: Weight-averaged consistency targets improve semi-supervised deep learning results，因为我发现伪标签相关的论文或多或少有它的影子。&lt;/p&gt;
+&lt;p&gt;第二篇是：ICCV 2021 的 End-to-End Semi-Supervised Object Detection with Soft Teacher，微软出品的半监督目标检测，质量上还是比较让人相信的，且语义分割也可以借鉴目标检测的东西。&lt;/p&gt;
+&lt;p&gt;第三篇是：ECCV 2021 的 Semi-supervised Semantic Segmentation via Strong-weak Dual-branch Network，因为搜半监督语义分割，最新的进展论文就是它了。&lt;/p&gt;
+&lt;p&gt;文章最后有代码实现。&lt;del&gt;才发现好久没更新博客了。&lt;/del&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="CV" scheme="https://muyuuuu.github.io/tags/CV/"/>
+    
+  </entry>
   
   <entry>
     <title>CV 领域的自监督</title>
@@ -443,27 +468,6 @@
     
     
       <category term="Python" scheme="https://muyuuuu.github.io/tags/Python/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>对抗训练篇：MART 防御算法论文笔记</title>
-    <link href="https://muyuuuu.github.io/2021/06/22/MART/"/>
-    <id>https://muyuuuu.github.io/2021/06/22/MART/</id>
-    <published>2021-06-22T13:26:54.000Z</published>
-    <updated>2021-07-22T09:20:26.000Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，<strong>网络连干净样本都不认识，何谈认识它的对抗样本？</strong> MART 算法的创新点在于区别对待错分类和正确分类的样本。</p><a id="more"></a><h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>MART 防御的仍然是微小扰动的图像，也就是人眼察觉不出来的那种。论文用$p$ 范数满足这一限制：$\Vert x’-x \Vert_p \leq \epsilon$。对抗训练可以视为使用对抗样本进行数据增强，解决的是以下优化问题：</p><p>\begin{equation}<br>\min_\theta \frac{1}{n} \sum_{i=1}^{n} \max_{\Vert x’-x \Vert_p \leq \epsilon} L(h_\theta(x_i’), y_i)<br>\end{equation}</p><p>$n$ 是一个 batch 的大小，$L$ 是分类的损失函数。内部通过最大化损生成对抗样本，外部最小化对抗样本的分类损失来训练更好的 DNN，如 <a href="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/">PGD</a> 就是使用的这种方案。</p><p>而本文的关注点在对抗训练的对抗样本上，其实许多对抗训练算法忽略了一点，有些样本被正确分类，有些样本被错误分类，但无论哪种样本，都在 min-max 中直接制作对抗样本。因此本文也就抛出例如下疑问：</p><blockquote><p>由错分类样本和正确分类的样本产生的对抗样本，对模型的鲁棒性贡献程度是一样的吗？如果不是，如何利用这个差异，来提升模型的鲁棒性？</p></blockquote><p>本文针对这个被忽略的一点做了一些探索，发现被错分类和正确分类的样本对最终模型的鲁棒性的确有不同的影响。</p><p>本文做了这样的实验，在 CIFAR-10 数据集上做白盒攻击，扰动值 $\epsilon=8/255$。使用 PGD-10 算法制作对抗样本，以对抗训练的形式训练得到的网络的准确率是 87%。然后选择被错分类的样本记为 $S^-$，在选择被正确分类的样本记为 $S^+$。之后使用这两类样本，用不同的方式训练上述网络，最后用 PGD-20 算法制作的对抗样本评估最终模型的鲁棒性。结果如下图所示：</p><p><img data-src="https://z3.ax1x.com/2021/06/22/RmVckj.png" alt></p><p>在图 a 中：错分类样本对鲁棒性有明显影响。</p><ol><li>蓝色的线是标准对抗训练的对抗鲁棒性</li><li>绿色的线表示没有对 $S^-$ 制作对抗样本，其它样本仍然是对抗样本，鲁棒性降低很大；</li><li>橙色的线表示没有对 $S^+$ 制作对抗样本，其它样本仍然是对抗样本，鲁棒性变换其实不大。</li></ol><p>图 b 中：为了更深理解『错分类样本和其它样本』的影响是不同的，外部 min 采用交叉熵，内部 max 采用攻击强度很弱的 <a href="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/">FGSM</a> 算法：</p><ol><li>蓝色的线是标准对抗训练的对抗鲁棒性</li><li>绿色的线表示在 $S^-$ 上产生的对抗样本对鲁棒性几乎没有提升。这可以说明不同的 max 方法在 $S^-$ 上会对模型鲁棒性有不同程度的影响。然而，</li><li>橙色的线表示，低强度的攻击算法在 $S^+$ 上制作的对抗样本会使鲁棒性退化。</li></ol><p>图 c 中，内部 max 选择 PGD-10 算法，外部 min 尝试不同的函数。发现对错分类的样本使用不同的 min 方法，对最终鲁棒性的结果影响也很大。</p><ol><li>蓝色的线是，对传统对抗训练，外部 min 使用交叉熵函数</li><li>绿色的线是，对错分类样本添加额外的 KL 散度作为正则化项，鲁棒性有明显的提升</li><li>绿色的线是，将同样的 KL 散度作为正则化项添加到正确分类的样本上，鲁棒性也有提升，但不如绿色的线明显。</li></ol><p>基于以上实验发现，论文考虑了错分类样本对鲁棒性的影响，提出了一个新的防御算法，以一种动态的方式实现对抗训练。主要贡献是：</p><ul><li>研究了错分类和正确分类的样本对『对抗训练』最终鲁棒性的影响，结果表明，在 min-max 框架下，对错分类样本的处理对模型最终鲁棒性的影响佷大，且 min 方法比 max 方法更为关键。</li><li>提出一种正则化的对抗风险，将错误分类的样本做显式区分，作为正则化项添加到损失函数中。</li></ul><h1 id="MART-算法"><a href="#MART-算法" class="headerlink" title="MART 算法"></a>MART 算法</h1><p>临时通知一周后期末考试，去准备期末考试了，考完了回来填坑。其实这个算法的缺陷显而易见，可以尝试往 GAN 那边走一走。考完了，回来填坑。</p><h2 id="前期定义"><a href="#前期定义" class="headerlink" title="前期定义"></a>前期定义</h2><p>对于一个 $K$ 分类问题，给定数据集 $(x_i,y_i)$，深度模型 $h_\theta$，对于每个样本而言，网络的输出如下：</p><p>\begin{equation}<br>\begin{aligned}<br>h_\theta(x_i) &amp;= \arg \max p_k(x_i, \theta) \\<br>p_k(x_i, \theta) &amp;= \exp(z_k(x_i,\theta)) / \sum_{j=1}^K \exp(z_j(x_i,\theta))<br>\end{aligned}<br>\end{equation}</p><p>其中，$z_k(x_i,\theta)$ 是网络的逻辑输出，<code>softmax</code> 后获得类别标签。对抗风险定义为：一个 batch 中被分类错误的样本数除以 batch 数。对抗样本的制作为：</p><p>\begin{equation}<br>\hat{x} = \arg\max \mathbb{I}(h_\theta(x_i) \neq y_i)<br>\end{equation}</p><h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><blockquote><p>注，原文第二章写了一些0-1损失，后面又说不用这个，所以我没有写0-1损失</p></blockquote><p>首先将训练样本分为正样本 $S^+_{h\theta}$ 和错样本 $S^-_{h\theta}$，即能被网络正确识别的样本和不能被正确识别的样本。</p><ul><li>对于 $S^-_{h\theta}$ 而言，添加正则化项，使得网络能稳定的防御错分类对抗样本。因为对抗样本的分类需要更强的分类器和更光滑的决策边界，损失函数定义为 $\mathbb{I}(h_\theta(\hat{x_i}) \neq y_i) + \mathbb{I}(h_\theta(x_i) \neq h_\theta(\hat{x_i}))$，意思是，第一项优化的目标是，使对抗样本被分类正确；第二项优化的目标是，使网络认识原始样本和对抗样本。</li><li>对于 $S^+_{h\theta}$ 而言，正则化不会明显提升网络鲁棒性。在这种情况下，已经有 $h_\theta(x_i)=y_i$，因此此时的优化目标是 $\mathbb{I}(h_\theta(x_i) \neq h_\theta(\hat{x}))=\mathbb{I}(h_\theta(\hat{x_i})\neq y_i)$，也就是说，网络将干净样本和对抗样本视为两个类别且对抗样本分类错误的概率。</li><li>其中 $\mathbb{I}$ 是指示函数，意思是，错了损失值为1，正确损失值为0。</li></ul><p>但是这个指示函数难以优化，本文提出 BCE(boosted cross entropy) 损失函数，用于代替 $\mathbb{I}(h(\hat{x} \neq y))$，定义如下：</p><p>\begin{equation}<br>\begin{aligned}<br>\text{BCE}(p(\hat{x}, \theta), y_i) &amp;= -\log(p_{y_i}(\hat{x},\theta)) - \log (1-\max_{k\neq y_i}p_k(\hat{x}, \theta))<br>\end{aligned}<br>\end{equation}</p><p>第一项是普通的交叉熵损失函数，第二项用于提升模型决策边界的间隙。</p><p>使用 $KL$ 散度代替 $\mathbb{I}(h_\theta(x) \neq h_\theta(\hat{x}))$，定义如下：</p><p>\begin{equation}<br>\text{KL}(p(x_i,\theta)||p(\hat{x}, \theta))=\sum_{k=1}^K p_k{(x_i,\theta)} \log \frac{p_k(x_i,\theta)}{p_k(\hat{x_i},\theta)}<br>\end{equation}</p><p>对于制作对抗样本使用的指示函数 $\mathbb{I}(h_\theta(x_i) \neq y_i)$，通过 $1-p_{y_i}(x_i, \theta)$ 的形式选择对抗样本。因此，内部最大化的损失定义如下，攻击方式选择 PGD。</p><p>\begin{equation}<br>\hat{x} = \arg \max \text{CE} (p(x_i, \theta), y_i)<br>\end{equation}</p><p>将两中损失结合起来到对抗训练的框架中，最终的损失函数为：</p><p>\begin{equation}<br>L = \text{BCE}(p(\hat{x}, \theta), y_i) + \lambda \text{KL} (p(x_i,\theta)||p(\hat{x}, \theta))(1-p_{y_i}(x_i, \theta))<br>\end{equation}</p><p>$\lambda$ 参数用于平衡两个损失。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;MART(Misclassification Aware adveRsarial Training) 是 2020 年提出的最好的对抗防御算法。传统对抗训练算法中 min-max 时不会考虑当前样本是否被正确分类，统一制作对抗样本。而作者抓住了这一点，发现对于 max 制作对抗样本期间没有被网络正确分类的样本，对结果的影响很大。换句话说，&lt;strong&gt;网络连干净样本都不认识，何谈认识它的对抗样本？&lt;/strong&gt; MART 算法的创新点在于区别对待错分类和正确分类的样本。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="DeepLearning" scheme="https://muyuuuu.github.io/tags/DeepLearning/"/>
     
   </entry>
   
