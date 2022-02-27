@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好一些，且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。调优过程明确不采用的方案：增大模型">
+  <meta name="description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好上很多（3.2mAP%），且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。 阅读源码后发">
 <meta name="keywords" content="CV">
 <meta property="og:type" content="article">
-<meta property="og:title" content="YOLOX 源码解析与调优">
+<meta property="og:title" content="YOLOX 源码解析与小目标检测调优">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/02/26/yolox/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好一些，且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。调优过程明确不采用的方案：增大模型">
+<meta property="og:description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好上很多（3.2mAP%），且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。 阅读源码后发">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-02-26T08:43:22.191Z">
+<meta property="og:updated_time" content="2022-02-27T03:05:58.619Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="YOLOX 源码解析与调优">
-<meta name="twitter:description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好一些，且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。调优过程明确不采用的方案：增大模型">
+<meta name="twitter:title" content="YOLOX 源码解析与小目标检测调优">
+<meta name="twitter:description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好上很多（3.2mAP%），且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。 阅读源码后发">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/02/26/yolox/">
 
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>YOLOX 源码解析与调优 | Just for Life.</title>
+  <title>YOLOX 源码解析与小目标检测调优 | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          YOLOX 源码解析与调优
+          YOLOX 源码解析与小目标检测调优
         </h1>
 
         <div class="post-meta">
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-02-26 16:31:59 / 修改时间：16:43:22" itemprop="dateCreated datePublished" datetime="2022-02-26T16:31:59+08:00">2022-02-26</time>
+              <time title="创建时间：2022-02-26 16:31:59" itemprop="dateCreated datePublished" datetime="2022-02-26T16:31:59+08:00">2022-02-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-02-27 11:05:58" itemprop="dateModified" datetime="2022-02-27T11:05:58+08:00">2022-02-27</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.7k</span>
+              <span>3.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -286,7 +292,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>最近用 yolox 的发现了一个很神奇的现象，简而言之 <code>yolox-tiny</code> 在单目标检测的效果比 <code>yolox-small</code> 好一些，且 <code>yolox-small</code> 能大幅提升检测精度的方法到了 <code>yolox-tiny</code> 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。调优过程明确不采用的方案：增大模型规模、模型融合和其他消耗算力的方法，专注算法本身。</p>
+        <p>最近用 yolox 的发现了一个很神奇的现象，简而言之 <code>yolox-tiny</code> 在单目标检测的效果比 <code>yolox-small</code> 好上很多（3.2mAP%），且 <code>yolox-small</code> 能大幅提升检测精度的方法到了 <code>yolox-tiny</code> 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。</p>
+<p>阅读源码后发现 yolox 的 SimOTA 机制存在一些漏洞，并使用对应的方法调优。调优过程明确不采用的方案：增大模型规模、模型融合和其他消耗算力的方法，专注算法本身。</p>
 <a id="more"></a>
 <h1 id="Model-部分"><a href="#Model-部分" class="headerlink" title="Model 部分"></a>Model 部分</h1><p>和其他检测模型一样，<code>model</code> 分为 <code>backbone</code>，<code>neck</code> 和 <code>head</code>。</p>
 <h2 id="backbone"><a href="#backbone" class="headerlink" title="backbone"></a>backbone</h2><p><code>backbone</code> 采用 <code>CSPDarkNet</code>，包括 <code>stem</code>，<code>dark2</code>，<code>dark3</code>，<code>dark4</code> 和 <code>dark5</code>。</p>
@@ -309,7 +316,9 @@
 <p>分类网络的输出通道数是类别数，这里假设为 2，回归网络的输出通道数是 4，负责预测中心点坐标和高宽尺寸，前背景网络的输出通道数是 1，因此输出的通道数是 2+4+1=7。将这三个网络的输出然后拼接到一起，放到一个列表中。因此，<code>head</code> 部分得到的输出为三组数据：<code>7X80X80, 7X40X40, 7X20X20</code>。以 <code>7X80X80</code> 为例，表示预测了 <code>80X80</code> 个目标，每个目标包括位置、类别和前背景共 7 个参数。</p>
 <p><img data-src="https://s4.ax1x.com/2022/02/26/bZ8cBd.png" alt></p>
 <h1 id="训练部分"><a href="#训练部分" class="headerlink" title="训练部分"></a>训练部分</h1><p>这一部分是难点，或者说，是任何目标检测算法的实现难点，代码量也是最大。</p>
-<h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><p>在这一部分，将对 <code>head</code> 的三个输出进行一些转换并生成对应的 <code>grid</code> 信息，将预测输出对应到图像中的实际位置。这一部分大概分以下步骤：</p>
+<h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><p>在这一部分，将对 <code>head</code> 的三个输出进行一些转换并生成对应的 <code>grid</code> 信息，将预测输出对应到图像中的实际位置。<code>grid</code> 可以理解为特征点的位置吧，是固定的，如下图所示黑色的那一个个格子（其他颜色不用看，我实在找不到类似的图了）：</p>
+<p><img data-src="https://s4.ax1x.com/2022/02/27/beHtnP.png" alt></p>
+<p>这一部分大概分以下步骤：</p>
 <ol>
 <li>获取输出特征的的宽度和高度，如 80 和 80，或者 40 和 40，那么就生成对应的 <code>grid</code>，如 [0, 1] [0, 2] … [80, 80] 共 6400 个，维度是 [1, 6400, 2]</li>
 <li>将预测结果 <code>reshape</code> 成 <code>Batch, HxW, C</code> 大小，坐标的 <code>x</code> 和 <code>y</code> 加上 <code>grid</code> 会映射到每个预测特征点的中心位置，在乘以 8，也就是理想情况下位置信息的运算结果会在 640 X 640 之间，也就是图像上目标的中心点</li>
@@ -330,12 +339,18 @@
 <p>之后进行动态 k 分配，这里的 k 计算比较简单，在 10 和上一步骤选中的 <code>fg_mask</code> 数量取最小值就是 <code>k</code>，给每个真实框选取损失最小的 <code>k</code> 个预测结果。如果当某一个特征点指向多个真实框的时候，选取 <code>cost</code> 最小的真实框，之后对 <code>fg_mask</code> 进行更新。</p>
 <h3 id="计算损失-1"><a href="#计算损失-1" class="headerlink" title="计算损失"></a>计算损失</h3><ul>
 <li><code>obj</code> 损失是全部的预测结果和动态 k 分配后得到的 <code>fg_mask</code> 做交叉熵，提升检测到目标的能力</li>
-<li><code>cls</code> 损失基于 <code>fg_mask</code> 选中的预测结果，将类别的 <code>one-hot</code> 向量与正样本和真实框的 iou 做乘积视为目标，和预测结果做交叉熵损失</li>
+<li><code>cls</code> 损失基于 <code>fg_mask</code> 选中的预测结果，将类别的 <code>one-hot</code> 向量与正样本和真实框的 iou 做乘积视为目标。比如预测框和真实框的 iou 是 0.4，那么对应的类别得分就是 0.4，毕竟相交面积小。预测结果和目标做交叉熵损失</li>
 <li><code>reg</code> 损失是就是预测盒子和真实盒子的 iou 损失</li>
 </ul>
-<h1 id="问题分析与调优"><a href="#问题分析与调优" class="headerlink" title="问题分析与调优"></a>问题分析与调优</h1><p>那么问题出在哪里呢？我目前只发现了一点点问题，等我彻底解决完毕回来填坑（因为又又又摸不到显卡了）。</p>
-<p>如何解释开头的问题呢？我想是这样的，由于是单目标检测任务，也就是说只有一个目标，那么小模型参数少，很容易聚焦和收敛；而大模型参数大，解空间也会更多，相对小模型难以探索到更好的解，因此一些常见的 <code>trick</code> 才会有效的提升大模型的检测效果，而对小模型而言，很容易找到更优的解，因此一些 <code>trick</code> 并不会起到很大的作用。</p>
-<p>具体到调优阶段，通过一路 <code>debug</code> 找到了一些问题，等摸到显卡了回来填坑。</p>
+<h1 id="问题分析与调优"><a href="#问题分析与调优" class="headerlink" title="问题分析与调优"></a>问题分析与调优</h1><p>如何解释开头的问题以及如何调优呢？通过一路 <code>debug</code> 找到了一些问题，我目前只发现了一点点问题，<del>等我彻底解决完毕回来填坑（因为又又又摸不到显卡了）。</del></p>
+<ul>
+<li>第一点，由于是单目标检测任务，也就是说只有一个目标，那么小模型参数少，很容易聚焦和收敛；而大模型参数大，解空间也会更多，相对小模型难以探索到更好的解，因此一些常见的 <code>trick</code> （比如预训练 <code>backbone</code>）才会有效的提升大模型的检测效果，而对小模型而言，参数少，搜索空间小，很容易找到更优的解，因此一些 <code>trick</code> 并不会起到很大的作用。</li>
+<li>第二点，由于检测任务绝大多数目标是小目标，而 yolox-tiny 模型尺寸小，输出的通道数也少，底层的特征信息的保留程度好于大模型，因为模型越深，对图像细节的保留程度就越低。</li>
+<li>第三点，也是最重要的一点，由于 YOLOX 选取正样本的机制是：预测结果落入真实框，或者落入真实框的周围，这些落入真实框周围的正样本在模型初期会侥幸存活下来并通过 <code>SimOTA</code> ，但是，由于大部分都是小目标，会导致预测结果和真实目标毫不相交的场景，这就 <code>reg</code> 分支的 IoU Loss 不起作用，我们换成 CIoU Loss 就可以了。</li>
+</ul>
+<p><img data-src="https://s4.ax1x.com/2022/02/27/beHJXt.png" alt></p>
+<p>如图所示，红色是真实框，绿色是落入真实框周围的预测结果（正样本），灰色表示不参与训练。可以看到，由于目标较小，预测结果和真实标签毫不相交，IoU Loss 的损失是 0，这显然是不合理的，应该是一个很大的数，而 CIoU Loss 能很好的解决这一点。</p>
+<p>如果你要从发论文的角度调优 yolox，那么建议改动它的 SimOTA 机制，但是这也只能是为了毕业而发的一篇普通的论文，还远远达不到 yolov6 问世的高度。如果是工程的角度，那么 CIoU Loss 会很适合你。结果也显示，使用 CIoU Loss 的 mAP 要远远高于不使用和 yolox-tiny，提升 4.1 的 mAP。</p>
 
     </div>
 
@@ -556,7 +571,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">11:56</span>
+    <span title="站点阅读时长">11:57</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
