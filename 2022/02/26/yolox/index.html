@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好上很多（3.2mAP%），且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。 阅读源码后发">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-02-27T03:05:58.619Z">
+<meta property="og:updated_time" content="2022-04-28T13:18:55.065Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YOLOX 源码解析与小目标检测调优">
 <meta name="twitter:description" content="最近用 yolox 的发现了一个很神奇的现象，简而言之 yolox-tiny 在单目标检测的效果比 yolox-small 好上很多（3.2mAP%），且 yolox-small 能大幅提升检测精度的方法到了 yolox-tiny 也不起作用了。网上很多 yolox 的解读基本都是翻译论文，没啥价值，还是决定仔细读一下代码，这大概也是全网第一份从源代码的角度解析 yolox 的文章。 阅读源码后发">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-27 11:05:58" itemprop="dateModified" datetime="2022-02-27T11:05:58+08:00">2022-02-27</time>
+                <time title="修改时间：2022-04-28 21:18:55" itemprop="dateModified" datetime="2022-04-28T21:18:55+08:00">2022-04-28</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -346,10 +346,10 @@
 <ul>
 <li>第一点，由于是单目标检测任务，也就是说只有一个目标，那么小模型参数少，很容易聚焦和收敛；而大模型参数大，解空间也会更多，相对小模型难以探索到更好的解，因此一些常见的 <code>trick</code> （比如预训练 <code>backbone</code>）才会有效的提升大模型的检测效果，而对小模型而言，参数少，搜索空间小，很容易找到更优的解，因此一些 <code>trick</code> 并不会起到很大的作用。</li>
 <li>第二点，由于检测任务绝大多数目标是小目标，而 yolox-tiny 模型尺寸小，输出的通道数也少，底层的特征信息的保留程度好于大模型，因为模型越深，对图像细节的保留程度就越低。</li>
-<li>第三点，也是最重要的一点，由于 YOLOX 选取正样本的机制是：预测结果落入真实框，或者落入真实框的周围，这些落入真实框周围的正样本在模型初期会侥幸存活下来并通过 <code>SimOTA</code> ，但是，由于大部分都是小目标，会导致预测结果和真实目标毫不相交的场景，这就 <code>reg</code> 分支的 IoU Loss 不起作用，我们换成 CIoU Loss 就可以了。</li>
+<li>第三点，也是最重要的一点，由于 YOLOX 选取正样本的机制是：预测结果落入真实框，或者落入真实框的周围，这些落入真实框周围的正样本在模型初期会侥幸存活下来并通过 <code>SimOTA</code> ，但是，由于大部分都是小目标，会导致预测结果和真实目标毫不相交的场景，这就 <code>reg</code> 分支的 IoU Loss 面临难以优化的场景，我们换成 CIoU Loss 就可以了。具体可以参考这里：<a href="https://muyuuuu.github.io/2022/04/23/iou-loss/">IoU Loss 系列</a>。</li>
 </ul>
 <p><img data-src="https://s4.ax1x.com/2022/02/27/beHJXt.png" alt></p>
-<p>如图所示，红色是真实框，绿色是落入真实框周围的预测结果（正样本），灰色表示不参与训练。可以看到，由于目标较小，预测结果和真实标签毫不相交，IoU Loss 的损失是 0，这显然是不合理的，应该是一个很大的数，而 CIoU Loss 能很好的解决这一点。</p>
+<p>如图所示，红色是真实框，绿色是落入真实框周围的预测结果（正样本），灰色表示不参与训练。可以看到，由于目标较小，预测结果和真实标签毫不相交，IoU Loss 的损失恒定是 1，这显然是不合理的。应该根据距离预测结果与真实目标的远近而定，而 CIoU Loss 能很好的解决这一点。</p>
 <p>如果你要从发论文的角度调优 yolox，那么建议改动它的 SimOTA 机制，但是这也只能是为了毕业而发的一篇普通的论文，还远远达不到 yolov6 问世的高度。如果是工程的角度，那么 CIoU Loss 会很适合你。结果也显示，使用 CIoU Loss 的 mAP 要远远高于不使用和 yolox-tiny，提升 4.1 的 mAP。</p>
 
     </div>
@@ -370,10 +370,10 @@
       <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
   </ul>
 
@@ -569,12 +569,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">808k</span>
+    <span title="站点总字数">809k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:14</span>
+    <span title="站点阅读时长">12:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

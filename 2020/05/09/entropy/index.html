@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-02T21:53:48.000Z">
+<meta property="og:updated_time" content="2022-04-28T13:30:29.176Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="更通俗的理解熵">
 <meta name="twitter:description" content="时至今日，早已忘记高中化学里面的熵代表什么，还好化学里的熵和我要研究的熵并非同一性质。在进坑DL中，遇到了许多和熵有关的概念，于是今天就彻底来扒一扒熵的有关概念和常用领域。包括：  什么是熵 条件熵 KL散度 交叉熵  注：本篇文章默认读者有一定的求期望、计算联合概率分布、计算条件概率分布和知道什么是概率密度的基础知识。">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-03 05:53:48" itemprop="dateModified" datetime="2021-04-03T05:53:48+08:00">2021-04-03</time>
+                <time title="修改时间：2022-04-28 21:30:29" itemprop="dateModified" datetime="2022-04-28T21:30:29+08:00">2022-04-28</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -305,7 +305,7 @@
 <p>假设此时有32个盒子，31个盒子里是白球，1个盒子里是黑球。假设让人<strong>用二分法</strong>来猜测黑球在哪个盒子里，猜一次1块钱，只需要5次就能猜中$(\log_232=5)$，那么这个信息值5块钱。当然信息的不确定性不能用钱来衡量，香农给出的定义是：<br>\begin{equation}<br>H = -(p_1\log p_1 + p_2\log p_2 + \cdots+p_n\log p_n), n=32<br>\end{equation}</p>
 <p>$p_i$为黑球在第$i$个盒子里的概率，$H$即为信息熵，且此时的熵恰好为5。在通俗一点，对于一个随机变量$X$，它的熵定义如下：</p>
 <p>\begin{equation}<br>H = \sum_{x\in X}P(x)\log P(x)<br>\end{equation}</p>
-<p>在通俗一点，对于序列<code>0, 0, 0, 1, 1, 1</code>，它的熵为2，单位是bit，因为序列里不是1就是0，2，即需要几个bit能够表示序列的全部的信息。所以也可以得到<strong>变量的不确定性越大，熵也就越大</strong>这样的结论。</p>
+<p>在通俗一点，对于序列<code>0, 0, 0, 1, 1, 1</code>，它的熵为2，单位是bit，因为序列里不是1就是0，2，即需要几个bit能够表示序列的全部的信息。或者说，对于这个系统或分布，信息量的期望就是熵，可以衡量系统的不确定程度。所以也可以得到<strong>变量的不确定性越大，熵也就越大</strong>这样的结论。</p>
 <h1 id="条件熵"><a href="#条件熵" class="headerlink" title="条件熵"></a>条件熵</h1><p>信息的作用在于消除不确定性，根据相关的信息来减少另外信息的不确定性。如：A想明天邀请B来做客，但不知道B有没有时间，此时的信息由不确定性因素，但A此时得到了一条消息：B出门旅游了，那么A就不必在明天邀请B反而可以去做一些别的事情。</p>
 <p>这就是利用其他信息来减少不确定性，知道的相关信息越多，一件事的不确定性就越小。那么如何用数学语言描述呢？</p>
 <p>假设两个随机变量$X, Y$，$X$是我们了解的，可以根据$X$的分布来求出$X$的熵：</p>
@@ -319,11 +319,8 @@
 <p>借鉴这个思路，在2019年美国大学生数学建模竞赛的C题中，成功分析了主要是哪些人群在吸毒，合理提出建议。即吸毒人口的熵减去各种身份吸毒人口的熵，单亲家庭、残疾人员等，得到互信息，互信息越大，说明相关性越高，互信息越小则说明两者完全无关。</p>
 <h1 id="KL散度"><a href="#KL散度" class="headerlink" title="KL散度"></a>KL散度</h1><p>KL 散度可以用来衡量两个分布的差异。在深度学习中，我们经常会将一个复杂的分布用一个简单的近似分布来代替。KL 散度可以帮助我们测量在选择一个近似分布时丢失的信息量。</p>
 <p>对于离散型随机变量$X$，假设原概率分布为$P(x)$，近似概率分布为$Q(x)$，则使用 KL 散度衡量这两个分布的差异：</p>
-<p>\begin{equation}<br>KL(P||Q)=\sum_{x\in X}P(x)\log \Big( \frac{P(x)}{Q(x)}\Big)<br>\end{equation}</p>
-<p>对于$P(x)/Q(x)$这一项，可以理解为如果我们使用 $Q$ 的编码来表示 $P$ 额外所需的编码长度。当然，也许你一眼就看出来了，这不就是在求期望嘛，改写一下看起来更直观：</p>
-<p>\begin{equation}<br>KL(P||Q)=E_{x\sim P}\Big[ \log (P(x)/Q(x)) \Big]<br>\end{equation}</p>
-<p>对于连续型变量，我们对概率密度函数求积分即可(假设随机变量$X$的取值范围是$[-\infty, +\infty]$)：</p>
-<p>\begin{equation}<br>KL(P||Q)=\int_{-\infty}^{+\infty}p(x)\log{\frac{p(x)}{q(x)}}dx<br>\end{equation}</p>
+<p>\begin{equation}<br>\begin{aligned}<br>KL(P||Q) &amp;=\sum_{x\in X}P(x)(-\log Q(x) + \log P(x) ) \\<br>{ } &amp;= -\sum_{x\in X} (P(x)\log Q(x)) + \sum_{x\in X} (P(x)\log P(x))<br>\end{aligned}<br>\end{equation}</p>
+<p>那么公式的第二项就是 $P(x)$ 的熵，是个定值，公式的第一项就是交叉熵。KL 散度衡量两个分布的差异，如果想要使分布差异小，我们优化公式的第一项交叉熵即可。补充：由吉布斯不等式可以知道 KL 散度恒正，那么交叉熵也恒正。</p>
 <h1 id="交叉熵"><a href="#交叉熵" class="headerlink" title="交叉熵"></a>交叉熵</h1><p>交叉熵(也有人叫相对熵)也可以用来衡量两个分布的差异。以离散型变量 $x$ 为例，交叉熵$H(P,Q)$的定义如下：</p>
 <p>\begin{equation}<br>H(P,Q)=-\sum_{x\in X} P(x)\log Q(x)<br>\end{equation}</p>
 <p>当然也可以写成期望的形式：$-E_{x\sim P}\log Q(x)$，也许你善于观察，肯快发现了交叉熵与KL散的联系(公式推导较为简单，不在展示)：</p>
@@ -371,8 +368,8 @@
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上。</p>
 <ol>
 <li>《数学之美(第二版)》第六章：信息的度量和作用</li>
-<li>互信息公式推导：<a href="https://www.cnblogs.com/gatherstars/p/6004075.html" target="_blank" rel="noopener">https://www.cnblogs.com/gatherstars/p/6004075.html</a></li>
-<li>KL散度与交叉熵：<a href="https://www.cnblogs.com/wuliytTaotao/p/9713038.html" target="_blank" rel="noopener">https://www.cnblogs.com/wuliytTaotao/p/9713038.html</a></li>
+<li>互信息公式推导：<br><a href="https://www.cnblogs.com/gatherstars/p/6004075.html" target="_blank" rel="noopener">https://www.cnblogs.com/gatherstars/p/6004075.html</a></li>
+<li>KL散度与交叉熵：<br><a href="https://www.cnblogs.com/wuliytTaotao/p/9713038.html" target="_blank" rel="noopener">https://www.cnblogs.com/wuliytTaotao/p/9713038.html</a></li>
 </ol>
 
     </div>
@@ -384,10 +381,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/04/LSH-consine/" rel="bookmark">从代码角度理解局部敏感哈希算法</a></div>
+      <div class="popular-posts-title"><a href="/2020/03/30/KDE-cluster/" rel="bookmark">核密度聚类</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/30/KDE-cluster/" rel="bookmark">核密度聚类</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/04/LSH-consine/" rel="bookmark">从代码角度理解局部敏感哈希算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/11/20/Metis/" rel="bookmark">基于Metis的大规模图融合算法实现</a></div>
@@ -592,12 +589,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">808k</span>
+    <span title="站点总字数">809k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:14</span>
+    <span title="站点阅读时长">12:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
