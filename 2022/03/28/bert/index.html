@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载和 mark 之类没啥用的东西，属实是占据了搜索引擎的首页，占够了热度。">
+  <meta name="description" content="书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载，mark 甚至文不对题之类没啥用的东西，但占据了搜索引擎的首页的热度，像无耻的营销号一样。">
 <meta name="keywords" content="NLP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="什么是 bert">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/03/28/bert/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载和 mark 之类没啥用的东西，属实是占据了搜索引擎的首页，占够了热度。">
+<meta property="og:description" content="书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载，mark 甚至文不对题之类没啥用的东西，但占据了搜索引擎的首页的热度，像无耻的营销号一样。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-03-28T14:51:04.932Z">
+<meta property="og:updated_time" content="2022-04-30T12:32:34.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="什么是 bert">
-<meta name="twitter:description" content="书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载和 mark 之类没啥用的东西，属实是占据了搜索引擎的首页，占够了热度。">
+<meta name="twitter:description" content="书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载，mark 甚至文不对题之类没啥用的东西，但占据了搜索引擎的首页的热度，像无耻的营销号一样。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/03/28/bert/">
 
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-28 22:16:12 / 修改时间：22:51:04" itemprop="dateCreated datePublished" datetime="2022-03-28T22:16:12+08:00">2022-03-28</time>
+              <time title="创建时间：2022-03-28 22:16:12" itemprop="dateCreated datePublished" datetime="2022-03-28T22:16:12+08:00">2022-03-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-30 20:32:34" itemprop="dateModified" datetime="2022-04-30T20:32:34+08:00">2022-04-30</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>5.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -286,22 +292,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载和 mark 之类没啥用的东西，属实是占据了搜索引擎的首页，占够了热度。</p>
+        <p>书接上文，因为参加 NLP 的比赛不知道什么是 bert 实在有点说不过去，于是花了三天时间看了下 bert 的基本概念和代码。不得不说，网上阳间的 bert 预训练代码太少了，大多是转载，mark 甚至文不对题之类没啥用的东西，但占据了搜索引擎的首页的热度，像无耻的营销号一样。</p>
 <a id="more"></a>
-<h1 id="transformer"><a href="#transformer" class="headerlink" title="transformer"></a>transformer</h1><p>这个就不得不提一下 Attention is all your need. 由于处理序列的时候 RNN 不容易并行计算，输出 $b_4$ 的时候需要输入 $a_1, a_2, a_3, a_4$。所以使用 CNN 来代替 RNN，一个 CNN 按顺序划过序列输入产生一个输出，就不用看完一个句子才会有输出，而多个 CNN 就可以产生多个输出，模型就可以可以并行化。如下图所示，不需要等待红色的输出算完，再算黄色的输出。</p>
+<h1 id="从-transformer-开始"><a href="#从-transformer-开始" class="headerlink" title="从 transformer 开始"></a>从 transformer 开始</h1><p>这个就不得不提一下 Attention is all your need. 由于处理序列的时候 RNN 不容易并行化，输出 $b_4$ 的时候需要输入 $a_1, a_2, a_3, a_4$。所以就象使用 CNN 来代替 RNN，一个 CNN 按顺序划过序列输入产生一个输出，那么就不用看完一个句子才会有输出，因为先算后面和先算前面得到的结果是一样的，这样就可以并行化。而多个 CNN 就可以产生多个输出，能提升模型的表达能力。如下图所示，同颜色之前可以并行化，不同颜色之间也可以并行化。不需要等待红色的输出算完，再算黄色的输出。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1mct.jpg" alt></p>
 <p>如果考虑让一个 CNN 看到更多的输入，那么只需要在模型的隐层叠加另外的 CNN 即可，也就是上图的蓝色三角。基于这个概念，就有了后面的 self-attention。</p>
-<h2 id="self-attention"><a href="#self-attention" class="headerlink" title="self-attention"></a>self-attention</h2><p>$A=Wx, Q=W_qA, K=W_kA, V=W_vA$，这里其实就是乘以一个大矩阵，只不过图里分开写清楚一些。</p>
+<h2 id="self-attention"><a href="#self-attention" class="headerlink" title="self-attention"></a>self-attention</h2><p>attention 本质上是一些矩阵乘法，$A=Wx, Q=W_qA, K=W_kA, V=W_vA$，这里其实就是乘以一个大矩阵，只不过图里分开写清楚一些。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1Y3n.png" alt></p>
-<p>之后每个 $q$ 和每个 $k$ 做 attention，也就是内积，得到如下的 $\alpha$ 输出，然后再除以维度数，防止维度过高导致的内积过大。</p>
+<p>之后每个 $q^i$ 和每个 $k^i$ 做 attention，也就是内积，得到如下的 $\alpha$ 输出，然后再除以维度数，防止维度过高导致的内积过大。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1auV.png" alt></p>
 <p>然后将 $\alpha$ 经过 softmax 操作得到 $\hat{\alpha}$：</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1wHU.png" alt></p>
 <p>对于 $b_1$ 输出，只需要让 $\hat{\alpha_{1,i}}$ 和所有的 $v_i$ 做乘积并求和即可。同理，可以得到 $b_2,b_3,b_4$ 的输出。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1DN4.png" alt></p>
-<p>对应的，下图左上角就是我们的 self-attention 层，期中的运算可以总结成矩阵乘法：</p>
+<p>对应的，下图左上角就是我们的 self-attention 层，其中的运算可以总结成矩阵乘法：</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1r4J.png" alt></p>
-<h3 id="multi-head-self-attention"><a href="#multi-head-self-attention" class="headerlink" title="multi-head-self-attention"></a>multi-head-self-attention</h3><p>可以再计算 $Q,K,V$ 的时候产生多个结果，然后在输出 $b$ 的时候再通过一个矩阵将多个结果融合成一个。而我看的程序，就分开注意力，最后 view 到一起。</p>
+<h3 id="multi-head-self-attention"><a href="#multi-head-self-attention" class="headerlink" title="multi-head-self-attention"></a>multi-head-self-attention</h3><p>多注意力头机制，可以在计算 $Q,K,V$ 的时候产生多个结果，然后在输出 $b$ 的时候再通过一个矩阵将多个结果融合成一个。而我看的程序，就是将矩阵 $Q,K,V$ 分开，计算完最后 view 到一起。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1Ru6.png" alt></p>
 <h3 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h3><p>现在的 self-attention 没有考虑到序列的位置信息，而是使用全局信息，不能利用单词的顺序信息，而这部分信息对于 NLP 来说非常重要，所以需要加入位置的 embedding。人工设定每一个位置的 embedding，和 $A$ 加在一起作为新的 $A$ 参与后面的运算，等价于在 $X$ 拼接一个 one-hot 向量后再做运算：</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1fHO.png" alt></p>
@@ -311,38 +317,40 @@
 <li>在这个类的初始化阶段，首先初始化 $W_Q,W_K,W_V$ 三个全连接层，输入维度和输出维度保持一致。假设输入维度是 512，有 8 个头；</li>
 <li>计算 $Q,K,V$，大小是 <code>B, L, 8, 64</code>，毕竟有 8 个头。在 softmax 之后经过 0.1 的 dropout，最后在把这 8 个头 view 到一起，加上最开始的 $Q$</li>
 </ol>
-<h2 id="FeedForwardNetwork"><a href="#FeedForwardNetwork" class="headerlink" title="FeedForwardNetwork"></a>FeedForwardNetwork</h2><ol>
-<li>经过全连接降维，而后 relu 激活并 dropout</li>
-<li>在经过一个全连接，升到之前的维度，加上最开始的输入做一个残差，layer norm 后输出</li>
-</ol>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MultiHeadAttention</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="string">''' Multi-Head Attention module '''</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, n_head, d_model, d_k, d_v, dropout=<span class="number">0.1</span>)</span>:</span></span><br><span class="line">        super().__init__()</span><br><span class="line"></span><br><span class="line">        self.n_head = n_head</span><br><span class="line">        self.d_k = d_k</span><br><span class="line">        self.d_v = d_v</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 输出维度是之前的 8 倍，也就是 8 个头</span></span><br><span class="line">        self.w_qs = nn.Linear(d_model, n_head * d_k, bias=<span class="literal">False</span>)</span><br><span class="line">        self.w_ks = nn.Linear(d_model, n_head * d_k, bias=<span class="literal">False</span>)</span><br><span class="line">        self.w_vs = nn.Linear(d_model, n_head * d_v, bias=<span class="literal">False</span>)</span><br><span class="line">        <span class="comment"># 最后的输出维度保持不变</span></span><br><span class="line">        self.fc = nn.Linear(n_head * d_v, d_model, bias=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">        self.attention = ScaledDotProductAttention(temperature=d_k ** <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        self.dropout = nn.Dropout(dropout)</span><br><span class="line">        self.layer_norm = nn.LayerNorm(d_model, eps=<span class="number">1e-6</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, q, k, v, mask=None)</span>:</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 单个 k v 的输出维度，头的数量</span></span><br><span class="line">        d_k, d_v, n_head = self.d_k, self.d_v, self.n_head</span><br><span class="line">        sz_b, len_q, len_k, len_v = q.size(<span class="number">0</span>), q.size(<span class="number">1</span>), k.size(<span class="number">1</span>), v.size(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        residual = q</span><br><span class="line"></span><br><span class="line">        <span class="comment">#  batch x len_q x (n_head * dv) -&gt; batch x len_q x n_head x dv</span></span><br><span class="line">        q = self.w_qs(q).view(sz_b, len_q, n_head, d_k)</span><br><span class="line">        k = self.w_ks(k).view(sz_b, len_k, n_head, d_k)</span><br><span class="line">        v = self.w_vs(v).view(sz_b, len_v, n_head, d_v)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Transpose for attention dot product: b x n x lq x dv</span></span><br><span class="line">        q, k, v = q.transpose(<span class="number">1</span>, <span class="number">2</span>), k.transpose(<span class="number">1</span>, <span class="number">2</span>), v.transpose(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> mask <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            mask = mask.unsqueeze(<span class="number">1</span>)   <span class="comment"># For head axis broadcasting.</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># mask to pad zero</span></span><br><span class="line">        <span class="comment"># q \cdot k and matmul v</span></span><br><span class="line">        q, attn = self.attention(q, k, v, mask=mask)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Transpose to move the head dimension back: b x lq x n x dv</span></span><br><span class="line">        <span class="comment"># Combine the last two dimensions to concatenate all the heads together: b x lq x (n*dv)</span></span><br><span class="line">        q = q.transpose(<span class="number">1</span>, <span class="number">2</span>).contiguous().view(sz_b, len_q, <span class="number">-1</span>)</span><br><span class="line">        q = self.dropout(self.fc(q))</span><br><span class="line">        q += residual</span><br><span class="line"></span><br><span class="line">        q = self.layer_norm(q)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> q, attn</span><br></pre></td></tr></table></figure>
 <h2 id="PositionalEncoding"><a href="#PositionalEncoding" class="headerlink" title="PositionalEncoding"></a>PositionalEncoding</h2><p>这个就是生成一个 $200\times dim$ 的表，每次输入一个 $x$，查看 $x$ 的维度，从表中取到对应维度的数值，和 $A$ 直接相加。这个表采用的是 sin-cos 规则，使用了 sin 和 cos 函数的线性变换来提供给模型位置信息。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1HgI.png" alt></p>
 <p>如上图所示，随着维度越来越大，周期变化会越来越慢，而产生一种包含位置信息的纹理。</p>
 <h2 id="Encoder-Layer"><a href="#Encoder-Layer" class="headerlink" title="Encoder Layer"></a>Encoder Layer</h2><ol>
-<li>输入 $x$ 经过 layer norm，经过 MultiHeadAttention，经过 dropout 得到 $y$，进行 $x+y$</li>
-<li>将 $x+y$ 经过 layer norm，经过 FeedForwardNetwork，经过 dropout 得到 $y’$，最终的输出为 $x+y+y’$</li>
+<li>输入： $x$ 经过 embedding layer 层后得到一个表示，并加上 position embedding 表示向下传播</li>
+<li>经过 dropout 后进入堆叠 6 层的 encoder layer，单个 encode layer 由 multiheadattention 和 PositionwiseFeedForward 组成，后者是简单的全连接与残差结构。</li>
 </ol>
-<p>通常，这个 Encoder Layer 堆叠 6 次 （因为维度没有发生变化）得到 Encoder。Encoder 的输入是输入序列的 embedding，如果是最开始的输入，需要叠加位置 embedding 后 dropout-&gt;layer norm，在经过堆叠的 Encoder Layer。</p>
-<h2 id="Decoder-Layer"><a href="#Decoder-Layer" class="headerlink" title="Decoder Layer"></a>Decoder Layer</h2><p>大部分内容和 Encoder Layer 一样，先将 target 进行 embedding 并叠加位置 embedding，然后 dropout-&gt;layer norm，得到解码输出。拿到 encoder 的输出和解码输出送入 decoder，再依次经过堆叠的 6 个 decoder layer 时（解码输出注意力机制，结果在和encoder 输出进行注意力）得到新的解码输出，上一个解码状态输出下一个状态的解码输入。</p>
-<p>在拿到 decoder 的输出后，经过一个全连接层，将 dim 映射到 n_vocab。而 bert 的结构就是 transformer 的多个 Encoder 双向堆叠到一起：</p>
-<p><img data-src="https://s1.ax1x.com/2022/03/28/qs1HgI.png" alt></p>
+<h2 id="Decoder-Layer"><a href="#Decoder-Layer" class="headerlink" title="Decoder Layer"></a>Decoder Layer</h2><p>大部分内容和 Encoder Layer 一样，先将 target 经过 embedding layer 之后得到表示，并叠加位置的 embedding 表示向后传播。</p>
+<p>首先计算 target 的自注意力，也就是当前翻译和已经翻译的前文之间的关系；而后将输出视为 $Q$，encoder 的输出视为 $K,V$，再次计算注意力，得到新的解码输出，也就是计算一下当前输出结果和编码的特征向量之间的关系。在拿到 decoder 的输出后，经过一个全连接层，将 dim 映射到 n_vocab。</p>
+<p><img data-src="https://s1.ax1x.com/2022/04/30/OpKlzF.png" alt></p>
+<p>不过这里需要注意的事，为了防止 see the future，decoder 计算 target 的自注意力时需要添加 target mask，就是对角线及其以上的元素都是 0，防止预测当前元素时看到后面的元素。具体来说，真实的句子输入 decoder，经过 embedding 和 position embedding，在自己和自己的注意力矩阵中，对角线及以上的元素全部为 -inf，这样 softmax 之后对角线以上的元素为 0。那么在预测第一个单词时，只能根据 encoder output 的输出，而在预测之后的单词时，可以根据目前预测的结果预测之后的单词。</p>
+<p><img data-src="https://s1.ax1x.com/2022/04/30/OpKboq.png" alt></p>
+<h1 id="bert-程序"><a href="#bert-程序" class="headerlink" title="bert 程序"></a>bert 程序</h1><p>而 bert 的结构就是 transformer 的多个 Encoder 双向堆叠到一起：</p>
+<p><img data-src="https://s1.ax1x.com/2022/04/30/OpKfW8.jpg" alt></p>
 <p>其输入的 embedding 为：</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/28/qs1Xb8.jpg" alt></p>
 <ul>
-<li>Token Embeddings 是词向量，第一个单词是CLS标志，可以用于之后的分类任务，通过 embedding 层实现。如果句子很短，pad 为 0。</li>
-<li>Segment Embeddings 用来区别两种句子，因为预训练还要做 NSP 任务，同样是 embedding 层。</li>
-<li>Position Embeddings 和之前的 Transformer 不一样，不是三角函数而是学习出来的，非人工设定，而是 embedding 层。</li>
+<li>Token Embeddings 是词向量，第一个单词是CLS标志，可以用于之后的分类任务，通过 embedding 层实现。如果句子很短，pad 为 0。程序传入的参数是 input_dis，输入到 embedding 层中。</li>
+<li>Segment Embeddings 用来区别两种句子，因为预训练还要做 NSP 任务，同样是 embedding 层。程序传入的参数是 <code>token_type_ids</code>，输入到 embedding 层中。</li>
+<li>Position Embeddings 和之前的 Transformer 不一样，不是三角函数而是学习出来的，非人工设定，而是 embedding 层。输入到 embedding 层中。</li>
 </ul>
-<p>将这三者的相加作为输入，经过 layernorm 和 dropout 后输出。大概理论就是这些，不过它的预训练是真的靠谱，或者说，应用到具体任务，可以针对具体任务设计与训练。借着预训练，解释一下上面的符号，也是困扰我很久的东西。</p>
-<p>之前一直不知道 CLS 这种东西是干什么的，直到看了代码才清楚，这个符号输入网络，最后一层的输出经过全连接和激活，得到的输出，所以这个符号对应位置的输出能用于下游分类任务。</p>
-<p>此外，常用 bert 训练时会传入三个参数，<code>input_ids</code> 表示输入序列的原始 <code>token id</code>，即根据词表映射后的索引，<code>token_type_ids</code> 用于不同序列之间的分割，例如 <code>[0,0,0,0,1,1,1,1]</code> 用于区分前后不同的两个句子，形状为 <code>[src_len,batch_size]</code>。而最重要的 mask 值得细说：</p>
+<p>将这三个不同的 embedding 层的输出相加之和作为 encoder 输入，经过 layernorm 和 dropout 后输出。大概理论就是这些，不过它的预训练是真的靠谱，或者说，应用到具体任务，可以针对具体任务设计与训练。借着预训练，解释一下上面的符号，也是困扰我很久的东西。</p>
+<p>之前一直不知道 CLS 这种东西是干什么的，直到看了代码才清楚，这个符号输入网络，bert encoder 输出的所有状态第一个位置的均值或最后一层的第一个位置的输出，经过全连接和激活，得到的输出，所以这个符号对应位置的输出能用于下游分类任务。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BertPooler</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, config)</span>:</span></span><br><span class="line">        super().__init__()</span><br><span class="line">        self.dense = nn.Linear(config.hidden_size, config.hidden_size)</span><br><span class="line">        self.activation = nn.Tanh()</span><br><span class="line">        self.config = config</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, hidden_states)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :param hidden_states:  [src_len, batch_size, hidden_size]</span></span><br><span class="line"><span class="string">        :return: [batch_size, hidden_size]</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> self.config.pooler_type == <span class="string">"first_token_transform"</span>:</span><br><span class="line">            token_tensor = hidden_states[<span class="number">0</span>, :].reshape(<span class="number">-1</span>, self.config.hidden_size)</span><br><span class="line">        <span class="keyword">elif</span> self.config.pooler_type == <span class="string">"all_token_average"</span>:</span><br><span class="line">            token_tensor = torch.mean(hidden_states, dim=<span class="number">0</span>)</span><br><span class="line">        pooled_output = self.dense(token_tensor)  <span class="comment"># [batch_size, hidden_size]</span></span><br><span class="line">        pooled_output = self.activation(pooled_output)</span><br><span class="line">        <span class="keyword">return</span> pooled_output</span><br></pre></td></tr></table></figure>
 <h1 id="MASK"><a href="#MASK" class="headerlink" title="MASK"></a>MASK</h1><p>bert 有效的原因取决于它的预训练，比如 MLM（Mask language model） 和 NSP （Next sentence prediction），而这其中依赖的主要是 mask。</p>
 <h2 id="处理非定长序列"><a href="#处理非定长序列" class="headerlink" title="处理非定长序列"></a>处理非定长序列</h2><p>在NLP中，文本一般是不定长的，所以在进行 batch训练之前，要先进行长度的统一，过长的句子可以通过truncating 截断到固定的长度，过短的句子可以通过 padding 增加到固定的长度，但是 padding 对应的字符只是为了统一长度，并没有实际的价值，因此希望在之后的计算中屏蔽它们，这时候就需要 Mask。此外，self-attention中，$Q$ 和 $K$ 在点积之后，需要先经过 mask 再进行 softmax，因此，对于要屏蔽的部分，mask之后的输出需要为负无穷，这样softmax之后输出才为0。</p>
 <h2 id="辅助预训练"><a href="#辅助预训练" class="headerlink" title="辅助预训练"></a>辅助预训练</h2><p>做 MLM 预训练时，需要对句子进行 mask，使得模型看不到输入句子的单词。而后，其 label 为被 mask 掉单词的 id。由于 bert 本身的结构，由于预训练的时候，需要做 NSP 和 MLM，而 NSP 是二分类任务，MLM 是多分类任务，因此需要在 bert 上插入两个头分别实现这两个功能，前者就是将缺失的词汇预测回去，后者加入一个全连接输入 pooler output，判断句子是否为上下文。</p>
+<h2 id="防止-see-the-future"><a href="#防止-see-the-future" class="headerlink" title="防止 see the future"></a>防止 see the future</h2><p>这个已经在前文说过了，因为循环神经网络是时间驱动的，只有当时刻 $t$ 运算结束了，才能看到 $t+1$ 时刻的词。而 Transformer Decoder 抛弃了 RNN，改为 Self-Attention，由此就产生了一个问题，在训练过程中，整个 ground truth 都暴露在 Decoder 中，这显然是不对的。因此需要加入 mask 来防止预测过程中看到后面的词汇。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://github.com/jadore801120/attention-is-all-you-need-pytorch/blob/master/transformer/Models.py" target="_blank" rel="noopener">https://github.com/jadore801120/attention-is-all-you-need-pytorch/blob/master/transformer/Models.py</a></li>
-<li><a href="https://qixinbo.info/2021/11/09/transformer/" target="_blank" rel="noopener">https://qixinbo.info/2021/11/09/transformer/</a></li>
-<li><a href="https://www.ylkz.life/deeplearning/p10602241/" target="_blank" rel="noopener">https://www.ylkz.life/deeplearning/p10602241/</a></li>
+<li><a href="https://github.com/jadore801120/attention-is-all-you-need-pytorch/blob/master/transformer/Models.py" target="_blank" rel="noopener">transformer程序</a></li>
+<li><a href="https://qixinbo.info/2021/11/09/transformer/" target="_blank" rel="noopener">一个不错的transformer博客</a></li>
+<li><a href="https://www.ylkz.life/deeplearning/p10602241/" target="_blank" rel="noopener">月来客栈解析的 bert 源码</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/139595546" target="_blank" rel="noopener">mask 机制</a></li>
 </ol>
 
     </div>
@@ -474,7 +482,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#transformer"><span class="nav-number">1.</span> <span class="nav-text">transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#self-attention"><span class="nav-number">1.1.</span> <span class="nav-text">self-attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-head-self-attention"><span class="nav-number">1.1.1.</span> <span class="nav-text">multi-head-self-attention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Positional-Encoding"><span class="nav-number">1.1.2.</span> <span class="nav-text">Positional Encoding</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">2.</span> <span class="nav-text">程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MultiHeadAttention"><span class="nav-number">2.1.</span> <span class="nav-text">MultiHeadAttention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FeedForwardNetwork"><span class="nav-number">2.2.</span> <span class="nav-text">FeedForwardNetwork</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PositionalEncoding"><span class="nav-number">2.3.</span> <span class="nav-text">PositionalEncoding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Encoder-Layer"><span class="nav-number">2.4.</span> <span class="nav-text">Encoder Layer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Decoder-Layer"><span class="nav-number">2.5.</span> <span class="nav-text">Decoder Layer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MASK"><span class="nav-number">3.</span> <span class="nav-text">MASK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#处理非定长序列"><span class="nav-number">3.1.</span> <span class="nav-text">处理非定长序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#辅助预训练"><span class="nav-number">3.2.</span> <span class="nav-text">辅助预训练</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#从-transformer-开始"><span class="nav-number">1.</span> <span class="nav-text">从 transformer 开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#self-attention"><span class="nav-number">1.1.</span> <span class="nav-text">self-attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-head-self-attention"><span class="nav-number">1.1.1.</span> <span class="nav-text">multi-head-self-attention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Positional-Encoding"><span class="nav-number">1.1.2.</span> <span class="nav-text">Positional Encoding</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">2.</span> <span class="nav-text">程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MultiHeadAttention"><span class="nav-number">2.1.</span> <span class="nav-text">MultiHeadAttention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PositionalEncoding"><span class="nav-number">2.2.</span> <span class="nav-text">PositionalEncoding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Encoder-Layer"><span class="nav-number">2.3.</span> <span class="nav-text">Encoder Layer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Decoder-Layer"><span class="nav-number">2.4.</span> <span class="nav-text">Decoder Layer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bert-程序"><span class="nav-number">3.</span> <span class="nav-text">bert 程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MASK"><span class="nav-number">4.</span> <span class="nav-text">MASK</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#处理非定长序列"><span class="nav-number">4.1.</span> <span class="nav-text">处理非定长序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#辅助预训练"><span class="nav-number">4.2.</span> <span class="nav-text">辅助预训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#防止-see-the-future"><span class="nav-number">4.3.</span> <span class="nav-text">防止 see the future</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -544,12 +552,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">809k</span>
+    <span title="站点总字数">812k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:16</span>
+    <span title="站点阅读时长">12:18</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
