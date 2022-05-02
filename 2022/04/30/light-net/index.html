@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="很久之前我觉得移动端应用几百兆的模型不切实际，在不考虑蒸馏、量化等压缩方法下，发现了 MobileNet 设计的很神奇，大小只有几 MB，可以说是一股清流了。就整理发布了一下，然后今天发现找不到了，神奇。（于是顺手和 ShuffleNet 一并整理到轻量化的神经网络中）">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-04-30T14:57:28.644Z">
+<meta property="og:updated_time" content="2022-05-02T14:36:47.337Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="轻量的神经网络">
 <meta name="twitter:description" content="很久之前我觉得移动端应用几百兆的模型不切实际，在不考虑蒸馏、量化等压缩方法下，发现了 MobileNet 设计的很神奇，大小只有几 MB，可以说是一股清流了。就整理发布了一下，然后今天发现找不到了，神奇。（于是顺手和 ShuffleNet 一并整理到轻量化的神经网络中）">
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-04-30 20:43:59 / 修改时间：22:57:28" itemprop="dateCreated datePublished" datetime="2022-04-30T20:43:59+08:00">2022-04-30</time>
+              <time title="创建时间：2022-04-30 20:43:59" itemprop="dateCreated datePublished" datetime="2022-04-30T20:43:59+08:00">2022-04-30</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-02 22:36:47" itemprop="dateModified" datetime="2022-05-02T22:36:47+08:00">2022-05-02</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.5k</span>
+              <span>7.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -308,7 +314,31 @@
 <p>\begin{equation}<br>    \begin{aligned}<br>        \text{h-sigmoid} &amp;= \frac{\text{ReLU6}(x+3)}{6} \\<br>        \text{h-swish} &amp;= x \cdot \text{h-sigmoid}<br>    \end{aligned}<br>\end{equation}</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">h_sigmoid</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inplace=True)</span>:</span></span><br><span class="line">        super(h_sigmoid, self).__init__()</span><br><span class="line">        self.relu = nn.ReLU6(inplace=inplace)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.relu(x + <span class="number">3</span>) / <span class="number">6</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">h_swish</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inplace=True)</span>:</span></span><br><span class="line">        super(h_swish, self).__init__()</span><br><span class="line">        self.sigmoid = h_sigmoid(inplace=inplace)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> x * self.sigmoid(x)</span><br></pre></td></tr></table></figure>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InvertedResidual</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inp, hidden_dim, oup, kernel_size, stride, use_se, use_hs)</span>:</span></span><br><span class="line">        super(InvertedResidual, self).__init__()</span><br><span class="line">        <span class="keyword">assert</span> stride <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        self.identity = stride == <span class="number">1</span> <span class="keyword">and</span> inp == oup</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> inp == hidden_dim:</span><br><span class="line">            self.conv = nn.Sequential(</span><br><span class="line">                <span class="comment"># dw</span></span><br><span class="line">                nn.Conv2d(hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - <span class="number">1</span>) // <span class="number">2</span>, groups=hidden_dim, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                h_swish() <span class="keyword">if</span> use_hs <span class="keyword">else</span> nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># Squeeze-and-Excite</span></span><br><span class="line">                SELayer(hidden_dim) <span class="keyword">if</span> use_se <span class="keyword">else</span> nn.Identity(),</span><br><span class="line">                <span class="comment"># pw-linear</span></span><br><span class="line">                nn.Conv2d(hidden_dim, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv = nn.Sequential(</span><br><span class="line">                <span class="comment"># pw 升维</span></span><br><span class="line">                nn.Conv2d(inp, hidden_dim, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                h_swish() <span class="keyword">if</span> use_hs <span class="keyword">else</span> nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># dw 提取特征</span></span><br><span class="line">                nn.Conv2d(hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - <span class="number">1</span>) // <span class="number">2</span>, groups=hidden_dim, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                <span class="comment"># Squeeze-and-Excite</span></span><br><span class="line">                SELayer(hidden_dim) <span class="keyword">if</span> use_se <span class="keyword">else</span> nn.Identity(),</span><br><span class="line">                h_swish() <span class="keyword">if</span> use_hs <span class="keyword">else</span> nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># pw-linear 先行激活，降维</span></span><br><span class="line">                nn.Conv2d(hidden_dim, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.identity:</span><br><span class="line">            <span class="keyword">return</span> x + self.conv(x)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> self.conv(x)</span><br></pre></td></tr></table></figure>
-<h1 id="ShuffleNet-V1"><a href="#ShuffleNet-V1" class="headerlink" title="ShuffleNet-V1"></a>ShuffleNet-V1</h1><h1 id="ShuffleNet-V2"><a href="#ShuffleNet-V2" class="headerlink" title="ShuffleNet-V2"></a>ShuffleNet-V2</h1>
+<h1 id="ShuffleNet-V1"><a href="#ShuffleNet-V1" class="headerlink" title="ShuffleNet-V1"></a>ShuffleNet-V1</h1><p>group 卷积能有效的减少卷积参数。假设输入图像的大小为 $c_1\times H \times W$，卷积核大小为 $c_1 \times h \times w$，想要得到 $c_2 \times H \times W$ 的输出目标，那么需要的卷积层参数量就是：$c_2 \times c_1 \times h \times w$。</p>
+<p>如果使用 group 卷积，将通道分成 $g$ 组，那么每个输入就是 $c_1/g \times H \times W$，对应的卷积核大小为 $c_1/g \times h \times w$，为了得到同样大小的输出，一组卷积的输出大小就是 $c_2/g \times H \times W$，将 $g$ 组卷积核的输出拼接到一起得到同等大小的输出 $c_2 \times H \times W$，此时的参数量为 $c_2 \times c_1 / g\times h \times w$。</p>
+<p><img data-src="https://s1.ax1x.com/2022/05/02/OFVjDH.jpg" alt></p>
+<ul>
+<li>图 a 中，对于 group 卷积而言，channel 特征只在组内传递</li>
+<li>图 b 中，对 channel 进行打乱，特征在多个 channel 中传递</li>
+</ul>
+<p>综上，使用 group 卷积替换传统卷积，并在 group 卷积后使用 channel shuffle 操作。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">channel_shuffle</span><span class="params">(x, groups)</span>:</span></span><br><span class="line">    batchsize, num_channels, height, width = x.data.size()</span><br><span class="line"></span><br><span class="line">    channels_per_group = num_channels // groups</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># reshape</span></span><br><span class="line">    x = x.view(batchsize, groups, </span><br><span class="line">        channels_per_group, height, width)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 通道那个矩阵发生了转置</span></span><br><span class="line">    <span class="comment"># - contiguous() required if transpose() is used before view()</span></span><br><span class="line">    x = torch.transpose(x, <span class="number">1</span>, <span class="number">2</span>).contiguous()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># flatten</span></span><br><span class="line">    x = x.view(batchsize, <span class="number">-1</span>, height, width)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h1 id="ShuffleNet-V2"><a href="#ShuffleNet-V2" class="headerlink" title="ShuffleNet-V2"></a>ShuffleNet-V2</h1><p>在众多影响模型推理速度的因素中，理论计算量只是一部分，额外的还有内存访问（memory access cost, MAC）、平台架构和并行等级；而 数据 IO、逐元素运算也会占用时间。因此作者给出了设计轻量网络的四条准则和实验验证：</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>        \text{MAC} &amp;= hw(c_1+c_2)+c_1c_2 \\<br>        { } &amp; \geq 2hw\sqrt{c_1c_2}+c_1c_2\\<br>        { } &amp; \geq 2\sqrt{hwB} + \frac{B}{hw}\\<br>        B &amp;= hwc_1c_2 (\text{FLOPs})<br>    \end{aligned}<br>\end{equation}</p>
+<ol>
+<li>如上的 MAC 计算中，可以发现当 $c_1=c_2$ 的时候取等号。也就是当卷积的输入和输出 channel 相等时，内存访问代价最低，因此尽可能使通道不变</li>
+</ol>
+<p>\begin{equation}<br>    \begin{aligned}<br>        \text{Group-MAC} &amp;= hw(c_1+c_2)+c_1c_2/g \\<br>        { } &amp;=hwc_1 + \frac{Bg}{c_1} + \frac{B}{hw}\\<br>        B &amp;= hwc_1c_2/g (\text{FLOPs})<br>    \end{aligned}<br>\end{equation}</p>
+<ol>
+<li>在 Group-MAC 计算中，因为其他是定植，那么大小取决于 $g$，因此分组卷积分的越多时，内存访问代价会增大</li>
+<li>网络的碎片化程度越高（分支越多的意思），速度越慢。对于 GPU 的并行计算不友好，而且涉及不同分支的同步问题</li>
+<li>逐元素相加也会带来不可忽视的开销，如 relu，残差的 add 运算</li>
+</ol>
+<p><img data-src="https://s1.ax1x.com/2022/05/02/OFVXKe.jpg" alt></p>
+<p>图左侧的 a（stride=1） 和 b（stride=2） 是 ShuffleNetV1 的结构，右侧的 c（stride=1） 和 d（stride=2） 是 ShuffleNetV2 的结构。</p>
+<p>图 c 中，为了减少碎片化，在 c 中取消了左侧分支没有运算，右侧分支满足第一个准则，而最开始的 channel split 到最后的 concat，再次满足第一个准则，不选择 add 操作满足第 4 个准则。只对右侧的分支进行 relu 激活，并取消最终输出的 relu，满足第 4 个准则。而 concat，channel shuffle 和下一层输入的 channel split 可以合并为一个逐元素操作，不得不说太细了。</p>
+<p>然后 ShuffleNetV2+ 在借鉴 MobileNetV3 的想法，也使用了 h-swish 激活函数和 SE 注意力机制，结果上超过了 MobileNetV3，这一部分可以在旷视的 github 上找到。</p>
+
     </div>
 
     
@@ -330,7 +360,7 @@
       <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
   </ul>
 
@@ -523,12 +553,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">817k</span>
+    <span title="站点总字数">820k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:23</span>
+    <span title="站点阅读时长">12:25</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
