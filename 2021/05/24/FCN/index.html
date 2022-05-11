@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。">
+  <meta name="description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。 2022 年回来填坑，因为之前接了一个语义分割的项目，所以看了一些相关的论文，当时整理的内容都在草稿里躺着，今天想起来，于是决定补充到这个博客里。注意：我看一些 github 的第三方不错的实现，">
 <meta name="keywords" content="CV">
 <meta property="og:type" content="article">
-<meta property="og:title" content="分割篇：开山之作 FCN">
+<meta property="og:title" content="分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/24/FCN/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。">
+<meta property="og:description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。 2022 年回来填坑，因为之前接了一个语义分割的项目，所以看了一些相关的论文，当时整理的内容都在草稿里躺着，今天想起来，于是决定补充到这个博客里。注意：我看一些 github 的第三方不错的实现，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-25T17:32:30.000Z">
+<meta property="og:updated_time" content="2022-05-11T14:05:08.524Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="分割篇：开山之作 FCN">
-<meta name="twitter:description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。">
+<meta name="twitter:title" content="分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet">
+<meta name="twitter:description" content="CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。 2022 年回来填坑，因为之前接了一个语义分割的项目，所以看了一些相关的论文，当时整理的内容都在草稿里躺着，今天想起来，于是决定补充到这个博客里。注意：我看一些 github 的第三方不错的实现，">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/24/FCN/">
 
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>分割篇：开山之作 FCN | Just for Life.</title>
+  <title>分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          分割篇：开山之作 FCN
+          分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet
         </h1>
 
         <div class="post-meta">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-26 01:32:30" itemprop="dateModified" datetime="2021-05-26T01:32:30+08:00">2021-05-26</time>
+                <time title="修改时间：2022-05-11 22:05:08" itemprop="dateModified" datetime="2022-05-11T22:05:08+08:00">2022-05-11</time>
               </span>
 
           
@@ -273,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>4.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -292,7 +292,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。这个系列完结后，大概会结合对抗样本 and 目标检测做一些东西。自己还是差的太远。</p>
+        <p>CV 系列的论文和程序得一点点开坑了。目前准备的计划任务是：FCN，OHEM，Mask RCNN，YOLO，Focal loss，Seesaw loss。别问，问就是网上一点点查阅得到的，然后写写代码。</p>
+<p>2022 年回来填坑，因为之前接了一个语义分割的项目，所以看了一些相关的论文，当时整理的内容都在草稿里躺着，今天想起来，于是决定补充到这个博客里。注意：我看一些 github 的第三方不错的实现，多多少少在模型结构上和原论文不完全一致，因此网络结构部分略写了。</p>
 <a id="more"></a>
 <h1 id="什么是语义分割"><a href="#什么是语义分割" class="headerlink" title="什么是语义分割"></a>什么是语义分割</h1><p>语义分割的直观解释可以见下图，计算照片中的每一个像素点的类别，进而得到哪些像素点属于同一类，把一些物体给分割出来：</p>
 <p><img data-src="http://mi.eng.cam.ac.uk/research/projects/VideoRec/CamVid/pr/DBOverview1_1_huff_0000964.jpg" alt></p>
@@ -301,12 +302,12 @@
 <li>对于传统的分类网络，经过 CNN 不断卷积、池化的处理，最后进入全连接网络，预测当前图片的分类。但会丢失空间信息，无法预测每个像素的分类。</li>
 <li>对于目标检测的网络，也是经过 CNN 不断卷积、池化的处理，在最后的特征图上预测类别和位置。但识别出来的是目标框，并非物体的轮廓边界。</li>
 </ul>
-<p>而 FCN 的创新之处在于，使用卷积操作替换了分类网络的全连接，使得输入输出保持在相同尺寸，这样就可以预测每个像素点的类别。加上使用了卷积，自然而然也就可以处理任意尺寸的图像。网络结构如下，用下面的卷积替换上面的全连接：</p>
+<p>而 FCN 的创新之处在于，使用卷积操作替换了分类网络的全连接，可以保留特征的高度和宽度信息，再通过上采样使得输入输出保持在相同尺寸，这样就可以预测每个像素点的类别，通过交叉熵损失函数计算损失并反向传播。网络结构如下，用下面的卷积替换上面的全连接：</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvGwrQ.png" alt></p>
-<h1 id="上采样"><a href="#上采样" class="headerlink" title="上采样"></a>上采样</h1><p>经过不断的卷积，图像的尺寸会减少而维度会增加。所以为了使得网络输出的图像尺寸和原图像一致，需要进行一些上采样，使它恢复到输入图像相同的尺寸，从而可以对每个像素都产生了一个预测, 同时保留了原始输入图像中的空间信息, 最后在与输入图等大小的特征图上对每个像素进行分类，逐像素地用 softmax 分类计算损失，相当于每个像素对应一个训练样本。这部分在论文的第三章有所描述。</p>
-<p>而上采样采用的操作是<strong>转置卷积</strong>，如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示，蓝色是输入，青色是输出，将图像的尺寸瞬间增加了一倍。而文中发现，这种形式的上采样是最有效的，且，可以通过叠加之前的输入（类此残差），获得更好的精度。此外文中特意表明了转置卷积也是卷积层，按照普通的卷积层进行训练即可。</p>
+<h2 id="上采样"><a href="#上采样" class="headerlink" title="上采样"></a>上采样</h2><p>经过不断的卷积，图像的尺寸会减少而维度会增加。所以为了使得网络输出的图像尺寸和原图像一致，需要进行一些上采样，使它恢复到输入图像相同的尺寸，从而可以对每个像素都产生了一个预测, 同时保留了原始输入图像中的空间信息。最后在与输入图等大小的特征图上对每个像素进行分类，逐像素地用 softmax 分类计算损失，相当于每个像素对应一个训练样本。这部分在论文的第三章有所描述。</p>
+<p>而<strong>上采样采用的操作是转置卷积(Transposed Convolution)</strong>，如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示，蓝色是输入，青色是输出，白色的 padding 部分为 0，将图像的尺寸瞬间增加了一倍。需要注意的是，转置卷积不是卷积的逆运算。而文中发现，这种形式的上采样是最有效的，且，可以通过叠加网络之前层的输出（类此残差），获得更好的精度。此外文中特意表明了转置卷积也是卷积层，按照普通的卷积层进行训练即可。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvNSo9.gif" alt></p>
-<h1 id="融合操作"><a href="#融合操作" class="headerlink" title="融合操作"></a>融合操作</h1><p><img data-src="https://z3.ax1x.com/2021/05/24/gva3Vg.png" alt></p>
+<h2 id="融合操作"><a href="#融合操作" class="headerlink" title="融合操作"></a>融合操作</h2><p><img data-src="https://z3.ax1x.com/2021/05/24/gva3Vg.png" alt></p>
 <p>如上图所示，论文给出了 FCN 的三种版本。</p>
 <ul>
 <li>对于 FCN-32s，直接在最后一层进行 32 倍的上采样，原始空间信息倍大量丢失</li>
@@ -315,14 +316,64 @@
 </ul>
 <p>论文中的结论是，FCN-8s 的效果要好一些，毕竟更多的利用了原始空间信息。网络结构图如下 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> ：</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvwICd.png" alt></p>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>网上看到了份程序，逻辑写的还不错：</p>
+<h2 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h2><p>网上看到了份程序，逻辑写的还不错：</p>
 <p><a href="https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py" target="_blank" rel="noopener">https://github.com/pochih/FCN-pytorch/blob/master/python/fcn.py</a></p>
 <p>尺寸在我裁剪图片的时候进行了放缩，不要太在意。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gvBWfH.png" alt></p>
-<h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><p>若要可视化展示结果，需要对网络输出的结果进行解码。如标注图片上的类别等。假设输入图像的尺寸是 [800, 800] 的，当前类别数量是 21，会得到 [bacthsize, num_classes, height, width] 的输出。假设当前 batchsize 是 1，那么就需要在 num_classes 张 [height, width] 大小的图片中选择出每个像素点的类别。</p>
+<h3 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h3><p>若要可视化展示结果，需要对网络输出的结果进行解码。如标注图片上的类别等。假设输入图像的尺寸是 [800, 800] 的，当前类别数量是 21，会得到 [bacthsize, num_classes, height, width] 的输出。假设当前 batchsize 是 1，那么就需要在 num_classes 张 [height, width] 大小的图片中选择出每个像素点的类别。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">out = fcn(data)[<span class="string">'out'</span>]</span><br><span class="line"><span class="comment"># 选择每个像素点的最大的类别</span></span><br><span class="line">om = torch.argmax(out.squeeze(), dim=<span class="number">0</span>).detach().cpu().numpy()</span><br><span class="line">decode_segmap(om)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_segmap</span><span class="params">(image, nc=<span class="number">21</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 类别颜色，画图用</span></span><br><span class="line">    label_colors = np.array([</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>),  <span class="comment"># 0=background</span></span><br><span class="line">        <span class="comment"># 1=aeroplane, 2=bicycle, 3=bird, 4=boat, 5=bottle</span></span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 6=bus, 7=car, 8=cat, 9=chair, 10=cow</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        <span class="comment"># 11=dining table, 12=dog, 13=horse, 14=motorbike, 15=person</span></span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">0</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">64</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        (<span class="number">192</span>, <span class="number">128</span>, <span class="number">128</span>),</span><br><span class="line">        <span class="comment"># 16=potted plant, 17=sheep, 18=sofa, 19=train, 20=tv/monitor</span></span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">64</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">128</span>, <span class="number">192</span>, <span class="number">0</span>),</span><br><span class="line">        (<span class="number">0</span>, <span class="number">64</span>, <span class="number">128</span>)</span><br><span class="line">    ])</span><br><span class="line">    r = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    g = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    b = np.zeros_like(image).astype(np.uint8)</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">0</span>, nc):</span><br><span class="line">        <span class="comment"># 目标类的索引</span></span><br><span class="line">        idx = image == l</span><br><span class="line">        r[idx] = label_colors[l, <span class="number">0</span>]</span><br><span class="line">        g[idx] = label_colors[l, <span class="number">1</span>]</span><br><span class="line">        b[idx] = label_colors[l, <span class="number">2</span>]</span><br><span class="line">    rgb = np.stack([r, g, b], axis=<span class="number">2</span>)</span><br><span class="line">    plt.imshow(rgb)</span><br><span class="line">    plt.savefig(<span class="string">'result.png'</span>)</span><br></pre></td></tr></table></figure>
-<h1 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h1><p>此外，U-Net <sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup> 的网络结构也适合做分割，先记下来，也许某一天做语义分割的任务会用到。</p>
+<h1 id="DeepLab"><a href="#DeepLab" class="headerlink" title="DeepLab"></a>DeepLab</h1><p>由于前面详细介绍了 FCN，对语义分割有了初步的认知，后面的 DeepLab，UNet 和 UperNet 就会略写。</p>
+<h2 id="DeepLabV1"><a href="#DeepLabV1" class="headerlink" title="DeepLabV1"></a>DeepLabV1</h2><p>首先给出了语义分割存在的问题：</p>
+<ol>
+<li><code>max-pooling</code> 下采样导致的图片分辨率降低，为了解决这个问题，作者使用了膨胀卷积。</li>
+<li>空间不敏感问题。分类器本来就具备一定空间不变性，当图片发生变化，分类结果也不会改变，但是分割结果应该发生改变，这里我也认为是 <code>max-pooling</code> 导致的。作者使用了条件随机场解决，但我看后面的分割网络没有在采用这个结构，于是没有深究。</li>
+</ol>
+<p>由于选用的是 VGG16 作为 backbone，进行了和 FCN 一样将全连接替换卷积层，此时图片经过后会下采样 32 倍。由于采样倍率太大导致难以复原原图，因此最后的两个 maxpool 的步距设置为 1，此时就是下采样 8 倍。最后三个3x3的卷积层采用了膨胀卷积，膨胀系数 <code>dilation=2</code>。</p>
+<p>此外，针对第一个替换全连接的卷积层，实现了 <code>largeFOV (field of view)</code>，使用 <code>3X3</code> 且 膨胀系数 <code>dilation=12</code> 的卷积核扩大感受野，相对于 FCN 减少了 kernel size，降低参数量的同时加快训练速度。</p>
+<p>另外一个创新点是 <code>MSC(multiscale)</code>，多尺度融合，将原图经过卷积、前四个 max-pool 的输出经过卷积，这五个分支的输出最后相加，得到结果。无论采用多尺度与否，都是将最后的输出通过双线性插值进行上采样，得到和原图同样的大小。</p>
+<h3 id="程序-1"><a href="#程序-1" class="headerlink" title="程序"></a>程序</h3><p><a href="https://github.com/kazuto1011/deeplab-pytorch/tree/master" target="_blank" rel="noopener">我觉得不错的程序实现</a>。</p>
+<h2 id="DeepLabV2"><a href="#DeepLabV2" class="headerlink" title="DeepLabV2"></a>DeepLabV2</h2><p>相对于 DeepLabV1，我个人的理解就是换了 backbone，引入了 <code>ASPP （atrous spatial pyramid pooling）</code> 模块。</p>
+<ul>
+<li>分辨率低的问题：由于替换了 backbone，再次面临了和 DeepLabV1 一样的问题，将最后几个 <code>max-pooling</code> 的步距设置为 1，并配合使用膨胀卷积。</li>
+<li><p>由于分割目标存在多尺度问题，作者提出了 <code>ASPP</code> 和多尺度训练两种方法解决。<code>ASPP</code> 如下图所示，对输入的特征图并联 4 个分支，每个分支的膨胀率不同，也就是感受野不同，从而解决目标多尺度的问题。最终对四个分支进行求和。<br><img data-src="https://s1.ax1x.com/2022/05/11/Od47rt.jpg" alt></p>
+</li>
+<li><p>对于多尺度训练而言，将输入图像缩小一些，并通过双线性插值得到和不缩放同样大小的特征图。针对每个像素点的类别，使用的是这些特征图中最大的值。</p>
+</li>
+<li>此外，学习率使用 <code>poly</code> 策略进行更新，没训练一定的步数学习率就会衰减一些，文中说提高了 3.6 个点。</li>
+</ul>
+<p>\begin{equation}<br>lr \times = (1 - \frac{iter}{n_{}iter})^p<br>\end{equation}</p>
+<p><a href="https://github.com/kazuto1011/deeplab-pytorch/tree/master" target="_blank" rel="noopener">我觉得不错的程序实现</a>。</p>
+<h2 id="DeepLabV3"><a href="#DeepLabV3" class="headerlink" title="DeepLabV3"></a>DeepLabV3</h2><ol>
+<li>引入 <code>multi-grid</code>，每个 <code>block</code> 中的三个卷积有各自膨胀率，例如 <code>Multi Grid = (1, 2, 4)</code>，<code>block</code> 的 <code>dilaterate=2</code>，则 <code>block</code> 中每个卷积的实际膨胀率为 <code>2* (1, 2, 4)=(2,4,8)</code>。</li>
+<li>改进了 <code>ASPP</code>，总结一下就是，对特征图进行平均池化、卷积、标准化和激活，在经过 4 路并联的卷积层。对这五路输出进行 <code>concat</code> 拼接，经过 <code>1X1</code> 卷积降维后输出。相当于细化了特征提取的过程。</li>
+<li>移除了条件随机场。</li>
+</ol>
+<h2 id="DeepLabV3-1"><a href="#DeepLabV3-1" class="headerlink" title="DeepLabV3+"></a>DeepLabV3+</h2><p>我觉得到 DeepLab 发展到这个版本看着舒服一些。对于 DeepLabV3，论文中写如果 Backbone 为 ResNet101，Stride=16（下采样 16 倍）将造成后面 9 层的特征图不得不使用膨胀卷积；而如果下采样 8 倍，则后面 78 层的计算量都会变得很大，这就造成了 DeepLabV3 如果应用在大分辨率图像时非常耗时。我个人认为它的创新点在解码器和网络模型的改进上：</p>
+<p><img data-src="https://s1.ax1x.com/2022/05/11/Od4hPe.jpg" alt></p>
+<ul>
+<li>decoder 如何工作的，直接看图就好，文字描述一大堆反而显得很乱。</li>
+<li>backbone 替换为 Xception，在 Entry flow 中，首先是两个 <code>3X3</code> 的卷积，然后是三个用深度可分离卷积代替 <code>3X3</code> 卷积的残差模块。然后是 Middle flow，这是一个左侧没有卷积的残差模块，同样这里也是用的深度可分离卷积，然后重复16次。最后是 Exit flow，这里就是一个残差模块和三个深度可分离卷积。最终图片倍下采样 8 倍。</li>
+</ul>
+<p><img data-src="https://s1.ax1x.com/2022/05/11/Od4rvR.jpg" alt></p>
+<p>出于对谷歌的信任，我当时试用了这个网络，效果很不错。</p>
+<p><a href="https://github.com/jfzhang95/pytorch-deeplab-xception" target="_blank" rel="noopener">我觉得不错的实现</a>。</p>
+<h1 id="U-Net"><a href="#U-Net" class="headerlink" title="U-Net"></a>U-Net</h1><p>此外，U-Net <sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup> 的网络结构也适合做分割，一图胜千言。上采样使用的是前文提到过的转置卷积。在原论文中，灰色连接的两个特征图尺寸是不一样的，因此需要裁剪并选择中间部分。由于输入和输出的大小是不同的，为了得到图像的分割结果，需要对图像的边缘进行镜像填充处理。不过在他人的程序实现中，卷积的时候添加了 padding 进行处理，这样就得到了同等大小的输入和输出。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/24/gv6rd0.png" alt></p>
+<h1 id="PAN"><a href="#PAN" class="headerlink" title="PAN"></a>PAN</h1><p><img data-src="https://s1.ax1x.com/2022/05/11/Od40C4.jpg" alt></p>
+<p>当时出于对旷世的信任，加上直观感觉这个网络结构也不错，也使用了一下 PAN 这种分割结构，我认为的创新点有两个：</p>
+<ol>
+<li>与 SPP 不同，使用了 FPA（Feature Pyramid Attention）结构进行多尺度特征融合。全尺寸特征图的 global pooling 和卷积可以理解为注意力机制，将全局上下文信息作为先验知识引融入到通道的重要性中。<br><img data-src="https://s1.ax1x.com/2022/05/11/Od4YD0.jpg" alt></li>
+<li>将高维特征使用 global pooling 将图像上采样到 <code>1X1</code> 大小，经过卷积层后和低维特征进行相乘。<br><img data-src="https://s1.ax1x.com/2022/05/11/OdhzB6.jpg" alt></li>
+</ol>
+<p>细节的话，global pooling 是通过 avgpool 实现的，将图像上采样到 <code>1X1</code> 大小。FPA 中的上采样是通过转置卷积实现的。</p>
+<p><a href="https://github.com/JaveyWang/Pyramid-Attention-Networks-pytorch/blob/master/networks.py" target="_blank" rel="noopener">我觉得不错的实现</a>。</p>
+<h1 id="UperNet"><a href="#UperNet" class="headerlink" title="UperNet"></a>UperNet</h1><p><img data-src="https://s1.ax1x.com/2022/05/11/Odhbh4.jpg" alt></p>
+<p>这是一种统一感知解析网络，看图说话就是：经过 backbone 和 FPN 提取到的特征图，可以应用到各种场景，目标检测、场景识别、材料识别或者文本生成等，而这当然也可以用到语义分割中。</p>
+<ul>
+<li><a href="https://muyuuuu.github.io/2021/04/28/faster-rcnn/">FPN</a> 是一种多尺度特征融合的方法</li>
+<li><a href="https://github.com/open-mmlab/mmsegmentation/blob/master/mmseg/models/decode_heads/psp_head.py#L11" target="_blank" rel="noopener">PPM Head</a> 发表自 PSPNet 网络，类似于 SPP 的多尺度特征融合</li>
+</ul>
+<p>这里的实现我是直接通过 <code>mmseg</code> 工具箱实现的，效果很不错。</p>
 <h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/1411.4038" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/vdumoulin/conv_arithmetic" target="_blank" rel="noopener">卷积动画演示</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="http://flyrie.top/2018/06/22/%E5%85%A8%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%EF%BC%88FCN%EF%BC%89/" target="_blank" rel="noopener">FCN-8s 结构图</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a href="https://learnopencv.com/pytorch-for-beginners-semantic-segmentation-using-torchvision/" target="_blank" rel="noopener">分割后的图片解码 </a></span><a href="#fnref:4" rev="footnote"> ↩</a></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/milesial/Pytorch-UNet" target="_blank" rel="noopener">U-Net 网络实现</a></span><a href="#fnref:5" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
@@ -409,8 +460,8 @@
       <i class="fa fa-chevron-left"></i> 目标检测篇：自定义 MMDetection 的 Pipeline
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/05/25/Mask-R-CNN/" rel="next" title="分割篇：Mask R-CNN">
-      分割篇：Mask R-CNN <i class="fa fa-chevron-right"></i>
+    <a href="/2021/05/25/Mask-R-CNN/" rel="next" title="实例分割篇：Mask R-CNN">
+      实例分割篇：Mask R-CNN <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -471,7 +522,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是语义分割"><span class="nav-number">1.</span> <span class="nav-text">什么是语义分割</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FCN"><span class="nav-number">2.</span> <span class="nav-text">FCN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上采样"><span class="nav-number">3.</span> <span class="nav-text">上采样</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#融合操作"><span class="nav-number">4.</span> <span class="nav-text">融合操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">5.</span> <span class="nav-text">程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解码"><span class="nav-number">5.1.</span> <span class="nav-text">解码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#延伸"><span class="nav-number">6.</span> <span class="nav-text">延伸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">7.</span> <span class="nav-text">reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是语义分割"><span class="nav-number">1.</span> <span class="nav-text">什么是语义分割</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FCN"><span class="nav-number">2.</span> <span class="nav-text">FCN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#上采样"><span class="nav-number">2.1.</span> <span class="nav-text">上采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#融合操作"><span class="nav-number">2.2.</span> <span class="nav-text">融合操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序"><span class="nav-number">2.3.</span> <span class="nav-text">程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解码"><span class="nav-number">2.3.1.</span> <span class="nav-text">解码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DeepLab"><span class="nav-number">3.</span> <span class="nav-text">DeepLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DeepLabV1"><span class="nav-number">3.1.</span> <span class="nav-text">DeepLabV1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DeepLabV2"><span class="nav-number">3.2.</span> <span class="nav-text">DeepLabV2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DeepLabV3"><span class="nav-number">3.3.</span> <span class="nav-text">DeepLabV3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DeepLabV3-1"><span class="nav-number">3.4.</span> <span class="nav-text">DeepLabV3+</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#U-Net"><span class="nav-number">4.</span> <span class="nav-text">U-Net</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PAN"><span class="nav-number">5.</span> <span class="nav-text">PAN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UperNet"><span class="nav-number">6.</span> <span class="nav-text">UperNet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">7.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -500,7 +551,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -541,12 +592,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">824k</span>
+    <span title="站点总字数">826k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:29</span>
+    <span title="站点阅读时长">12:31</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

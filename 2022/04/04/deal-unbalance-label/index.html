@@ -21,14 +21,14 @@
   </script>
 
   <meta name="description" content="去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。 而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解">
-<meta name="keywords" content="DeepLearning">
+<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="遥感图像分割，类别不平衡损失为何失效了？">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/04/04/deal-unbalance-label/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。 而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-04-10T15:39:28.539Z">
+<meta property="og:updated_time" content="2022-05-11T14:10:00.372Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="遥感图像分割，类别不平衡损失为何失效了？">
 <meta name="twitter:description" content="去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。 而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-10 23:39:28" itemprop="dateModified" datetime="2022-04-10T23:39:28+08:00">2022-04-10</time>
+                <time title="修改时间：2022-05-11 22:10:00" itemprop="dateModified" datetime="2022-05-11T22:10:00+08:00">2022-05-11</time>
               </span>
 
           
@@ -332,19 +332,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/04/CW-attack/" rel="bookmark">对抗攻击篇：CW 攻击算法</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/04/26/DNN-safe-basic/" rel="bookmark">对抗攻击篇：FGSM 与 PGD 攻击算法</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/03/24/E-commerce-Search-Recall/" rel="bookmark">电商搜索召回</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
   </ul>
 
@@ -390,7 +390,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
+              <a href="/tags/CV/" rel="tag"># CV</a>
           </div>
 
         
@@ -499,7 +499,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -540,12 +540,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">824k</span>
+    <span title="站点总字数">826k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:29</span>
+    <span title="站点阅读时长">12:31</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
