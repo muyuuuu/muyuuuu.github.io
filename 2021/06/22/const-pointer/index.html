@@ -23,14 +23,14 @@
   <meta name="description" content="和指针联用有佷微妙的地方，之前一直佷晕，现在来继续研究下。诸如以下： 123456int const;const int;const int* p;int const* p;int* const p;const int* const p;">
 <meta name="keywords" content="C++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ 中的常量与指针">
+<meta property="og:title" content="C++ 中的 const">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/06/22/const-pointer/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="和指针联用有佷微妙的地方，之前一直佷晕，现在来继续研究下。诸如以下： 123456int const;const int;const int* p;int const* p;int* const p;const int* const p;">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-06-22T20:33:22.000Z">
+<meta property="og:updated_time" content="2022-05-12T13:57:13.435Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ 中的常量与指针">
+<meta name="twitter:title" content="C++ 中的 const">
 <meta name="twitter:description" content="和指针联用有佷微妙的地方，之前一直佷晕，现在来继续研究下。诸如以下： 123456int const;const int;const int* p;int const* p;int* const p;const int* const p;">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/06/22/const-pointer/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>C++ 中的常量与指针 | Just for Life.</title>
+  <title>C++ 中的 const | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          C++ 中的常量与指针
+          C++ 中的 const
         </h1>
 
         <div class="post-meta">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-23 04:33:22" itemprop="dateModified" datetime="2021-06-23T04:33:22+08:00">2021-06-23</time>
+                <time title="修改时间：2022-05-12 21:57:13" itemprop="dateModified" datetime="2022-05-12T21:57:13+08:00">2022-05-12</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>2.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -295,14 +295,65 @@
         <p>和指针联用有佷微妙的地方，之前一直佷晕，现在来继续研究下。诸如以下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="keyword">const</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span>* p;</span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span>* p;</span><br><span class="line"><span class="keyword">int</span>* <span class="keyword">const</span> p;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span>* <span class="keyword">const</span> p;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<p><code>const</code> 是一种处理符号常量的方法，以 <code>const</code> 声明的变量，一般首字母大写，声明之后无法被修改。相比于 <code>define</code>，<code>const</code> 会显式的指定类型。除定义符号外，一般可用于函数声明，表示函数不会修改任何值；用于参数，表示函数不会修改参数；甚至可以用于声明数组的长度。</p>
-<h1 id="解读"><a href="#解读" class="headerlink" title="解读"></a>解读</h1><p>const默认作用于其左边的东西。左边没东西的情况下，作用于其右边的东西。<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+<h1 id="与宏定义的区别"><a href="#与宏定义的区别" class="headerlink" title="与宏定义的区别"></a>与宏定义的区别</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>宏定义  #define</th>
+<th>const 常量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>宏定义，相当于字符替换</td>
+<td>常量声明</td>
+</tr>
+<tr>
+<td>预处理器处理</td>
+<td>编译器处理</td>
+</tr>
+<tr>
+<td>无类型安全检查</td>
+<td>有类型安全检查</td>
+</tr>
+<tr>
+<td>不分配内存</td>
+<td>要分配内存</td>
+</tr>
+<tr>
+<td>存储在代码段</td>
+<td>存储在数据段</td>
+</tr>
+<tr>
+<td>可通过 #undef 取消</td>
+<td>不可取消</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h1><p><code>const</code> 是一种处理符号常量的方法，以 <code>const</code> 声明的变量，一般首字母大写，声明之后无法被修改。相比于 <code>define</code>，<code>const</code> 会显式的指定类型。</p>
+<ol>
+<li>修饰变量，说明该变量不可以被改变；</li>
+<li>修饰指针，分为指向常量的指针（pointer to const）和自身是常量的指针（常量指针，const pointer）；</li>
+<li>修饰引用，指向常量的引用（reference to const），用于形参类型，即避免了拷贝，又避免了函数对值的修改；</li>
+<li>修饰成员函数，说明该成员函数内不能修改成员变量。</li>
+</ol>
+<p>第 1,3,4 条容易理解，主要是第二条。看一个简单的例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> greeting[] = <span class="string">"Hello"</span>;</span><br><span class="line"><span class="keyword">char</span>* p1 = greeting;                <span class="comment">// 指针变量，指向字符数组变量</span></span><br><span class="line"><span class="comment">// （const 后面是 char，说明指向的字符（char）不可改变）</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* p2 = greeting;          <span class="comment">// 指针变量，指向字符数组常量</span></span><br><span class="line"><span class="comment">// （const 左侧是 p3，说明 p3 指针自身不可改变）</span></span><br><span class="line"><span class="keyword">char</span>* <span class="keyword">const</span> p3 = greeting;          <span class="comment">// 自身是常量的指针，指向字符数组变量</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span> p4 = greeting;    <span class="comment">// 自身是常量的指针，指向字符数组常量</span></span><br></pre></td></tr></table></figure>
+<h1 id="具体解读"><a href="#具体解读" class="headerlink" title="具体解读"></a>具体解读</h1><p>const默认作用于其左边的东西。左边没东西的情况下，作用于其右边的东西。<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+<p>简单的修饰指针：</p>
 <ol>
 <li><code>const int* p</code>，只有右边有东西，修饰的为 <code>int</code>，所以数值不能被修改。在与 <code>*</code> 结合，意思是<code>*p</code>不能被修改，其它的都可以。即不可通过该指针改变其指向的内容，但可改变指针本身所指向的地址。</li>
 <li><code>int const* p</code>，先作用于左侧的 <code>int</code> 为 <code>int const</code>，在叠加上右侧的 <code>*</code>，所以修饰的为 <code>int* p</code>，所以，<code>*p</code>不能被修改，其它的都可以。即不可通过该指针改变其指向的内容，但可改变指针本身所指向的地址。也就是，和上面的是一样的。</li>
 <li><code>int* const p</code>，左边是 <code>*</code>，所以 <code>const</code> 作用于指针，指向一个 <code>int</code> 变量。即不可以修改 <code>p</code>，但可以修改 <code>*p</code>，即不可改变指向的地址。</li>
+</ol>
+<p>中等难度的修饰指针：</p>
+<ol>
 <li><code>const int* const p</code>，对于第一个 <code>const</code>，左边没东西，修饰右边的 <code>int</code>，指向的值不能修改；对于第二个 <code>const</code> 修饰 <code>*</code>，指针不能修改。即不可改变指针本身所指向的地址，也不可通过指针改变其指向的内容。同 <code>int const* const p</code>。</li>
-<li><code>int const* const* p</code>，第一个 <code>const</code> 修饰 <code>int</code>，第二个 <code>const</code> 修饰第一个 <code>*</code>，也就是，指向 <code>const int* const p</code> 的指针，最后一个 <code>*</code> 没有被修饰，因此可以指向其它变量。<code>int const* const* const</code> 就不可以了。</li>
+</ol>
+<p>如何分析满天飞的 <code>const</code> 指针：</p>
+<ol>
+<li><code>int const* const* p</code>，第一个 <code>const</code> 修饰 <code>int</code>，第二个 <code>const</code> 修饰第一个 <code>*</code>，也就是，指向 <code>const int* const</code> 的指针，最后一个 <code>*</code> 没有被修饰，因此可以指向同类型的其它变量。<code>int const* const* const</code> 就不可以了。</li>
 <li>之后再出现此类情况，也可以慢慢分析满天飞的 <code>const</code> 和指针。</li>
 </ol>
 <h1 id="一些例子"><a href="#一些例子" class="headerlink" title="一些例子"></a>一些例子</h1><p>为了更好的理解上述内容，这里来举一些例子。常见的一般有两种选择：</p>
@@ -318,11 +369,11 @@
 <p>对于第三种情况：修改指针来修改常量会显得佷荒谬，因此编译会直接报错：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a&#123;<span class="number">34</span>&#125;;</span><br><span class="line">    <span class="comment">// error: invalid conversion from 'const int*' to 'int*'</span></span><br><span class="line">    <span class="keyword">int</span> *p = &amp;a;</span><br><span class="line">    *p ++;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *p ;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="二级指针"><a href="#二级指针" class="headerlink" title="二级指针"></a>二级指针</h2><p>之前说到，常指针可以指向变量，但是涉及二级指针后，情况又会发生逆转。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a&#123;<span class="number">12</span>&#125;;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span>** p1;</span><br><span class="line">    <span class="keyword">int</span>* p2;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// error: invalid conversion from 'int**' to 'const int**'</span></span><br><span class="line">    p1 = &amp;p2;</span><br><span class="line">    *p1 = &amp;a;</span><br><span class="line"></span><br><span class="line">    *p2 = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a&#123;<span class="number">12</span>&#125;;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span>** p1;</span><br><span class="line">    <span class="keyword">int</span>* p2;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// error: invalid conversion from 'int**' to 'const int**'</span></span><br><span class="line">    <span class="comment">// p1 指向 p2 的地址</span></span><br><span class="line">    p1 = &amp;p2;</span><br><span class="line">    <span class="comment">// p2 指向 a</span></span><br><span class="line">    *p1 = &amp;a;</span><br><span class="line">    <span class="comment">// 修改 p2，错误，因为 a 无法修改</span></span><br><span class="line">    *p2 = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果上述代码通过，那么完全可以通过 <code>p2</code> 指针修改常量。因此我们可以得到以下结论：</p>
 <ul>
-<li>若数据类型本身不是指针，可以将 <code>const</code> 数据或非 <code>const</code> 数据的地址赋给指向 <code>const</code> 的指针，但指针可以修改，指向别的值。因此，<code>const</code> 修饰的数组不能传参给非常量指针。</li>
 <li>如果数据类型是指针，非 <code>const</code> 数据的地址只能赋值给非 <code>const</code> 指针，如二级指针中，<code>p1 = &amp;p2</code> 是错误的。</li>
+<li>若数据类型本身不是指针，可以将 <code>const</code> 数据或非 <code>const</code> 数据的地址赋给指向 <code>const</code> 的指针，但指针可以修改，指向别的值。因此，<code>const</code> 修饰的数组不能传参给非常量指针。</li>
 </ul>
 <h1 id="references"><a href="#references" class="headerlink" title="references"></a>references</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;">https://www.zhihu.com/question/443195492</span><a href="#fnref:1" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
@@ -340,10 +391,10 @@
       <div class="popular-posts-title"><a href="/2021/02/01/CharArray-vs-ArrayName-vs-String/" rel="bookmark">字符数组，字符串与数组名</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
+      <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
+      <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
@@ -472,7 +523,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#解读"><span class="nav-number">1.</span> <span class="nav-text">解读</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些例子"><span class="nav-number">2.</span> <span class="nav-text">一些例子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#二级指针"><span class="nav-number">2.1.</span> <span class="nav-text">二级指针</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">3.</span> <span class="nav-text">references</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#与宏定义的区别"><span class="nav-number">1.</span> <span class="nav-text">与宏定义的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#功能"><span class="nav-number">2.</span> <span class="nav-text">功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体解读"><span class="nav-number">3.</span> <span class="nav-text">具体解读</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些例子"><span class="nav-number">4.</span> <span class="nav-text">一些例子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#二级指针"><span class="nav-number">4.1.</span> <span class="nav-text">二级指针</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">5.</span> <span class="nav-text">references</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -488,7 +539,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">205</span>
+          <span class="site-state-item-count">206</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -542,12 +593,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">826k</span>
+    <span title="站点总字数">829k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:31</span>
+    <span title="站点阅读时长">12:34</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

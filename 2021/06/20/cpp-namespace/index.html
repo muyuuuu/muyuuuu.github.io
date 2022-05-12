@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="之前在学 C++ 的时候，第一个例子大概是： 123456789101112#include &amp;lt;iostream&amp;gt;using namespace std;int main()&amp;#123;    cout &amp;lt;&amp;lt; &quot;hello world&quot; &amp;lt;&amp;lt; endl;     return 0;&amp;#125;// 或者#include &amp;lt;iostream&amp;gt;int m">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-06-21T20:37:24.000Z">
+<meta property="og:updated_time" content="2022-05-12T15:04:52.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++ 的名称空间">
 <meta name="twitter:description" content="之前在学 C++ 的时候，第一个例子大概是： 123456789101112#include &amp;lt;iostream&amp;gt;using namespace std;int main()&amp;#123;    cout &amp;lt;&amp;lt; &quot;hello world&quot; &amp;lt;&amp;lt; endl;     return 0;&amp;#125;// 或者#include &amp;lt;iostream&amp;gt;int m">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-22 04:37:24" itemprop="dateModified" datetime="2021-06-22T04:37:24+08:00">2021-06-22</time>
+                <time title="修改时间：2022-05-12 23:04:52" itemprop="dateModified" datetime="2022-05-12T23:04:52+08:00">2022-05-12</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -309,7 +309,7 @@
 <p>但是，尽量不要使用 <code>using namespace std</code>，这句话的意思是告诉编辑器我们将要使用空间 <code>std</code> 中的函数或者对象。或者说，能不用就不用，能在大括号里面用就不要在外面用，尤其是在 <code>.h</code> 等头文件中。幻想一下，你写的 <code>.h</code> 文件被其它人使用，你的名字空间和他人的名字空间不一样，但名字空间下面的函数名一样，就会导致冲突。跟 <code>python</code> 中写 <code>from numpy import *</code> 一个道理。</p>
 <h1 id="自定义名称空间"><a href="#自定义名称空间" class="headerlink" title="自定义名称空间"></a>自定义名称空间</h1><p>名称空间提供了一个声明名称的区域，而可以通过作用域解析运算符 <code>::</code> 访问其中的名称。如下是一种简单的写法：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mylib/show_info.h 文件下</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 名称空间</span></span><br><span class="line"><span class="keyword">namespace</span> std1 &#123;</span><br><span class="line">    <span class="comment">// 名称</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cout</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"first"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> std2 &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">cout</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"second"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main.cpp 文件下</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"mylib/show_info.h"</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std1;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="using-声明与编译指令"><a href="#using-声明与编译指令" class="headerlink" title="using 声明与编译指令"></a>using 声明与编译指令</h2><p>有的时候并不希望每次使用名称时都进行限定，所以 <code>C++</code> 提供了两种机制，<code>using</code> 声明使得特定的名称可用，<code>using</code> 编译指令使名称空间中的所有名称可用，两者都可以简化名称空间中名称的使用，也都会增加名称冲突的可能性。</p>
+<h1 id="using-声明与编译指令"><a href="#using-声明与编译指令" class="headerlink" title="using 声明与编译指令"></a>using 声明与编译指令</h1><p>有的时候并不希望每次使用名称时都进行限定，所以 <code>C++</code> 提供了两种机制，<code>using</code> 声明使得特定的名称可用，<code>using</code> 编译指令使名称空间中的所有名称可用，两者都可以简化名称空间中名称的使用，也都会增加名称冲突的可能性。</p>
 <p>对于 <code>using</code> 声明而言，将指定的的名称添加到声明区域，使其可用。如下所示的代码：</p>
 <ul>
 <li>在声明的作用域内，不能在声明其它同名变量；</li>
@@ -332,12 +332,17 @@
 <li>名称空间可以嵌套，但最好加上限定，表明这个名称的来源；</li>
 <li>以函数为例，名称空间里面的函数的声明和定义要在同一名称空间内；</li>
 <li>如果函数被重载，那么一个 <code>using</code> 声明将导入所有版本；</li>
-<li><p>对于未命名的名称空间，不能显式使用 <code>using</code>，不能在名称空间之外的文件使用名称空间中的名称。这可以作为<strong>链接性为内部静态变量的替代品</strong>。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 名称空间中的 a</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><p>对于未命名的名称空间，不能显式使用 <code>using</code>，不能在名称空间之外的文件使用名称空间中的名称。这可以作为<strong>链接性为内部静态变量(static)的替代品</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 名称空间中的 a</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 100</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>当名称空间很长时，可以简化名称空间：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> MEF = math::element::fire;</span><br><span class="line"><span class="keyword">using</span> MEF::flame;</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> MEF = math::element::fire;</span><br><span class="line"><span class="keyword">using</span> MEF::flame;</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
+<h1 id="与构造函数"><a href="#与构造函数" class="headerlink" title="与构造函数"></a>与构造函数</h1><p>在 C++11 中，派生类能够重用其直接基类定义的构造函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> Base &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">using</span> Base::Base;</span><br><span class="line">    <span class="comment">/* ... */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>如上 <code>using</code> 声明，对于基类的每个构造函数，编译器都生成一个与之对应（形参列表完全相同）的派生类构造函数。生成如下类型构造函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Derived(parms) : Base(args) &#123; &#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -354,10 +359,10 @@
       <div class="popular-posts-title"><a href="/2021/02/01/CharArray-vs-ArrayName-vs-String/" rel="bookmark">字符数组，字符串与数组名</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
+      <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
+      <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
@@ -424,8 +429,8 @@
       <i class="fa fa-chevron-left"></i> 二分搜索的亿点点细节
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/06/22/const-pointer/" rel="next" title="C++ 中的常量与指针">
-      C++ 中的常量与指针 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/06/22/const-pointer/" rel="next" title="C++ 中的 const">
+      C++ 中的 const <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -486,7 +491,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义名称空间"><span class="nav-number">1.</span> <span class="nav-text">自定义名称空间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#using-声明与编译指令"><span class="nav-number">1.1.</span> <span class="nav-text">using 声明与编译指令</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#自定义名称空间"><span class="nav-number">1.</span> <span class="nav-text">自定义名称空间</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#using-声明与编译指令"><span class="nav-number">2.</span> <span class="nav-text">using 声明与编译指令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#与构造函数"><span class="nav-number">3.</span> <span class="nav-text">与构造函数</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -502,7 +507,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">205</span>
+          <span class="site-state-item-count">206</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -556,12 +561,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">826k</span>
+    <span title="站点总字数">829k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:31</span>
+    <span title="站点阅读时长">12:34</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
