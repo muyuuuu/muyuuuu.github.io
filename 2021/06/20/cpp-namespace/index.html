@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="之前在学 C++ 的时候，第一个例子大概是： 123456789101112#include &amp;lt;iostream&amp;gt;using namespace std;int main()&amp;#123;    cout &amp;lt;&amp;lt; &quot;hello world&quot; &amp;lt;&amp;lt; endl;     return 0;&amp;#125;// 或者#include &amp;lt;iostream&amp;gt;int m">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-12T15:04:52.551Z">
+<meta property="og:updated_time" content="2022-05-14T13:29:27.963Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++ 的名称空间">
 <meta name="twitter:description" content="之前在学 C++ 的时候，第一个例子大概是： 123456789101112#include &amp;lt;iostream&amp;gt;using namespace std;int main()&amp;#123;    cout &amp;lt;&amp;lt; &quot;hello world&quot; &amp;lt;&amp;lt; endl;     return 0;&amp;#125;// 或者#include &amp;lt;iostream&amp;gt;int m">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-12 23:04:52" itemprop="dateModified" datetime="2022-05-12T23:04:52+08:00">2022-05-12</time>
+                <time title="修改时间：2022-05-14 21:29:27" itemprop="dateModified" datetime="2022-05-14T21:29:27+08:00">2022-05-14</time>
               </span>
 
           
@@ -332,7 +332,7 @@
 <li>名称空间可以嵌套，但最好加上限定，表明这个名称的来源；</li>
 <li>以函数为例，名称空间里面的函数的声明和定义要在同一名称空间内；</li>
 <li>如果函数被重载，那么一个 <code>using</code> 声明将导入所有版本；</li>
-<li><p>对于未命名的名称空间，不能显式使用 <code>using</code>，不能在名称空间之外的文件使用名称空间中的名称。这可以作为<strong>链接性为内部静态变量(static)的替代品</strong>。</p>
+<li><p>对于未命名的名称空间，不能显式使用 <code>using</code>，不能在名称空间之外的文件使用名称空间中的名称。这可以作为<strong>链接性为内部静态变量<a href="https://muyuuuu.github.io/2022/05/12/cpp-static/">static</a>的替代品</strong>。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 名称空间中的 a</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 100</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>当名称空间很长时，可以简化名称空间：</p>
@@ -359,13 +359,13 @@
       <div class="popular-posts-title"><a href="/2021/02/01/CharArray-vs-ArrayName-vs-String/" rel="bookmark">字符数组，字符串与数组名</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
+      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">C++中protected继承的成员放到public域下面好不好？</a></div>
     </li>
   </ul>
 
@@ -507,7 +507,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">206</span>
+          <span class="site-state-item-count">211</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -561,12 +561,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">829k</span>
+    <span title="站点总字数">848k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:34</span>
+    <span title="站点阅读时长">12:51</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
