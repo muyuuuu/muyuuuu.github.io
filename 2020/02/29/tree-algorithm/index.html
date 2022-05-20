@@ -23,14 +23,14 @@
   <meta name="description" content="树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：  求二叉树叶子节点的数量 求节点权重和 求距离根节点最近、最远的叶节点 求每一层节点的数量 遍历二叉树，求给定权值的路径 二叉查找树  而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适">
 <meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
-<meta property="og:title" content="树的遍历算法及常见衍生问题的归纳整理">
+<meta property="og:title" content="算法系列：树">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/02/29/tree-algorithm/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：  求二叉树叶子节点的数量 求节点权重和 求距离根节点最近、最远的叶节点 求每一层节点的数量 遍历二叉树，求给定权值的路径 二叉查找树  而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-28T17:20:56.000Z">
+<meta property="og:updated_time" content="2022-05-20T14:40:57.232Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="树的遍历算法及常见衍生问题的归纳整理">
+<meta name="twitter:title" content="算法系列：树">
 <meta name="twitter:description" content="树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：  求二叉树叶子节点的数量 求节点权重和 求距离根节点最近、最远的叶节点 求每一层节点的数量 遍历二叉树，求给定权值的路径 二叉查找树  而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/02/29/tree-algorithm/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>树的遍历算法及常见衍生问题的归纳整理 | Just for Life.</title>
+  <title>算法系列：树 | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          树的遍历算法及常见衍生问题的归纳整理
+          算法系列：树
         </h1>
 
         <div class="post-meta">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-29 01:20:56" itemprop="dateModified" datetime="2020-03-29T01:20:56+08:00">2020-03-29</time>
+                <time title="修改时间：2022-05-20 22:40:57" itemprop="dateModified" datetime="2022-05-20T22:40:57+08:00">2022-05-20</time>
               </span>
 
           
@@ -273,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8.2k</span>
+              <span>9.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -305,6 +305,8 @@
 <a id="more"></a>
 <p>一类通常题目：求树的叶子数量，求每一层的节点数量，求树的最大高度，求叶子权重的和，都可以归类为对二叉树的遍历，所以本文更多的是树的遍历算法(深度优先或广度优先)的应用。其次，先序、中序、后序遍历树，对遍历顺序有严格的要求，一般不用此类方法遍历树去求解上述问题，一般都是解决先序中序转后序此类需求，在后续会写出此类问题的求解算法。</p>
 <p>警告：尽管文本做了详细的代码注释和讲解，但如果你只是准备靠本文的讲解企图理解代码，恐怕不太行，还需要自己多加练习和多思考。</p>
+<h1 id="对称二叉树"><a href="#对称二叉树" class="headerlink" title="对称二叉树"></a>对称二叉树</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for a binary tree node.</span></span><br><span class="line"><span class="comment"> * struct TreeNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     TreeNode *left;</span></span><br><span class="line"><span class="comment"> *     TreeNode *right;</span></span><br><span class="line"><span class="comment"> *     TreeNode() : val(0), left(nullptr), right(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) &#123;&#125;</span></span><br><span class="line"><span class="comment"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) &#123;&#125;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isSymmetric</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> check(root-&gt;left, root-&gt;right);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">check</span><span class="params">(TreeNode* l, TreeNode* r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (l == <span class="literal">nullptr</span> &amp;&amp; r == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((l == <span class="literal">nullptr</span> &amp;&amp; r != <span class="literal">nullptr</span>) || (l != <span class="literal">nullptr</span> &amp;&amp; r == <span class="literal">nullptr</span>))</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (l-&gt;val != r-&gt;val) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">bool</span> a = check(l-&gt;left, r-&gt;right);</span><br><span class="line">        <span class="keyword">bool</span> b = check(l-&gt;right, r-&gt;left);</span><br><span class="line">        <span class="keyword">return</span> (l-&gt;val == r-&gt;val) &amp;&amp; a &amp;&amp; b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="寻找重复的子树"><a href="#寻找重复的子树" class="headerlink" title="寻找重复的子树"></a>寻找重复的子树</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;TreeNode*&gt; res;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt; m1;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;TreeNode*&gt; <span class="title">findDuplicateSubtrees</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        check(root);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">check</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        <span class="built_in">string</span> a = <span class="string">""</span>;</span><br><span class="line">        dfs(root, a);</span><br><span class="line">        m1[a] += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (m1[a] == <span class="number">2</span> &amp;&amp; a != <span class="string">"#"</span>) &#123;</span><br><span class="line">            res.push_back(root);</span><br><span class="line">        &#125;</span><br><span class="line">        check(root-&gt;left);</span><br><span class="line">        check(root-&gt;right);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode* root, <span class="built_in">string</span>&amp; s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            s += <span class="string">'#'</span>;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        s += to_string(root-&gt;val);</span><br><span class="line">        s += <span class="string">' '</span>;</span><br><span class="line">        dfs(root-&gt;left, s);</span><br><span class="line">        dfs(root-&gt;right, s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h1 id="求二叉树叶子节点数量"><a href="#求二叉树叶子节点数量" class="headerlink" title="求二叉树叶子节点数量"></a>求二叉树叶子节点数量</h1><p>PAT甲级 1004，<a href="https://pintia.cn/problem-sets/994805342720868352/problems/994805521431773184" target="_blank" rel="noopener">Counting Leaves</a> 。看样子是一道很经典的题目，输出每一层的叶子节点数。也就是，遍历二叉树，计算每层几个叶子节点，不一定要层次遍历，深度遍历也行。如下图所示：第一层的叶子节点数为0，第二层的叶子节点数为2，分别是2号节点和5号节点，第三层的叶子节点数是2，分别是6号节点和7号节点。</p>
 <p><img data-src="/2020/02/29/tree-algorithm/1.png" alt></p>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>深度遍历二叉树，如果遍历到的节点没有孩子，那么这一层的叶子节点数自增，所以我们知道了需要：输入节点时需要一个<code>vector</code>数组，将此节点的孩子给<code>push_back</code>进来，如果这个节点的<code>size</code>为0，那么表明这是一个叶子节点，此外还需要记录层数和标记这个节点属于哪一层。</p>
@@ -486,7 +488,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#求二叉树叶子节点数量"><span class="nav-number">1.</span> <span class="nav-text">求二叉树叶子节点数量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思路"><span class="nav-number">1.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求节点的权重和"><span class="nav-number">2.</span> <span class="nav-text">求节点的权重和</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思路-1"><span class="nav-number">2.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算到根节点的距离"><span class="nav-number">3.</span> <span class="nav-text">计算到根节点的距离</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#求距离根节点最远的叶节点（DFS）"><span class="nav-number">3.1.</span> <span class="nav-text">求距离根节点最远的叶节点（DFS）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路-2"><span class="nav-number">3.1.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求距离根节点最近的叶节点"><span class="nav-number">3.2.</span> <span class="nav-text">求距离根节点最近的叶节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求每一层的节点数量"><span class="nav-number">4.</span> <span class="nav-text">求每一层的节点数量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DFS"><span class="nav-number">4.1.</span> <span class="nav-text">DFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BFS思路"><span class="nav-number">4.2.</span> <span class="nav-text">BFS思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求给定权值的路径"><span class="nav-number">5.</span> <span class="nav-text">求给定权值的路径</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思路-3"><span class="nav-number">5.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉查找树"><span class="nav-number">6.</span> <span class="nav-text">二叉查找树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#对称二叉树"><span class="nav-number">1.</span> <span class="nav-text">对称二叉树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#寻找重复的子树"><span class="nav-number">2.</span> <span class="nav-text">寻找重复的子树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求二叉树叶子节点数量"><span class="nav-number">3.</span> <span class="nav-text">求二叉树叶子节点数量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思路"><span class="nav-number">3.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求节点的权重和"><span class="nav-number">4.</span> <span class="nav-text">求节点的权重和</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思路-1"><span class="nav-number">4.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算到根节点的距离"><span class="nav-number">5.</span> <span class="nav-text">计算到根节点的距离</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#求距离根节点最远的叶节点（DFS）"><span class="nav-number">5.1.</span> <span class="nav-text">求距离根节点最远的叶节点（DFS）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路-2"><span class="nav-number">5.1.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求距离根节点最近的叶节点"><span class="nav-number">5.2.</span> <span class="nav-text">求距离根节点最近的叶节点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求每一层的节点数量"><span class="nav-number">6.</span> <span class="nav-text">求每一层的节点数量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DFS"><span class="nav-number">6.1.</span> <span class="nav-text">DFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BFS思路"><span class="nav-number">6.2.</span> <span class="nav-text">BFS思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#求给定权值的路径"><span class="nav-number">7.</span> <span class="nav-text">求给定权值的路径</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思路-3"><span class="nav-number">7.1.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉查找树"><span class="nav-number">8.</span> <span class="nav-text">二叉查找树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -502,7 +504,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">211</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -515,7 +517,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -556,12 +558,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">848k</span>
+    <span title="站点总字数">855k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:51</span>
+    <span title="站点阅读时长">12:57</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
