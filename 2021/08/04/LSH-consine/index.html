@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="因为开发图像检索系统的需要，需要学习局部敏感哈希算法。我在网上看了很多局部敏感哈希算法的讲解，也没有一个能讲清楚的。什么打乱表格、计数 1 最开始出现的索引、minHash 等没啥用的东西把人说的云里雾里。 而如何设计哈希函数、如何把相似内容放到同一个桶中、计算相似度则闭口不谈。所以，关于数学理论推导，本文就不描述了，网上其他博客多的是，本文从代码的角度来理解局部敏感哈希算法，相对更清晰，附 C+">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-05T13:44:44.143Z">
+<meta property="og:updated_time" content="2022-05-22T10:48:03.670Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从代码角度理解局部敏感哈希算法">
 <meta name="twitter:description" content="因为开发图像检索系统的需要，需要学习局部敏感哈希算法。我在网上看了很多局部敏感哈希算法的讲解，也没有一个能讲清楚的。什么打乱表格、计数 1 最开始出现的索引、minHash 等没啥用的东西把人说的云里雾里。 而如何设计哈希函数、如何把相似内容放到同一个桶中、计算相似度则闭口不谈。所以，关于数学理论推导，本文就不描述了，网上其他博客多的是，本文从代码的角度来理解局部敏感哈希算法，相对更清晰，附 C+">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-05 21:44:44" itemprop="dateModified" datetime="2021-08-05T21:44:44+08:00">2021-08-05</time>
+                <time title="修改时间：2022-05-22 18:48:03" itemprop="dateModified" datetime="2022-05-22T18:48:03+08:00">2022-05-22</time>
               </span>
 
           
@@ -326,8 +326,8 @@
 </ul>
 <p>那么，假设数据库里面有 10000 条数据，那么我可以设置 10 个哈希函数，因为 $2^{10}=1024$，这样就有了 1024 个桶。而如果 10000 数据分布均匀，每个桶就可以有 10 条左右的数据，查询也快。至于哈希表，2个，3个都是可以的，但是不能太多。</p>
 <p>此外还要注意的是，每个哈希桶内的元素数最好是均匀的，这样查询时间也更稳定。所以要设置合理的哈希函数的机制，也就是 <code>pos</code> 的分布一定要均匀。</p>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>我自己实现了一份<a href="https://github.com/muyuuuu/SeetaFace-Retri/tree/main/CosineLSH" target="_blank" rel="noopener">局部敏感哈希程序</a>，我是 C++ 初学者，代码写的不是很难，相信你看完代码是可以理解局部敏感哈希算法的。计算相似度是使用的余弦距离，因为欧拉距离会面临维灾。<code>modules</code> 里面的 <code>config.cpp</code> 可以忽略，那个是为了衔接其他业务设计的。</p>
-<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>处理 <code>13466 X 2048</code> 大小的数据，即 13466 条数据，每条数据的维度是 2048 维。构建 1024 个哈希函数，两张哈希表。log 日志显示每秒哈希 50 条数据。 对 100 条数据进行查询，每条数据返回最接近的 5 条数据。每条数据的平均查询时间为 0.86 秒，最低时间为 0.34 秒，召回率接近 100% 。</p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p>我自己实现了一份<a href="https://github.com/muyuuuu/high-performance-LSH" target="_blank" rel="noopener">局部敏感哈希程序</a>，我是 C++ 初学者，代码写的不是很难，相信你看完代码是可以理解局部敏感哈希算法的。计算相似度是使用的余弦距离，因为欧拉距离会面临维灾。<code>modules</code> 里面的 <code>config.cpp</code> 可以忽略，那个是为了衔接其他业务设计的。</p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>处理 <code>13466 X 2048</code> 大小的数据，即 13466 条数据，每条数据的维度是 2048 维。构建 1024 个哈希函数，两张哈希表。log 日志显示每秒哈希 50 条数据。 对 100 条数据进行查询，每条数据返回最接近的 5 条数据。每条数据的平均查询时间为 0.86 秒，最低时间为 0.34 秒，召回率接 25% 左右。</p>
 
     </div>
 
@@ -492,7 +492,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">213</span>
+          <span class="site-state-item-count">214</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -505,7 +505,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -546,12 +546,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">855k</span>
+    <span title="站点总字数">861k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:57</span>
+    <span title="站点阅读时长">13:03</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

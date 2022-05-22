@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：序列中某个元素的下一个最大元素，和下一个最大元素的跨度等。以序列 [2,1,3,4] 为例，1 的下一个最大元素就是 3，而不是 4。对于这种问题都可以用单调栈求解。">
+  <meta name="description" content="单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：序列中某个元素的下一个最大元素，元素间的最大跨度，维持某一状态持续的最长时间等。以序列 [2,1,3,4] 为例，1 的下一个最大元素就是 3，而不是 4；最大上升的跨度为从 2 到 4，跨越了 2 个数。对于这种问题都可以用单调栈求解。">
 <meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
 <meta property="og:title" content="算法系列：单调栈">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/05/20/monotonic-stack/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：序列中某个元素的下一个最大元素，和下一个最大元素的跨度等。以序列 [2,1,3,4] 为例，1 的下一个最大元素就是 3，而不是 4。对于这种问题都可以用单调栈求解。">
+<meta property="og:description" content="单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：序列中某个元素的下一个最大元素，元素间的最大跨度，维持某一状态持续的最长时间等。以序列 [2,1,3,4] 为例，1 的下一个最大元素就是 3，而不是 4；最大上升的跨度为从 2 到 4，跨越了 2 个数。对于这种问题都可以用单调栈求解。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-20T15:15:40.044Z">
+<meta property="og:updated_time" content="2022-05-22T13:01:51.396Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="算法系列：单调栈">
-<meta name="twitter:description" content="单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：序列中某个元素的下一个最大元素，和下一个最大元素的跨度等。以序列 [2,1,3,4] 为例，1 的下一个最大元素就是 3，而不是 4。对于这种问题都可以用单调栈求解。">
+<meta name="twitter:description" content="单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：序列中某个元素的下一个最大元素，元素间的最大跨度，维持某一状态持续的最长时间等。以序列 [2,1,3,4] 为例，1 的下一个最大元素就是 3，而不是 4；最大上升的跨度为从 2 到 4，跨越了 2 个数。对于这种问题都可以用单调栈求解。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/05/20/monotonic-stack/">
 
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-05-20 22:26:12 / 修改时间：23:15:40" itemprop="dateCreated datePublished" datetime="2022-05-20T22:26:12+08:00">2022-05-20</time>
+              <time title="创建时间：2022-05-20 22:26:12" itemprop="dateCreated datePublished" datetime="2022-05-20T22:26:12+08:00">2022-05-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-22 21:01:51" itemprop="dateModified" datetime="2022-05-22T21:01:51+08:00">2022-05-22</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5k</span>
+              <span>5.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -286,7 +292,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：<strong>序列中某个元素的下一个最大元素，和下一个最大元素的跨度等</strong>。以序列 <code>[2,1,3,4]</code> 为例，1 的下一个最大元素就是 3，而不是 4。对于这种问题都可以用单调栈求解。</p>
+        <p>单调栈属于栈的具体应用，而非栈这种数据结构的简单使用。此类问题一般用于求解以下场景：<strong>序列中某个元素的下一个最大元素，元素间的最大跨度，维持某一状态持续的最长时间等</strong>。以序列 <code>[2,1,3,4]</code> 为例，1 的下一个最大元素就是 3，而不是 4；最大上升的跨度为从 2 到 4，跨越了 2 个数。对于这种问题都可以用单调栈求解。</p>
 <a id="more"></a>
 <h1 id="为什么用单调栈"><a href="#为什么用单调栈" class="headerlink" title="为什么用单调栈"></a>为什么用单调栈</h1><p>同样以 <code>[2,1,3,4]</code> 为例，假设此时我们有一个容器，输入一个数，容器顶部的元素是下一个最大的数。对于 1 而言，后面的最大元素是 3，因此可以得到一个结论：3 比 1 先进入容器，更通用一些：<strong>如果判断下一个最大元素，序列就要倒序进入容器，如果判断上一个最大元素，序列就要顺序进入容器</strong>。</p>
 <p>由于 1 比 2 先进入容器，但 2 的下一个最大元素是 3 而不是 1，那么就需要在容器中进行一些操作来删除 1。即 1 比 2 早进入容器，却要先从容器种出来，那么有什么容器是后入先出的呢？当然是栈。这也就是单调栈的由来。我们总结一下：</p>
@@ -312,11 +318,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">示例 1：</span><br><span class="line"></span><br><span class="line">输入：[6,0,8,2,1,5]</span><br><span class="line">输出：4</span><br><span class="line">解释：</span><br><span class="line">最大宽度的坡为 (i, j) = (1, 5): A[1] = 0 且 A[5] = 5.</span><br></pre></td></tr></table></figure>
 <p>是不是觉得毫无头绪，我刚开始也是这么想的，后来直到看了一个不错的<a href="https://leetcode.cn/problems/maximum-width-ramp/solution/c-962-zui-da-kuan-du-po-ti-jie-dan-diao-5ztod/" target="_blank" rel="noopener">题解</a>。暴力破解能得到答案，但显然会超时，单调栈是如何应用到求最大跨度问题中呢？</p>
 <p>首先来一点点的分析，由于要求解最大跨度，因此存储的肯定为索引。在者，对于 <code>[9,8,1,0,1,9,4,0,4,1]</code> 而言的最大跨度，我们希望在左边找很小的值，在右边找比左边大的值。并且有两个 0，显然第一个 0 能贡献的跨度更大。因此，基于以上两点，我们可以使用栈来存储单调递减序列的而索引，即：<code>[9,8,1,0]</code>，对应的索引是 <code>[0,1,2,3]</code>。如此，满足了找左侧很小值的目标，也满足了不考虑后面的 0。</p>
-<p>之后，我们只要倒序遍历序列，依次和栈顶元素比较大小，如果大于，那么记录跨度并弹栈。随着弹栈的进行，索引会越来越小，也容易求到更大的跨度。具体理解一下：</p>
+<p>之后，我们只要倒序遍历序列，依次和栈顶元素比较大小，如果大于，那么记录跨度并弹栈。随着弹栈的进行，索引会越来越小，也求到了更大的跨度。具体理解一下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">输入：[9,8,1,0,1,9,4,0,4,1]</span><br><span class="line">单调递减元素:[9,8,1,0], 对应下标:[0,1,2,3], 严格单调递减栈s:[0,1,2,3]</span><br><span class="line">j=9, nums[j]=1 &gt; nums[s.top()]=nums[3]=0, pos=s.top()=3, pop出3, res=max(res, j-pos)=(0, 9-3)=6</span><br><span class="line">     nums[j]=1 = nums[s.top()]=nums[2]=1, pos=s.top()=2, pop出2, res=max(res, j-pos)=(6, 9-2)=7</span><br><span class="line">     nums[j]=1 &lt; nums[s.top()]=nums[1]=8, 遍历下一个j</span><br><span class="line">j=8, nums[j]=4 &lt; nums[s.top()]=nums[1]=8, 遍历下一个j</span><br><span class="line">     ... </span><br><span class="line">     ...</span><br><span class="line">     ...</span><br></pre></td></tr></table></figure>
 <p>不难写出程序：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxWidthRamp</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; stk;</span><br><span class="line">        <span class="keyword">int</span> n = nums.size();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (stk.empty() || nums[stk.top()] &gt; nums[i]) &#123;</span><br><span class="line">                stk.push(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = n - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--) &#123;</span><br><span class="line">            <span class="keyword">while</span> (stk.size() &amp;&amp; nums[j] &gt;= nums[stk.top()]) &#123;</span><br><span class="line">                res = max(res, j - stk.top());</span><br><span class="line">                stk.pop();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>前缀和之后：<a href="https://leetcode.cn/problems/longest-well-performing-interval/" target="_blank" rel="noopener">https://leetcode.cn/problems/longest-well-performing-interval/</a></p>
+<h1 id="维持某一状态最长的持续时间"><a href="#维持某一状态最长的持续时间" class="headerlink" title="维持某一状态最长的持续时间"></a>维持某一状态最长的持续时间</h1><p>这个题需要用到一些其他知识，因此和前缀和数组整理到一起了，可以观看下一篇博客。</p>
 
     </div>
 
@@ -330,10 +336,10 @@
       <div class="popular-posts-title"><a href="/2018/11/03/AVL-RB-tree/" rel="bookmark">AVL树的Python实现</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
+      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
+      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/09/04/PAT/" rel="bookmark">算法笔记</a></div>
@@ -402,7 +408,10 @@
     <a href="/2022/05/16/dp-series/" rel="prev" title="算法系列：动态规划">
       <i class="fa fa-chevron-left"></i> 算法系列：动态规划
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/22/array-series/" rel="next" title="算法系列：数组类题目">
+      算法系列：数组类题目 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -462,7 +471,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么用单调栈"><span class="nav-number">1.</span> <span class="nav-text">为什么用单调栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下一个最大-小元素"><span class="nav-number">2.</span> <span class="nav-text">下一个最大/小元素</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#496-下一个更大元素-I"><span class="nav-number">2.1.</span> <span class="nav-text">496. 下一个更大元素 I</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#739-每日温度"><span class="nav-number">2.2.</span> <span class="nav-text">739. 每日温度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#901-股票价格跨度"><span class="nav-number">2.3.</span> <span class="nav-text">901. 股票价格跨度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最大跨度问题"><span class="nav-number">3.</span> <span class="nav-text">最大跨度问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#962-最大宽度坡"><span class="nav-number">3.1.</span> <span class="nav-text">962. 最大宽度坡</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么用单调栈"><span class="nav-number">1.</span> <span class="nav-text">为什么用单调栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下一个最大-小元素"><span class="nav-number">2.</span> <span class="nav-text">下一个最大/小元素</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#496-下一个更大元素-I"><span class="nav-number">2.1.</span> <span class="nav-text">496. 下一个更大元素 I</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#739-每日温度"><span class="nav-number">2.2.</span> <span class="nav-text">739. 每日温度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#901-股票价格跨度"><span class="nav-number">2.3.</span> <span class="nav-text">901. 股票价格跨度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最大跨度问题"><span class="nav-number">3.</span> <span class="nav-text">最大跨度问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#962-最大宽度坡"><span class="nav-number">3.1.</span> <span class="nav-text">962. 最大宽度坡</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#维持某一状态最长的持续时间"><span class="nav-number">4.</span> <span class="nav-text">维持某一状态最长的持续时间</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -478,7 +487,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">213</span>
+          <span class="site-state-item-count">214</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -491,7 +500,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -532,12 +541,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">855k</span>
+    <span title="站点总字数">861k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:57</span>
+    <span title="站点阅读时长">13:03</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
