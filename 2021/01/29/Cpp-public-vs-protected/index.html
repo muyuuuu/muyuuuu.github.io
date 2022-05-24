@@ -23,14 +23,14 @@
   <meta name="description" content="众所周知  public 继承时，所有的基类成员的访问属性在派生类中不会改变。派生类中只能访问基类的 public 和 protected 成员，不能访问 private 成员；在外部派生类对象只能访问 public 的成员； protected 继承时，基类的 public 成员到派生类中变成 protected，其余成员的属性不变。派生类只能访问基类的 public 和 protected 成">
 <meta name="keywords" content="C++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++中protected继承的成员放到public域下面好不好？">
+<meta property="og:title" content="从虚函数的角度聊聊 C++ 中的 protected 继承">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/01/29/Cpp-public-vs-protected/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="众所周知  public 继承时，所有的基类成员的访问属性在派生类中不会改变。派生类中只能访问基类的 public 和 protected 成员，不能访问 private 成员；在外部派生类对象只能访问 public 的成员； protected 继承时，基类的 public 成员到派生类中变成 protected，其余成员的属性不变。派生类只能访问基类的 public 和 protected 成">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-22T13:38:56.855Z">
+<meta property="og:updated_time" content="2022-05-22T14:03:52.574Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++中protected继承的成员放到public域下面好不好？">
+<meta name="twitter:title" content="从虚函数的角度聊聊 C++ 中的 protected 继承">
 <meta name="twitter:description" content="众所周知  public 继承时，所有的基类成员的访问属性在派生类中不会改变。派生类中只能访问基类的 public 和 protected 成员，不能访问 private 成员；在外部派生类对象只能访问 public 的成员； protected 继承时，基类的 public 成员到派生类中变成 protected，其余成员的属性不变。派生类只能访问基类的 public 和 protected 成">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/01/29/Cpp-public-vs-protected/">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>C++中protected继承的成员放到public域下面好不好？ | Just for Life.</title>
+  <title>从虚函数的角度聊聊 C++ 中的 protected 继承 | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          C++中protected继承的成员放到public域下面好不好？
+          从虚函数的角度聊聊 C++ 中的 protected 继承
         </h1>
 
         <div class="post-meta">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-22 21:38:56" itemprop="dateModified" datetime="2022-05-22T21:38:56+08:00">2022-05-22</time>
+                <time title="修改时间：2022-05-22 22:03:52" itemprop="dateModified" datetime="2022-05-22T22:03:52+08:00">2022-05-22</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.7k</span>
+              <span>6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -297,7 +297,7 @@
 <li><code>public</code> 继承时，所有的基类成员的访问属性在派生类中不会改变。派生类中只能访问基类的 <code>public</code> 和 <code>protected</code> 成员，不能访问 <code>private</code> 成员；在外部派生类对象只能访问 <code>public</code> 的成员；</li>
 <li><code>protected</code> 继承时，基类的 <code>public</code> 成员到派生类中变成 <code>protected</code>，其余成员的属性不变。派生类只能访问基类的 <code>public</code> 和 <code>protected</code> 成员；在类的外面，派生类无法访问基类的任何成员。</li>
 </ul>
-<p>但覆写抽象类（形状）的纯虚函数（求面积）时，想在派生类（三角形）的外面调用成员（求面积）。如果求面积的方法位于 <code>protected</code> 域，此时需要把覆写的成员移动到 <code>public</code> 域下面，这样好吗？还是说，采取某些手段，仍然保持覆写的成员在 <code>protected</code> 域下面？</p>
+<p>但覆写抽象类（形状）的纯虚函数（求面积）时，想在派生类（三角形）的外面调用成员（求面积）。如果基类求面积的方法位于 <code>protected</code> 域，此时需要把覆写的成员移动到 <code>public</code> 域下面，这样好吗？还是说，采取某些手段，仍然保持覆写的成员在 <code>protected</code> 域下面？</p>
 <p><del>如果看不懂本文提到的概念，请回去补C++基础。</del></p>
 <a id="more"></a>
 <h1 id="派生类的同名函数"><a href="#派生类的同名函数" class="headerlink" title="派生类的同名函数"></a>派生类的同名函数</h1><p>先引入一丢丢其它的知识，在循序渐进到本文开篇的问题。假设一个场景，许多派生类源自一个基类，但每个类的展示信息是不一样的。现在写一个叫 <code>print</code> 的函数，用于打印不同类的信息。利用继承中的重定义函数，注意不是重载，来隐藏基类中的同名函数：</p>
@@ -323,11 +323,11 @@
 <ul>
 <li>基类对象的指针或引用指向派生类，这叫向上强制类型转换；父类有的子类一定有，允许转换</li>
 <li>派生类对象的指针或医用指向基类，这叫向下强制类型转换；子类有的父类不一定有，不允许转换</li>
-<li>只有成员才能是虚函数，所以友元函数不能是虚函数</li>
-<li>基类的构造函数不能是虚函数；而基类的析构函数推荐写成虚函数</li>
+<li>只有成员才能是虚函数，所以友元函数等非成员函数不能是虚函数</li>
+<li>基类的构造函数不能是虚函数；而基类的<a href="https://muyuuuu.github.io/2021/07/21/constructor-and-destructor-with-inheritance/">析构函数推荐写成虚函数</a></li>
 <li>调用的函数不由指针类型决定，由指针所指的实际对象的类型决定该调用哪个类的函数</li>
 <li>运行时，检查指针所指对象的类型，如果该类型重定义了虚函数，则使用，否则使用基类的虚函数</li>
-<li>可以使用纯虚函数将类声明为抽象类，不能定义函数，也不能实例化抽象类</li>
+<li>可以使用<strong>纯虚</strong>函数将类声明为抽象类，不能定义函数，也不能实例化抽象类</li>
 <li>虚函数的重定义不会生成函数的重载版本，子类的同名函数会隐藏基类的函数。所以，继承中重定义虚函数时，要保证除返回值以外的其它函数原型相同，这称为返回型协变</li>
 <li>如果想实现虚函数的重载，那么要从基类开始。如果基类的某个虚函数是重载的，那么子类要重定义所有版本，否则无法使用。如果不需要重定义，只需要调用基类的版本：<code>void A::show() {Base::show();}</code></li>
 <li>虚函数的传递性：如果基类定义了虚函数，那么派生类的同名函数自动变为虚函数，所以派生类可以不写 <code>virtual</code> 关键字，写上会更清楚</li>
@@ -339,9 +339,17 @@
 <li>不能覆写非虚函数</li>
 <li><code>override</code> 避免写出 <code>bug</code> 的代码，参考上述内容最后一条</li>
 </ul>
+<h2 id="纯虚函数"><a href="#纯虚函数" class="headerlink" title="纯虚函数"></a>纯虚函数</h2><p>上文提到了一下纯虚函数，多年不写差点忘了纯虚函数，2022 年 5 月 22 日复习回来补充：</p>
+<ul>
+<li>类里如果声明了虚函数，它的作用就是为了能让这个函数在它的子类里面可以被覆盖，这样的话，编译器就可以使用后期绑定来达到多态了。</li>
+<li>纯虚函数只是一个接口，是个函数的声明而已，只能留到子类里去实现。</li>
+<li>虚函数在子类里面可以不重写；但纯虚函数必须在子类实现才可以实例化子类。</li>
+<li>虚函数继承接口的同时也继承了父类的实现；纯虚函数关注的是接口的统一性，实现由子类完成。</li>
+<li>带纯虚函数的类叫抽象类，这种类不能直接生成对象，而只有被继承，并重写其虚函数后，才能使用。抽象类被继承后，子类可以继续是抽象类，也可以是普通类。</li>
+</ul>
 <h2 id="如何实现虚函数"><a href="#如何实现虚函数" class="headerlink" title="如何实现虚函数"></a>如何实现虚函数</h2><p>如图所示：</p>
 <p><img data-src="https://z3.ax1x.com/2021/07/21/WwtQMD.png" alt></p>
-<p>编译器给每个对象添加一个隐藏成员，隐藏成员中保存一个指向函数地址的数组的指针，这种数组就是虚函数表。虚函数表存储为类进行声明的虚函数的地址。如 <code>Base</code> 类，包含一个指针，指向这个虚函数表。派生类也有指向<strong>独立地址表</strong>的指针，如果派生类提供了虚函数的定义，那么该虚函数表就保存为新的函数的地址，如 <code>A</code> 函数；如果没有定义，就保留基类的虚函数的地址，如 <code>B</code> 函数。</p>
+<p>编译器给每个对象添加一个隐藏成员，隐藏成员中保存一个指向函数地址的数组的指针，这种数组就是虚函数表。虚函数表存储了类声明的虚函数的地址。如 <code>Base</code> 类，包含一个指针，指向这个虚函数表。派生类也有指向<strong>独立地址表</strong>的指针，如果派生类提供了虚函数的定义，那么该虚函数表就保存为新的函数的地址，如 <code>A</code> 函数；如果没有定义，就保留基类的虚函数的地址，如 <code>B</code> 函数。</p>
 <p>因此我们可以知道静态联编和动态联编各有优缺点：</p>
 <ul>
 <li>动态联编是程序在运行阶段决策，造成额外的开销，如虚函数表等，涉及的类、对象会增大，函数调用时的查表也会造成开销；</li>
@@ -359,7 +367,7 @@
 <p>这样，如果我们在写 <code>print</code> 展示信息的函数，那么又要回到<strong>每个类都需要单独写一个函数</strong>的繁琐场景，不能使用动态联编的优良特性，这并不推荐。所以，个人建议，在 <code>protected</code> 继承时，如果要覆写函数且需要在外部调用，那么将需要覆写的函数放到 <code>public</code> 域下，这样会更简洁。给个完整代码感受一下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">cout</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shape</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">double</span> <span class="title">getArea</span><span class="params">()</span> <span class="keyword">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> <span class="keyword">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> :</span> <span class="keyword">public</span> Shape&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">double</span> radius = <span class="number">1.0</span>;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Circle()=<span class="keyword">default</span>;</span><br><span class="line">    Circle(<span class="keyword">double</span> r)&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;radius = r;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getArea</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>-&gt;radius * <span class="keyword">this</span>-&gt;radius * <span class="number">3.14</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Circle"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> :</span> <span class="keyword">public</span> Shape&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">double</span> side = <span class="number">1.0</span>;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Rectangle()=<span class="keyword">default</span>;</span><br><span class="line">    Rectangle(<span class="keyword">double</span> s)&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;side = s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getArea</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>-&gt;side * <span class="keyword">this</span>-&gt;side; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Rectangle"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 只需要写一次 调用 show 函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">(Shape&amp; p)</span></span>&#123;</span><br><span class="line">    p.show();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 错误 抽象类不能实例化</span></span><br><span class="line">    <span class="comment">// Shape s;</span></span><br><span class="line">    Circle c&#123;<span class="number">3.2</span>&#125;;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; c.getArea() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Shape* p = &amp;c;</span></span><br><span class="line">    Circle* p = &amp;c;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; p-&gt;getArea() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    Rectangle r&#123;<span class="number">2.0</span>&#125;;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; r.getArea() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(c);</span><br><span class="line">    <span class="built_in">print</span>(r);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>或者，直接 <code>public</code> 继承多省事：</p>
-<p><img data-src="/2021/01/29/Cpp-public-vs-protected/1.png" alt></p>
+<p><img data-src="https://s1.ax1x.com/2022/05/22/Oz2R00.png" alt></p>
 
     </div>
 
@@ -379,10 +387,10 @@
       <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
+      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
     </li>
   </ul>
 
@@ -508,7 +516,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#派生类的同名函数"><span class="nav-number">1.</span> <span class="nav-text">派生类的同名函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#虚函数"><span class="nav-number">2.</span> <span class="nav-text">虚函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#虚函数的注意事项"><span class="nav-number">2.1.</span> <span class="nav-text">虚函数的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何实现虚函数"><span class="nav-number">2.2.</span> <span class="nav-text">如何实现虚函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#protected-继承"><span class="nav-number">3.</span> <span class="nav-text">protected 继承</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#派生类的同名函数"><span class="nav-number">1.</span> <span class="nav-text">派生类的同名函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#虚函数"><span class="nav-number">2.</span> <span class="nav-text">虚函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#虚函数的注意事项"><span class="nav-number">2.1.</span> <span class="nav-text">虚函数的注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#纯虚函数"><span class="nav-number">2.2.</span> <span class="nav-text">纯虚函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何实现虚函数"><span class="nav-number">2.3.</span> <span class="nav-text">如何实现虚函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#protected-继承"><span class="nav-number">3.</span> <span class="nav-text">protected 继承</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -524,7 +532,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">214</span>
+          <span class="site-state-item-count">216</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -578,12 +586,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">861k</span>
+    <span title="站点总字数">874k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:03</span>
+    <span title="站点阅读时长">13:15</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
