@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="优化器这种东西之前从来不去接触，以为是很高深莫测的东西。直到今天自己去亲自探测才发现，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。">
-<meta name="keywords" content="Python,DeepLearning">
+  <meta name="description" content="2022 年 5 月 26 日回来复习。大概涵盖了这么多年写程序过程中遇到的梯度消失、梯度爆炸等基本情况，以及优化器的整理，后面会出一些为什么 train 到的神经网络准确率很低的文章。 有了梯度就要反向传播，而优化器对反向传播有着举足轻重的作用。这种东西之前很少接触，加上常年累月的直接调用，很多理论也忘记了。直到今天自己又去亲自探测了一番，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举">
+<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
-<meta property="og:title" content="优化梯度函数">
+<meta property="og:title" content="神经网络中的梯度">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/02/20/gradient-function/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="优化器这种东西之前从来不去接触，以为是很高深莫测的东西。直到今天自己去亲自探测才发现，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。">
+<meta property="og:description" content="2022 年 5 月 26 日回来复习。大概涵盖了这么多年写程序过程中遇到的梯度消失、梯度爆炸等基本情况，以及优化器的整理，后面会出一些为什么 train 到的神经网络准确率很低的文章。 有了梯度就要反向传播，而优化器对反向传播有着举足轻重的作用。这种东西之前很少接触，加上常年累月的直接调用，很多理论也忘记了。直到今天自己又去亲自探测了一番，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-04T22:43:34.000Z">
+<meta property="og:updated_time" content="2022-05-26T15:39:25.054Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="优化梯度函数">
-<meta name="twitter:description" content="优化器这种东西之前从来不去接触，以为是很高深莫测的东西。直到今天自己去亲自探测才发现，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。">
+<meta name="twitter:title" content="神经网络中的梯度">
+<meta name="twitter:description" content="2022 年 5 月 26 日回来复习。大概涵盖了这么多年写程序过程中遇到的梯度消失、梯度爆炸等基本情况，以及优化器的整理，后面会出一些为什么 train 到的神经网络准确率很低的文章。 有了梯度就要反向传播，而优化器对反向传播有着举足轻重的作用。这种东西之前很少接触，加上常年累月的直接调用，很多理论也忘记了。直到今天自己又去亲自探测了一番，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/02/20/gradient-function/">
 
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>优化梯度函数 | Just for Life.</title>
+  <title>神经网络中的梯度 | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          优化梯度函数
+          神经网络中的梯度
         </h1>
 
         <div class="post-meta">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-03-05 06:43:34" itemprop="dateModified" datetime="2019-03-05T06:43:34+08:00">2019-03-05</time>
+                <time title="修改时间：2022-05-26 23:39:25" itemprop="dateModified" datetime="2022-05-26T23:39:25+08:00">2022-05-26</time>
               </span>
 
           
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.2k</span>
+              <span>4.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -292,11 +292,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>优化器这种东西之前从来不去接触，以为是很高深莫测的东西。直到今天自己去亲自探测才发现，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。</p>
+        <p>2022 年 5 月 26 日回来复习。大概涵盖了这么多年写程序过程中遇到的梯度消失、梯度爆炸等基本情况，以及优化器的整理，后面会出一些为什么 train 到的神经网络准确率很低的文章。</p>
+<p>有了梯度就要反向传播，而优化器对反向传播有着举足轻重的作用。这种东西之前很少接触，加上常年累月的直接调用，很多理论也忘记了。直到今天自己又去亲自探测了一番，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。</p>
 <p><img data-src="/2019/02/20/gradient-function/opt1.gif" alt></p>
 <a id="more"></a>
-<p>本文收录内容：</p>
+<h1 id="梯度消失与爆炸"><a href="#梯度消失与爆炸" class="headerlink" title="梯度消失与爆炸"></a>梯度消失与爆炸</h1><p>梯度消失相比梯度爆炸更为常见，梯度消失、梯度爆炸其根本原因在于反向传播训练法则，即在使用梯度下降法对误差进行反向传播时，由于求偏导累乘而出现趋于0（梯度消失）或者趋于无穷大（梯度爆炸）的问题。梯度消失和爆炸出现的原因经常是因为网络层次过深，以及激活函数选择不当，比如sigmoid函数</p>
 <ul>
+<li>梯度消失：当梯度消失发生时，接近于输出层的隐藏层由于其梯度相对正常，所以权值更新时也就相对正常；但是当越靠近输入层时，由于梯度消失现象，会导致靠近输入层的隐藏层权值更新缓慢或者更新停滞；</li>
+<li>梯度爆炸：当梯度爆炸发生时，初始的权值过大，靠近输入层的权值变化比靠近输出层的权值变化更快，就会引起梯度爆炸的问题；会导致模型不稳定，更新过程中的损失出现显著变化；</li>
+</ul>
+<p>产生这些原因有很多：</p>
+<ol>
+<li>网络初始化不好，relu 或者 sigmoid 激活后，位于梯度很小的区域，会出现梯度消失问题</li>
+<li>损失函数选择不恰当，如 <code>dice</code> 损失，对于背景区域存在梯度为 0 的情况</li>
+<li>网络层数很深，如果期间一直是 <code>sigmoid</code> 激活，梯度最大也就是 0.25，而多个 0.25 相乘，网络的浅层也会出现梯度消失。如果反向传播时，网络权重很大，累计乘法后就会出现梯度爆炸。</li>
+</ol>
+<p>那么如何解决呢？</p>
+<ol>
+<li>使用预训练模型，而后微调。如果不想使用预训练模型，就初始化模型参数</li>
+<li>梯度正则化，限制梯度爆炸</li>
+<li>relu 激活函数，解决了梯度消失、爆炸的问题，计算快，但负数部分恒为0，一些神经元无法激活。可以使用 leakrelu</li>
+<li>使用 batch norm，激活后位于梯度不容易位于饱和区域</li>
+<li>使用残差结构，解决梯度消失问题</li>
+</ol>
+<h1 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h1><ul>
 <li>加权移动平均</li>
 <li>梯度消失与梯度爆炸</li>
 <li><strong>Adam，SGD，RMSprop，momentum，</strong>学习率衰减</li>
@@ -347,19 +366,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/05/19/basic-nlp/" rel="bookmark">从分词到自然语言的世界</a></div>
+      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/02/18/rnn/" rel="bookmark">循环神经网络</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/02/18/rnn1/" rel="bookmark">循环神经网络的进化</a></div>
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/02/17/transfer-learning/" rel="bookmark">Keras玩耍迁移学习(VGG16)</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
+      <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
     </li>
   </ul>
 
@@ -405,7 +424,6 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Python/" rel="tag"># Python</a>
               <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
           </div>
 
@@ -486,7 +504,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习率衰减"><span class="nav-number">1.</span> <span class="nav-text">学习率衰减</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加权移动平均"><span class="nav-number">2.</span> <span class="nav-text">加权移动平均</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python实现："><span class="nav-number">2.1.</span> <span class="nav-text">python实现：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Momentum动量梯度下降"><span class="nav-number">3.</span> <span class="nav-text">Momentum动量梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tensorflow实现"><span class="nav-number">3.1.</span> <span class="nav-text">Tensorflow实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RMSprop"><span class="nav-number">4.</span> <span class="nav-text">RMSprop</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tensorflow简单实现"><span class="nav-number">4.1.</span> <span class="nav-text">Tensorflow简单实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam优化器"><span class="nav-number">5.</span> <span class="nav-text">Adam优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的Tensorflow实现"><span class="nav-number">5.1.</span> <span class="nav-text">简单的Tensorflow实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">6.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度消失与爆炸"><span class="nav-number">1.</span> <span class="nav-text">梯度消失与爆炸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化器"><span class="nav-number">2.</span> <span class="nav-text">优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习率衰减"><span class="nav-number">2.1.</span> <span class="nav-text">学习率衰减</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加权移动平均"><span class="nav-number">2.2.</span> <span class="nav-text">加权移动平均</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python实现："><span class="nav-number">2.2.1.</span> <span class="nav-text">python实现：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Momentum动量梯度下降"><span class="nav-number">2.3.</span> <span class="nav-text">Momentum动量梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tensorflow实现"><span class="nav-number">2.3.1.</span> <span class="nav-text">Tensorflow实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RMSprop"><span class="nav-number">2.4.</span> <span class="nav-text">RMSprop</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tensorflow简单实现"><span class="nav-number">2.4.1.</span> <span class="nav-text">Tensorflow简单实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam优化器"><span class="nav-number">2.5.</span> <span class="nav-text">Adam优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的Tensorflow实现"><span class="nav-number">2.5.1.</span> <span class="nav-text">简单的Tensorflow实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">2.6.</span> <span class="nav-text">结语</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -556,12 +574,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">874k</span>
+    <span title="站点总字数">881k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:15</span>
+    <span title="站点阅读时长">13:21</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

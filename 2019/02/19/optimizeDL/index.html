@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="来整理一下在机器学习中常用的优化方法，无非是在容易出问题的地方加入人的调控，包括数据数据，数据处理，反向传播，梯度函数等方面，在各种容易出问题的地方加入调控，使得神经网络更有效，或者说神经网络的运行在你的控制之中，而不是调了一堆参数后网络没有优化，甚至调一些无关紧要的参数。 本文收录内容：  正则化的常用方式与实现 有关数据输入和传输的处理 优化后的梯度函数  还是在实际的背景下对于这些概念的理解">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-04-28T15:10:03.316Z">
+<meta property="og:updated_time" content="2022-05-26T15:39:19.458Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="正则化与标准化">
 <meta name="twitter:description" content="来整理一下在机器学习中常用的优化方法，无非是在容易出问题的地方加入人的调控，包括数据数据，数据处理，反向传播，梯度函数等方面，在各种容易出问题的地方加入调控，使得神经网络更有效，或者说神经网络的运行在你的控制之中，而不是调了一堆参数后网络没有优化，甚至调一些无关紧要的参数。 本文收录内容：  正则化的常用方式与实现 有关数据输入和传输的处理 优化后的梯度函数  还是在实际的背景下对于这些概念的理解">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-28 23:10:03" itemprop="dateModified" datetime="2022-04-28T23:10:03+08:00">2022-04-28</time>
+                <time title="修改时间：2022-05-26 23:39:19" itemprop="dateModified" datetime="2022-05-26T23:39:19+08:00">2022-05-26</time>
               </span>
 
           
@@ -273,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>9.2k</span>
+              <span>10k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -351,11 +351,14 @@
 <h2 id="正则化的输入与传播"><a href="#正则化的输入与传播" class="headerlink" title="正则化的输入与传播"></a>正则化的输入与传播</h2><p>其实对输入数据和网络中正向传播的数据进行标准化的处理，也能加快网络的学习速度。我们期望这个标准化可以去除特征之间的相关性；同时使得所有特征具有相同的均值和方差，做到独立同分布，并且希望这个操作可微分，且容易操作。先放上正则化的处理方式：</p>
 <script type="math/tex; mode=display">x_i=\frac{x_i-\mu_i}{\sigma_i}</script><p>也就是每个特征减去自己的均值在除以自己的方差（测试是均值，方差保持一致），如果学过概率论的话，这样处理后的数据会服从均值为0，方差为1的正态分布，即$X\sim N(0,1)$，看下图：</p>
 <p><img data-src="/2019/02/19/optimizeDL/4.png" alt></p>
-<h2 id="优化意义"><a href="#优化意义" class="headerlink" title="优化意义"></a>优化意义</h2><p>当不对数据进行正则化时，比如特征$x_1$可能分布在$[1,1000]$，而特征$x_2$可能分布在$[0,1]$，这样的输入会使得成本函数分布在一个乱七八糟(左图)的空间内，可能会沿着最复杂的梯度进行下降，而对所有特征数据正则化到$[0,1]$区间内部时，无论是哪个方向的梯度，都能很快的寻找到最优点。</p>
-<p>此外，在网络的正向传播过程中，如果对网络的每一层的接受的输出(激活之前)也进行这样的处理，后面的网络也会运行的更快，如此，正则化便从输入推广到了传播。</p>
+<h2 id="优化意义"><a href="#优化意义" class="headerlink" title="优化意义"></a>优化意义</h2><p>在机器学习中的一个重要假设independent and identically distributed (独立同分布，IID)，假设训练集与测试集是满足独立且相同分布，那通过训练集训练出的模型在测试集上能获得好的结果，也就是说模型具有泛化能力。但是若训练集与测试集的分布不一致，就叫做 Covariate Shift。Internal Covariate Shift 就是指神经网路内部各个层的数据分布不一致的问题。更详细的说明就是指神经网路的参数会随着每一层的训练更新，而每一次的参数更新都会使输入数据的分布产生变化，导致输出的分布改变，这个现象称为Internal Covariate Shift (ICS)。</p>
+<p>因为每一层的参数都会受到前面所有层的参数影响，造成每层的数据分布不一致，导致神经网路要不断地学习新的分布，此外这些变化随着层数越深而越大，使得模型训练变得困难。过去为了解决这个问题只能设定较低的学习率(learning rate)，造成收敛速度过慢，而且因为每层的参数更新都会影响到后面层，因此每层更新的策略需要更谨慎。</p>
+<p>当不对数据进行标准化时，比如特征$x_1$可能分布在$[1,1000]$，而特征$x_2$可能分布在$[0,1]$，这样的输入会使得成本函数分布在一个乱七八糟(左图)的空间内，可能会沿着最复杂的梯度进行下降，而对所有特征数据正则化到$[0,1]$区间内部时，此时数据之间对于结果的影响是相同的，能加快收敛。</p>
+<p>使用Normalization 可以加速收敛，那在每层都使用Normalization，也就是指Batch Normalization 同样也可以加速收敛。另外，Batch Normalization 可以让每层的数据分布一致，让数值更稳定，因此可以使用较高的学习率优化，提高模型的学习速度。</p>
+<p>此外，在网络的正向传播过程中，如果对网络的每一层的接受的输出(激活之前)也进行这样的处理，会激活到梯度变化最大的区域，<strong>减缓梯度消失</strong>。</p>
 <p>传播过程对数据的标准化会使得参数$b$没有意义($x-\mu$)，所以也就取消了这个参数，而且还可以正则化为任意的均值和方差：</p>
 <script type="math/tex; mode=display">z=\gamma z_{norm}+\beta</script><p>所以$\gamma$决定了方差，$\beta$决定了均值，也就是最终的数据分布是均值为 $\beta$，方差为 $\gamma^2$，保证模型的表达能力不因标准化而下降。这两个参数也是由网络学习而来(每层和每层不一样，测试时使用的$\mu,\sigma$为所有的batch的加权平均值)。</p>
-<p>此外，当对数据进行正则化时，网络也能更加泛化。比如面临不同的输入：黑猫与白猫。网络在学习了认识黑猫后，可能还不认识白猫，因为两者的RGB数值差异很大。但是正则化会限制输入的均值与方差，保证了数据在$[-1,1]$范围内，也就是前层无论面临何种输入，对后层的权重影响都不会太大。</p>
+<p>此外，当对数据进行正则化时，网络也能更加泛化。比如面临不同的输入：黑猫与白猫。网络在学习了认识黑猫后，可能还不认识白猫，因为两者的RGB数值差异很大。但是正则化会限制输入的均值与方差，保证了数据在$[-1,1]$范围内，也就是前层无论面临何种输入，对后层的权重影响都不会太大。通俗一些：由于Batch Normalization 是在每个 mini-batch 上做计算，而非在整个数据集上，可想而知每个mini-batch 的平均值与标准差有所不同，因此其平均值与标准差会有一些小噪音，也为神经网路训练的过程中添加了随机噪音。而这些轻微噪音与Dropout 所带来的噪音类似，因此Batch Normalization 也会有正则化的效果</p>
 <h2 id="不同类型的标准化"><a href="#不同类型的标准化" class="headerlink" title="不同类型的标准化"></a>不同类型的标准化</h2><ul>
 <li>Batch Normalizatoin，对一个 batch 内的数据进行标准化，因此，BN 比较适用的场景是：每个 mini-batch 比较大，数据分布比较接近。在进行训练之前，要做好充分的 shuffle. 否则效果会差很多。但是对于目标检测、RNN 等领域不适用。</li>
 <li>Layer Normalization，针对单个训练样本进行，取的是同一个样本的不同通道做归一化。不依赖于其他数据，因此可以避免 BN 中受 mini-batch 数据分布影响的问题。在 RNN 中的一个 batch 中，通常各个样本的长度都是不同的，当统计到比较靠后的位置时，这时只有一个样本还有数据，基于这个样本的统计信息不能反映全局分布，所以这时 BN 的效果并不好。</li>
@@ -387,10 +390,10 @@
       <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
@@ -453,12 +456,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/02/18/rnn/" rel="prev" title="循环神经网络">
-      <i class="fa fa-chevron-left"></i> 循环神经网络
+    <a href="/2019/02/18/rnn1/" rel="prev" title="循环神经网络的进化">
+      <i class="fa fa-chevron-left"></i> 循环神经网络的进化
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/02/20/gradient-function/" rel="next" title="优化梯度函数">
-      优化梯度函数 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/02/20/gradient-function/" rel="next" title="神经网络中的梯度">
+      神经网络中的梯度 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -589,12 +592,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">874k</span>
+    <span title="站点总字数">881k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:15</span>
+    <span title="站点阅读时长">13:21</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
