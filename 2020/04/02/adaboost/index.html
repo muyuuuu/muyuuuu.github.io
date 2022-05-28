@@ -293,7 +293,7 @@
 
       
         <p>在多年前的某次任务中，看到了别人使用提升树等算法，取得了比较好的效果。今日眼馋，特来学习提升方法，并记录于此。提升方法是一种统计学习方法。在分类问题中，通过改变训练样本的权重，学习多个分类器，将多个分类器进行线性组合，以提升分类的性能。</p>
-<p><img data-src="/2020/04/02/adaboost/error_rate.png" alt></p>
+<p><img data-src="adaboost/error_rate.png" alt></p>
 <a id="more"></a>
 <p>本文收录：</p>
 <ol>
@@ -409,7 +409,7 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
 <p>输出如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Estimators ===&gt; 1  Accuracy ===&gt; 0.6295 Time ===&gt; 0.03 s</span><br><span class="line">Estimators ===&gt; 5  Accuracy ===&gt; 0.741 Time ===&gt; 0.2 s</span><br><span class="line">Estimators ===&gt; 20  Accuracy ===&gt; 0.841 Time ===&gt; 0.77 s</span><br><span class="line">Estimators ===&gt; 50  Accuracy ===&gt; 0.9105 Time ===&gt; 1.92 s</span><br><span class="line">Estimators ===&gt; 100  Accuracy ===&gt; 0.937 Time ===&gt; 3.86 s</span><br><span class="line">DecisionTreeClassifier(ccp_alpha=0.0, class_weight=None, criterion=&apos;gini&apos;,</span><br><span class="line">                       max_depth=4, max_features=None, max_leaf_nodes=None,</span><br><span class="line">                       min_impurity_decrease=0.0, min_impurity_split=None,</span><br><span class="line">                       min_samples_leaf=1, min_samples_split=2,</span><br><span class="line">                       min_weight_fraction_leaf=0.0, presort=&apos;deprecated&apos;,</span><br><span class="line">                       random_state=None, splitter=&apos;best&apos;)</span><br></pre></td></tr></table></figure>
 <p>可见，在增加决策树深度后，准确性有了明显提升。</p>
-<h2 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h2><p><img data-src="/2020/04/02/adaboost/error_rate.png" alt></p>
+<h2 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h2><p><img data-src="adaboost/error_rate.png" alt></p>
 <p>如图所示，随着分类器数量的增加，误差率逐渐下降并稳定在一个区间内。因为提升算法是有训练误差的界限的，其训练误差为：</p>
 <script type="math/tex; mode=display">\begin{equation}
 \frac{1}{N}\sum_{i=1}^NI(G(x_i) != y_i) \leq \frac{1}{N}\sum_{i=1}\exp (-y_iG(x_i)) = \frac{1}{N}\sum_{i=1}\exp(-\sum_{m=1}^M\alpha_my_iG_m(x_i))
@@ -511,8 +511,8 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
       <i class="fa fa-chevron-left"></i> 核密度聚类
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/04/11/dynamic-programming/" rel="next" title="动态规划问题系列">
-      动态规划问题系列 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/04/18/reverse-radar-begin/" rel="next" title="倒车雷达（一）：介绍">
+      倒车雷达（一）：介绍 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -589,7 +589,7 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -643,12 +643,12 @@ G(x)=\text{sign}[f_3(x)]=\text{sign}[0.4236G_1(x)+0.6496G_2(x)+0.7514G_3(x)]
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">886k</span>
+    <span title="站点总字数">847k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:26</span>
+    <span title="站点阅读时长">12:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

@@ -452,7 +452,7 @@
 </ul>
 <p>每次在最大位移方向走一步，另一个方向是否移动取决于中点误差项的判断。</p>
 <p>对于$0\leq|k|\leq 1$，$x$在方向上加1， $y$方向是否加1需要判断。如下图所示：</p>
-<p><img data-src="/2020/02/17/cg/midpoint1.png" alt></p>
+<p><img data-src="cg/midpoint1.png" alt></p>
 <ul>
 <li>交点$Q$在Midpoint上方时，$Q$距离$P_u$近；</li>
 <li>交点$Q$在Midpoint下方时，$Q$距离$P_t$近；</li>
@@ -468,7 +468,7 @@
 <ol>
 <li>在$d&lt;0$时</li>
 </ol>
-<p><img data-src="/2020/02/17/cg/midpoint2.png" alt></p>
+<p><img data-src="cg/midpoint2.png" alt></p>
 <ul>
 <li>在点$M_0$处，$d_0=F(x_{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
 <li>在点$M_1$处，$d_1=A(x_i+2) + B(y_i+1.5) + C=d_0+A+B$</li>
@@ -476,7 +476,7 @@
 <ol>
 <li>在$d\geq 0$时</li>
 </ol>
-<p><img data-src="/2020/02/17/cg/midpoint3.png" alt></p>
+<p><img data-src="cg/midpoint3.png" alt></p>
 <ul>
 <li>在点$M_0$处，$d_0=F(x_{m0}, y_{m0})=A(x_i+1)+B(y_i+0.5)+C$</li>
 <li>在点$M_1$处，$d_1=A(x_i+2) + B(y_i+0.5) + C=d_0+A$</li>
@@ -485,7 +485,7 @@
 <script type="math/tex; mode=display">d_0 = A(x_0+1)+ B(y_0+0.5) + C = A + 0.5B</script><script type="math/tex; mode=display">d\geq0  \Longrightarrow d_{i+1}=d_i+A</script><script type="math/tex; mode=display">d < 0 \Longrightarrow d_{i+1}=d_i+A+B</script><p>但是在$d_0$中有小数，且只判断$d$的符号，所以可以使用$2d$代替$d$，即$d_0=2A+B$，摆脱浮点运算，提高到整数加法，优于DDA算法。</p>
 <p><strong>Bresenham算法</strong></p>
 <p>效率没办法提升，所以算法要解决其它问题，如是否可以画圆，不限于直线的方程形式。</p>
-<p><img data-src="/2020/02/17/cg/bresenham.png" alt></p>
+<p><img data-src="cg/bresenham.png" alt></p>
 <p>此时不再依赖直线的方程形式，更加一般化。</p>
 <p>计算直线的起点到终点与垂直网格线的交点，根据误差项判断与交点最近的像素点。</p>
 <p>每次$x+1$，$y$的增量为0或者1， 取决于最近光栅网格点的距离。最开始是，$d_0=0$，递增公式为$d=d+k$。一旦$d&gt;1$，则$d=d-1$，使得$d$在$[0, 1]$区间内。所以：</p>
@@ -512,10 +512,10 @@
 <li>知道边界，就知道了哪些像素在多边形内，就可以转换为点阵表示，也叫多边形的扫描转换。即将顶点表示转换为点阵表示，寻找内部的像素点并填充颜色。</li>
 <li>知道多边形内部的像素，但不可以确定多边形的边界。(属于图像处理课程的东西)</li>
 </ul>
-<p><img data-src="/2020/02/17/cg/muliangle.png" alt></p>
+<p><img data-src="cg/muliangle.png" alt></p>
 <p><strong>X扫描线算法</strong></p>
 <p>以数值扫描为例，按照扫描的顺序，求与多边形相交的区间，对区间内部的像素点进行颜色填充。同样，坐标点需要四舍五入为整数。</p>
-<p><img data-src="/2020/02/17/cg/scan-fill.png" alt></p>
+<p><img data-src="cg/scan-fill.png" alt></p>
 <p>需要以$x$递增的排列顺序得到$x$的坐标，也就是要在$[2,4],[7,9]$两个区间内填充。</p>
 <p>如果图形中，$y_{\mathrm{min}}$值为$1$，$y_{\mathrm{max}}$值为$12$，一共需要$12$条扫描线从下向上扫描，其他线不考虑。在$y\in [y_{\mathrm{min}},y_{\mathrm{max}}]$中，对每一条扫面线的扫描结果进行填充，步骤为：</p>
 <ul>
@@ -529,7 +529,7 @@
 <li>共享顶点的两条边在扫描线的两侧，算一个交点</li>
 <li>共享顶点的两条边在扫面线的一侧，需要检查共享顶点的另外两个端点的$y$值，按照大于$y$值的个数决定交点的个数。</li>
 </ul>
-<p><img data-src="/2020/02/17/cg/pair.png" alt></p>
+<p><img data-src="cg/pair.png" alt></p>
 <p>如上图所示</p>
 <ul>
 <li>左图：共享顶点的两条边在扫描线的两侧，算一个交点</li>
@@ -537,7 +537,7 @@
 <li>右图：$y_1&gt;y_4,y_3&gt;y_5$，共四个交点，每个交点有两个</li>
 </ul>
 <p>例题：</p>
-<p><img data-src="/2020/02/17/cg/pair-exam.png" alt></p>
+<p><img data-src="cg/pair-exam.png" alt></p>
 <div class="table-container">
 <table>
 <thead>
@@ -569,7 +569,7 @@
 <li>多边形的连贯线，某边与扫描线相交，还可能与下条扫描线继续相交</li>
 </ul>
 <p>如$P_1,P_2,P_3$三条扫描线连贯性，多边形的边也有连贯性。</p>
-<p><img data-src="/2020/02/17/cg/continue.png" alt></p>
+<p><img data-src="cg/continue.png" alt></p>
 <p>此时需要引入特殊的数据结构，活性边表AET(Active Edge Table)，活性边是指与扫描线相交的边，同样以$x$递增的顺序放入一个表内。这个表的节点内容为：</p>
 <div class="table-container">
 <table>
@@ -597,7 +597,7 @@
 <p>$\Delta x$的计算过程：</p>
 <script type="math/tex; mode=display">k=\frac{\Delta y}{\Delta x}=\frac{y_{i+1}-y_i}{x_{i+1}-x_i}=\frac{1}{x_{i+1}-x_i}</script><p>得到：</p>
 <script type="math/tex; mode=display">x_{i+1}=x_i+\frac{1}{k}\Longrightarrow \Delta x=\frac{1}{k}</script><p><strong>例题</strong></p>
-<p><img data-src="/2020/02/17/cg/AET.png" alt></p>
+<p><img data-src="cg/AET.png" alt></p>
 <p>为了方便存放多边形的边，AET的建立与更新，需要建立新边表NET(New Edge Table)。是一种纵向链表，长度为最大扫描线的数量，每个节点是一个吊桶，对应一条扫描线，节点的结构为：</p>
 <div class="table-container">
 <table>
@@ -617,7 +617,7 @@
 </table>
 </div>
 <p><strong>例题</strong></p>
-<p><img data-src="/2020/02/17/cg/NET.png" alt></p>
+<p><img data-src="cg/NET.png" alt></p>
 <p>$1,3,5,7$处需要更新，读入新的边，所以存入NET表，从最低点的$y=1$开始做，引入两条边放入AET处理。</p>
 <p><strong>总结</strong></p>
 <p>每次扫描线要经过三个处理</p>
@@ -629,7 +629,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Python code for algorithm flow</span></span><br><span class="line">Begin Algorithm</span><br><span class="line">--------------------------------------------------</span><br><span class="line">sort(every_scanline)</span><br><span class="line">num = len(every_scanline) + scanline[<span class="number">0</span>].height</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> e <span class="keyword">in</span> range(scanline[<span class="number">0</span>].height, num):</span><br><span class="line">    init NET[e]</span><br><span class="line">    insert the edge <span class="keyword">in</span> NET[e] which edge.y_min = e</span><br><span class="line"></span><br><span class="line">y = min(scanline)</span><br><span class="line">init AET</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> e <span class="keyword">in</span> range(scanline[<span class="number">0</span>].height, num):</span><br><span class="line">    <span class="comment"># x's value is in ascending</span></span><br><span class="line">    Insert to AET <span class="keyword">from</span> NET[e] by Insert Sort Method</span><br><span class="line">    loop through AET, pair x <span class="keyword">and</span> brush(x, y, color)</span><br><span class="line">    loop through AET, delete edge.y_max = e <span class="keyword">from</span> AET</span><br><span class="line"></span><br><span class="line">--------------------------------------------------</span><br><span class="line">End  Algorithm</span><br></pre></td></tr></table></figure>
 <p>这样就可以完成对任意多边形的填充，利用了扫描线增量的思想，多边形的连贯性和一种新的数据结构。但是要求待填充区域必须已知，无法对位置边界的区域进行填充。</p>
 <p>此外还有其他多种算法可以完成对多边形的填充，如边缘填充算法，随机则一条边和边的遍历顺序，对每条边的右侧像素取补运算，即可完成对多边形区域额填充。</p>
-<p><img data-src="/2020/02/17/cg/edge-fill.png" alt></p>
+<p><img data-src="cg/edge-fill.png" alt></p>
 <p><strong>区域填充算法</strong></p>
 <p>将区域内的某个点赋予颜色(种子点)，并将此颜色扩展到整个区域，其中的区域是指：已经点阵表示的填充图形的像素的集合。</p>
 <p>区域表示的两种方法：</p>
@@ -638,7 +638,7 @@
 <li>边界表示：枚举边界的所有像素，内部点着同一颜色</li>
 </ul>
 <p>这个算法要求区域是连通的，进行四向连通和八向连通。</p>
-<p><img data-src="/2020/02/17/cg/connected.png" alt></p>
+<p><img data-src="cg/connected.png" alt></p>
 <p>以四连通填充为例，边界的像素与内部的像素颜色不同，找到内部的种子像素，并填充到内部的其他像素。使用栈结构实现(和栈结构的米够求解问题类似)</p>
 <p>算法伪代码如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">push seed</span><br><span class="line"><span class="keyword">while</span>(!empty(stack)):</span><br><span class="line">    e = pop(shack)</span><br><span class="line">    brush(e)</span><br><span class="line">    a = go through adjacent pixels by four directions</span><br><span class="line">    <span class="keyword">if</span> a <span class="keyword">not</span> brushed:</span><br><span class="line">        push(a)</span><br></pre></td></tr></table></figure>
@@ -651,7 +651,7 @@
 </ul>
 <h2 id="反走样算法"><a href="#反走样算法" class="headerlink" title="反走样算法"></a>反走样算法</h2><p>走样是理想世界数字化的必然产物，发生走样的原因是像素本身是离散的，可能会导致锯齿状、微小物体丢失的现象。</p>
 <p>走样可以总结为:原始信号变化快，采样频率低而导致，最终的结果会取决于低频的采样信号(低频的采样信号可以理解为很少的像素点，分辨率低，分辨率高则采样频率也会高)</p>
-<p><img data-src="/2020/02/17/cg/frequency.png" alt></p>
+<p><img data-src="cg/frequency.png" alt></p>
 <p>反走样：减少或消除走样的效果。所有的图像处理系统都会对基本图形进行反走样处理。</p>
 <ul>
 <li>提高分辨率：像素更密集，但是付出的存储代价和扫描转换时间都要提升，还要提高电子枪的射击速度，并不可取。</li>
@@ -660,7 +660,7 @@
 <p><strong>两种反走样算法</strong></p>
 <p><strong>非加权采样方法</strong></p>
 <p>以物体的覆盖率计算像素的颜色，即某个像素区域被物体覆盖的比例，覆盖率越大，颜色越亮。</p>
-<p><img data-src="/2020/02/17/cg/coverage.png" alt></p>
+<p><img data-src="cg/coverage.png" alt></p>
 <p>如上图所示的第$3$号区域，覆盖了一个像素的一般的区域，所以颜色取原来的二分之一。如果为小数则进行四舍五入的取整。</p>
 <p>缺点</p>
 <ul>
@@ -670,7 +670,7 @@
 <p><strong>加权采样方法</strong></p>
 <p>亮度取决于距离像素中心的远近，区域与像素中心的距离决定了对像素亮度的贡献。将一个像素分为$3\times 3$的矩阵，矩阵的每个值被赋予权重，乘以颜色求平均，得到最后的亮度值。(和图像处理中的高斯模糊过程一致)</p>
 <h2 id="裁剪算法"><a href="#裁剪算法" class="headerlink" title="裁剪算法"></a>裁剪算法</h2><p>内部存储的比实际显示的要大，所以要对不分区域进行裁剪，确定哪些像素落在显示区域内。(基于点阵的判断)</p>
-<p><img data-src="/2020/02/17/cg/cat.png" alt></p>
+<p><img data-src="cg/cat.png" alt></p>
 <p>判断一个点$P(x,y)$是否在区域内部的方法：</p>
 <script type="math/tex; mode=display">x_{\text{left}}\leq x\leq x_{\text{right}}, y_{\text{bottom}}\leq y\leq y_{\text{top}}</script><p>而直线段的裁剪，是复杂图形裁剪的基础，分为以下三种情况。</p>
 <ul>
@@ -685,7 +685,7 @@
 <li>Liang-Barsky算法</li>
 </ul>
 <p><strong>Cohen-Sutherland</strong></p>
-<p><img data-src="/2020/02/17/cg/cat-cate.png" alt></p>
+<p><img data-src="cg/cat-cate.png" alt></p>
 <p>设直线的两个端点$p_1,p_2$</p>
 <ul>
 <li>$p_1,p_2$全部在窗口内，保留直线</li>
@@ -712,10 +712,10 @@
 <li>如果以上均不成立，则需要求交点，划分线段，然后继续</li>
 </ul>
 <p><strong>例题</strong></p>
-<p><img data-src="/2020/02/17/cg/cohen.png" alt></p>
+<p><img data-src="cg/cohen.png" alt></p>
 <p>编码的思想值得学习，二进制计算速度快，适用于直线的大部分在区域内可见或者大部分在区域外不可见的情况。</p>
 <p><strong>Liang-Barsky算法</strong></p>
-<p><img data-src="/2020/02/17/cg/liang.png" alt></p>
+<p><img data-src="cg/liang.png" alt></p>
 <p>核心思想：</p>
 <ul>
 <li>将直线以参数方程进行表示</li>
@@ -725,7 +725,7 @@
 <li>$u_1$窗口内可见的起点，$u_1=max(0, u_l, u_b)$(入边)</li>
 <li>$u_2$窗口内可见的终点，$u_2=min(1, u_t, u_r)$(出边)</li>
 </ul>
-<p><img data-src="/2020/02/17/cg/barsky.png" alt></p>
+<p><img data-src="cg/barsky.png" alt></p>
 <p>所以现在的问题是：</p>
 <ul>
 <li>如何判断入边与出边</li>
@@ -741,13 +741,13 @@
 </ul>
 <p>如此，求得了出边与入边，以及相关的$u$值，求解即可。</p>
 <p><strong>例题</strong></p>
-<p><img data-src="/2020/02/17/cg/liang-exam.png" alt></p>
+<p><img data-src="cg/liang-exam.png" alt></p>
 <p>可以看到，Liang-barsky算法一般情况下会更好，但只适用于矩形的裁剪窗口。更改的底层算法效率更高，可以固化到计算机底层硬件中，加速显示与执行效率，且图形软件则不用研究此类算法（如photoshop）</p>
 <p><strong>多边形裁剪</strong></p>
 <p>裁剪后的多边形边界的顶点序列。保留封闭区域，可能一个，也可能多个。Sutherland-hodgemen算法针对裁剪过程中出现的四种情况，作出了分类求解：</p>
-<p><img data-src="/2020/02/17/cg/hodgemen.png" alt></p>
+<p><img data-src="cg/hodgemen.png" alt></p>
 <p><strong>例题</strong></p>
-<p><img data-src="/2020/02/17/cg/hodgemen-exam.png" alt></p>
+<p><img data-src="cg/hodgemen-exam.png" alt></p>
 <p><strong>文字裁剪算法</strong></p>
 <ul>
 <li>串精度的裁剪：字符串全部在窗口内部，保留；一个字符不在，全部舍弃。</li>
@@ -780,7 +780,7 @@
 </ul>
 <p>$z$的求法：空间中的平面方程为：$Ax+By+Cz+d=0\Longrightarrow z=\frac{Ax+By+d}{-C}$</p>
 <p>在同一条视野线上：$P_1$在$P_2$前面，则只显示$P_1$的颜色。同一组$(x,y)$，通过判断$z$的大小来决定显示哪个像素，与在屏幕中的出现顺序无关。</p>
-<p><img data-src="/2020/02/17/cg/z-buffer.png" alt></p>
+<p><img data-src="cg/z-buffer.png" alt></p>
 <p>特点：</p>
 <ul>
 <li>占用空间大</li>
@@ -797,18 +797,18 @@
 <li>弧长判断法</li>
 </ul>
 <p><strong>射线法</strong></p>
-<p><img data-src="/2020/02/17/cg/ray.png" alt></p>
+<p><img data-src="cg/ray.png" alt></p>
 <p><strong>弧长法</strong></p>
-<p><img data-src="/2020/02/17/cg/arc.png" alt></p>
+<p><img data-src="cg/arc.png" alt></p>
 <p>但是弧长的计算比较不容易，还需要考虑精度问题。需要加以改进。</p>
 <p><strong>弧长判断法</strong></p>
-<p><img data-src="/2020/02/17/cg/arc-judge.png" alt></p>
+<p><img data-src="cg/arc-judge.png" alt></p>
 <p>虽然加以改进，仍是基于像素级别的消隐，时间效率不高。</p>
 <p><strong>区间扫描线算法</strong></p>
 <p>不再基于像素级别的消隐，加快了执行速度。</p>
 <p>按照扫描线的思想，同款区间设置同款颜色，而相交的区间取决于谁在前。而在染色时，一个像素决定了一个区间的颜色，以逐段染色的方式对区间进行染色。</p>
 <p>同样，借助图形的连贯性和连续性，以增量的形式避免求交，排序$x$点，染色。</p>
-<p><img data-src="/2020/02/17/cg/scan-color.png" alt></p>
+<p><img data-src="cg/scan-color.png" alt></p>
 <ul>
 <li>无多边形，$[a_4,a_5]$染背景颜色</li>
 <li>一个多边形内，$[a_1,a_2]$染对应的颜色</li>
@@ -832,7 +832,7 @@
 <li>一个面则直接显示</li>
 <li>窗口有两个面及其以上，等分为四个窗口，递归执行。</li>
 </ul>
-<p><img data-src="/2020/02/17/cg/warmock-exam.png" alt></p>
+<p><img data-src="cg/warmock-exam.png" alt></p>
 <h1 id="二维图形变换"><a href="#二维图形变换" class="headerlink" title="二维图形变换"></a>二维图形变换</h1><h2 id="向量的基础"><a href="#向量的基础" class="headerlink" title="向量的基础"></a>向量的基础</h2><p>对对象的变换：形状、位置、方向，最后计算每个点的像素值。变换的基础是向量，有长度方向，无位置；对于单纯的点，有位置，无长度与方向。且可以上升到$n$维向量，便于处理问题。</p>
 <p>向量的线性组合：$\vec{w}=a_1\vec{v}_1+a_2\vec{v}_2+a_3\vec{v}_3+\dots+a_n\vec{v}_n$</p>
 <p>仿射组合：$a_1+a_2+a_3+\dots+a_n=1$</p>
@@ -886,10 +886,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/06/12/Computer-network/" rel="bookmark">计算机网络原理</a></div>
@@ -962,8 +962,8 @@
       <i class="fa fa-chevron-left"></i> 元胞自动机——万物皆可模拟
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/02/23/substring-match/" rel="next" title="通用的子串匹配问题求解算法">
-      通用的子串匹配问题求解算法 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/02/29/tree-algorithm/" rel="next" title="算法系列：树">
+      算法系列：树 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -1040,7 +1040,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1094,12 +1094,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">886k</span>
+    <span title="站点总字数">847k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:26</span>
+    <span title="站点阅读时长">12:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

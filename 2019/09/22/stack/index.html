@@ -300,15 +300,15 @@
 <h1 id="调用栈"><a href="#调用栈" class="headerlink" title="调用栈"></a>调用栈</h1><p>调用栈函数调用时产生，描述了函数之间的调用关系。由多个栈帧组成，每个栈帧对应一个没有运行完的函数，栈帧保存了该函数的返回地址和局部变量。所以可以保证在执行完毕后找到返回地址。保证了不同函数的局部变量互不相干，因为不同函数对应了不同的栈帧。</p>
 <h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><p>步骤与上述内容相同, 但是调用的函数为自己, 即自身调用自身。（如经典的非波那切数列）</p>
 <p>以<code>Cpp</code>为例，编译后的可执行文件存放的内容中主要内容为段，段是指二进制文件内的区域。所有某种特定类型的信息保存在里面，<code>size</code>得到各个段的大小。执行如下指令会：</p>
-<p><img data-src="/2019/09/22/stack/1.png" alt></p>
+<p><img data-src="stack/1.png" alt></p>
 <p><code>text</code>：存储代码指令（也叫正文段）</p>
 <p><code>data</code>：存储初始化的全局变量（也叫数据段）</p>
 <p><code>bss</code>：存储未赋值的全局变量所需要的空间</p>
 <p>可执行文件并不包括调用函数时的调用栈，而是在运行时创建。调用栈所在的段为堆栈段，也有自己的大小，不能被访问越界，否则会出现段错误（Segmentation Fault）。而每次递归会在调用栈里面添加一个栈帧，栈帧过多会越界，叫做堆栈溢出（Stack Overflow）。调用栈存放了函数的调用关系和局部变量。</p>
 <h1 id="查看堆栈段的大小"><a href="#查看堆栈段的大小" class="headerlink" title="查看堆栈段的大小"></a>查看堆栈段的大小</h1><p><code>linux</code>下，栈大小并没有在可执行文件中，需要通过指令修改。<code>ulimit-a</code>，观察其中的<code>stack size</code>即为所求。</p>
-<p><img data-src="/2019/09/22/stack/2.png" alt></p>
+<p><img data-src="stack/2.png" alt></p>
 <p><code>ulimit -s 37629</code>进行修改：</p>
-<p><img data-src="/2019/09/22/stack/3.png" alt></p>
+<p><img data-src="stack/3.png" alt></p>
 <p>栈溢出不一定是递归太多，也可能是局部变量太大，总大小超出允许的范围，就会产生栈溢出。因此，较大数组存储在main函数之外，因为局部变量存放在堆栈段。（main函数中的变量同样为局部变量）</p>
 
     </div>
@@ -320,10 +320,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/06/12/Computer-network/" rel="bookmark">计算机网络原理</a></div>
@@ -474,7 +474,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -528,12 +528,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">886k</span>
+    <span title="站点总字数">847k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:26</span>
+    <span title="站点阅读时长">12:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

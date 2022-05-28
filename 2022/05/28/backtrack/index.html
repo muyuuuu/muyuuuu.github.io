@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
+  <meta name="description" content="回溯算法是一种暴力枚举的算法。但是，枚举是一个技术活，枚举过程如何保证不重复、剪纸、不遗漏和优先处理可能的结果，这并不简单。 回溯应该是算法系列中除动态规划外最难的一个，需要很好的明确回溯入口，退出条件，两者保证回溯的不遗漏。而下一步如何回溯，以及如何退出当前状态要保证回溯的不重复。也许有些抽象，我们来看具体例子。">
 <meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
-<meta property="og:title" content="通用的子串匹配问题求解算法">
-<meta property="og:url" content="https://muyuuuu.github.io/2020/02/23/substring-match/index.html">
+<meta property="og:title" content="算法系列：回溯">
+<meta property="og:url" content="https://muyuuuu.github.io/2022/05/28/backtrack/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
+<meta property="og:description" content="回溯算法是一种暴力枚举的算法。但是，枚举是一个技术活，枚举过程如何保证不重复、剪纸、不遗漏和优先处理可能的结果，这并不简单。 回溯应该是算法系列中除动态规划外最难的一个，需要很好的明确回溯入口，退出条件，两者保证回溯的不遗漏。而下一步如何回溯，以及如何退出当前状态要保证回溯的不重复。也许有些抽象，我们来看具体例子。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-28T17:20:26.000Z">
+<meta property="og:updated_time" content="2022-05-28T07:02:18.469Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="通用的子串匹配问题求解算法">
-<meta name="twitter:description" content="19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。">
+<meta name="twitter:title" content="算法系列：回溯">
+<meta name="twitter:description" content="回溯算法是一种暴力枚举的算法。但是，枚举是一个技术活，枚举过程如何保证不重复、剪纸、不遗漏和优先处理可能的结果，这并不简单。 回溯应该是算法系列中除动态规划外最难的一个，需要很好的明确回溯入口，退出条件，两者保证回溯的不遗漏。而下一步如何回溯，以及如何退出当前状态要保证回溯的不重复。也许有些抽象，我们来看具体例子。">
 
-<link rel="canonical" href="https://muyuuuu.github.io/2020/02/23/substring-match/">
+<link rel="canonical" href="https://muyuuuu.github.io/2022/05/28/backtrack/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>通用的子串匹配问题求解算法 | Just for Life.</title>
+  <title>算法系列：回溯 | Just for Life.</title>
   
 
 
@@ -227,7 +227,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/02/23/substring-match/">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2022/05/28/backtrack/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          通用的子串匹配问题求解算法
+          算法系列：回溯
         </h1>
 
         <div class="post-meta">
@@ -249,16 +249,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-02-23 20:30:13" itemprop="dateCreated datePublished" datetime="2020-02-23T20:30:13+08:00">2020-02-23</time>
+              <time title="创建时间：2022-05-28 14:30:27 / 修改时间：15:02:18" itemprop="dateCreated datePublished" datetime="2022-05-28T14:30:27+08:00">2022-05-28</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-29 01:20:26" itemprop="dateModified" datetime="2020-03-29T01:20:26+08:00">2020-03-29</time>
-              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -273,14 +267,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -292,29 +286,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>19年夏天出去面试的时候，被考了一道子串匹配的问题。当时也没回答上来，当时的学长说可以用类似二叉树的方式去查找，一个分支走不通的时候开始回溯到另一个分支，当时实在是太饿了，大概只听懂了这些吧。今天在刷题的时候又再次遇到了这个题目，也想到了更为简易(时间复杂度$O(n)$)和通用的算法，记录于此。</p>
+        <p>回溯算法是一种暴力枚举的算法。但是，枚举是一个技术活，枚举过程如何保证不重复、剪纸、不遗漏和优先处理可能的结果，这并不简单。</p>
+<p>回溯应该是算法系列中除动态规划外最难的一个，需要很好的明确回溯入口，退出条件，两者保证回溯的不遗漏。而下一步如何回溯，以及如何退出当前状态要保证回溯的不重复。也许有些抽象，我们来看具体例子。</p>
 <a id="more"></a>
-<h1 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h1><p>字符串 <code>APPAPT</code> 中包含了两个单词 <code>PAT</code>，其中第一个 PAT 是第 2 位(P)，第 4 位(A)，第 6 位(T)；第二个 PAT 是第 3 位(P)，第 4 位(A)，第 6 位(T)。那么可以类比到：<code>PPPAAATTT</code>有27个<code>PAT</code>。现给定字符串，问一共可以形成多少个 <code>PAT</code>？由于结果可能比较大，只输出对 1000000007 取余数的结果。</p>
-<h1 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h1><h2 id="一个常识"><a href="#一个常识" class="headerlink" title="一个常识"></a>一个常识</h2><script type="math/tex; mode=display">(a+b)\%c = a \% c + b \% c</script><p>如 $101 \% 100 + 50 \% 100 = (100 + 51) \% 100 = 51$</p>
-<h2 id="错解思路"><a href="#错解思路" class="headerlink" title="错解思路"></a>错解思路</h2><p>当时的思路记不太清，我现在的想法是使用遍历的方法，先寻找<code>P</code>，在寻找<code>A</code>，在寻找<code>T</code>，当前字符不满足就跳到下一个字符，一条路走不通就走下一条路。以<code>APPAPT</code>第二位的<code>P</code>为例。从<code>P</code>开始，依次向后遍历字符，遇到错误的字符跳过，遇到正确的字符+1，如下图所示。</p>
-<p><img data-src="/2020/02/23/substring-match/1.png" alt></p>
-<p>第二位的<code>P</code>处理完毕后开始第三位<code>P</code>的处理，也很容易看出来，查找3个字符，复杂度为$O(n^3)$，查找4个字符，复杂度为$O(n^4)$，且代码维护不易容易超时。粗糙的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++)&#123;</span><br><span class="line">    <span class="keyword">if</span> (s[i] != <span class="string">'P'</span>)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; s.length(); j++)&#123;</span><br><span class="line">            <span class="keyword">if</span> (s[j] != <span class="string">'A'</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">1</span>; j &lt; s.length(); k++)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (s[k] == <span class="string">'T'</span>)&#123;</span><br><span class="line">                        count++;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="正解"><a href="#正解" class="headerlink" title="正解"></a>正解</h1><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>既然容易超时，得想办法把时间复杂度给降下来，争取一次遍历在时间复杂度为$O(n)$内把问题解决掉。既然假设只能遍历一次，那么也可以理解为最终的个数是：有序字符<code>P,A,T</code>的排列组合数。</p>
-<p>有序是指<code>P</code>要在<code>A</code>的前面，<code>A</code>要在<code>T</code>的前面，顺序错了的不能计算。最后，统计有几个有序的<code>P, A, T</code>，相乘一下即可解决。如<code>PPPAAATTT</code>中，有序的<code>P</code>是3个，<code>A</code>是3个，<code>T</code>是3个，那么最后的结果就是：$3\times3\times3=27$。</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p><code>T</code>的个数为<code>countt</code>，<code>P</code>的个数为<code>countp</code>，最终结果的个数为<code>result</code>。</p>
-<ol>
-<li>读取字符串，先统计<code>T</code>的个数。</li>
-<li>开始遍历字符串：</li>
-<li>遇到一个<code>P</code>，那么<code>P</code>的个数加一。</li>
-<li>遇到一个<code>A</code>，开始计数，数量为<code>result += countt * countp</code>。</li>
-<li>遇到一个<code>T</code>，<code>T</code>的个数减一。这样可以做到：<code>A</code>前面的<code>T</code>无效，遇到<code>A</code>后计算一次<code>P, T</code>的组合数，指针向后移动继续遍历，<code>T</code>的数量减少一个。如字符串<code>PPPAAAATTTTAT</code>，计算到倒数第二个<code>A</code>时，此时只有一个<code>T</code>。</li>
-</ol>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">    <span class="keyword">int</span> len = s.length(), result = <span class="number">0</span>, countp = <span class="number">0</span>, countt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>)</span><br><span class="line">            countt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'P'</span>) countp++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) countt--;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'A'</span>) result = (result + countp * countt) % <span class="number">1000000007</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><p>如果题目要求是寻找有几个<code>PSAT</code>呢，如果是寻找有几个<code>PNSAT</code>呢。错误的思路只会无限制的增加循环次数，而正解仍然能够在$O(n)$内解决问题。只需要把<code>PS</code>看作一个整体，在增加一个<code>S</code>的计数变量即可。如寻找<code>PSSSATTAAT</code>中<code>PSAT</code>的个数：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; s;</span><br><span class="line">    <span class="keyword">int</span> len = s.length(), result = <span class="number">0</span>, countp = <span class="number">0</span>, countt = <span class="number">0</span>, counts = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>)</span><br><span class="line">            countt++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'P'</span>) countp++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'S'</span>) counts++;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'T'</span>) countt--;</span><br><span class="line">        <span class="keyword">if</span> (s[i] == <span class="string">'A'</span>) result = (result + countp * counts * countt) % <span class="number">1000000007</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; result;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出为15。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://github.com/liuchuo/PAT/tree/master/BasicLevel_C%2B%2B" target="_blank" rel="noopener">柳神的代码, 1040</a></p>
+<h1 id="什么是回溯"><a href="#什么是回溯" class="headerlink" title="什么是回溯"></a>什么是回溯</h1><p>如果简单的说回溯，那么如下函数就可以解释清楚：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> i : arr) &#123;</span><br><span class="line">    backtrack(i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">backtrack</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (i &gt; n)</span><br><span class="line">        退出条件</span><br><span class="line">    <span class="comment">// 回溯入口</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> j : arr[i]) &#123;</span><br><span class="line">        <span class="built_in">vector</span>.push_back(j);</span><br><span class="line">        <span class="comment">// 下一步而回溯</span></span><br><span class="line">        backtrack(j);</span><br><span class="line">        <span class="comment">// 退出当前的状态，往回走</span></span><br><span class="line">        <span class="comment">// 因此叫做回溯</span></span><br><span class="line">        <span class="built_in">vector</span>.pop_back()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h1><h2 id="图路径"><a href="#图路径" class="headerlink" title="图路径"></a>图路径</h2><h2 id="797-所有可能的路径"><a href="#797-所有可能的路径" class="headerlink" title="797. 所有可能的路径"></a>797. 所有可能的路径</h2><p>给你一个有 <code>n</code> 个节点的 有向无环图 <code>DAG</code>，请你找出所有从节点 <code>0</code> 到节点 <code>n-1</code> 的路径并输出，不要求按特定顺序。<code>graph[i]</code> 是一个从节点 <code>i</code> 可以访问的所有节点的列表（即从节点 <code>i</code> 到节点 <code>graph[i][j]</code>存在一条有向边）。</p>
+<p><img data-src="https://s1.ax1x.com/2022/05/28/Xul4OA.jpg" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入：graph = [[1,2],[3],[3],[]]</span><br><span class="line">输出：[[0,1,3],[0,2,3]]</span><br><span class="line">解释：有两条路径 0 -&gt; 1 -&gt; 3 和 0 -&gt; 2 -&gt; 3</span><br></pre></td></tr></table></figure>
+<p>如果说从 0 开始，而 0 又指向 1 和 2，那么只能按照这样的顺序找下去，因为题目并没有说要求最短路径。如果遍历的是 0，1，3，那么在找完这条路径后，需要回退，找到 0，1，2 这条路径。也就是，这算是一道回溯类题目。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; res;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; tmp;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">allPathsSourceTarget</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; graph)</span> </span>&#123;</span><br><span class="line">        tmp.push_back(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">int</span> n = graph.size();</span><br><span class="line">        <span class="comment">// 回溯入口</span></span><br><span class="line">        dfs(<span class="number">0</span>, n, graph);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> idx, <span class="keyword">int</span> n, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; graph)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 退出条件</span></span><br><span class="line">        <span class="keyword">if</span> (idx &gt;= n - <span class="number">1</span>) &#123;</span><br><span class="line">            res.push_back(tmp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 回溯入口</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">auto</span> i : graph[idx]) &#123;</span><br><span class="line">                tmp.push_back(i);</span><br><span class="line">                dfs(i, n, graph);</span><br><span class="line">                <span class="comment">// 回溯</span></span><br><span class="line">                tmp.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -334,10 +315,10 @@
       <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/09/04/PAT/" rel="bookmark">算法笔记</a></div>
+      <div class="popular-posts-title"><a href="/2020/03/02/algorithm-time-complexity/" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/02/05/Spiral-matrix/" rel="bookmark">易于理解的旋转矩阵求解算法</a></div>
+      <div class="popular-posts-title"><a href="/2022/05/22/array-series/" rel="bookmark">算法系列：数组类题目</a></div>
     </li>
   </ul>
 
@@ -397,13 +378,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/02/17/cg/" rel="prev" title="计算机图形学笔记">
-      <i class="fa fa-chevron-left"></i> 计算机图形学笔记
+    <a href="/2022/05/27/math-and-bit/" rel="prev" title="算法系列：数学运算与位运算">
+      <i class="fa fa-chevron-left"></i> 算法系列：数学运算与位运算
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/02/26/graph-algorithm-search/" rel="next" title="图问题中的搜索算法">
-      图问题中的搜索算法 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -463,7 +441,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#题目描述"><span class="nav-number">1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#题目分析"><span class="nav-number">2.</span> <span class="nav-text">题目分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一个常识"><span class="nav-number">2.1.</span> <span class="nav-text">一个常识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错解思路"><span class="nav-number">2.2.</span> <span class="nav-text">错解思路</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正解"><span class="nav-number">3.</span> <span class="nav-text">正解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析"><span class="nav-number">3.1.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路"><span class="nav-number">3.2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">3.3.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展"><span class="nav-number">4.</span> <span class="nav-text">扩展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是回溯"><span class="nav-number">1.</span> <span class="nav-text">什么是回溯</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单"><span class="nav-number">2.</span> <span class="nav-text">简单</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#图路径"><span class="nav-number">2.1.</span> <span class="nav-text">图路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#797-所有可能的路径"><span class="nav-number">2.2.</span> <span class="nav-text">797. 所有可能的路径</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -479,7 +457,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -533,12 +511,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">886k</span>
+    <span title="站点总字数">847k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:26</span>
+    <span title="站点阅读时长">12:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
@@ -751,59 +729,6 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 
@@ -818,7 +743,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'blabla',
       owner       : 'muyuuuu',
       admin       : ['muyuuuu'],
-      id          : '7254900247d3e72a6ca019de5aa8b9ed',
+      id          : 'dc446f1f2b54ed1beaf9165b96f1d34b',
         language: 'zh-CN',
       distractionFreeMode: true
     });

@@ -296,7 +296,7 @@
 <p>本文也提供部分代码，代码虽然都是核心代码<strong>但不能够独立运行</strong>。程序都附注释，有一丢丢开发基础都能看懂。希望看官能有所思考后取得所需代码，而不是无脑的复制粘贴。完整代码参考<a href="https://github.com/muyuuuu/Reversing-radar-on-Arduino/blob/master/code/Reverse-radar/Reverse-radar.ino" target="_blank" rel="noopener">这里</a>。且代码仅以我的接线方式为标准。</p>
 <a id="more"></a>
 <h1 id="通信功能"><a href="#通信功能" class="headerlink" title="通信功能"></a>通信功能</h1><p>通信功能选取了HC-05蓝牙模块，某购物平台25RMB左右。对于Arduino而言，还是能很轻易的做到Arduino与HC-05蓝牙模块的连接。连接的电路图如下所示：</p>
-<p><img data-src="/2020/04/23/reverse-radar-hardware/1.jpg" alt></p>
+<p><img data-src="reverse-radar-hardware/1.jpg" alt></p>
 <ul>
 <li>5V连接VCC，GND相互连接构成回路</li>
 <li>HC-05的发射端TXD连接Arduino的接收端RXD</li>
@@ -317,10 +317,10 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">b'1\r\n'</span></span><br><span class="line"><span class="string">b'1\r\n'</span></span><br><span class="line"><span class="string">b'1\r\n'</span></span><br><span class="line"><span class="string">b'1\r\n'</span></span><br><span class="line"><span class="string">b'1\r\n'</span></span><br><span class="line"><span class="string">b'1\r\n'</span></span><br><span class="line"><span class="string">b'1\r\n'</span></span><br></pre></td></tr></table></figure>
 <p>所以可以str(data[2:-5])这样取出其中的数值部分。</p>
 <h1 id="测距功能"><a href="#测距功能" class="headerlink" title="测距功能"></a>测距功能</h1><p>选用了HC-SR04模块作为超声测距模块，购物平台5RMB左右。超声波测距的原理较为简单，首先发送特定频率的声波，在接收对应频率的声波。记录声波传输的时间，再结合声波传输的速度，很容易得到当前与障碍物的距离。测距原理图如下所示：</p>
-<p><img data-src="/2020/04/23/reverse-radar-hardware/2.png" alt></p>
+<p><img data-src="reverse-radar-hardware/2.png" alt></p>
 <p>而具体到硬件而言，测距方法如下。HC-SR04有两个喇叭，Trig发送声波，Echo接收声波。Trig是启动信号引脚，使用的时候先给他10us以上的高电平，再拉低，SR04就会发送八个40khz的超声波。此时对Echo拉低。然后就开始等待Echo啥时候变高了我们就开始计时 <strong>(开始接收到反馈的声波)</strong>， 直到他变低为止 <strong>(声波接收完毕)</strong>，当它变低的时候，我们就可以根据这个时间计算距离了。</p>
 <p>这个时间是声波在空气中传播的时间，因为是往返的，所以计算过程需要除以2，变成单程的时间，再将这个单程时间乘以声速即340米/秒，得到的就是从当前位置到对面障碍物的距离。因此，得到的电路连接方式如下：</p>
-<p><img data-src="/2020/04/23/reverse-radar-hardware/3.jpg" alt></p>
+<p><img data-src="reverse-radar-hardware/3.jpg" alt></p>
 <p>也很容易得到相应的程序，但也有相关的注意事项：</p>
 <ul>
 <li>使用pulseIn函数记录Echo持续高电平的时间即可。</li>
@@ -330,7 +330,7 @@
 <h1 id="制动功能"><a href="#制动功能" class="headerlink" title="制动功能"></a>制动功能</h1><p>车辆最基本的功能还是实现前进、后退、左转和右转，而这些功能的实现离不开电机模块。选用的电机模块是HC02-48，便宜到忘记了它的价格。但是Arduino不能直接驱动HC02-48电机完成工作，因为驱动电机需要较大电流，而Arduino的作用在于高低电平的控制而不是电流的输出。Arduino的IO口输出电流在40mA左右，无法驱动最低要求150mA的电机。因此需要借助电机驱动模块L298N来放大驱动电流。</p>
 <p>L298N驱动直流电机时可选择任何额定电压在4.8~35V和电流小于2A范围内的电机。而HC02-48电机的工作电压在3-6V，且L298N的输出电流恰好能驱动电机模块，因此在硬件层面可完成驱动。这个好像也很便宜，大约10RMB左右。</p>
 <p>将L298N的四个入口引脚IN1，IN2，IN3和IN4接Arduino的控制引脚，此时Out1，Out2连接一个电机，Out3，Out4出口引脚连接另外的电机。通过对4个入口引脚赋值来更改出口引脚的电平输出，进而控制电机的正反转，完成前进、后退和转向的功能。此外可以通过总开关ENA，ENB两个使能端控制两个电机能否转动和转速。电路连接方式下：</p>
-<p><img data-src="/2020/04/23/reverse-radar-hardware/4.jpg" alt></p>
+<p><img data-src="reverse-radar-hardware/4.jpg" alt></p>
 <p>而L298N的+12V和GND接口，需要单独的电池供电。正如上文所说，Arduino的核心功能是控制电平的输出而不是提供电压，因此仅将Arduino的IO口和L298N的使能端连接即可，L298N的供电部分需要另外的电池。</p>
 <h2 id="转速调节"><a href="#转速调节" class="headerlink" title="转速调节"></a>转速调节</h2><p>在倒车的过程中，车辆不能够以过高的速度倒车，否则容易发生碰撞。因此，需要PWM调制的手段将车速给降下来。想必在做的看官应该不是自动化专业的，所以我准备通俗的解释PWM的含义：</p>
 <ul>
@@ -339,7 +339,7 @@
 <li>在一个时间段内，75%的时间不供电，25%的时间供电，那么电机会在1/4的时间内转动，此时速度会更低；</li>
 <li>如果将一个时间段取极限无限的减小，那么电机就是时而供电时而没电，此时便会减速。如下图所示：</li>
 </ul>
-<p><img data-src="/2020/04/23/reverse-radar-hardware/5.png" alt></p>
+<p><img data-src="reverse-radar-hardware/5.png" alt></p>
 <p>而在Arduino实现这个并不是很难，只需要调用analogWrite方法对L298N的使能端进行PWM调制即可。其中，analogWrite方法接收一个参数，参数的取值范围是[0, 255]，取值越大，输出电压越大，电机转速越快。代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义两个电机驱动的使能端</span></span><br><span class="line"><span class="keyword">int</span> en1 = <span class="number">9</span>;</span><br><span class="line"><span class="keyword">int</span> en2 = <span class="number">6</span>;</span><br><span class="line"><span class="comment">// 定义行驶速度</span></span><br><span class="line"><span class="keyword">int</span> speed = <span class="number">95</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 使能端为输出模式</span></span><br><span class="line">    pinMode(en1, OUTPUT);</span><br><span class="line">    pinMode(en2, OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// speed 就是行走的速度</span></span><br><span class="line">    analogWrite(en1, speed);</span><br><span class="line">    analogWrite(en2, speed);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>需要注意的是：电机的实际转速不仅和参数speed有关，还和供电的电压有关。即使speed的取值为255，但电池没电了，电机还是会转的很慢。</p>
@@ -355,13 +355,13 @@
 <p>当然，电平高低的输出需要根据实际的接线情况来判断。</p>
 <h1 id="供电系统"><a href="#供电系统" class="headerlink" title="供电系统"></a>供电系统</h1><p>全部系统的供电系统分为两部分，一个是给Arduino供电，一个是给L298N电机供电。</p>
 <ul>
-<li><p>对于给Arduino供电，我选择了使用电源接口为Arduino供电。通过此方法为Arduino开发板供电时，直流电源电压为9V ~ 12V，买一个9V电池和转接线即可。使用低于9V的电源电压可能导致Arduino工作不稳定，使用高于12V电源电压存在着毁坏Arduino开发板的风险。<img data-src="/2020/04/23/reverse-radar-hardware/6.jpg" alt></p>
+<li><p>对于给Arduino供电，我选择了使用电源接口为Arduino供电。通过此方法为Arduino开发板供电时，直流电源电压为9V ~ 12V，买一个9V电池和转接线即可。使用低于9V的电源电压可能导致Arduino工作不稳定，使用高于12V电源电压存在着毁坏Arduino开发板的风险。<img data-src="reverse-radar-hardware/6.jpg" alt></p>
 </li>
 <li><p>对于给L298N供电，选择的是3.7V 18650可充电锂电池，在配一个电池盒即可。电池盒要求是串联的，而不是并联，否则电压不够。将电池盒自带的红色线与L298N的+12V连接，将黑色线与L298N的GND连接即可完成电机部分的供电。</p>
 </li>
 </ul>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>接线并不是很复杂，我都是用的杜邦线接起来的，大胆的去尝试就好了。有问题也欢迎在下方留言，毕竟计算机搞这些可能也是一头雾水，上文都是我一点点摸索出来的经验。</p>
-<p><img data-src="/2020/04/23/reverse-radar-hardware/7.jpg" alt></p>
+<p><img data-src="reverse-radar-hardware/7.jpg" alt></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
 <li><a href="http://www.taichi-maker.com/homepage/arduino-projects-index/arduino-power-supply/" target="_blank" rel="noopener">http://www.taichi-maker.com/homepage/arduino-projects-index/arduino-power-supply/</a></li>
 <li><a href="http://www.taichi-maker.com/homepage/reference-index/arduino-code-reference/" target="_blank" rel="noopener">http://www.taichi-maker.com/homepage/reference-index/arduino-code-reference/</a></li>
@@ -380,10 +380,10 @@
       <div class="popular-posts-title"><a href="/2018/05/22/C51/" rel="bookmark">DIY智能小车——超声波与液晶显示</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2018/05/24/c512/" rel="bookmark">DIY智能小车——手机蓝牙</a></div>
+      <div class="popular-posts-title"><a href="/2018/05/23/c511/" rel="bookmark">DIY智能小车——寻迹与马达</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2018/05/23/c511/" rel="bookmark">DIY智能小车——寻迹与马达</a></div>
+      <div class="popular-posts-title"><a href="/2018/05/24/c512/" rel="bookmark">DIY智能小车——手机蓝牙</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2018/05/25/c513/" rel="bookmark">DIY智能小车——PWM调速与产品问世</a></div>
@@ -531,7 +531,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -585,12 +585,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">886k</span>
+    <span title="站点总字数">847k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:26</span>
+    <span title="站点阅读时长">12:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

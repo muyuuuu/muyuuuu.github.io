@@ -297,7 +297,7 @@
 <a id="more"></a>
 <h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>求偏导的概念得会一下(懂概念即可，不用自己求)，激活函数如何工作得会，网络的连接得会(搞明白参数在哪里工作就好了)。</p>
 <h1 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h1><p>我们先设一个简单的函数$y=3x^2+2x+1$。假设此时$x=10$，那么$y=321$，我们想优化这个函数，即利用梯度下降的方式来求得$y$的最小值和对应的$x$的值。<del>为什么不求导直接算$y$的最小值？因为现实中的函数维度极度复杂，在复杂的函数空间内可能求不出来极小值点，这里只是用简单函数举例。</del>可以求出目标函数的导函数为：$y’=6x+2$。万事具备，再来回顾下导数的意义<del>非严谨数学定义，不要较真</del>：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/2.png" alt></p>
+<p><img data-src="back-propagation-and-fradient-descent/2.png" alt></p>
 <p>如上图所示，无限放大曲线的一小部分，在$y$轴方向截取一段$dy$，向$x$轴方向截取一段$dx$，则$f’(x)=dy/dx$即为这一小段曲线的斜率，也为导数值。当然，具体到实际问题，并不是取一段曲线而是以一个具体的点计算，这里只是距离。如$f(x)=2x^2$在$x=2$处的导数值为8。</p>
 <p>梯度的本意是一个向量（矢量），即函数在该点处沿着该方向（此梯度的方向）变化最快，变化率最大，显而易见，对一元函数而言就是求导(多元函数求偏导并含有方向)。继续推导，可以得到这样的式子：$f’(x)dx=dy$。在详细一点，当前$x=10$，我们取一个固定的$dx=0.2$，沿着导数的方向，让$x$逐渐的变化，此时的$y$也逐渐变小，是不是就能逐步得到目标函数的最小值呢？数学语言如下：</p>
 <ol>
@@ -310,7 +310,7 @@
 </li>
 </ol>
 <p>即迭代示意图如下：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/3.png" alt></p>
+<p><img data-src="back-propagation-and-fradient-descent/3.png" alt></p>
 <ul>
 <li>$x_1-f’_1dx=x_2$，$f’_1$为$x_1$处的导数值</li>
 <li>$x_2-f’_2dx=x_3$，$f’_2$为$x_2$处的导数值</li>
@@ -320,7 +320,7 @@
 <p>可见在迭代1000次后，$y$的最终取值为0.67，和函数实际的最小值不谋而合<del>利用中学知识求一下即可</del>，这就是梯度下降的力量。当然，对于复杂的多元函数求偏导，或者求导的链式法则，还是借助<code>Tensorflow</code>这种专业工具更加省事。</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">X = tf.constant([<span class="number">0.</span>, <span class="number">0.25</span>, <span class="number">0.5</span>, <span class="number">0.74</span>, <span class="number">1.</span>])</span><br><span class="line">y = tf.constant([<span class="number">0.</span>, <span class="number">0.36</span>, <span class="number">0.54</span>, <span class="number">0.82</span>, <span class="number">1.</span>])</span><br><span class="line"></span><br><span class="line">a = tf.Variable(initial_value=<span class="number">0.</span>)</span><br><span class="line">b = tf.Variable(initial_value=<span class="number">0.</span>)</span><br><span class="line">variables = [a, b]</span><br><span class="line"></span><br><span class="line">num_epoch = <span class="number">100</span></span><br><span class="line">optimizer = tf.keras.optimizers.SGD(learning_rate=<span class="number">5e-4</span>)</span><br><span class="line"><span class="keyword">for</span> e <span class="keyword">in</span> range(num_epoch):</span><br><span class="line">    <span class="comment"># 使用tf.GradientTape()记录损失函数的梯度信息</span></span><br><span class="line">    <span class="keyword">with</span> tf.GradientTape() <span class="keyword">as</span> tape:</span><br><span class="line">        y_pred = a * X + b</span><br><span class="line">        loss = tf.reduce_sum(tf.square(y_pred - y))</span><br><span class="line">    <span class="comment"># TensorFlow自动计算损失函数关于自变量（模型参数）的梯度</span></span><br><span class="line">    grads = tape.gradient(loss, variables)</span><br><span class="line">    <span class="comment"># TensorFlow自动根据梯度更新参数</span></span><br><span class="line">    optimizer.apply_gradients(grads_and_vars=zip(grads, variables))</span><br><span class="line"></span><br><span class="line">print(a, b)</span><br></pre></td></tr></table></figure>
 <h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><p>反向传播是一种以梯度下降为基础，对误差进行反馈，并调节相关参数的方法，因网络文章普遍都是公式较为晦涩，因此这里以数学计算为主，给出反向传播的实例，供读者理解。(因此期待看数学公式的可以移步了)。以MLP为例，首先构建结构如下图所示的网络：</p>
-<p><img data-src="/2020/05/09/back-propagation-and-gradient-descent/4.png" alt></p>
+<p><img data-src="back-propagation-and-fradient-descent/4.png" alt></p>
 <p>然后完成参数的初始化，且激活函数均采用Sigmoid($f(x)=\frac{1}{1 + e ^{-x}}$)</p>
 <p>$x=2,w_{11}=1,w_{12}=-1,b_1=3,w_{21}=2,w{22}=1,b_2=0,y_{true}=1,\alpha=0.2$</p>
 <h2 id="前向计算"><a href="#前向计算" class="headerlink" title="前向计算"></a>前向计算</h2><ol>
@@ -509,7 +509,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">212</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -563,12 +563,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">886k</span>
+    <span title="站点总字数">847k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:26</span>
+    <span title="站点阅读时长">12:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
