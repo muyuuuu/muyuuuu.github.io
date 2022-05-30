@@ -294,7 +294,7 @@
       
         <p>2022 年 5 月 26 日回来复习。大概涵盖了这么多年写程序过程中遇到的梯度消失、梯度爆炸等基本情况，以及优化器的整理，后面会出一些为什么 train 到的神经网络准确率很低的文章。</p>
 <p>有了梯度就要反向传播，而优化器对反向传播有着举足轻重的作用。这种东西之前很少接触，加上常年累月的直接调用，很多理论也忘记了。直到今天自己又去亲自探测了一番，恩，其实也不是不能接受。从统计学中的加权移动平均出发列举经受时间考验的优化器，和时间序列有异曲同工之妙，探求一下优化器的神奇之处。</p>
-<p><img data-src="gradient-function/opt1.gif" alt></p>
+<p><img data-src="/2019/02/20/gradient-function/opt1.gif" alt></p>
 <a id="more"></a>
 <h1 id="梯度消失与爆炸"><a href="#梯度消失与爆炸" class="headerlink" title="梯度消失与爆炸"></a>梯度消失与爆炸</h1><p>梯度消失相比梯度爆炸更为常见，梯度消失、梯度爆炸其根本原因在于反向传播训练法则，即在使用梯度下降法对误差进行反向传播时，由于求偏导累乘而出现趋于0（梯度消失）或者趋于无穷大（梯度爆炸）的问题。梯度消失和爆炸出现的原因经常是因为网络层次过深，以及激活函数选择不当，比如sigmoid函数</p>
 <ul>
@@ -331,7 +331,7 @@
 <p>所以，更需要在意的是本文开头动画中马鞍面的处理。这个时候就需要一些强大的梯度函数来处理复杂情况了。</p>
 <h2 id="加权移动平均"><a href="#加权移动平均" class="headerlink" title="加权移动平均"></a>加权移动平均</h2><p>给出加权移动平均的公式：</p>
 <script type="math/tex; mode=display">v_n=\beta V_{n-1}+(1-\beta)x_n,v_0=0</script><p>$x_n$是第$n$个数值，$v_n$是第$n$个的平均值，$\beta$是对前面数值的学习情况，因为设置初始值为0，前期的函数数值会偏低，不过这点误差可以接受。来看下图，首先产生一堆随机数，然后用不同的$\beta$去求随机数的平均值。</p>
-<p><img data-src="gradient-function/1.png" alt></p>
+<p><img data-src="/2019/02/20/gradient-function/1.png" alt></p>
 <p>我们发现，当$\beta$过大的时候(0.98)，学习的趋势呈现出了随机性，而$\beta$太小时(0.5)，学习的趋势呈现出了滞后性，也就是对前面的信息学的慢，反应也慢。选择一个合适的$\beta$(0.9)，就能很好的描述出数据的平均走势。而接下来的优化器，也很大程度借鉴了这个观念。</p>
 <h3 id="python实现："><a href="#python实现：" class="headerlink" title="python实现："></a>python实现：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">date = <span class="number">365</span></span><br><span class="line">x = np.linspace(<span class="number">-1</span>, <span class="number">1</span>, date)</span><br><span class="line">x = x.reshape(date, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 噪音数据</span></span><br><span class="line">noise = <span class="number">0.1</span> * np.random.randn(date)</span><br><span class="line">noise = noise.reshape(date, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 产生随机函数</span></span><br><span class="line">y = - x * x + noise + <span class="number">1</span></span><br><span class="line"><span class="comment"># 加权移动平均函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">weight__move_average</span><span class="params">(beta, date, y_value)</span>:</span></span><br><span class="line"></span><br><span class="line">    v = [<span class="number">0</span>] * date</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">1</span>, date):</span><br><span class="line">        v[i] = beta * v[i - <span class="number">1</span>] + (<span class="number">1</span> - beta) * y_value[i]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line"></span><br><span class="line">y_beta1 = weight__move_average(<span class="number">0.90</span>, <span class="number">365</span>, y)</span><br><span class="line">y_beta2 = weight__move_average(<span class="number">0.98</span>, <span class="number">365</span>, y)</span><br><span class="line">y_beta3 = weight__move_average(<span class="number">0.50</span>, <span class="number">365</span>, y)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plt.plot(x, y, label=<span class="string">'data'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plt.plot(x, y_beta1, label = <span class="string">'0.9'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">plt.plot(x, y_beta2, label = <span class="string">'0.98'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">4</span>)</span><br><span class="line">plt.plot(x, y_beta3, label = <span class="string">'0.5'</span>)</span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line"></span><br><span class="line">plt.savefig(<span class="string">'test.png'</span>, dpi = <span class="number">200</span>)</span><br></pre></td></tr></table></figure>
 <hr>
@@ -372,10 +372,10 @@
       <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
@@ -520,7 +520,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -574,12 +574,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

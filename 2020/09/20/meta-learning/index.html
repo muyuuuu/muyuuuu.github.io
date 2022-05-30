@@ -295,10 +295,10 @@
         <p>又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分（我只是感觉这几年算法岗很内卷，泡沫化严重。不管什么专业的，都可以来搞计算机或智能，门槛低但要求高，甚至跨专业来的还认为撕代码没用，这个行业一言难尽。</p>
 <a id="more"></a>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Machine learning 中，我们的目标是定义一个神经网络，训练数据并获取输出，且希望输出的准确率很高，这可以简化为 $f(\text{data})=\hat{y}$，如下图所示：</p>
-<p><img data-src="meta-learning/1.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/1.png" alt></p>
 <p>而在 meta learning 中，则是让机器学会如何学习。假设现在有多个任务，第一个任务是猫狗分类，第二个任务是数字识别，以此类推就不一一举例了。meta learning 的目标就是让网络基于过去的任务获取学习技巧，并能快速应用到其他任务中。比如：分类中，知道猫和狗纹理不一样后，能快速学习出数字 1 和数字 3 不一样。（每一个任务都有一个模型，希望未来基于已有经验能学的更快更好）。在通俗一点，你学过 C++，那么再去学 java 就很快，有经验在那。</p>
 <p>meta learning 的目标就是寻找一个 $F$，使得$F(\text{data})=f$，生成的 $f$ 是完成任务，$F$ 就表示其学习能力。</p>
-<h1 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h1><p><img data-src="meta-learning/3.png" alt></p>
+<h1 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h1><p><img data-src="/2020/09/20/meta-learning/3.png" alt></p>
 <p>如上图所示，灰白背景为整个 $F$，生成的结果为 $f$。其中：参数初始化、网络结构设计和参数的更新方法是 $F$ 可以学习的。最后得到每个任务的参数 $\theta$。比如 $\theta^1$ 用于第一个任务，$\theta^2$ 用于第二个任务。</p>
 <h2 id="评价"><a href="#评价" class="headerlink" title="评价"></a>评价</h2><p>那么如何评价 $F$ 的好坏呢？或者说，$F$ 的损失函数该如何写？这里采用简单的任务损失求和的形式来表示：</p>
 <p>\begin{equation}<br>    L(F)=\sum_{i=1}^n l^n<br>\end{equation}</p>
@@ -336,18 +336,18 @@
 <li>meta learning 的多任务学习常用于小样本，防止过拟合。</li>
 </ul>
 <p>来看一下 $\phi$ 的更新趋势：</p>
-<p><img data-src="meta-learning/4.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/4.png" alt></p>
 <p>采样 $m$ 个任务，第一次训练完毕得到参数 $\theta_1$，计算 $\theta_1$ 的梯度方向，将 $\phi_0$ 按照梯度方向更新至 $\phi_1$，之后的训练以此类推。</p>
 <h3 id="Reptile-方法"><a href="#Reptile-方法" class="headerlink" title="Reptile 方法"></a>Reptile 方法</h3><p>和 MAML 方法类似，但有以下几个点不同：</p>
 <ul>
 <li>训练任务的网络可以更新多次，以 $k$ 次为例；</li>
 <li>reptile 不再像 MAML 一样计算梯度（因此带来了工程性能的提升），而是直接用一个参数乘以meta网络与训练任务的网络参数的差来更新meta网络参数；（向最终的参数方向去更新）</li>
 </ul>
-<p><img data-src="meta-learning/5.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/5.png" alt></p>
 <h1 id="基于测量的-meta-learning-网络结构"><a href="#基于测量的-meta-learning-网络结构" class="headerlink" title="基于测量的 meta learning 网络结构"></a>基于测量的 meta learning 网络结构</h1><p>这里设想，在之前的 meta learning 中，是 Support Set 先进入网络训练，而后测试集合进入网络并计算误差 $l$。最终多个 $l$ 相加而后反向传播。一个宏观的误差并不能使网络拉开同一组数据中 Support Set 和 Query Set 中不同类的样本的差距，只是用一个总误差更新初始化的参数。看如下的结构图：</p>
-<p><img data-src="meta-learning/7.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/7.png" alt></p>
 <p>将训练模块和预测模块放到一起，训练数据和测试数据同时进入，以此来达到区分一次训练数据中 Support Set 和 Query Set 的区别，更好的将不同的样本区分开。这里简单介绍两种网络，Siamese Network，Prototypical Network 和 Relatoin Network。</p>
-<h2 id="Siamese-Network"><a href="#Siamese-Network" class="headerlink" title="Siamese Network"></a>Siamese Network</h2><p><img data-src="meta-learning/8.png" alt></p>
+<h2 id="Siamese-Network"><a href="#Siamese-Network" class="headerlink" title="Siamese Network"></a>Siamese Network</h2><p><img data-src="/2020/09/20/meta-learning/8.png" alt></p>
 <p>在训练数据中引入一个类，测试数据只有一个类。经过可参数共享的 CNN 后得到嵌入表示，并计算测试数据和训练数据中每个类数据的相似性，以此来计算得分。若测试数据和训练数据中的某个样本属于同一类，则该单元的输出最高。举例说明：</p>
 <p>训练数据为类别为1，测试数据的类别为3。那么相似性应该很低，输出的分数也低。如果是同一类，相似度高，输出的分数就高，这就是基于度量的 meta-learning。</p>
 <p>其实就是计算的两个样本是否相似，可以看成一个二分类问题。同一类的样本距离近，不同类的样本远。与 AutoEncoder 的区别是，AutoEncoder 是尽可能的复原信息，而不是提取能作为区分的重要信息。</p>
@@ -355,7 +355,7 @@
 <p>输入数据是1，2，3，4，5这么多个类，每个类一个数据。测试数据的类别是 3。那么，第三个单元的输出最大，其他单元的输出较小。以此来计算相似度，拉开不同类样本在空间中的分布。</p>
 <p>当然，这里是可以引入 Triplet loss 的，只需要在训练时加入额外的数据即可。此时训练的数据为：Train data, Untrain data, Test data。其中，Untrain data 就像训练 Word2Vec 时使用的无关词汇一样。这里轻描淡写了，Triplet loss 如何应用到 Siamese 中还请查询具体文章，比如<a href="https://zhuanlan.zhihu.com/p/68200241" target="_blank" rel="noopener">这里</a>。</p>
 <h2 id="Relation-Network"><a href="#Relation-Network" class="headerlink" title="Relation Network"></a>Relation Network</h2><p>之前的网络在计算相似度时可能都是使用 $\cos$ 等函数，而 Relation Network 中则使用一个网络来计算相似度。将测试数据的嵌入拼接到训练数据后面，一起进入计算相似性的网络，之后的操作就都一样了。</p>
-<p><img data-src="meta-learning/9.png" alt></p>
+<p><img data-src="/2020/09/20/meta-learning/9.png" alt></p>
 <h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><h2 id="基于梯度"><a href="#基于梯度" class="headerlink" title="基于梯度"></a>基于梯度</h2><p>代码实现了 <a href="https://github.com/muyuuuu/Algorithm/tree/master/meta-learning/Gradient-based" target="_blank" rel="noopener">Reptileh和MAML</a>。很简单，只是简单的更新参数的方法，通过小样本采样来学习一个 $y=a\sin(x+b)$ 的函数。强烈建议看代码，看完代码后就知道meta learning 的工作原理了。结果如下（我就训练了几次，次数很少）：</p>
 <p><img data-src="https://static01.imgkr.com/temp/f9c142375b0d4a46a32039144825a6e9.png" alt></p>
 <h2 id="基于度量"><a href="#基于度量" class="headerlink" title="基于度量"></a>基于度量</h2><p>还没写好，最近课多。</p>
@@ -380,10 +380,10 @@
       <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
@@ -528,7 +528,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -582,12 +582,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

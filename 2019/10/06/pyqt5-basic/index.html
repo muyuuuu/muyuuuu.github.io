@@ -297,7 +297,7 @@
 <p>因代码太长，所以每节的代码都会在章节最后一压缩包的形式呈现，且，本文不适合没有GUI开发经验的人看，但是代码适合新手观看。如果真的是新手来看此文，还是建议多写写，结合代码多看看。</p>
 <a id="more"></a>
 <p>多年前写过的GUI（西电的优研答辩）效果如下，可以做到不错的效果，但是还是要系统的学一下。</p>
-<p><img data-src="pyqt5-basic/1.gif" alt></p>
+<p><img data-src="/2019/10/06/pyqt5-basic/1.gif" alt></p>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="https://muyuuuu.github.io/2019/11/16/A-Beautiful-PyQt5-Interface/">一个好看的通用的界面</a></p>
 <p><a href="https://muyuuuu.github.io/2019/10/19/pyqt-layout/">高级布局，与实际软件开发</a></p>
 <p><a href="https://muyuuuu.github.io/2019/10/11/pyqt-pit/">pyqt5的高级应用和踩坑</a></p>
@@ -307,7 +307,7 @@
 <h1 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h1><p>布局主要为绝对布局和使用布局管理器进行布局。</p>
 <h2 id="绝对布局"><a href="#绝对布局" class="headerlink" title="绝对布局"></a>绝对布局</h2><p>绝对布局是最傻的一种方式，只有两三个控件问题不大。但对于大规模的软件开发，控件数量过多会造成严重不便。如新加空间，可能会全部重新布局，且控件的大小和位置不会随窗口大小变化而变化。</p>
 <h2 id="布局管理器布局"><a href="#布局管理器布局" class="headerlink" title="布局管理器布局"></a>布局管理器布局</h2><p>分为水平、垂直、网格、表单四种方式。表单主要用于两列的布局，左边是<code>key</code>，右边是<code>value</code>。网格布局较为便利，可以设置控件的其实坐标和横跨坐标，设置较为精确。控件的间距（addStretch）、对其方式（Qt.AlignLeft）均可以调节。还可以实现嵌套布局，如下图所示（水平布局、垂直布局嵌套在网格布局中）。</p>
-<p><img data-src="pyqt5-basic/1.png" alt></p>
+<p><img data-src="/2019/10/06/pyqt5-basic/1.png" alt></p>
 <p>均在QtDesigner里面实现，因此无代码。</p>
 <h2 id="尺寸"><a href="#尺寸" class="headerlink" title="尺寸"></a>尺寸</h2><p>可以通过QtDesigner里面的<code>minimumsize</code>和<code>maximumsize</code>属性设置控件随窗口大小变化而变动的最小尺寸与最大尺寸(用于撑开布局)。<code>sizepolicy</code>可以设置水平、竖直方向的延伸策略，如<code>minimum</code>,<code>maximum</code>,<code>fixed</code>等。</p>
 <h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p><a href="/download/layout.zip">在窗口中加载子窗口。</a></p>
@@ -463,9 +463,9 @@
 <p>状态栏的理想是：鼠标在哪里就显示什么信息，但不太好实现。但也不是不能实现，只是学完基本控件还不能实现，需要学一下信号与槽的高级设置。</p>
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p><a href="/download/BasicWin.zip">基本控件练习</a></p>
 <p>执行方式为：<code>python control.py</code>，以上所有功能的界面如下所示：</p>
-<p><img data-src="pyqt5-basic/2.png" alt></p>
+<p><img data-src="/2019/10/06/pyqt5-basic/2.png" alt></p>
 <p>软件运行界面如下：（上面提到的基本内容都有）</p>
-<p><img data-src="pyqt5-basic/3.png" alt></p>
+<p><img data-src="/2019/10/06/pyqt5-basic/3.png" alt></p>
 <h1 id="高级控件"><a href="#高级控件" class="headerlink" title="高级控件"></a>高级控件</h1><h2 id="表格与树"><a href="#表格与树" class="headerlink" title="表格与树"></a>表格与树</h2><p>表格与树可以有效的解决在一个控件中有规律的呈现更多的数据。如对一批数据进行交互，以表格的形式输出这些信息。</p>
 <h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><div class="table-container">
 <table>
@@ -527,7 +527,7 @@
 </div>
 <h2 id="网页交互"><a href="#网页交互" class="headerlink" title="网页交互"></a>网页交互</h2><p>使用<code>PyQt5.QtWebKitWidgets.QWebEngineView</code>类来使用网页控件，可以加载外部的网页地址，也可以加载本地的html文档。但是并不推荐，建议使用系统浏览器完成打开网页的功能。</p>
 <p>效果如下图所示：</p>
-<p><img data-src="pyqt5-basic/4.png" alt></p>
+<p><img data-src="/2019/10/06/pyqt5-basic/4.png" alt></p>
 <p>当然也可以调用<code>javascript</code>的代码，也可以在<code>javascript</code>中调用<code>pyqt5</code>，暂时没这个需求，所以没有学。</p>
 <h2 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h2><p><a href="/download/Container.zip">容器的代码实现</a></p>
 <p><a href="/download/ViewWidget.zip">表格与树的代码实现</a></p>
@@ -697,7 +697,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -751,12 +751,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

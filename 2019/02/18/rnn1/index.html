@@ -308,12 +308,12 @@
 </blockquote>
 <p>大概意思是TEST山的海拔是四千米，当做提问模型的时候，问题是TEST mountain height is:，显然，对于RNN而言，需要了解前文的信息高度，和后文的信息名称，也就是需要综合考虑前后文的信息，这个时候，双向RNN问世了。</p>
 <p>此时的网络结构为：</p>
-<p><img data-src="rnn1/1.png" alt></p>
+<p><img data-src="/2019/02/18/rnn1/1.png" alt></p>
 <p>即在正向传播的过程中会有中间信息$\overrightarrow{a^t}$，此时加入一个反向行走的信息$\overleftarrow{a^t}$，(我先吐槽一下mathjax真丑，功能不够强大)。当然俩个$a$和两个$a$所用的参数是不一样的，在预测$y$的时候，加入两个$a$的信息：</p>
 <script type="math/tex; mode=display">\hat{y}=g(W_y[\overrightarrow{a^t},\overleftarrow{a^t}]+b_a)</script><p>简单的kears实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Activation</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>, return_sequences=<span class="literal">True</span>), input_shape=(<span class="number">5</span>, <span class="number">10</span>)))</span><br><span class="line">model.add(Bidirectional(LSTM(<span class="number">10</span>)))</span><br><span class="line">model.add(Dense(<span class="number">5</span>))</span><br><span class="line">model.add(Activation(<span class="string">'softmax'</span>))</span><br><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer=<span class="string">'rmsprop'</span>)</span><br></pre></td></tr></table></figure></p>
 <hr>
 <h2 id="深层RNN"><a href="#深层RNN" class="headerlink" title="深层RNN"></a>深层RNN</h2><p>这个时候总有些闲的蛋疼的人觉得原版的RNN不够舒服，想要去加深RNN的层数来追求精度(装x)效果。</p>
-<p><img data-src="rnn1/2.png" alt></p>
+<p><img data-src="/2019/02/18/rnn1/2.png" alt></p>
 <p>其实加入三个相互连接的层参数已经不少了，能达到绝大部分人的需求。</p>
 <p>如果还想加深，那就么就是在单个输出的后面堆叠各种层，但是在后面堆叠的层中，第一个单词的层和第二个单词的层相互之间没有联系了，也就是三层之后的层中就没有$a$了，只是的单独的训练参数和预测。</p>
 <h2 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h2><p>在机器翻译的过程中，或者说在人工阅读文本的过程中，更倾向的是阅读一小段文本然后翻译一小段，很少去翻译很长的句子，或者说在阅读的过程中，阅读下面的句子肯定很少记得上上文的信息。这就是注意力机制，把注意力放在附近的句子中，而不用注意很远的信息。</p>
@@ -406,12 +406,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/02/18/rnn/" rel="prev" title="循环神经网络">
-      <i class="fa fa-chevron-left"></i> 循环神经网络
+    <a href="/2019/02/17/transfer-learning/" rel="prev" title="Keras玩耍迁移学习(VGG16)">
+      <i class="fa fa-chevron-left"></i> Keras玩耍迁移学习(VGG16)
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/02/19/optimizeDL/" rel="next" title="正则化与标准化">
-      正则化与标准化 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/02/18/rnn/" rel="next" title="循环神经网络">
+      循环神经网络 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -488,7 +488,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -542,12 +542,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

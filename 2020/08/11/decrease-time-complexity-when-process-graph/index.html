@@ -309,7 +309,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        adj_reverse = defaultdict(list)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_reverse[str(set(graph.get_out_neighbors(i)))].append(i)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 以邻接列表为键，节点索引为 values</span></span><br><span class="line">        <span class="keyword">for</span> values <span class="keyword">in</span> adj_reverse.values():</span><br><span class="line">            <span class="keyword">if</span> len(values) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(values) - <span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">                    ver1, ver2 = values[i], values[i+<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">if</span> visited[ver1] == <span class="literal">False</span> <span class="keyword">and</span> visited[ver2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[ver1] = visited[ver2] = <span class="literal">True</span></span><br><span class="line">                        M[ver1], M[ver2] = ver2, ver1</span><br></pre></td></tr></table></figure>
 <p>其实这个优化的并不所最好的，另一个是，但涉及的问题背景太深了，直接拿出来怕读者看不懂，就用这个例子凑合了。</p>
 <h1 id="好的逻辑"><a href="#好的逻辑" class="headerlink" title="好的逻辑"></a>好的逻辑</h1><p>问题描述：此时我们要生成一个图的 k 跳邻接信息，即常见的邻接矩阵是一跳信息。二跳信息就是隔着一个节点还能相邻，那么邻接矩阵中，这两个节点对应的索引取值为 1。可以直接看图，节点 1 和节点 5 就是二跳连接，<code>adj[1][5] = 1</code>，这个意思。假设我们要找三跳信息。</p>
-<p><img data-src="decrease-time-complexity-when-process-graph/graph.png" alt></p>
+<p><img data-src="/2020/08/11/decrease-time-complexity-when-process-graph/graph.png" alt></p>
 <p>在 <code>networkx</code> 这个包中，判断两个节点是否有路径的方式是使用最短路径，如没有最短路径，这两个节点当然不存在路径，最短路径的复杂度为$O(V+E)$，$V$是节点的数量，$E$是边的数量。伪代码就是<code>has_path(node1, node2)</code>。那么，此时最粗暴的算法来了，遍历节点，若两个节点之间的最短路径等于 3 ，就在邻接矩阵中置为 1。时间复杂度$O(V^2(V+E))$的伪代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> node1 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="keyword">for</span> node2 <span class="keyword">in</span> graph.vertices():</span><br><span class="line">        <span class="keyword">if</span> has_path(node1, node2) == <span class="number">3</span>:</span><br><span class="line">            adj[node1, node2] = adj[node2, node1] = <span class="number">1</span></span><br></pre></td></tr></table></figure>
 <p>真实数据测试：运行时间 19.098s，图节点数是94，边数是1554。</p>
@@ -341,7 +341,7 @@
       <div class="popular-posts-title"><a href="/2020/03/02/algorithm-time-complexity/" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/05/22/array-series/" rel="bookmark">算法系列：数组类题目</a></div>
+      <div class="popular-posts-title"><a href="/2022/05/28/backtrack/" rel="bookmark">算法系列：回溯</a></div>
     </li>
   </ul>
 
@@ -483,7 +483,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -537,12 +537,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

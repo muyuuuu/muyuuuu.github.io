@@ -298,7 +298,7 @@
 <li>另外就是今天的主角，元胞自动机——万物皆可模拟。</li>
 </ul>
 <p>另一方面是，当初在学习元胞自动机这个模型时，网上的资料是在少之又少，且内容凌乱的不堪入目，我猜作者也不知道他在写啥，自己也走了很多弯路。遂决定，以实战的背景，演示元胞自动机的工作原理和使用方法。而在看本文之前，你只需要知道元胞自动机里面有很多格子，格子间通过某种规则相互影响即可。</p>
-<p><img data-src="autocell/1.gif" alt></p>
+<p><img data-src="/2020/02/14/autocell/1.gif" alt></p>
 <a id="more"></a>
 <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>模拟题是2015年的MCM的A题，决定用元胞自动机去模拟埃博拉病毒的传播。但我不会把论文的全部内容放上来，只写关键的文字，什么参考文献，数据网址就不放了。且时过境迁，本文使用的数据为过去式，和今天对不上则选择性忽略。</p>
 <p>The world medical association has announced that their new medication could stop Ebola and cure patients whose disease is not advanced. Build a realistic, sensible, and useful model that considers not only the spread of the disease, the quantity of the medicine needed, possible feasible delivery systems (sending the medicine to where it is needed), (geographical) locations of delivery, speed of manufacturing of the vaccine or drug, but also any other critical factors your team considers necessary as part of the model to optimize the eradication of Ebola, or at least its current strain. In addition to your modeling approach for the contest, prepare a 1-2 page non-technical letter for the world medical association to use in their announcement.</p>
@@ -331,14 +331,14 @@
 <li>死亡状态$D$，因感染疾病而死亡，且死亡后若尸体处置不恰当，仍然能够传播病毒</li>
 <li>暂时免疫状态$T$，因采取及时隔离、药物治疗等措施，病人暂时康复，但是没有长期的抵抗力。</li>
 </ul>
-<p><img data-src="autocell/1.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/1.png" alt></p>
 <h2 id="定义CA规则"><a href="#定义CA规则" class="headerlink" title="定义CA规则"></a>定义CA规则</h2><h3 id="定义CA格子表达含义"><a href="#定义CA格子表达含义" class="headerlink" title="定义CA格子表达含义"></a>定义CA格子表达含义</h3><ul>
 <li><p>因埃博拉病毒的传播过程中，每一个国家均存在感染病毒的几率与感染病毒后的死亡几率，不会受到地理空间分布的影响，用CA表示国家的空间分布没有实际意义，因此不考虑用元胞空间表示实际地理空间。</p>
 </li>
 <li><p>在前期工作中，我们了解到在一个区域内，会因人口密度、人口数量不同，而导致感染水平不同。即在人口密度大的城市，感染水平会高于人口密度低的城市，人口密度在很大程度中影响疾病传播率。因此元胞自动机模拟埃博拉传染过程中，设定CA的每一个方格代表人口密度，并且每个方格所代表的人口密度相同。并根据三个国家的人口数量比例划分元胞空间，划分域如下。</p>
 </li>
 </ul>
-<p><img data-src="autocell/2.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/2.png" alt></p>
 <h3 id="定义CA颜色含义"><a href="#定义CA颜色含义" class="headerlink" title="定义CA颜色含义"></a>定义CA颜色含义</h3><ul>
 <li>缺少计算服务器，因此元胞数量设置为$20\times 20$，用于表示并模拟区域内疾病的传播，进而得到患病者死亡率、感染率的分布规律。并且定义灰色表示死亡状态；红色表示已经被感染状态，且颜色越深代表被感染时间越长；白色表示易染状态和暂时免疫状态。</li>
 </ul>
@@ -349,7 +349,7 @@
 <li>在埃博拉病毒的爆发之际，病毒主要的传染方式为人口的流动导致病毒的扩散，进而导致各地区开始出现疫情，最终导致疫情恶化而难以控制。因此，我们需要考虑人口流动现象对疫情的影响。在疫情初期，人口流动的频率$F$与范围$R$会高于疫情严重时期人口流动的频率与范围。流动半径$R$在CA中的表达形式为：格子的数量。流动频率$F$在CA中的表达形式为：在时间长度为100天的期限内，发生人口流动现象的天数。因随着时间的增加，疫情逐渐严重，人口流动频率会逐渐降低，符合指数分布的特征，设符号$t$表示疫情爆发时间，则流动频率的表达式为$F(t)=\frac{1}{\theta}e^{-t/\theta}$，$\theta$为参数。</li>
 </ul>
 <h2 id="数学表达CA所需的参数"><a href="#数学表达CA所需的参数" class="headerlink" title="数学表达CA所需的参数"></a>数学表达CA所需的参数</h2><h3 id="理论死亡率"><a href="#理论死亡率" class="headerlink" title="理论死亡率"></a>理论死亡率</h3><p>埃博拉病毒传染具有潜伏期，潜伏期的时间通常为为5-10天，过了潜伏期之后便会死亡，因此感染时间越长，死亡率越高。当被感染埃博拉病毒的人足够多时，可认为潜伏期$\phi(t)$服从正态分布$N(\mu, \sigma^2)$，$\mu=7.5, \sigma^2=1$为假定参数。以易染状态的元胞$i$举例，若在第一次迭代后被感染变为状态$I$；第二次迭代以$\Phi(5+\lambda)$的概率变为死亡状态（ 为迭代一次所代表的时间长度）；第三次迭代以$\Phi(5+3\lambda)$的概率变为死亡状态，以此类推第j次迭代后以$\Phi(5+(j-1)\lambda)$的概率变为死亡状态。</p>
-<p><img data-src="autocell/3.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/3.png" alt></p>
 <h3 id="理论治愈率"><a href="#理论治愈率" class="headerlink" title="理论治愈率"></a>理论治愈率</h3><p>实际情况中，国家政府会对埃博拉病毒采取一定的抵抗措施，因此定义治愈率函数$f_1(t)$，治愈率包含自身对埃博拉的抵抗力，以及国家对疫情的控制情况，如隔离、医疗救助、及时医治等措施能够减缓疫情的蔓延率与死亡率。</p>
 <p>因自身免疫力与国家对疫情控制度共同影响了死亡率，而在前期调查中得知三个国家的死亡率并不相同，三个国家死亡率分布：利比里亚死亡率$\eta’=42.7\%$，几内亚死亡率$\eta’’=63.1\%$，塞拉利昂死亡率$\eta’’’=29.2\%$。</p>
 <p>当元胞$i$变为感染状态$I$时，随着时间增加，治愈系数会逐渐减弱。假设这种减弱的关系服从指数分布，则治愈函数$f_1(t)$的表达式为$f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1}$。而实际中三个国家的治愈系数并不相同，为反应出三个国家治愈率的不同之处，用三个国家的死亡率进一步表示治愈率，得到如下的关系式：</p>
@@ -360,7 +360,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
     1 - \eta'' & \text{几内亚} \\
     1 - \eta''' & \text{塞拉利昂} \\
 \end{cases}</script><p>理论死亡率与康复率分布图如下：</p>
-<p><img data-src="autocell/4.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/4.png" alt></p>
 <h2 id="计算真实死亡率与真实治愈率"><a href="#计算真实死亡率与真实治愈率" class="headerlink" title="计算真实死亡率与真实治愈率"></a>计算真实死亡率与真实治愈率</h2><p>计算真实死亡率与康复率：目前只提出了理论死亡率与理论治愈率的计算方法，因假设死亡率随时间增加符合正态分布，因此死亡率会逐渐增加，并十分接近100%，因此提出的理论情况并非真实情况下的死亡率与康复率。在实际情况中，当死亡率很高时，仍会有个体康复；在个体康复率很高时，仍会有个体死亡；为表示这一关系，采用下列方程式计算真实情况下的康复率与死亡率：</p>
 <div class="table-container">
 <table>
@@ -406,10 +406,10 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 </li>
 </ul>
 <h1 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h1><p>采用定义的CA规则，对2014年内埃博拉爆发情况进行模拟，当CA迭代完成后，得到如下的结果，其中灰色代表死亡状态，白色代表易染状态，红色代表被感染状态，颜色越深表示被感染程度越高。</p>
-<p><img data-src="autocell/2.gif" alt></p>
+<p><img data-src="/2020/02/14/autocell/2.gif" alt></p>
 <p>如图所示，每一个方格代表感染人口，埃博拉病毒迅速传染至每个区域，区域内人口开始出现感染埃博拉病毒以及死亡的现象，并且在国家政策干预和患者自身免疫力的抵抗下，在感染区域内仍有康复个体。</p>
 <p>我们计算元胞自动机模拟结果中几内亚感染数（<code>GI</code>）与几内亚死亡数（<code>GD</code>）比例，塞拉利昂感染数（<code>SI</code>）与塞拉利昂死亡数（<code>SD</code>）比例，利比里亚感染数（<code>LI</code>）与利比里亚死亡数（<code>LD</code>），总感染案例（<code>TI</code>）与总体死亡数（<code>TD</code>），（格子数乘以对应人口密度）。并与原始数据对比，得到的对比情况如下图。</p>
-<p><img data-src="autocell/6.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/6.png" alt></p>
 <p>与实际情况对比之下，发现我们建立模型的模拟的效果较好，与实际结果极为接近，并且证实了之前假设的合理性。并根据实际数据调节模型中的参数，最终调整参数的结果为：传染率：$\eta_1=0.8$ ，死亡传染率：$\eta_2=0.15$，时间修正函数：$\epsilon=10$，迭代步长：$\lambda=1$，游走频率指数分布中$\theta=5$，游走半径$R=2$，治愈率指数分布$f_1(t)$中，$\theta_1=10$，理论死亡率的正态分布$\phi(t)$中：$N=7.5, \sigma^2=5$。</p>
 <h1 id="开始治疗"><a href="#开始治疗" class="headerlink" title="开始治疗"></a>开始治疗</h1><p>假设采用空运的形式将疫苗从制药工厂送往区域E内的所有机场。针对疫情最为严重的三个国家，在Google Map中我们查询到疫情覆盖范围内最远距离为1135公里左右，假设以直升机或卡车的方式进行运输，则在一天内足够将药物送到我们设立的急救站点处，因此不再考虑运输药物时间对疫情的影响。</p>
 <p>创立良好的医助条件：①当地政府需要指挥相关人员配合医生，及时对染病患者进行隔离，建立隔离区或在医院对患者进行隔离，防止疾病传播疫情难以控制；②在对患者进行救治时，将救治好的患者及时脱离隔离区，避免二次感染；③对因感染疾病而死的患者尸体，及时进行有效的火化处理，防止尸体传播病毒。</p>
@@ -420,22 +420,22 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <h2 id="增加药物治疗效果"><a href="#增加药物治疗效果" class="headerlink" title="增加药物治疗效果"></a>增加药物治疗效果</h2><p>随着感染时间的延长，病情逐渐恶化，药物的有效率逐渐降低。若患者第一天被感染病毒，设药物的有效率为$\beta_0$，患者处于潜伏期最后一天时药物有效率为$\beta_n$，则$\beta_n &gt; \beta_0$。假设药物的有效率与时间变化仍服从指数分布，则有效率随感染期限的变化函数为$f_2(t)=\frac{1}{\theta_2}e^{-t/\theta_2}$，$\theta_2$为参数，$t$为感染时间。</p>
 <p>在最初CA模拟疾病爆发时，疫情的蔓延和死亡受到治愈率的影响，而在对患者使用药物后的治愈率同样会提高。药物的治疗率为$f_2(t)$，初始治愈率为$f_1(t)$，但对于病人而言，最终的药物治疗效果并非简单叠加：$f_1(t)+f_2(t)$，因为这会导致康复率大于1，出现完全治愈的现象，不符合实际情况。因此假设药物治疗效果与国家监管对治疗患者的成功率存在交互影响作用，此交互影响作用表达式为$(1-\alpha)(f_1(t)+f_2(t))$，$\alpha$为交互因子，因此，得到使用药物后的治愈率：$f_3(t)=(1-\alpha)(f_1(t)+f_2(t))$。</p>
 <h1 id="模拟结果"><a href="#模拟结果" class="headerlink" title="模拟结果"></a>模拟结果</h1><p>根据模拟2014年埃博拉爆发得到的不同区域内元胞的感染状态与死亡状态，并以此为基础，加入药物治疗因素影响，在感染与死亡基础之上进一步模拟药物治疗效果，随迭代时间增加，感染率逐渐降低，被感染的患者也被医治好，得到如下的药物的治疗效果。</p>
-<p><img data-src="autocell/7.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/7.png" alt></p>
 <p>感染率由最初的24%逐渐降到0%。</p>
 <p>在CA迭代15次时，模拟的是2014年内埃博拉爆发时死亡情况与感染情况，感染率达到高峰；在迭代15次之后，加入药物治疗因素影响，模拟加入药物对埃博拉疫情的根除效果，感染率逐步降低。感染率示意图如下图所示：</p>
-<p><img data-src="autocell/8.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/8.png" alt></p>
 <p>在埃博拉病毒爆发期间，感染人数持续上升，并且一年后，在缺乏有效药物的抵抗的情况下，感染病毒人数达到顶峰。在加入药物治疗对病情进行控制后，感染人数急剧降低，并在迭代22次后，感染元胞数量为零，即所有的感染患者都被治愈。而通过CA模拟药物的治疗效果，可以得到根除埃博拉的预计时间为3个月。（忘了咋算的了）</p>
 <p>同时，在分析下埃博拉病毒的死亡率，定义的死亡率为：死亡元胞数量除以死亡元胞数量与感染元胞数量的和。</p>
-<p><img data-src="autocell/9.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/9.png" alt></p>
 <p>在埃博拉病毒爆发期间，死亡率呈上升趋势，但在加入药物对病情进行控制后，被感染元胞迅速被治愈，在迭代22次后死亡率迅速上升至100%，因为此时只含死亡元胞。感染元胞数量为零，即所有的感染患者都被治愈。</p>
 <p>以红色代表感染状态，且颜色越深感染时间越长，灰色代表死亡状态，白色代表康复状态。下图描绘了加入药物治疗因素后，对埃博拉病毒的根除效果，感染人数（红色元胞）逐渐减少，逐渐转化为白色元胞，即被感染患者逐步开始被治疗。</p>
-<p><img data-src="autocell/3.gif" alt></p>
-<p><img data-src="autocell/10.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/3.gif" alt></p>
+<p><img data-src="/2020/02/14/autocell/10.png" alt></p>
 <h1 id="灵敏性分析"><a href="#灵敏性分析" class="headerlink" title="灵敏性分析"></a>灵敏性分析</h1><h2 id="人口流动"><a href="#人口流动" class="headerlink" title="人口流动"></a>人口流动</h2><p>人口流动为传播埃博拉病毒的主要形式，当接触埃博拉病毒之后，随着人口流动，病毒也开始扩散，由最初的小村落传染至西非三个国家，甚至传播至欧洲、美洲，并且造成了破坏性影响。因此，我们讨论人口流动现象对疾病传播造成的影响。</p>
-<p><img data-src="autocell/11.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/11.png" alt></p>
 <p>如图所示，当不存在人口流动现象时，元胞的存活率最高，即更少的人会被病毒感染，元胞的被感染几率最低，死亡率最低。而随着流动频率与流动范围的增加，元胞被感染几率上升，死亡率也上升。因此，人口流动现象影响了疾病传播情况，也影响了死亡率与感染率，因此，对于国家政府而言，应采取“戒严”形式，减少人口流动频率，对于减缓疾病传播与降低死亡率有着至关重要的作用。</p>
 <h2 id="加大治理力度"><a href="#加大治理力度" class="headerlink" title="加大治理力度"></a>加大治理力度</h2><p>在以上灵敏性分析中，我们提出了国家应采取戒严措施防治疾病的进一步蔓延。而在其他方面，如提供充足的医疗设施；及时建立急救站点；发动较多医生甚至志愿者及时为患者提供的医疗服务，提高医疗效率，都能提高染病患者的存活几率。因此，我们讨论在加大疾病治理力度的情况下，对疫情的控制情况。</p>
-<p><img data-src="autocell/12.png" alt></p>
+<p><img data-src="/2020/02/14/autocell/12.png" alt></p>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><a href="https://github.com/Zeroto521/Zeroto521.github.io/tree/master/assets/source/CellMachine" target="_blank" rel="noopener">下载</a>，程序的原作者不是我，模型关系复杂到这里，这种难度的程序已经不是我这种技术渣可以写出来的了。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>针对埃博拉病毒传染问题，建立了符合题目要求的CA模型。充分考虑了感染率、死亡率、人口流动现象、治愈率等多方面因素，将这些因素影响融入CA中传播规则，模拟对疾病传播的影响，并与实际情况对比调整参数；在埃博拉病毒传播基础上，考虑药物治疗因素，重新定义CA传播规则，进一步模拟治疗效果。整体而言，准确模拟了疾病传播情况，并模拟药物治疗效果，预计根除艾比拉病毒所需时间，完成了工作。</p>
 <p>并且在面临其他问题时，可对模型进行灵活的改动。根据需求重新定义传播规则，在改变元胞之间的联系规则后，可以模拟其他现象，并解决问题，具有很强的应用范围，如石油扩散、人口流动、交通运输等，因此，CA 模型具有很强的扩展性与灵活性。</p>
@@ -603,7 +603,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -657,12 +657,12 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

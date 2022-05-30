@@ -302,9 +302,9 @@
 <h1 id="降低网页功耗"><a href="#降低网页功耗" class="headerlink" title="降低网页功耗"></a>降低网页功耗</h1><p>起初，我还真没在意网页的功耗问题，首先举个例子明白功耗是干什么用的。假设，你打开电脑，不管是写<code>word</code>，听音乐还是看电影，只要电脑在工作就会产生功耗，单位是瓦(W)。一般打开网页和浏览网页的功耗是10W~15W左右(我亲手测过)，而你笔记本的电池是60Wh的，那么你笔记本在满电、不充电的情况下，浏览网页的时长大约为6小时（$60\text{Wh} \div 10\text{W} = 6\text{h}$）。而浏览网页的同时，如果再有一些写<code>word</code>，听音乐或者跑程序的操作，那么电脑的续航时长也就4小时左右。</p>
 <p>这就是笔记本续航的粗暴计算方法。但是很遗憾，市面上常见轻薄本的电池均为60Wh左右，但都在宣传自己笔记本续航高达10小时以上，我实在不能理解这是怎么计算出来的。所以，买电脑的时候不要看它吹嘘的续航时间多长，应该看电池是多少Wh的。</p>
 <p>扯远了，回归正题，如何降低博客的功耗呢？我第一次发现问题是在<code>Linux</code>系统中，打开我的博客后发现，电脑风扇在飞速旋转，键盘也开始发烫。嗯？这是为何，我也没载入杀病毒啊。找了一个查看功耗的命令显示下现在的功耗。右上角为查看<code>CPU</code>，内存等利用率，右下角为功耗，单位W。可以看到，我博客当初的功耗为55W。</p>
-<p><img data-src="blog-optimize/1.png" alt></p>
+<p><img data-src="/2020/03/12/blog-optimize/1.png" alt></p>
 <p>经过一段时间的排查变量实锤了一个现象：观看我的博客，功耗飞速上升到55W，CPU利用率<code>10%</code>，然后关闭我的博客，功耗降低到1W左右，极度真实。55W的功耗，意味着，我笔记本在看我博客的时候只能保证一个小时的续航，岂不给看我博客的用户带来极度不良体验？我寻思我就看个网页不至于啊，那么看一下别人同款<code>next</code>主题的博客，什么？5W？<code>CPU</code>利用率从<code>10%</code>降到了<code>0%</code>，见鬼了？不行，得优化。</p>
-<p><img data-src="blog-optimize/2.png" alt></p>
+<p><img data-src="/2020/03/12/blog-optimize/2.png" alt></p>
 <p>废话扯多了，优化的方案无非就是排除变量，（毕竟我不会前端无法确定哪个插件的功耗影响有多大）。索性打开了主题文件夹（非站点文件夹）下的<code>_config.yml</code>文件，大不了一个一个改。</p>
 <p>我看到了其中的<code>minify, lazyload, quicklink, pjax, jquery, SEO, baidu_push</code>等等一些列配置，发现，问题丝毫没在这些上面，且与我魔改主题的字体，颜色都无关。不绕弯子了，问题出在<code>live2d</code>这个看板娘上，就是他导致的过高的功耗。注意，不仅要在博客里关闭看板娘，还要删除安装在站点文件夹下<code>node_modules</code>里面的<code>live2d</code>的配置文件。<del>（因为我最开始也只是关闭，结果发现看板娘还在，索性在<code>node_modules</code>文件夹里面搜索名称含有<code>live2d</code>的文件，全部删除，<code>live2d</code>才正式在我博客里消失）</del>。后续就正常很多了，功耗也降低了下来，希望看我博客的人能有一个好的体验感。</p>
 <h1 id="优化博客访问速度"><a href="#优化博客访问速度" class="headerlink" title="优化博客访问速度"></a>优化博客访问速度</h1><p>如果你不幸的读到了这里，我先引入<code>next</code>官方的一句话吧：<strong>DO NOT EDIT THE FOLLOWING SETTINGS UNLESS YOU KNOW WHAT YOU ARE DOING</strong>，意思是：不要改以下的配置，除非你知道自己在干什么。</p>
@@ -319,7 +319,7 @@
 <li><code>lazyload</code>，同样先看官方解释：<strong>LazyLoad is a fast, lightweight and flexible script that speeds up your web application by loading your content images, videos and iframes only as they enter the viewport</strong>。翻译过来的意思就是：图片进入窗口我才加载，在网页最后面的图片、视频啥的文件我先不加载，看到那里在加载。因为用户可能看不到网页结尾，那么在打开网页的时候就加载网页结尾处的图片是没意义的，这不利于提高浏览速度。既然如此，增加这个配置，方法同<code>pjax</code>，先改为<code>true</code>，在去<code>vendors</code>里面加上链接。</li>
 </ul>
 <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>以下情况仅供参考。关于<code>pjax</code>要补充一点，如果在页面里设置了不蒜子来统计人数和每篇文章的访问量，那么，最好不要开启<code>pjax</code>。因为设置<code>pjax</code>后，每个页面中的不蒜子统计可能不会加载，意思是，别人看了你的文章但是你没统计。就像这样：</p>
-<p><img data-src="blog-optimize/3.png" alt></p>
+<p><img data-src="/2020/03/12/blog-optimize/3.png" alt></p>
 <p>这只是我实践出来的结论，所以，我选择关闭<code>pjax</code>，开启<code>quicklink</code>和<code>lazyload</code>也同样能秒开博客～。</p>
 <p>但是，在我更新<code>Next</code>后，就又没这个问题了，我现在是<code>pjax</code>和<code>lazyload</code>都在启用。</p>
 <h1 id="代码参考"><a href="#代码参考" class="headerlink" title="代码参考"></a>代码参考</h1><p>我把上述全部的配置代码放到了网上，如果还是不懂如何设置可以对照参考。<a href="https://github.com/muyuuuu/My-Next-theme-blog-config-files/blob/master/_config.yml" target="_blank" rel="noopener">点我过去</a>。</p>
@@ -478,7 +478,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -532,12 +532,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

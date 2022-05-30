@@ -320,7 +320,7 @@
 </li>
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> arr[<span class="number">1002</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m, n, k;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; m &gt;&gt; n &gt;&gt; k;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;arr[i]);</span><br><span class="line">        <span class="keyword">int</span> flag = <span class="number">0</span>, pos = <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">stack</span> &lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            s.push(i);</span><br><span class="line">            <span class="keyword">if</span> (s.<span class="built_in">size</span>() &gt; m) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">while</span> (!s.empty() &amp;&amp; s.top() == arr[pos])</span><br><span class="line">            &#123;</span><br><span class="line">                s.pop();</span><br><span class="line">                pos += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pos == n + <span class="number">1</span>) flag = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (flag == <span class="number">1</span>) <span class="built_in">printf</span>(<span class="string">"YES\n"</span>);</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">"NO\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img data-src="stack-pop-sequence/1.png" alt></p>
+<p><img data-src="/2022/05/20/monotonic-stack/1.png" alt></p>
 <h1 id="单调栈"><a href="#单调栈" class="headerlink" title="单调栈"></a>单调栈</h1><p>同样以 <code>[2,1,3,4]</code> 为例，假设此时我们有一个容器，输入一个数，容器顶部的元素是下一个最大的数。对于 1 而言，后面的最大元素是 3，因此可以得到一个结论：3 比 1 先进入容器，更通用一些：<strong>如果判断下一个最大元素，序列就要倒序进入容器，如果判断上一个最大元素，序列就要顺序进入容器</strong>。</p>
 <p>由于 1 比 2 先进入容器，但 2 的下一个最大元素是 3 而不是 1，那么就需要在容器中进行一些操作来删除 1。即 1 比 2 早进入容器，却要先从容器种出来，那么有什么容器是后入先出的呢？当然是栈。这也就是单调栈的由来。我们总结一下：</p>
 <ul>
@@ -372,7 +372,7 @@
       <div class="popular-posts-title"><a href="/2020/03/02/algorithm-time-complexity/" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/05/22/array-series/" rel="bookmark">算法系列：数组类题目</a></div>
+      <div class="popular-posts-title"><a href="/2022/05/28/backtrack/" rel="bookmark">算法系列：回溯</a></div>
     </li>
   </ul>
 
@@ -514,7 +514,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -568,12 +568,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

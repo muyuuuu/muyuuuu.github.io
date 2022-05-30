@@ -311,28 +311,28 @@
 <p>如果这类输入采用普通的全连接神经网络的话，每个句子长短不一，第一层神经元的数量怎么定义是不是？</p>
 <h2 id="萌新阶段"><a href="#萌新阶段" class="headerlink" title="萌新阶段"></a>萌新阶段</h2><p>建立一个网络来判断一个单词是不是人名，这个技术在搜索引擎中会被用到。</p>
 <p>当然为什么不采用查词典的技术呢？比如用查字典的方法也能解决，学过数据结构的话，知道这种情况建立索引查询会更快。如果一个人的名字是White(怀特)，总不能翻译成白色吧，判断是否是人名还得根据语境。</p>
-<p><img data-src="rnn/1.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/1.png" alt></p>
 <p>如上图所示，一个单词是一个输入，一句话是一个样本，1表示为人名，0表示不是。那么构建个什么样子的网络进行训练呢？而且还得解决每个样本输入维度不统一的问题。网络结构如下：</p>
-<p><img data-src="rnn/2.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/2.png" alt></p>
 <p>然后来解释下网络是如何运行的，参数的含义：</p>
 <p>首先，$T_x$表示一个样本中单词的数量，$\hat{y}^{<1>}$表示对样本中第一个单词的预测，$a$就是个中间变量，图上画得一个方框加四个圈表示计算过程。$X^{<1>}$会经过one-hot编码处理，假设样本数据库共有10000个单词，$X^{<1>}$为第一个单词，假设在词典排序中的位置为7893，那么$X^{<1>}$就是一个长度为10000，只有第7893个位置是1的零向量，其余单词也是经过one-hot处理数值化。Keras中使用序列模型进行分类时，通常都会对类别进行one-hot编码：</1></1></1></1></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> keras</span><br><span class="line">y_labels = keras.utils.to_categorical(y_label, num_classes=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
 <p>$a^{<0>}$是个初始化的零向量，推算$a^{<1>}$和$\hat{y}^{<1>}$的方式为：<br>\begin{equation}<br>a^{<1>}=g(W_{aa}a^{<0>}+W_{ax}X^{<1>}+b_a)<br>\end{equation}<br>$g$表示某种激活函数如RELU，$W_{aa}$为和$a$相乘的参数，$W_{ax}$表示和样本输入相乘的参数。输出的$a^{<1>}$为下一层的输入。<br>\begin{equation}<br>\hat{y}^{<1>}=f(W_{ya}a^{<1>}+b_y)<br>\end{equation}<br>$f$表示某种激活函数如RELU，$W_{ya}$为另外的和$a$相乘的参数。此外，在循环神经网络中参数是共享的以减少计算复杂度，对于之后每个输入的单词，$W_{ya},W_{ax},W_{aa}$都是一样的。</1></1></1></1></0></1></1></1></0></p>
 <p>推广到一般形式，第$t$个输入的单词(第$t$个时间步)的计算为：</p>
-<p><img data-src="rnn/3.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/3.png" alt></p>
 <p>这样，有几个单词就有几个$X$，这个网络就走几次，输入结束的话也就停止。在训练时，方向传播成本函数$y$与$\hat{y}$的交叉熵来梯度下降，最终达到预测的目标。</p>
 <hr>
 <h2 id="推广结构"><a href="#推广结构" class="headerlink" title="推广结构"></a>推广结构</h2><p>也许会好奇，在机器翻译时，输入与输出的数量是不相等的呀，处理影评的时候，多个单词的输入只会变成一个评分，这个时候就需要对网络的结构进行略微的修改。</p>
 <center>影评：多个输入对应一个输出</center>
 
-<p><img data-src="rnn/4.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/4.png" alt></p>
 <center>音乐合成：一个输入对应多个输出</center>
 
-<p><img data-src="rnn/5.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/5.png" alt></p>
 <p>此时第一次的输出作为下一次的输入使用，利用上一次的信息推理下一次的信息，更加连贯。</p>
 <center>机器翻译：输入与输出不同</center>
 
-<p><img data-src="rnn/6.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/6.png" alt></p>
 <p>其中$x$的部分称为编码器，将单词编码为数字，$y$为解码器，将数字预测为单词。这个图也可以作为生成模型的范例，以一个训练好的问答模型为例：当只有几个词作为输入时，可以预测之后最有可能输出的单词。比如简单的问答模型，输入：Mountain height is，那么能够计算出mountain height is 后面最有可能出现的几个单词，直到预测出句子结束的标志。这样就可以判断出山的高度是多少，一个简单的人工智障系统就出来了。</p>
 <hr>
 <h2 id="RNN的信息利用"><a href="#RNN的信息利用" class="headerlink" title="RNN的信息利用"></a>RNN的信息利用</h2><p>来一个很长很长的句子为例：</p>
@@ -343,13 +343,13 @@
 <p>意思是，一群猫吃了从商店买来的鱼，水果和蔬菜后，吃饱了在树上睡觉，cats 和 are 之间间隔了很多单词，对于普通的RNN而言，很难记忆如此长的信息，专业一点就是后面学习到的梯度反向传播到前面就没了，前面的单词是复数，后面应该用are。这个时候LSTM和GRU便登上了历史舞台。</p>
 <h2 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h2><p>GRU称为门控循环单元，即在网络中设立一个门，确保神经网络在输入长文本信息后能够记忆前面的单词是复数还是单数。</p>
 <p>取消前面的网络中间生成的变量$a$，这里暂时用$c$记忆细胞代替。来看一下GRU的门控结构：</p>
-<p><img data-src="rnn/9.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/9.png" alt></p>
 <p>此时$c$的计算方式为：</p>
-<p><img data-src="rnn/7.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/7.png" alt></p>
 <p>使用$\tilde{c}$来更新$c$，而是否更新则取决于记忆门$\Gamma_u$，当$\Gamma_u$为1时，更新信息，为0时取消更新。如果$\Gamma_u$一直不更新，$c$就会长时间记忆之前的信息，保持了长时间的记忆，避免了梯度消失。</p>
-<p>推广到一般形式，$c$的计算形式和GRU的预测方法为：<br><img data-src="rnn/8.png" alt></p>
+<p>推广到一般形式，$c$的计算形式和GRU的预测方法为：<br><img data-src="/2019/02/18/rnn/8.png" alt></p>
 <h2 id="泛化为LSTM"><a href="#泛化为LSTM" class="headerlink" title="泛化为LSTM"></a>泛化为LSTM</h2><p>LSTM与GRU大同小异，在GRU记忆门的基础上添加了遗忘门$\Gamma_f$，公式如下：</p>
-<p><img data-src="rnn/10.png" alt></p>
+<p><img data-src="/2019/02/18/rnn/10.png" alt></p>
 <p>$\hat{y}$的计算和以前一样，使用了遗忘门$\Gamma_f$来代替之前的$1-\Gamma_u$，也就是，GRU实际是复杂的LSTM的简化版本。实际上，LSTM有更强健的结构，也更加强大和善于记忆，缺陷就是不易计算。</p>
 <p>一个极度简单的LSTM实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> keras</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate dummy data</span></span><br><span class="line">x_train = np.random.random((<span class="number">1000</span>, <span class="number">20</span>))</span><br><span class="line">y_train = keras.utils.to_categorical(np.random.randint(<span class="number">10</span>, size=(<span class="number">1000</span>, <span class="number">1</span>)), num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Embedding</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> LSTM</span><br><span class="line"></span><br><span class="line">max_features = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line"><span class="comment"># 嵌入层</span></span><br><span class="line">model.add(Embedding(max_features, output_dim=<span class="number">256</span>))</span><br><span class="line">model.add(LSTM(<span class="number">128</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.5</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">model.compile(loss=<span class="string">'binary_crossentropy'</span>,</span><br><span class="line">              optimizer=<span class="string">'rmsprop'</span>,</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line"></span><br><span class="line">model.fit(x_train, y_train, batch_size=<span class="number">16</span>, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
 <h3 id="偷窥孔连接"><a href="#偷窥孔连接" class="headerlink" title="偷窥孔连接"></a>偷窥孔连接</h3><p>就是在LSTM中的三个门，记忆门、遗忘门、输出门的$W$乘的矩阵中$a,b$中在加入$t-1$时刻的$c$，也就是考虑了$t-1$时刻的记忆情况和输出情况，猜想他们共同影响了$t$时刻三个门的状况。(个人感觉多此一举)。</p>
@@ -437,12 +437,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/02/17/transfer-learning/" rel="prev" title="Keras玩耍迁移学习(VGG16)">
-      <i class="fa fa-chevron-left"></i> Keras玩耍迁移学习(VGG16)
+    <a href="/2019/02/18/rnn1/" rel="prev" title="循环神经网络的进化">
+      <i class="fa fa-chevron-left"></i> 循环神经网络的进化
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/02/18/rnn1/" rel="next" title="循环神经网络的进化">
-      循环神经网络的进化 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/02/19/optimizeDL/" rel="next" title="正则化与标准化">
+      正则化与标准化 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -519,7 +519,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -573,12 +573,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

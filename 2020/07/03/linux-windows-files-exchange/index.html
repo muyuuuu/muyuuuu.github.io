@@ -299,17 +299,17 @@
 <p>每次退出系统都需要重启电脑，实在是麻烦。今天无法忍受，决定研究下双系统如何快速访问对方的文件，即<code>linux</code>如何快速访问<code>windows</code>中的文件，<code>windows</code>如何快速访问<code>linux</code>中的文件。</p>
 <h1 id="挂载"><a href="#挂载" class="headerlink" title="挂载"></a>挂载</h1><p><strong>挂载</strong>（mount）是指由操作系统使一个存储设备，诸如硬盘上的计算机文件和目录可供用户计算机文件系统访问的过程。这里有两个重点：第一是要有存储设备，第二个是计算机的文件系统能访问存储设备中的文件。</p>
 <p>通俗而言，在<code>windows</code>系统下，将U盘插入<code>USB</code>接口，电脑打开U盘，这就叫挂载。在<code>linux</code>下，将存储设备接入到一个存在的目录上（目录不能为空），因为<code>linux</code>操作系统将所有的设备都看作文件，我们要访问存储设备中的文件，必须将文件所在的分区挂载到一个已存在的目录上，然后通过访问这个目录来访问存储设备。</p>
-<h1 id="linux访问windows文件"><a href="#linux访问windows文件" class="headerlink" title="linux访问windows文件"></a>linux访问windows文件</h1><p>既然知道了挂载的操作，那么就行动起来。首先通过<code>fdisk -l</code>来查看硬盘信息：<img data-src="linux-windows-files-exchange/2.png" alt></p>
+<h1 id="linux访问windows文件"><a href="#linux访问windows文件" class="headerlink" title="linux访问windows文件"></a>linux访问windows文件</h1><p>既然知道了挂载的操作，那么就行动起来。首先通过<code>fdisk -l</code>来查看硬盘信息：<img data-src="/2020/07/03/linux-windows-files-exchange/2.png" alt></p>
 <p>根据实际情况，我知道<code>/dev/nvme0n1p3</code>对应<code>windows</code>的<code>C</code>盘，<code>/dev/nvme0n1p4</code>对应<code>windows</code>的<code>D</code>盘，而我想看的数据在<code>C</code>盘，所以我们要挂载<code>/dev/nvme0n1p3</code>。</p>
 <ol>
 <li><p>首先创建挂载目录：<code>sudo mkdir /mnt/windows</code>；</p>
 </li>
 <li><p>之后开始挂载：<code>mount /dev/nvme0n1p3 /mnt/windows</code>；</p>
 </li>
-<li>然后 <code>cd /mnt/windows</code>，此时我们发现文件已经过来了，然后<code>cd Users/lanling/Desktop</code>就能查看<code>windows</code>桌面中的文件，需要拷贝仅需<code>cp</code>命令拷贝到某个路径即可，再也不用来回重启了。也印证了我所使用的计算机文件系统能访问<code>windows</code>中的文件。<img data-src="linux-windows-files-exchange/3.png" alt></li>
-<li>需要注意的是，在使用完毕后需要解除挂载，命令为：<code>umount /mnt/windows</code>，另外不要在<code>/mnt/windows</code>文件夹下进行解除挂载，会提示错误，在其他位置解除挂载就可以了。<img data-src="linux-windows-files-exchange/1.png" alt></li>
+<li>然后 <code>cd /mnt/windows</code>，此时我们发现文件已经过来了，然后<code>cd Users/lanling/Desktop</code>就能查看<code>windows</code>桌面中的文件，需要拷贝仅需<code>cp</code>命令拷贝到某个路径即可，再也不用来回重启了。也印证了我所使用的计算机文件系统能访问<code>windows</code>中的文件。<img data-src="/2020/07/03/linux-windows-files-exchange/3.png" alt></li>
+<li>需要注意的是，在使用完毕后需要解除挂载，命令为：<code>umount /mnt/windows</code>，另外不要在<code>/mnt/windows</code>文件夹下进行解除挂载，会提示错误，在其他位置解除挂载就可以了。<img data-src="/2020/07/03/linux-windows-files-exchange/1.png" alt></li>
 </ol>
-<h1 id="windows访问linux文件"><a href="#windows访问linux文件" class="headerlink" title="windows访问linux文件"></a>windows访问linux文件</h1><p>众所周知<code>windows</code>的命令行比较弱（本人不想安装<code>wsl</code>之类），所以决定下载个软件，搜寻了一番，还真有：名字叫做<a href="https://www.paragon-software.com/home/linuxfs-windows/" target="_blank" rel="noopener">Linux File Systems for Windows by Paragon Software</a>，软件使用就很简单了，打开，挂载，这里提示挂载到<code>E</code>盘。<img data-src="linux-windows-files-exchange/4.png" alt></p>
+<h1 id="windows访问linux文件"><a href="#windows访问linux文件" class="headerlink" title="windows访问linux文件"></a>windows访问linux文件</h1><p>众所周知<code>windows</code>的命令行比较弱（本人不想安装<code>wsl</code>之类），所以决定下载个软件，搜寻了一番，还真有：名字叫做<a href="https://www.paragon-software.com/home/linuxfs-windows/" target="_blank" rel="noopener">Linux File Systems for Windows by Paragon Software</a>，软件使用就很简单了，打开，挂载，这里提示挂载到<code>E</code>盘。<img data-src="/2020/07/03/linux-windows-files-exchange/4.png" alt></p>
 <p>然后去资源管理器中打开<code>E</code>盘，会看到<code>linux</code>中的各种文件，之后的操作就很轻松了。但是这个软件收费，且，会开机自己启动，还找不到设置的地方，感觉很流氓。</p>
 <p>在相同易用程度下，我找到了个免费、不流氓的软件，叫<a href="https://www.diskinternals.com/linux-reader/" target="_blank" rel="noopener">Diskinternals Linux Reader</a>。操作极度简单，就不截图演示了。选择盘符，双击进去，找到自己想访问的文件，右键，保存到桌面即可。</p>
 
@@ -476,7 +476,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -530,12 +530,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

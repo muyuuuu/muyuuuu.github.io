@@ -305,7 +305,7 @@
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model = torch.nn.Conv2d(in_channels, out_channels, kernel_size, dilation=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 <p>默认情况下<code>dilation</code>取值为1，也就是没有扩张。</p>
 <h1 id="因果卷积"><a href="#因果卷积" class="headerlink" title="因果卷积"></a>因果卷积</h1><p>因果卷积的重点突出在<strong>因果</strong>两个字上，输入的历史数据是因，输出的数据是果。来看一下模型结构图，这里有三层卷积网络。</p>
-<p><img data-src="causal-dilated-conv/1.png" alt></p>
+<p><img data-src="/2021/03/10/causal-dilated-conv/1.png" alt></p>
 <p>第一层的卷积块读取几个历史数据，经过后几层的卷积块后输出一个数据，达到预测的目的。</p>
 <p>但是，在逐层卷积的同时，每步只卷积两个模块。这就导致了视野域比较小。所以增加了扩张卷积，来增大网络的感受野，即：每次预测时能比之前看到更多的数据，做出更稳定的决策。此时的网络结构为：</p>
 <p><img data-src="https://s3.ax1x.com/2021/03/10/6Jc9hT.png" alt></p>
@@ -329,10 +329,10 @@
       <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
@@ -477,7 +477,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-count">213</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -531,12 +531,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">847k</span>
+    <span title="站点总字数">849k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12:50</span>
+    <span title="站点阅读时长">12:52</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
