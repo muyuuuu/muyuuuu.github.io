@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="上一次正儿八经写博客是今年 2 月，5 月做了个比赛总结，其余的博客竟然都是刷题和算法，实属无聊。艰难的日子已经过去，准备学点模型部署相关的东西以及参与一个实际的开源项目，争取数据、算法和工程全链路打通。众所周知，对于一个不是很常用的东西，学完就忘，如 spark, Go 等学过的但很少用的东西，已经被我抛到九霄云外了。所以，这次学完模型的 trace 之后，尝试部署一些能实际运行的软件。">
+<meta name="keywords" content="Pytorch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 0 开始的 TorchScript">
+<meta property="og:url" content="https://muyuuuu.github.io/2022/10/03/torch-jit-1/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="上一次正儿八经写博客是今年 2 月，5 月做了个比赛总结，其余的博客竟然都是刷题和算法，实属无聊。艰难的日子已经过去，准备学点模型部署相关的东西以及参与一个实际的开源项目，争取数据、算法和工程全链路打通。众所周知，对于一个不是很常用的东西，学完就忘，如 spark, Go 等学过的但很少用的东西，已经被我抛到九霄云外了。所以，这次学完模型的 trace 之后，尝试部署一些能实际运行的软件。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-10-02T16:08:35.887Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从 0 开始的 TorchScript">
+<meta name="twitter:description" content="上一次正儿八经写博客是今年 2 月，5 月做了个比赛总结，其余的博客竟然都是刷题和算法，实属无聊。艰难的日子已经过去，准备学点模型部署相关的东西以及参与一个实际的开源项目，争取数据、算法和工程全链路打通。众所周知，对于一个不是很常用的东西，学完就忘，如 spark, Go 等学过的但很少用的东西，已经被我抛到九霄云外了。所以，这次学完模型的 trace 之后，尝试部署一些能实际运行的软件。">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2022/10/03/torch-jit-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>从 0 开始的 TorchScript | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2022/10/03/torch-jit-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从 0 开始的 TorchScript
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-10-03 00:04:09 / 修改时间：00:08:35" itemprop="dateCreated datePublished" datetime="2022-10-03T00:04:09+08:00">2022-10-03</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>上一次正儿八经写博客是今年 2 月，5 月做了个比赛总结，其余的博客竟然都是刷题和算法，实属无聊。艰难的日子已经过去，准备学点模型部署相关的东西以及参与一个实际的开源项目，争取数据、算法和工程全链路打通。众所周知，对于一个不是很常用的东西，学完就忘，如 <code>spark, Go</code> 等学过的但很少用的东西，已经被我抛到九霄云外了。所以，这次学完模型的 <code>trace</code> 之后，尝试部署一些能实际运行的软件。</p>
+<a id="more"></a>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p><code>TorchScript</code> 是 <code>PyTorch</code> 的 <code>JIT</code> 实现。<code>JIT</code> 全程是 Just In Time Compilation，也就是即使编译。在深度学习中 <code>JIT</code> 的思想更是随处可见，最明显的例子就是 <code>Keras</code> 框架的 model.compile 创建的静态图。</p>
+<ul>
+<li>静态图需要先构建再运行，优势是在运行前可以对图结构进行优化，比如常数折叠、算子融合等，可以获得更快的前向运算速度。缺点也很明显，就是只有在计算图运行起来之后，才能看到变量的值，像 <code>TensorFlow1.x</code> 中的 <code>session.run</code> 那样。</li>
+<li>动态图是一边运行一边构建，优势是可以在搭建网络的时候看见变量的值，便于检查。缺点是前向运算不好优化，因为根本不知道下一步运算要算什么。动态图模型通过牺牲一些高级特性来换取易用性。</li>
+</ul>
+<p>那么那到底 <code>JIT</code> 有哪些特性，使得 <code>torch</code> 这样的动态图框架也要走 <code>JIT</code> 这条路呢？或者说在什么情况下不得不用到 <code>JIT</code> 呢？下面主要通过介绍 <code>TorchScript</code> 来分析 <code>JIT</code> 到底带来了哪些好处。</p>
+<p><code>JIT</code> 是 <code>Python</code> 和 <code>C++</code> 的桥梁，我们可以使用 <code>Python</code> 训练模型，然后通过 <code>JIT</code> 将模型转为语言无关的模块，从而让 <code>C++</code> 可以非常方便得调用，从此「使用 <code>Python</code> 训练模型，使用 <code>C++</code> 将模型部署到生产环境」对 <code>PyTorch</code> 来说成为了一件很容易的事。而因为使用了 <code>C++</code>，我们现在几乎可以把 <code>PyTorch</code> 模型部署到任意平台和设备上：树莓派、iOS、Android 等等。不然每次都要通过 <code>python</code> 调用模型，性能会大打折扣。</p>
+<p>既然是为部署生产所提供的特性，那免不了在性能上面做了极大的优化，如果推断的场景对性能要求高，则可以考虑将模型（<code>torch.nn.Module</code>）转换为 <code>TorchScript Module</code>，再进行推断。有两种方式可以转换：</p>
+<ol>
+<li>使用 <code>TorchScript Module</code> 的更简单的办法是使用 <code>Tracing</code>，<code>Tracing</code> 可以直接将 <code>PyTorch</code> 模型（<code>torch.nn.Module</code>）转换成 <code>TorchScript Module</code>。「 <code>trace</code> 」顾名思义，就是需要提供一个「输入」来让模型 <code>forward</code> 一遍，以通过该输入的流转路径，获得图的结构。这种方式对于 <code>forward</code> 逻辑简单的模型来说非常实用，但如果 <code>forward</code> 里面本身夹杂了很多流程控制语句，就会存在问题，因为同一个输入不可能遍历到所有的逻辑分枝。<strong>而没有被经过的分支就不会被 <code>trace</code> 。</strong></li>
+<li>可以直接使用 <code>TorchScript Language</code> 来定义一个 <code>PyTorch JIT Module</code>，然后用 <code>torch.jit.script</code> 来将他转换成 <code>TorchScript Module</code> 并保存成文件。而 <code>TorchScript Language</code> 本身也是 <code>Python</code> 代码，所以可以直接写在 <code>Python</code> 文件中。对于 <code>TensorFlow</code> 我们知道不能直接使用 <code>Python</code> 中的 <code>if</code> 等语句来做条件控制，而是需要用 <code>tf.cond</code>，但对于 <code>TorchScript</code> 我们依然能够直接使用 <code>if</code> 和 <code>for</code> 等条件控制语句，所以即使是在静态图上，<code>PyTorch</code> 依然秉承了「易用」的特性。</li>
+</ol>
+<h1 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h1><h2 id="trace-方法"><a href="#trace-方法" class="headerlink" title="trace 方法"></a>trace 方法</h2><p>首先定义一个简单的模型：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDecisionGate</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="comment"># 分支判断</span></span><br><span class="line">        <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> -x</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCell</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(MyCell, self).__init__()</span><br><span class="line">        self.dg = MyDecisionGate()</span><br><span class="line">        self.linear = torch.nn.Linear(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, h)</span>:</span></span><br><span class="line">        y = torch.tanh(self.dg(self.linear(x)) + h)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line">my_cell = MyCell()</span><br><span class="line">print(my_cell)</span><br><span class="line">x, h = torch.rand(<span class="number">1</span>, <span class="number">4</span>), torch.rand(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">print(my_cell(x, h))</span><br></pre></td></tr></table></figure>
+<p>我们可以绑定输入对模型进行 <code>trace</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDecisionGate</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> -x</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCell</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(MyCell, self).__init__()</span><br><span class="line">        self.dg = MyDecisionGate()</span><br><span class="line">        self.linear = torch.nn.Linear(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, h)</span>:</span></span><br><span class="line">        y = torch.tanh(self.dg(self.linear(x)) + h)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line">my_cell = MyCell()</span><br><span class="line">x, h = torch.rand(<span class="number">1</span>, <span class="number">4</span>), torch.rand(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">trace_model = torch.jit.trace(my_cell, (x, h))</span><br><span class="line">print(trace_model(x, h))</span><br><span class="line">print(trace_model.code)</span><br><span class="line"><span class="comment"># def forward(self,</span></span><br><span class="line"><span class="comment">#     x: Tensor,</span></span><br><span class="line"><span class="comment">#     h: Tensor) -&gt; Tensor:</span></span><br><span class="line"><span class="comment">#   dg = self.dg</span></span><br><span class="line"><span class="comment">#   linear = self.linear</span></span><br><span class="line"><span class="comment">#   _0 = torch.add((dg).forward((linear).forward(x, ), ), h)</span></span><br><span class="line"><span class="comment">#   return torch.tanh(_0)</span></span><br></pre></td></tr></table></figure>
+<p>可以看到没有出现 <code>if-else</code> 的分支， <code>trace</code> 做的是：运行代码，记录出现的运算，构建 <code>ScriptModule</code>，但是控制流就丢失了。然后流程丢失并不是好事，在 <code>trace</code> 只会对一个输入进行处理的情况下，对不同的输入得到的结果是不一样的，因为输入只会满足一个分支，因此 <code>trace</code> 的程序也只包含一个分支。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDecisionGate</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> -x</span><br><span class="line"></span><br><span class="line">my_cell = MyDecisionGate()</span><br><span class="line">x = torch.tensor([<span class="number">-0.1</span>, <span class="number">0.05</span>]) <span class="comment"># 这两个 x trace 到的代码是不一样的</span></span><br><span class="line"><span class="comment"># x = torch.tensor([0.1, -0.05])</span></span><br><span class="line">trace_model = torch.jit.trace(my_cell, (x))</span><br><span class="line">print(trace_model(x))</span><br><span class="line">print(trace_model.code)</span><br></pre></td></tr></table></figure>
+<p>因此，我们认为这样的 <code>trace</code> 没有泛化能力。而这种现象普遍发生在动态控制流中，即：具体执行哪个算子取决于输入的数据。</p>
+<ul>
+<li><code>if x[0] == 4: x += 1</code> 是动态控制流</li>
+<li><code>model: nn.Sequential = ... [m(x) for x in model]</code> 不是</li>
+<li><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">  backbone: nn.Module</span><br><span class="line">  head: Optiona[nn.Module]</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">    x = self.backbone(x)</span><br><span class="line">    <span class="keyword">if</span> self.head <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        x = self.head(x)</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>不是</p>
+<p>在之后的文章中，会介绍如何使 <code>trace</code> 具备泛化能力。</p>
+<h2 id="script-方法"><a href="#script-方法" class="headerlink" title="script 方法"></a>script 方法</h2><p><code>script</code> 方法直接分析 <code>python</code> 代码进行转换：使用他们提供的 <code>script</code> 编译器，将 <code>python</code> 的代码进行语法分析，并重新解释为 <code>TorchScript</code>。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDecisionGate</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> -x</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCell</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, dg)</span>:</span></span><br><span class="line">        super(MyCell, self).__init__()</span><br><span class="line">        self.dg = dg</span><br><span class="line">        self.linear = torch.nn.Linear(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, h)</span>:</span></span><br><span class="line">        new_h = torch.tanh(self.dg(self.linear(x)) + h)</span><br><span class="line">        <span class="keyword">return</span> new_h, new_h</span><br><span class="line"></span><br><span class="line">scripted_gate = torch.jit.script(MyDecisionGate())</span><br><span class="line">print(scripted_gate.code) <span class="comment"># 含有流程控制</span></span><br><span class="line">my_cell = MyCell(scripted_gate)</span><br><span class="line">traced_cell = torch.jit.script(my_cell)</span><br><span class="line">print(traced_cell.code)</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>TorchScript</code> 代码可以被它自己的解释器（一个受限的 <code>Python</code> 解释器）调用。这个解释器不需要获得全局解释锁GIL，这样很多请求可以同时处理。</li>
+<li>这个格式可以让我们保存模型到硬盘上，在另一个环境中加载，例如服务器，也可以使用非 <code>python</code> 的语言。</li>
+<li><code>TorchScript</code> 提供的表示可以做编译器优化，做到更有效地执行。</li>
+<li><code>TorchScript</code> 可以与其他后端/设备运行时进行对接，他们只需要处理整个项目，无需关心细节运算。</li>
+</ol>
+<h1 id="Trace-和-Script-谁更好？"><a href="#Trace-和-Script-谁更好？" class="headerlink" title="Trace 和 Script 谁更好？"></a>Trace 和 Script 谁更好？</h1><p>通过上文我们可以了解到：</p>
+<ul>
+<li><p><code>trace</code> 只记录走过的 <code>tensor</code> 和对 <code>tensor</code> 的操作，不会记录任何控制流信息，如 <code>if</code> 条件句和循环。因为没有记录控制流的另外的路，也没办法对其进行优化。好处是 <code>trace</code> 深度嵌入 <code>python</code> 语言，复用了所有 <code>python</code> 的语法，在计算流中记录数据流。</p>
+</li>
+<li><p><code>script</code> 会去理解所有的 <code>code</code>，真正像一个编译器一样去进行词法分析语法分析句法分析，形成 <code>AST</code> 树，最后再将 <code>AST</code> 树线性化。<code>script</code> 相当于一个嵌入在 <code>Python/Pytorch</code> 的 <code>DSL</code>，其语法只是 <code>Pytorch</code> 语法的子集，这意味着存在一些 <code>op</code> 和语法 <code>script</code> 不支持，这样在编译的时候就会遇到问题。此外，<code>script</code> 的编译优化方式更像是 <code>CPU</code> 上的传统编译优化，重点对于图进行硬件无关优化，并对 <code>if</code>、<code>loop</code> 进行优化。</p>
+</li>
+</ul>
+<p>在大模型的部署上 <code>trace</code> 更好，因为可以有效的优化复杂的计算图，如下所示：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x1, x2, x3)</span>:</span></span><br><span class="line">    z = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line">    xs = [x1, x2, x3]</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> z: x1 += xs[k]</span><br><span class="line">    <span class="keyword">return</span> x1</span><br><span class="line">model = A()</span><br><span class="line">print(torch.jit.script(model).code)</span><br><span class="line"><span class="comment"># def forward(self, x1: Tensor, x2: Tensor, x3: Tensor) -&gt; Tensor:</span></span><br><span class="line"><span class="comment">#   z = [0, 1, 2]</span></span><br><span class="line"><span class="comment">#   xs = [x1, x2, x3]</span></span><br><span class="line"><span class="comment">#   x10 = x1</span></span><br><span class="line"><span class="comment">#   for _0 in range(torch.len(z)):</span></span><br><span class="line"><span class="comment">#     k = z[_0]</span></span><br><span class="line"><span class="comment">#     x10 = torch.add_(x10, xs[k])</span></span><br><span class="line"><span class="comment">#   return x10</span></span><br><span class="line">print(torch.jit.trace(model, [torch.tensor(<span class="number">1</span>)] * <span class="number">3</span>).code)</span><br><span class="line"><span class="comment"># def forward(self, x1: Tensor, x2: Tensor, x3: Tensor) -&gt; Tensor:</span></span><br><span class="line"><span class="comment">#   x10 = torch.add_(x1, x1)</span></span><br><span class="line"><span class="comment">#   x11 = torch.add_(x10, x2)</span></span><br><span class="line"><span class="comment">#   return torch.add_(x11, x3)</span></span><br></pre></td></tr></table></figure>
+<p>因为 <code>script</code> 试图忠实地表示 <code>Python</code> 代码，所以即使其中一些是不必要的。例如：并不能对 <code>Python</code> 代码中的某些循环或数据结构进行优化。如上例，所以它实际上有变通方法，或者循环可能会在以后的优化过程中得到优化。但关键是：这个编译器并不总是足够聪明。对于复杂的模型， <code>script</code> 可能会生成一个具有不必要复杂性且难以优化的计算图。</p>
+<p><code>tracing</code> 有许多优点，事实上，在 <code>Facebook/Meta</code> 部署的分割和检测模型中，<code>tracing</code> 是默认的选择，仅当必要的时候使用 <code>scripting</code>。因为 <code>trace</code> 不会破坏代码质量，可以结合 <code>script</code> 来避免一些限制。</p>
+<p><code>python</code> 是一个很大很动态的语言，编译器最多只能支持其语法功能和内置函数的子集，同理，<code>script</code> 也不例外。这个编译器支持 <code>Python</code> 的哪个子集？一个粗略的答案是：编译器对最基本的语法有很好的支持，但对任何更复杂的东西（类、内置函数、动态类型等）的支持度很低或者不支持。但并没有明确的答案：即使是编译器的开发者，通常也需要运行代码，看看能不能编译去判断是否支持。</p>
+<p>所以不完整的 <code>Python</code> 编译器限制了用户编写代码的方式。尽管没有明确的约束列表，但可以从经验中看出它们对大型项目的影响：<code>script</code> 的问题会影响代码质量。很多项目只停留在了代码能 <code>script</code> 成功这一层面，使用基础语法，没有自定义类型，没有继承，没有内置函数，没有 <code>lambda</code> 等等的高级特性。因为这些高级的功能编译器并不支持或者部分支持，就会导致在某些情况下成功，但在其他情况下失败。而且由于没有明确的规范哪些是被支持的，因此用户无法推理或解决故障。因此，最终用户会仅仅停留在代码成功搬移，而不考虑可维护性和性能问题，会导致开发者因为害怕报错而停止进一步的探索高级特性。</p>
+<p>如此下去，代码质量可能会严重恶化：垃圾代码开始积累，因为优良的代码有时无法编译。此外，由于编译器的语法限制，无法轻松进行抽象以清理垃圾代码。该项目的可维护状况逐渐走下坡路。如果认为 <code>script</code> 似乎适用于我的项目，基于过去在一些支持 <code>script</code> 的项目中的经验，我可能会出于以下原因建议不要这样做：</p>
+<ul>
+<li>编译成功可能比你想象的更脆弱（除非将自己限制在基本语法上）：你的代码现在可能恰好可以编译，但是有一天你会在模型中添加一些更改，并发现编译失败；</li>
+<li>基本语法是不够的：即使目前你的项目似乎不需要更复杂的抽象和继承，但如果预计项目会增长，未来将需要更多的语言特性。</li>
+</ul>
+<p>以多任务检测器为例：</p>
+<ul>
+<li>可能有 10 个输入，因此最好使用一些结构/类。</li>
+<li>检测器有许多架构选择，这使得继承很有用。</li>
+<li>大型、不断增长的项目肯定需要不断发展的抽象来保持可维护性。</li>
+</ul>
+<p>因此，这个问题的现状是：<code>script</code> 迫使你编写垃圾的代码，因此我们仅在必要时使用它。</p>
+<h1 id="Trace-细节"><a href="#Trace-细节" class="headerlink" title="Trace 细节"></a>Trace 细节</h1><p><code>trace</code> 让模型的 <code>trace</code> 更清楚，对代码质量有很少的影响。</p>
+<p>如果模型不是以 <code>Pytorch</code> 格式表示的计算图，则 <code>script</code> 和 <code>trace</code> 都不起作用。例如，如果模型具有 <code>DataParallel</code> 子模块，或者如果模型将张量转换为 <code>numpy</code> 数组并调用 <code>OpenCV</code> 函数等，则必须对其进行重构。除了这个明显的限制之外，对 <code>trace</code> 只有两个额外的要求：</p>
+<ul>
+<li><p>输入/输出格式是 <code>Tensor</code> 类型时才能被 <code>trace</code>。但是，这里的格式约束不适用于子模块：子模块可以使用任何输入/输出格式：类、<code>kwargs</code> 以及 <code>Python</code> 支持的任何内容。格式要求仅适用于最外层的模型，因此很容易解决。如果模型使用更丰富的格式，只需围绕它创建一个简单的包装器，它可以与 <code>Tuple[Tensor]</code> 相互转换。</p>
+</li>
+<li><p><code>shape</code>。<code>tensor.size(0)</code> 是 <code>eager</code> 模式下的整数，但它是 <code>tracing mode</code> 下的 <code>tensor</code>。这个差异在 <code>trace</code> 时是必要的，<code>shape</code> 的计算可以被捕获为计算图中的算子。由于不同的返回类型，如果返回的一部分是 <code>shape</code> 是整数则无法 <code>trace</code> ，这通常可以简单的解决。此外，一个有用的函数是 <code>torch.jit.is_tracing</code>，它检查代码是否在 <code>trace</code> 模式下执行。</p>
+</li>
+</ul>
+<p>我们来看个例子：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b = torch.rand(<span class="number">1</span>), torch.rand(<span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">(x)</span>:</span> <span class="keyword">return</span> torch.arange(x.shape[<span class="number">0</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">(x)</span>:</span> <span class="keyword">return</span> torch.arange(len(x))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># See if the two traces generalize from a to b:</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>torch.jit.trace(f1, a)(b)</span><br><span class="line">tensor([<span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>torch.jit.trace(f2, a)(b)</span><br><span class="line">tensor([<span class="number">0</span>])  <span class="comment"># WRONG!</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># Why f2 does not generalize? Let's compare their code:</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(torch.jit.trace(f1, a).code, torch.jit.trace(f2, a).code)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">(x: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  _0 = ops.prim.NumToTensor(torch.size(x, <span class="number">0</span>))</span><br><span class="line">  _1 = torch.arange(annotate(number, _0), dtype=<span class="literal">None</span>, layout=<span class="number">0</span>, device=torch.device(<span class="string">"cpu"</span>), pin_memory=<span class="literal">False</span>)</span><br><span class="line">  <span class="keyword">return</span> _1</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">(x: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  _0 = torch.arange(<span class="number">1</span>, dtype=<span class="literal">None</span>, layout=<span class="number">0</span>, device=torch.device(<span class="string">"cpu"</span>), pin_memory=<span class="literal">False</span>)</span><br><span class="line">  <span class="keyword">return</span> _0</span><br></pre></td></tr></table></figure>
+<p>在 <code>trace f2</code> 函数时，<code>lex(x)</code> 是一个定值而非 <code>tensor</code>，这样在传入其他长度的数据时就回报错。除了 <code>len()</code>，这个问题也可能出现在：</p>
+<ul>
+<li><code>.item()</code> 将张量转换为 <code>int/float</code>。</li>
+<li>将 <code>Torch</code> 类型转换为 <code>numpy/python</code> 原语的任何其他代码。</li>
+</ul>
+<p><code>tensor.size()</code> 在 <code>trace</code> 期间返回 <code>Tensor</code>，以便在图中捕获形状计算。用户应避免意外将张量形状转换为常量。使用 <code>tensor.size(0)</code> 而不是 <code>len(tensor)</code>，因为后者是一个 <code>int</code>。这个函数对于将大小转换为张量很有用，在 <code>trace</code> 和 <code>eager</code> 模式下都可以使用。对于自定义类，实现 <code>.size()</code> 方法或使用 <code>.__len__()</code> 而不是 <code>len()</code>，不要通过 <code>int()</code> 转换大小，因为它们会捕获常量。</p>
+<p>这就是 <code>trace</code> 所需要的一切。最重要的是，模型实现中允许使用任何 <code>Python</code> 语法，因为 <code>trace</code> 根本不关心语法。</p>
+<h2 id="Trace-的泛化问题"><a href="#Trace-的泛化问题" class="headerlink" title="Trace 的泛化问题"></a>Trace 的泛化问题</h2><h3 id="Trace-和-Script-混合"><a href="#Trace-和-Script-混合" class="headerlink" title="Trace 和 Script 混合"></a>Trace 和 Script 混合</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span></span><br><span class="line"><span class="meta">... </span>  <span class="keyword">return</span> torch.sqrt(x) <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span> <span class="keyword">else</span> torch.square(x)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = torch.jit.trace(f, torch.tensor(<span class="number">3</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(m.code)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  <span class="keyword">return</span> torch.sqrt(x)</span><br></pre></td></tr></table></figure>
+<p>注意这种代码在 <code>trace</code> 时不会报错，只有 <code>warning</code> 的输出，因此我们要特别关注。<code>trace</code> 和 <code>script</code> 都有各自的问题，最好的方法是混合使用他们。避免影响代码质量，主要的部分进行 <code>trace</code>，必要时进行 <code>script</code>。如果有一个 <code>module</code> 里面有很多选择，但是我们不希望在 <code>TorchScript</code> 里出现，那么应该使用 <code>tracing</code> 而不是 <code>scripting</code>，这个时候，<code>trace</code> 将内联 <code>script</code> 模块的代码。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDecisionGate</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> x</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> -x</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCell</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, dg)</span>:</span></span><br><span class="line">        super(MyCell, self).__init__()</span><br><span class="line">        self.dg = dg</span><br><span class="line">        self.linear = torch.nn.Linear(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x, h)</span>:</span></span><br><span class="line">        new_h = torch.tanh(self.dg(self.linear(x)) + h)</span><br><span class="line">        <span class="keyword">return</span> new_h, new_h</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyRNNLoop</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, scripted_gate, x, h)</span>:</span></span><br><span class="line">        super(MyRNNLoop, self).__init__()</span><br><span class="line">        <span class="comment"># 对控制流进行 trace</span></span><br><span class="line">        self.cell = torch.jit.trace(MyCell(scripted_gate), (x, h))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, xs)</span>:</span></span><br><span class="line">        h, y = torch.zeros(<span class="number">3</span>, <span class="number">4</span>), torch.zeros(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(xs.size(<span class="number">0</span>)):</span><br><span class="line">            y, h = self.cell(xs[i], h)</span><br><span class="line">        <span class="keyword">return</span> y, h</span><br><span class="line"></span><br><span class="line">x, h = torch.rand(<span class="number">2</span>, <span class="number">4</span>), torch.rand(<span class="number">2</span>, <span class="number">4</span>)</span><br><span class="line">scripted_gate = torch.jit.script(MyDecisionGate())</span><br><span class="line">rnn_loop = torch.jit.script(MyRNNLoop(scripted_gate, x, h))</span><br><span class="line">print(rnn_loop.code)</span><br><span class="line">print(rnn_loop.cell.code)</span><br></pre></td></tr></table></figure>
+<p>我们简化一下：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model.submodule = torch.jit.script(model.submodule)</span><br><span class="line">torch.jit.trace(model, inputs)</span><br></pre></td></tr></table></figure>
+<p>对于不能正确 <code>trace</code> 的子模块，可以进行 <code>script</code> 处理。但是并不推荐，更建议使用 <code>@script_if_tracing</code>，因为这样修改 <code>script</code> 仅限于子模块的内部，而不影响模块的接口。使用 <code>@script_if_tracing</code> 装饰器，在 <code>torch.jit.trace</code> 时，<code>@script_if_tracing</code> 装饰器可以通过 <code>script</code> 编译。通常，这只需要对前向逻辑进行少量重构，以分离需要编译的部分（具有控制流的部分）：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, ...)</span>:</span></span><br><span class="line">  <span class="comment"># ... some forward logic</span></span><br><span class="line"><span class="meta">  @torch.jit.script_if_tracing</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">_inner_impl</span><span class="params">(x, y, z, flag: bool)</span>:</span></span><br><span class="line">      <span class="comment"># use control flow, etc.</span></span><br><span class="line">      <span class="keyword">return</span> ...</span><br><span class="line">  output = _inner_impl(x, y, z, flag)</span><br><span class="line">  <span class="comment"># ... other forward logic</span></span><br></pre></td></tr></table></figure>
+<p>只 <code>script</code> 需要的部分，代码质量相对于全部 <code>script</code> 被破坏的很少，被 <code>@script_if_tracing</code> 装饰的函数必须是不包含 <code>tensor</code> 模块运算的纯函数。因此，有时需要进行更多重构：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Before:</span></span><br><span class="line"><span class="keyword">if</span> x.numel() &gt; <span class="number">0</span>:  <span class="comment"># This branch cannot be compiled by @script_if_tracing because it refers to `self.layers`</span></span><br><span class="line">  x = preprocess(x)</span><br><span class="line">  output = self.layers(x)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">  output = torch.zeros(...)  <span class="comment"># Create empty outputs</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># After:</span></span><br><span class="line"><span class="keyword">if</span> x.numel() &gt; <span class="number">0</span>:  <span class="comment"># This branch can now be compiled by @script_if_tracing</span></span><br><span class="line">  x = preprocess(x)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">  x = torch.zeros(...)   <span class="comment"># Create empty inputs</span></span><br><span class="line"><span class="comment"># Needs to make sure self.layers accept empty inputs.</span></span><br><span class="line"><span class="comment"># If necessary, add such condition branch into self.layers as well.</span></span><br><span class="line">output = self.layers(x)</span><br></pre></td></tr></table></figure>
+<p>同样的，我们可以在 <code>script</code> 中嵌套 <code>trace</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model.submodule = torch.jit.trace(model.submodule, submodule_inputs)</span><br><span class="line">torch.jit.script(model)</span><br></pre></td></tr></table></figure>
+<p>这里的子模块是 <code>trace</code>，但是实际中并不常用，因为会影响子模块的推理（当且仅当子模块的输入和输出都是 <code>tensor</code> 时才适用），这是很大的限制。但是 <code>trace</code> 作为子模块的时候也有很试用的场景：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">    <span class="comment"># Dispatch to different submodules based on a dynamic, data-dependent condition:</span></span><br><span class="line">    <span class="keyword">return</span> self.submodule1(x) <span class="keyword">if</span> x.sum() &gt; <span class="number">0</span> <span class="keyword">else</span> self.submodule2(x)</span><br></pre></td></tr></table></figure>
+<p><code>@script_if_tracing</code> 不能处理这样的控制流，因为它只支持纯函数。如果子模块很复杂不能被 <code>script</code>，使用 <code>trace</code>  <code>trace</code> 子模块是很好的选择，这里就是 <code>self.submodule2</code> 和 <code>self.submodule1</code>，类 <code>A</code> 还是要 <code>script</code> 的。</p>
+<h3 id="Script-优势"><a href="#Script-优势" class="headerlink" title="Script 优势"></a>Script 优势</h3><p>事实上，对于大多数视觉模型，动态控制流仅在少数易于编写 <code>script</code> 的子模块中需要。<code>script</code> 相对于 <code>trace</code>，有两个有点：</p>
+<ul>
+<li>一个数据有很多属性的控制流，<code>trace</code> 无法处理</li>
+<li><code>trace</code> 只支持 <code>forward</code> 方法，<code>script</code> 支持更多的方法</li>
+</ul>
+<p>实际上，上述两个功能都在做同样的事情：它们允许以不同的方式使用导出的模型，即根据调用者的请求执行不同的运算符序列。下面是一个这样的特性很有用的示例场景：如果 <code>Detector</code> 是 <code>script</code> 化，调用者可以改变它的 <code>do_keypoint</code> 属性来控制它的行为，或者如果需要直接调用 <code>predict_keypoint</code> 方法。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Detector</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">  do_keypoint: bool</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img)</span>:</span></span><br><span class="line">      box = self.predict_boxes(img)</span><br><span class="line">      <span class="keyword">if</span> self.do_keypoint:</span><br><span class="line">          kpts = self.predict_keypoint(img, box)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">predict_boxes</span><span class="params">(self, img)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">predict_keypoint</span><span class="params">(self, img, box)</span>:</span> <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>这种要求并不常见。但是如果需要，如何在 <code>trace</code> 中实现这一点？我有一个不是很优雅的解决方案：<code>Tracing</code> 只能捕获一个序列的算子，所以自然的方式是对模型进行两次 <code>Tracing</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">det1 = torch.jit.trace(Detector(do_keypoint=<span class="literal">True</span>), inputs)</span><br><span class="line">det2 = torch.jit.trace(Detector(do_keypoint=<span class="literal">False</span>), inputs)</span><br></pre></td></tr></table></figure>
+<p>然后我们可以为它们的模型设置别名（以不重复存储），并将两个 <code>trace</code> 合并到一个模块中以编写 <code>script</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">det2.submodule.weight = det1.submodule.weight</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wrapper</span><span class="params">(nn.ModuleList)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img, do_keypoint: bool)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> do_keypoint:</span><br><span class="line">        <span class="keyword">return</span> self[<span class="number">0</span>](img)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> self[<span class="number">1</span>](img)</span><br><span class="line">exported = torch.jit.script(Wrapper([det1, det2]))</span><br></pre></td></tr></table></figure>
+<h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h3><p>还可以使用单元测试来判断 <code>trace</code> 是否成功：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> allclose(torch.jit.trace(model, input1)(input2), model(input2))</span><br></pre></td></tr></table></figure>
+<h3 id="程序优化"><a href="#程序优化" class="headerlink" title="程序优化"></a>程序优化</h3><p>此外，还可以通过<a href="https://github.com/pytorch/pytorch/issues/56998" target="_blank" rel="noopener">优化</a>程序，避免掉不必要的特殊情况：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> x.numel() &gt; <span class="number">0</span>:</span><br><span class="line">  output = self.layers(x)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">  output = torch.zeros((<span class="number">0</span>, C, H, W))  <span class="comment"># Create empty outputs</span></span><br></pre></td></tr></table></figure>
+<h3 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h3><p>此外还需要注意设备问题，在 <code>trace</code> 期间会记录使用的设备，而 <code>trace</code> 不会对不同的设备进行泛化，但是部署时都会有固定的设备，这个问题不用担心。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span></span><br><span class="line"><span class="meta">... </span>  <span class="keyword">return</span> torch.arange(x.shape[<span class="number">0</span>], device=x.device)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m = torch.jit.trace(f, torch.tensor([<span class="number">3</span>]))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(m.code)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x: Tensor)</span> -&gt; Tensor:</span></span><br><span class="line">  _0 = ops.prim.NumToTensor(torch.size(x, <span class="number">0</span>))</span><br><span class="line">  _1 = torch.arange(annotate(number, _0), dtype=<span class="literal">None</span>, layout=<span class="number">0</span>, device=torch.device(<span class="string">"cpu"</span>), pin_memory=<span class="literal">False</span>)</span><br><span class="line">  <span class="keyword">return</span> _1</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>m(torch.tensor([<span class="number">3</span>]).cuda()).device</span><br><span class="line">device(type=<span class="string">'cpu'</span>)  <span class="comment"># WRONG!</span></span><br></pre></td></tr></table></figure>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p><code>trace</code> 有明显的局限性：本文大部分时间都在讨论 <code>trace</code> 的局限性以及如何解决它们。我实际上认为这是 <code>trace</code> 的优点：它有明确的限制和解决方案，所以你可以推断它是否有效。相反， <code>script</code> 更像是一个黑匣子：在尝试之前没有人知道它是否有效。</p>
+<p><code>trace</code> 具有较小的代码破坏范围： <code>trace</code> 和 <code>script</code> 都会影响代码的编写方式，但 <code>trace</code> 的代码破坏范围要小得多，并且造成的损害要小得多：</p>
+<ul>
+<li>它限制了输入/输出格式，但仅限于最外层的模块。</li>
+<li>在 <code>trace</code> 中混合 <code>script</code>，但可以只更改受影响模块的内部实现，而不是它们的接口。</li>
+</ul>
+<p>另一方面， <code>script</code> 对以下方面有影响：</p>
+<ul>
+<li>涉及的每个模块和子模块的接口，接口需要高级语法特性，针对接口编程时，千万别在接口设计上妥协。</li>
+<li>这也可能最终影响训练，因为接口通常在训练和推理之间共享。</li>
+</ul>
+<p>这也是为什么 <code>script</code> 会对代码质量造成很大损害的原因。<code>Detectron2</code> 支持 <code>script</code>，但不推荐其他大型项目以可 <code>script</code> 且不丢失抽象为目标，因为这实在有点难度，除非它们也能像阿里巴巴那样得到 <code>PyTorch</code> 团队的支持。</p>
+<p><code>PyTorch</code> 深受用户喜爱，最重要的是编写 <code>Python</code> 控制流。但是 <code>Python</code> 的其他语法也很重要。如果能够编写 <code>Python</code> 控制流（ 使用 <code>script</code> ）意味着失去其他优秀的语法，我宁愿放弃编写 <code>Python</code> 控制流的能力。事实上，如果 <code>PyTorch</code> 对 <code>Python</code> 控制流不那么执着，并且像这样（类似于 <code>tf.cond</code> 的 <code>API</code>）为我提供了诸如 <code>torch.cond</code> 之类的符号控制流：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span></span><br><span class="line">  <span class="keyword">return</span> torch.cond(x.sum() &gt; <span class="number">0</span>, <span class="keyword">lambda</span>: torch.sqrt(x), <span class="keyword">lambda</span>: torch.square(x))</span><br></pre></td></tr></table></figure>
+<p>然后 <code>f</code> 可以正确 <code>trace</code>，不再需要担心 <code>script</code>。</p>
+<h1 id="保存和加载模型"><a href="#保存和加载模型" class="headerlink" title="保存和加载模型"></a>保存和加载模型</h1><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">traced.save(<span class="string">'wrapped_rnn.pt'</span>)</span><br><span class="line"></span><br><span class="line">loaded = torch.jit.load(<span class="string">'wrapped_rnn.pt'</span>)</span><br><span class="line"></span><br><span class="line">print(loaded)</span><br><span class="line">print(loaded.code)</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li>基本概念，<a href="https://zhuanlan.zhihu.com/p/370455320" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/370455320</a></li>
+<li>两者的优势，<a href="https://zhuanlan.zhihu.com/p/410507557" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/410507557</a></li>
+<li>trace vs script，<a href="https://ppwwyyxx.com/blog/2022/TorchScript-Tracing-vs-Scripting/" target="_blank" rel="noopener">https://ppwwyyxx.com/blog/2022/TorchScript-Tracing-vs-Scripting/</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+      
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/06/double-pointer/" rel="prev" title="算法系列：双指针">
+      <i class="fa fa-chevron-left"></i> 算法系列：双指针
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单例子"><span class="nav-number">2.</span> <span class="nav-text">简单例子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#trace-方法"><span class="nav-number">2.1.</span> <span class="nav-text">trace 方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#script-方法"><span class="nav-number">2.2.</span> <span class="nav-text">script 方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Trace-和-Script-谁更好？"><span class="nav-number">3.</span> <span class="nav-text">Trace 和 Script 谁更好？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Trace-细节"><span class="nav-number">4.</span> <span class="nav-text">Trace 细节</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Trace-的泛化问题"><span class="nav-number">4.1.</span> <span class="nav-text">Trace 的泛化问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Trace-和-Script-混合"><span class="nav-number">4.1.1.</span> <span class="nav-text">Trace 和 Script 混合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Script-优势"><span class="nav-number">4.1.2.</span> <span class="nav-text">Script 优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单元测试"><span class="nav-number">4.1.3.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序优化"><span class="nav-number">4.1.4.</span> <span class="nav-text">程序优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设备"><span class="nav-number">4.1.5.</span> <span class="nav-text">设备</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结论"><span class="nav-number">5.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#保存和加载模型"><span class="nav-number">6.</span> <span class="nav-text">保存和加载模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">213</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">890k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:29</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '5ead916cbddf4e86f50f617bb7deac90',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
