@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="深夜睡不着开始刷博客看到Stone-Zeng的博客，写的真心很好呀。 然后今天醒来顺藤摸瓜的去看了看原文：$\LaTeX$ 的罪与罚。看了之后，这是何等的心浮气躁之人才能写出的文章。天下之大，放不下一张安静的书桌供你仔细读说明书吗？时间之长，有您写知乎吐槽的时间，看看文档，你提到的80%的问题都会解决。 完全未知的领域不看说明书就开始乱用，这不是Word动动鼠标就解决的。不看说明书就算了，遇到问题">
+<meta name="keywords" content="LaTeX">
+<meta property="og:type" content="article">
+<meta property="og:title" content="正确打开LaTeX的姿势">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/08/06/latex-feel-stonezeng/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="深夜睡不着开始刷博客看到Stone-Zeng的博客，写的真心很好呀。 然后今天醒来顺藤摸瓜的去看了看原文：$\LaTeX$ 的罪与罚。看了之后，这是何等的心浮气躁之人才能写出的文章。天下之大，放不下一张安静的书桌供你仔细读说明书吗？时间之长，有您写知乎吐槽的时间，看看文档，你提到的80%的问题都会解决。 完全未知的领域不看说明书就开始乱用，这不是Word动动鼠标就解决的。不看说明书就算了，遇到问题">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-17T19:29:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="正确打开LaTeX的姿势">
+<meta name="twitter:description" content="深夜睡不着开始刷博客看到Stone-Zeng的博客，写的真心很好呀。 然后今天醒来顺藤摸瓜的去看了看原文：$\LaTeX$ 的罪与罚。看了之后，这是何等的心浮气躁之人才能写出的文章。天下之大，放不下一张安静的书桌供你仔细读说明书吗？时间之长，有您写知乎吐槽的时间，看看文档，你提到的80%的问题都会解决。 完全未知的领域不看说明书就开始乱用，这不是Word动动鼠标就解决的。不看说明书就算了，遇到问题">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/08/06/latex-feel-stonezeng/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>正确打开LaTeX的姿势 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/08/06/latex-feel-stonezeng/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          正确打开LaTeX的姿势
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-08-06 00:57:52" itemprop="dateCreated datePublished" datetime="2019-08-06T00:57:52+08:00">2019-08-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-18 03:29:48" itemprop="dateModified" datetime="2020-03-18T03:29:48+08:00">2020-03-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>深夜睡不着开始刷博客看到Stone-Zeng的博客，写的真心很好呀。</p>
+<p>然后今天醒来顺藤摸瓜的去看了看原文：$\LaTeX$ 的罪与罚。看了之后，这是何等的心浮气躁之人才能写出的文章。天下之大，放不下一张安静的书桌供你仔细读说明书吗？时间之长，有您写知乎吐槽的时间，看看文档，你提到的80%的问题都会解决。</p>
+<p>完全未知的领域不看说明书就开始乱用，这不是Word动动鼠标就解决的。不看说明书就算了，遇到问题宛如无头苍蝇瞎折腾，东一榔头西一棒槌，模板不懂代码不懂就开始瞎改。还是不去看文档，你折腾起来的样子真像那谁。</p>
+<p>$\LaTeX$是一门编程语言，在随便挑个编程语言如<code>Python</code>，任何人上手恐怕都会难免遇到错误吧。代码出错的语言不是好语言？不读想文档但我想解决问题，哪个语言能这样？恐怕是自然语言。<code>Java</code>的文档也不在少数吧，但是有人读有人会呀。不读文档，直接用别人代码，出错了就开始搜索，这种毒瘤观念，怕不是你写代码的样子也像那谁。</p>
+<p>基础不牢，地动山摇。心浮气躁，邪魔乱道。要么仔细看，要么别看，这么糊弄，很浪费时间的。</p>
+<a id="more"></a>
+<h1 id="我的回答"><a href="#我的回答" class="headerlink" title="我的回答"></a>我的回答</h1><p>准备给他讲解$\LaTeX$的正确姿势，看评论区也是普遍：我不想学，我想直接抄，我想$\LaTeX$特别好用，我想要好模板交差，我还是不想学没必要学的态度，罢了罢了。宛如给一个人解释：买菜不用微积分，可为什么所有的大学都要开高等数学这门课一样。眼光不同，视野不同让我咋交流。</p>
+<p>我只想说，要不您下次生病吃药也别看说明书了，直接吃吧，挺好的，别管一粒两粒一百粒药丸直接往嘴里塞。吃坏身体然后去怪设计药品的人太菜了设计不出好药，然后写一个知乎：论吃药的罪与罚，然后在评论区大家吃药五分钟，住院两星期的跟风。</p>
+<p>不是设计药品的人不懂如何设计药品也没关系，吃药之前仔细看说明书就好了。不是开发者不懂 $\LaTeX$ 内部原理没关系，然而不看说明书就乱用，然后浪费你时间我只想说：真好。$\LaTeX$ 是一门编程语言不是Word，你学任何一门编程语言不都先看书然后一点一点敲代码嘛？写论文的编程语言就不是编程语言了？Word确实不用，要不你还是回Word吧，上手快还没不容易出错。</p>
+<p>引用一个图片吧。</p>
+<p><img data-src="/2019/08/06/latex-feel-stonezeng/1.jpg" alt></p>
+<p>如果按你说的。想用一个东西直接百度别人的，出了问题就搜索，不怪自己怪开发者。那么我这种没学过Java的是不是可以说我精通Java，写代码之前直接抄别人的嘛，出了Error，我就去搜索解决嘛，只要遇到问题我也像你一样各种搜索，然后解决不了我也不去看Java经典的书从头学。就说Java的开发者不会开发嘛，搞的太难了，文档写的不好嘛，然后吐槽，再写一个Java的罪与罚是不是？（无意引战Java）。总结为三句话：反正我不会，反正我不学，出了错反正不能怪我，一定是开发者不会开发的问题。</p>
+<p>我只想问一下，你生病了吃药之前看不看说明书的。等您下次不看说明书吃坏了再来吐槽一下。</p>
+<p>若还是那个观念：我只想用它套模板写论文应付老师应付杂志社，没想学那么多东西。我想你的幼儿园、小学、初中、高中、大学、乃至硕博的老师都没有告诉你不劳而获的道理。$\LaTeX$ 是一门写论文的编程语言，但并不是你套模板且想不劳而获和不读说明书的理由。</p>
+<h1 id="Liam-Huang前辈"><a href="#Liam-Huang前辈" class="headerlink" title="Liam-Huang前辈"></a>Liam-Huang前辈</h1><p>原文在这里：<a href="https://zhuanlan.zhihu.com/p/74815765" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/74815765</a></p>
+<p>其实原文第一次出现在我面前就是 Zeng 在群里推送的。粗粗扫了一眼，唯一的感想就是：「这作者怕不是个友善度吧」。那么为啥咧？</p>
+<p>私以为问题出在两个方面。</p>
+<ul>
+<li>智能手机时代 App 无需说明文档的熏陶之下，人们已经渐渐失去了「看说明书」的习惯。<strong>然后将一切不符合「我认为」的东西，归罪于「这东西不好」</strong>。——其实原文作者提出的绝大多数问题，花一个下午好好读读入门文档，都是能解决的。</li>
+<li><strong>「我要我要我立即就要，不听不听我才不听」</strong>的功利心态。孩子醒醒，免费午餐和「捷径」最终都会害死你。——不限于 $\LaTeX$ 领域，适用于人生各个阶段各个领域。</li>
+</ul>
+<p>简而言之，你可以说它有这样那样的问题，不过前提是你以<strong>恰当</strong>的方式去了解了它。因为它有问题，而尝试掩盖和抹消「你自己」的问题，对这样<strong>自欺欺人</strong>的行为我们表示遗憾。</p>
+<h1 id="李阿玲前辈"><a href="#李阿玲前辈" class="headerlink" title="李阿玲前辈"></a>李阿玲前辈</h1><p>原文在这里：<a href="https://zhuanlan.zhihu.com/p/74809700" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/74809700</a></p>
+<p>对于$\LaTeX$，无论是用还是玩，这些年其实各种人都见识到了。有就想用这个搞个模版填上文字的。有纯粹是想玩的。有想研究一下排版软件的。</p>
+<p><strong>这很正常。或者，甚至可以这样说：凭什么你想做成什么就真会做成什么？！</strong></p>
+<p>Knuth的 $\TeX$ 他想了几个月改了几年。Lamport的$\LaTeX$ 也是弄了几年。这两位是<strong>图灵奖</strong>获得者的。凭什么你一两个小时就弄明白这俩东西？！这简直是对这两个人的智力上的侮辱。这种图灵得主顶级计算机大佬都没弄成您满意的东西，我还真希望您能弄出来，还弄的特别好，没准那年的图灵奖就是您的了，也算是为国争光。</p>
+<p>一个人在没遇到一个需要超出自己理解力/智力上限的东西前，总会有一点自我感觉良好。比较之下，更恐怖的事就是：这个世界上，这种事物并不少。当然更恐慌的是，他还是个没有耐心的人。遇到问题没有耐心，使用上没耐心，提问上没耐心，最后想做的就是没做成。</p>
+<p>不同的事物，经验不一定可迁移。Word里面点一点图标就能做到的事是不少。但是，很多人忽略了：点一点图标其实也不一定能把某些东西做对。而一旦想把这种经验迁移到$\LaTeX$里，那很可能能做对的事就是少数，做不出效果甚至做错的是多数。</p>
+<p><strong>一把钥匙只能开符合这把钥匙的锁。当你碰到不同的锁的时候，就得换钥匙。没有别的办法。</strong></p>
+<p>当然，人还要有耐心学习一个未知领域的事物。但是更应该有耐心承认自己的失败。但是，对于很多人来说，承认自己失败这一点太难了，承认自己有错误太难了。成年人的脸皮，比城墙厚，机关枪打不透的啊。</p>
+<p>这会造成一个结果：把学不懂的东西认为是这个系统设计的问题。总之，锅不是自己的。挑错点评头头是道，一副专家面孔。</p>
+<p>这种认识是一种特别具有直觉性的东西。我也会有，我很多时候也会有这种直觉。但是，直觉毕竟是容易产生误判。所以我自己再觉得XXX不对的时候会尝试证明出来。如果自己证明不出来，那就是自己的直觉有问题。</p>
+<p>真正设计的有问题的东西，有。没有设计问题而理解有问题的东西，也有。</p>
+<p>然而，对$\TeX$的批评大部分没到点子上，都可以回归为：吃药之前不看说说明书的心浮气躁。甚至可以说，最终级的对$\TeX$的批评，就是实现一个比$\TeX$好用的，排版效果不差，生态圈还大的软件作品。</p>
+<p>可惜，现在还没有人做到。我写过一个版本的$\TeX$实现，但是我没什么想法。</p>
+<p>或许是，他们很“聪明”，知道自己真做不出来。</p>
+<h1 id="Stone-zeng的回答"><a href="#Stone-zeng的回答" class="headerlink" title="Stone-zeng的回答"></a>Stone-zeng的回答</h1><p>原文在这里：<a href="https://stone-zeng.github.io/2019-07-23-latex-crime-and-punishment/" target="_blank" rel="noopener">https://stone-zeng.github.io/2019-07-23-latex-crime-and-punishment/</a></p>
+<p>你们啊，要……还是要提高自己的知识水平！我也给你们着急啊，真的。</p>
+<p>这是我使用 $\LaTeX$ 的第三年，踩了很多坑后，我也开始有了对 $\LaTeX$ 的一些感悟。</p>
+<p>不巧，这也是我使用 $\LaTeX$ 的第三年（从我 2015 年年底装 CTEX 套装开始算，四年不到），所以我也有「对 $\LaTeX$ 的一些感悟」。</p>
+<h2 id="入门之前"><a href="#入门之前" class="headerlink" title="入门之前"></a>入门之前</h2><blockquote>
+<p>在拥挤的办公桌前，面对 <code>doc</code> 文件夹下三千多个 PDF readme，我知道我这辈子都没办法做一个 $\LaTeX$ 科班生。然而，命运不会等人，我手中小小的报告，常常 24h 内就必须要飞到老师的邮箱中。</p>
+</blockquote>
+<p>比较不幸的是，大多数人用 $\LaTeX$ 都是被迫 / 半被迫的：你的老板可能并不会管你会不会用就直接把你逼上梁山，建模比赛别人都用我不用就没奖了（误）。但没有什么办法，<strong>24h 内掌握 $\LaTeX$ 就是不现实</strong>，至少得匀出几个礼拜到几个月的时间才能上手。既然知道「老板可能要我用一个之前没碰过的工具」，是不是应该提前预留一些学习时间呢？</p>
+<blockquote>
+<p>我也希望自己能做一个弄明白 $\LaTeX$ 的人。然而可惜的是，我或许永远无法将 $\LaTeX$ 看作一个「专业工具」，拿出钻研编译原理的劲儿来啃透 $\LaTeX$。</p>
+<p>这或许是因为，在座的你我需要的无非是排个章节、插个图、上下标、来几行公式……我们需要一个能好好地把字母排列到理想位置的「效率软件」，而不是一个慢吞吞又挑三拣四难以融洽的「活祖宗」。</p>
+</blockquote>
+<p>这是很多人的困扰：我就是只要写个文章为什么要把 $\LaTeX$ 搞得这么清楚？此时可以类比如下问题：</p>
+<ul>
+<li>我只是写个 C 的 Hello world，怎么还要学命令行、学 Linux、学 Makefile、学 Git……？</li>
+<li>我只是学计算机、学数学、学 xxx，为什么要会英语？</li>
+<li>我一个理科生为什么要学语文？我一个文科生为什么要学数学？买菜又不用三角函数微积分解析几何……</li>
+</ul>
+<p>具体问题具体来说。不管你认不认可，(La)TEX 就是一个完备的编程语言，虽然你需要的可能只是「作为标记语言」的那一个子集。所以，准备上手之前，<strong>请务必认清楚自己的身份</strong>：</p>
+<ol>
+<li><p>我要按照模版写毕业论文、建模论文、期刊论文</p>
+<p> 你需要找一些合适的入门材料，学习基本的语法。有模版<strong>请严格按照模版的说明操作</strong>，不要根据自己的喜好做任何修改（你的感觉与偏好在这个阶段极有可能是有问题的）。重点请放在文章的内容，而不是文章的格式。出现任何问题请找模版作者，没有必要试图自己解决。</p>
+</li>
+<li><p>我要记笔记、出试卷、写书</p>
+<p> 同上，请先从入门开始。熟悉基本流程之后再放飞自我，刘海洋的《$\LaTeX$ 入门》可以备在手边随时翻阅。每天读两次《入门》，每次都有新收获。</p>
+</li>
+<li><p>我要系统学习排版知识，写模版、写宏包</p>
+<p> 你可能确实要拿出「钻研编译原理的劲儿」。排版的水可能比你想象的还深，而 TEX 跟主流编程语言大相径庭也需要一些时间来掌握。Google、GitHub 和 StackExchange 将会是你的好朋友，以及，英语是必须的。</p>
+</li>
+<li><p>我要写世界上最好的排版引擎干掉 TEX</p>
+<p> 请联系 @李阿玲。（逃</p>
+</li>
+<li><p>老板让我干什么我就干什么</p>
+<p> 祝好运，不送。</p>
+</li>
+</ol>
+<h2 id="入门教程"><a href="#入门教程" class="headerlink" title="入门教程"></a>入门教程</h2><p>知乎上老生常谈的问题，前辈们的回答可以认真读：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/268569440/answer/339239086" target="_blank" rel="noopener">如何在 1 小时内快速入手 $\LaTeX$？ - 刘海洋的回答</a></li>
+<li><a href="https://www.zhihu.com/question/62943097/answer/203670095" target="_blank" rel="noopener">如何从零开始，入门 $\LaTeX$？ - 孟晨的回答</a></li>
+<li>自学 $\LaTeX$ 可以读什么书入门？ - <a href="https://www.zhihu.com/question/26645810/answer/33515971" target="_blank" rel="noopener">刘海洋的回答</a>、<a href="https://www.zhihu.com/question/26645810/answer/33529115" target="_blank" rel="noopener">孟晨的回答</a></li>
+</ul>
+<p>当然也可以选择看下面的：</p>
+<p>刚入门的头几步将会在很大程度上决定之后的路好不好走。不论是看了谭浩强的 C 语言，还是不知道从哪里找来的 $\LaTeX$ 教程，后果都是出现一堆稀奇古怪的问题，自己还找不到解决方法。所以，我们非常希望新手能够选择一些<strong>靠谱、合适</strong>的入门教材。</p>
+<p>现在（2019 年 7 月），我们只推荐下面这些材料：</p>
+<ul>
+<li>一份（不太）简短的 $\LaTeX$ 2<em>ε</em> 介绍（lshort） <a href="http://mirrors.ctan.org/info/lshort/chinese/lshort-zh-cn.pdf" target="_blank" rel="noopener">[PDF]</a> <a href="https://github.com/CTeX-org/lshort-zh-cn" target="_blank" rel="noopener">[GitHub]</a></li>
+<li>一份简短的安装 $\LaTeX$ 的介绍 <a href="https://github.com/OsbertWang/install_$\LaTeX$" target="_blank" rel="noopener">[GitHub]</a></li>
+<li>刘海洋的《$\LaTeX$ 入门》（跳过 CTEX 套装的部分）</li>
+</ul>
+<p>lshort 强烈建议<strong>完整</strong>读一遍，普通文章排版所需要的几乎全部功能这里都包含了。找不到直接去《$\LaTeX$ 入门》的相关章节翻阅（当字典查）。其他网上的资料，wikibook 上的教程可以参考，知乎请认准那几位的回答，b 站鱼龙混杂谨慎使用，而 csdn、科学网博客、x 度文库请<strong>绝对不要看</strong>。</p>
+<p>有人带自然很好，但请先判断他的水平。最简单的依据：如果他还在用 CTEX 套装，或 WinEdt 7.0 及以下，或代码里面出现了 <code>CJK</code> 环境，那么请立刻远离（当然，仅限 $\LaTeX$ 方面）。</p>
+<p>发行版建议使用最新版 TEX Live（目前是 2019），或者在线使用 <a href="https://www.overleaf.com/" target="_blank" rel="noopener">Overleaf</a>。<strong>CTEX 套装绝对不要用</strong>。</p>
+<p>最后一点提醒：如果你不小心学了假的 $\LaTeX$，建议回头重读一遍以上列出的入门材料。</p>
+<h2 id="如何找模版"><a href="#如何找模版" class="headerlink" title="如何找模版"></a>如何找模版</h2><blockquote>
+<p>为了写出符合学校要求的论文，谁都需要一个好用的模版，而不出意外地，我也是其中的一员。</p>
+<ul>
+<li>实验室的算法大神世豪搞了个模板用，折腾折腾，一编译，好使！</li>
+<li>我拿来用，不好使，浪费了一两天时间。</li>
+<li>实验室编码大神益达用了个模板，折腾折腾，编译一下，好使！</li>
+<li>我换成他的，不好使，浪费了一两天时间。</li>
+<li>我上 Github 下载了一个的 ZJUthesis</li>
+<li>不好使，浪费了两三天吧。</li>
+<li>换成另一个 github 上的 zju 模板，不好使。</li>
+<li>这时候数学优化大神萝卜给我了一个师兄自用的模板。</li>
+<li>我试了一下午，不好使。</li>
+</ul>
+</blockquote>
+<p>怀疑你在黑 zju 然而我找不到证据……</p>
+<p>首先，<strong>学长 / 学姐 / 大神 / 巨佬拷给你的模版几乎一定是不好用的</strong>。目前大多数高校的模版都挂在了 GitHub 上面，有些还发布在了 Overleaf 或者 CTAN 上面，请认准这些（半）官方渠道。（请问你会选择 <code>pip</code>、Anaconda，还是湿兄拷给你的 TensorFlow ？）</p>
+<p>其次，GitHub 上面找模版，居然还去试了几个。没有经验可以告诉你一点经验：</p>
+<ul>
+<li>没有 README、LICENSE、<code>.gitignore</code> 的可以直接忽略（原文章居然吐槽了 LICENSE 这我还能说什么？）</li>
+<li>Commit 很少，几个月内又没有什么更新，建议不要用</li>
+<li>Issue 越多说明积累的问题越多，也就意味着用户越多，当然前提是作者要去处理 issue</li>
+<li>Star、fork、watch 都很少的话请小心使用，不过也有可能是比较新的缘故</li>
+<li>使用 <code>dtx</code> 作为源代码、有测试文件、用 ci 的模版往往更靠谱一些</li>
+</ul>
+<p>最后，下载下来觉得不好使。请问有看过模版的使用说明吗？有完全按照模版提供的编译说明来跑吗？这样再出现问题应该直接联系模版作者 or 跑去 GitHub 提 issue。一个靠谱的模版作者应当可以解决你的问题。</p>
+<p>到此问题便得到了解决。我们可以总结一下：</p>
+<ul>
+<li><p>有问题请尽快整理出示例，向更有经验的人求助。一知半解 + 穷折腾很有可能会把问题代入死胡同。</p>
+</li>
+<li><p>一定要给出</p>
+<p>  最小工作示例（MWE）：</p>
+<ul>
+<li>应当是一个<strong>完整</strong>的、在你的电脑上<strong>能编译</strong>的 $\LaTeX$文档</li>
+<li>何为完整？以 <code>\documentclass</code> 开始，以 <code>\end{document}</code> 结束</li>
+<li>在你电脑上的编译结果，应当能<strong>复现问题</strong>，或<strong>体现需求</strong></li>
+<li>与复现问题和体现需求<strong>无关的代码应尽可能少</strong>，如各种宏包的加载、自定义的命令等</li>
+<li>尝试更换为标准文档类（<code>article</code>、<code>ctexart</code>）等</li>
+<li>如果复现问题需要其他文件（图片、<code>bib</code> 等），请把它们和 LaTEX 文档一起打包</li>
+<li>对你的论文不感兴趣，如果你不变透漏论文代码我也不便帮你解决问题。</li>
+</ul>
+</li>
+<li><p>给出 MWE 的过程就是 debug 的过程。这时需要进一步删掉无关代码，呈现问题原貌，此时可以：</p>
+<ul>
+<li>Print 大法好！TEX 的 <code>\show</code> 命令可以展示宏的内容，而 LaTEX3 还提供了更多的类似函数</li>
+<li>一点点注释掉无关内容，二分法定位</li>
+<li>插断点，实际上 <code>\show</code> 的时候编译会中止，我们常利用多个 <code>\show</code> 来定位 bug</li>
+</ul>
+</li>
+</ul>
+<h2 id="TEX-要面向现代化、面向世界、面向未来"><a href="#TEX-要面向现代化、面向世界、面向未来" class="headerlink" title="TEX 要面向现代化、面向世界、面向未来"></a>TEX 要面向现代化、面向世界、面向未来</h2><p>众所周知，(La)TEX 是一个很古老的东西，很多问题归根结底都源自于历史的局限。「新一代」的引擎 XETEX 和 LuaTEX 十多年前就进了 TEX Live，阿玲姐姐的那一个也指日可待。然而却还总有人试图靠 8-bit 引擎来解决 CJK 问题，对这样固步自封的行为我们表示遗憾。</p>
+<p>语言方面，宏语言捉襟见肘的表达能力确实是一个问题。但 LaTEX3 也在逐渐成熟，二十多年积累下来的方方面面的经验使得它正在成为标准库一样的东西。当有了统一的框架，可以想见开发与使用都将变得更加容易。与此同时，ConTEXt 那边也在持续地尝试新的想法，对 variable fonts 和 color fonts 的支持 2017 年就已经做了。所以，在追赶潮流的能力上 TEX 丝毫不比那几家商业公司差多少（误）。</p>
+<p>作为开发者，我们自然希望用户的使用门槛可以一降再降，遇到的坑也能够越来越少。不过，这都建立在用户自己有尝试、探索、讨论与交流的热情之上。遇到问题，只会无头苍蝇一样四处乱撞，或者阴阳怪气地嘲讽，我们只能提醒你：<strong>恐怕使用 Word 的能力你也没有</strong>。</p>
+<p>bye</p>
+<p>最后，其实Word用好了也不容易，入门门槛低，但是上限真的挺高的。对于本科生：我记得知乎上有人写了如何使用Word写科技论文。即使你用Word写过国赛论文写过美赛论文自以为能驾驭Word，其实还差的很远，我敢保证里面 70% 的操作不是常规操作，你没见过的， Word的上限还是挺高的。对于研究生：真的会 $\LaTeX$ 谁还用Word是吧。</p>
+<hr>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2018/11/07/Brief-introduction-to-LaTex/" rel="bookmark">一份不太简短的LaTeX简介</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2018/11/17/LaTeX-supplement/" rel="bookmark">LaTeX补充:矩阵外加描述元素</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/01/15/MCM-template/" rel="bookmark">美赛论文LaTeX模板</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/10/20/XDU-report-LaTeX-template/" rel="bookmark">西安电子科技大学实验报告LaTeX模板</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/03/latex-supplement1/" rel="bookmark">LaTeX补充:有关参考文献大小写问题</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LaTeX/" rel="tag"># LaTeX</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/26/datastructure/" rel="prev" title="数据结构">
+      <i class="fa fa-chevron-left"></i> 数据结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/13/new/" rel="next" title="更新">
+      更新 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#我的回答"><span class="nav-number">1.</span> <span class="nav-text">我的回答</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Liam-Huang前辈"><span class="nav-number">2.</span> <span class="nav-text">Liam-Huang前辈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#李阿玲前辈"><span class="nav-number">3.</span> <span class="nav-text">李阿玲前辈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Stone-zeng的回答"><span class="nav-number">4.</span> <span class="nav-text">Stone-zeng的回答</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#入门之前"><span class="nav-number">4.1.</span> <span class="nav-text">入门之前</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#入门教程"><span class="nav-number">4.2.</span> <span class="nav-text">入门教程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何找模版"><span class="nav-number">4.3.</span> <span class="nav-text">如何找模版</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TEX-要面向现代化、面向世界、面向未来"><span class="nav-number">4.4.</span> <span class="nav-text">TEX 要面向现代化、面向世界、面向未来</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">898k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'ef536c106022eed00c3472f73e842100',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

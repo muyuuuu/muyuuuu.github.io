@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：  求二叉树叶子节点的数量 求节点权重和 求距离根节点最近、最远的叶节点 求每一层节点的数量 遍历二叉树，求给定权值的路径 二叉查找树  而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适">
+<meta name="keywords" content="DataStructure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法系列：树">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/02/29/tree-algorithm/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：  求二叉树叶子节点的数量 求节点权重和 求距离根节点最近、最远的叶节点 求每一层节点的数量 遍历二叉树，求给定权值的路径 二叉查找树  而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-07-11T08:18:55.424Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法系列：树">
+<meta name="twitter:description" content="树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：  求二叉树叶子节点的数量 求节点权重和 求距离根节点最近、最远的叶节点 求每一层节点的数量 遍历二叉树，求给定权值的路径 二叉查找树  而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2020/02/29/tree-algorithm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>算法系列：树 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/02/29/tree-algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法系列：树
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-29 04:56:41" itemprop="dateCreated datePublished" datetime="2020-02-29T04:56:41+08:00">2020-02-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-11 16:18:55" itemprop="dateModified" datetime="2022-07-11T16:18:55+08:00">2022-07-11</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>树是数据结构中很重要的一种结构，在现实生活中常用于表达层次关系和非单一的映射关系，如一个老板下对应有多个员工。通过一段时间的算法练习，本文将树常见的算法收录整理，包括：</p>
+<ul>
+<li>求二叉树叶子节点的数量</li>
+<li>求节点权重和</li>
+<li>求距离根节点最近、最远的叶节点</li>
+<li>求每一层节点的数量</li>
+<li>遍历二叉树，求给定权值的路径</li>
+<li>二叉查找树</li>
+</ul>
+<p>而对于红黑树、2-3-4树等较为复杂的树结构，本文暂时不收录，仅收录较为简单容易理解的，本文适用于：编程不太好、但了解基本数据结构的人，你仅仅需要知道深度优先遍历、广度优先遍历、二叉树的根节点、普通节点、叶子节点的区别即可。</p>
+<a id="more"></a>
+<p>一类通常题目：求树的叶子数量，求每一层的节点数量，求树的最大高度，求叶子权重的和，都可以归类为对二叉树的遍历，所以本文更多的是树的遍历算法(深度优先或广度优先)的应用。其次，先序、中序、后序遍历树，对遍历顺序有严格的要求，一般不用此类方法遍历树去求解上述问题，一般都是解决先序中序转后序此类需求，在后续会写出此类问题的求解算法。</p>
+<p>警告：尽管文本做了详细的代码注释和讲解，但如果你只是准备靠本文的讲解企图理解代码，恐怕不太行，还需要自己多加练习和多思考。</p>
+<h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><h2 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h2><h3 id="654-最大二叉树"><a href="#654-最大二叉树" class="headerlink" title="654. 最大二叉树"></a>654. 最大二叉树</h3><p>给定一个不重复的整数数组 <code>nums</code>。 最大二叉树可以用下面的算法从 <code>nums</code> 递归地构建:</p>
+<ul>
+<li>创建一个根节点，其值为 <code>nums</code> 中的最大值。</li>
+<li>递归地在最大值 左边 的 子数组前缀上 构建左子树。</li>
+<li>递归地在最大值 右边 的 子数组后缀上 构建右子树。</li>
+<li>返回 <code>nums</code> 构建的 最大二叉树 。</li>
+</ul>
+<p>示例 1：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">输入：nums = [3,2,1,6,0,5]</span><br><span class="line">输出：[6,3,5,null,2,0,null,null,1]</span><br><span class="line">解释：递归调用如下所示：</span><br><span class="line">- [3,2,1,6,0,5] 中的最大值是 6 ，左边部分是 [3,2,1] ，右边部分是 [0,5] 。</span><br><span class="line">    - [3,2,1] 中的最大值是 3 ，左边部分是 [] ，右边部分是 [2,1] 。</span><br><span class="line">        - 空数组，无子节点。</span><br><span class="line">        - [2,1] 中的最大值是 2 ，左边部分是 [] ，右边部分是 [1] 。</span><br><span class="line">            - 空数组，无子节点。</span><br><span class="line">            - 只有一个元素，所以子节点是一个值为 1 的节点。</span><br><span class="line">    - [0,5] 中的最大值是 5 ，左边部分是 [0] ，右边部分是 [] 。</span><br><span class="line">        - 只有一个元素，所以子节点是一个值为 0 的节点。</span><br><span class="line">        - 空数组，无子节点。</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://s1.ax1x.com/2022/06/30/jMl15F.jpg" alt></p>
+<p>树的算法主要依赖于递归，假设有这么一个递归函数，返回的是所需要的节点，牢牢记住这一点。如果实在理解不了递归，那么只需要理解在调用这个函数的时候，知道它返回的是所需的节点即可。</p>
+<p>递归函数就是自己调用自己，因此需要确定好参数的类型和数量，因此下次还会用到这个函数。我们看一下这个题，根据数组创建树，如果找到了最大值，最大值左侧就是左子树，右侧就是右子树。而左右子树就需要索引来区分，不能越界，也就是说，不能把其他的节点放到当前子树中。因此，我们假定递归需要三个参数，数组 <code>nums</code>，子树的起点索引 <code>l</code> 和终点索引 <code>r</code>。</p>
+<ol>
+<li>第一次调用递归函数，传入的参数是 <code>nums, 0, nums.size()</code>。然后找到数组中的最大值，创建节点。假设最大值的索引是 <code>idx</code></li>
+<li>递归调用函数，创建节点的左子树，那么创建左子树的递归就是 <code>nums, 0, idx</code></li>
+<li>递归调用函数，创建节点的右子树，那么创建左子树的递归就是 <code>nums, idx+1, nums.size()</code></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">TreeNode* <span class="title">constructMaximumBinaryTree</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> build(nums, <span class="number">0</span>, nums.size());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// build 就是返回需要的节点</span></span><br><span class="line">    <span class="function">TreeNode* <span class="title">build</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> l, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 树的越界一定在函数最开始检查</span></span><br><span class="line">        <span class="keyword">if</span> (l &gt;= r) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> maxv = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">int</span> idx;</span><br><span class="line">        <span class="comment">// 找最大值和对应的索引</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = l; i &lt; r; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; maxv) &#123;</span><br><span class="line">                maxv = nums[i];</span><br><span class="line">                idx = i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 当前节点</span></span><br><span class="line">        TreeNode* node = <span class="keyword">new</span> TreeNode(maxv);</span><br><span class="line">        <span class="comment">// 当前节点的左子树</span></span><br><span class="line">        node-&gt;left = build(nums, l, idx);</span><br><span class="line">        <span class="comment">// 当前节点的右子树</span></span><br><span class="line">        node-&gt;right = build(nums, idx + <span class="number">1</span>, r);</span><br><span class="line">        <span class="comment">// 返回创建的，最大值根节点</span></span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h2><h3 id="剑指-Offer-68-I-二叉搜索树的最近公共祖先"><a href="#剑指-Offer-68-I-二叉搜索树的最近公共祖先" class="headerlink" title="剑指 Offer 68 - I. 二叉搜索树的最近公共祖先"></a>剑指 Offer 68 - I. 二叉搜索树的最近公共祖先</h3><p>给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。百度百科中最近公共祖先的定义为：对于有根树 <code>T</code> 的两个结点 <code>p</code>、<code>q</code>，最近公共祖先表示为一个结点 <code>x</code>，满足 <code>x</code> 是 <code>p</code>、<code>q</code> 的祖先且 <code>x</code> 的深度尽可能大（一个节点也可以是它自己的祖先）。</p>
+<p>例如，给定如下二叉搜索树:  root = [6,2,8,0,4,7,9,null,null,3,5]</p>
+<p><img data-src="https://s1.ax1x.com/2022/06/30/jMl8C4.png" alt></p>
+<p>这个算后续遍历了，因为要找两个节点的公共祖先，起码要先知道子节点在哪里，知道了子节点才能找到父节点。</p>
+<ul>
+<li>后序遍历时，如果遇到了要找的子节点，那么计数</li>
+<li>当计数满足条件时，当前节点就是深度最大的公共祖先</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    TreeNode* res = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="function">TreeNode* <span class="title">lowestCommonAncestor</span><span class="params">(TreeNode* root, TreeNode* p, TreeNode* q)</span> </span>&#123;</span><br><span class="line">        postorder(root, p, q);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">postorder</span><span class="params">(TreeNode* root, TreeNode* p, TreeNode* q)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 子树返回的值</span></span><br><span class="line">        <span class="keyword">int</span> r1 = postorder(root-&gt;left, p, q);</span><br><span class="line">        <span class="keyword">int</span> r2 = postorder(root-&gt;right, p, q);</span><br><span class="line">        a += (r1 + r2);</span><br><span class="line">        <span class="comment">// 当前节点是否满足，因为一个节点可以是自己的祖先</span></span><br><span class="line">        <span class="keyword">if</span> (root == p) &#123;</span><br><span class="line">            a += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (root == q) &#123;</span><br><span class="line">            a += <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果满足条件，那么找到的节点就是深度最大的公共祖先</span></span><br><span class="line">        <span class="keyword">if</span> (a == <span class="number">3</span> &amp;&amp; res == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            res = root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 返回当前子树的状态</span></span><br><span class="line">        <span class="comment">// 1 表示找到了 p</span></span><br><span class="line">        <span class="comment">// 0 表示没找到 q 和 p</span></span><br><span class="line">        <span class="comment">// 2 表示找到了 q</span></span><br><span class="line">        <span class="comment">// 3 表示都找到了</span></span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="652-寻找重复的子树"><a href="#652-寻找重复的子树" class="headerlink" title="652. 寻找重复的子树"></a>652. 寻找重复的子树</h2><p>给定一棵二叉树 <code>root</code>，返回所有重复的子树。对于同一类的重复子树，你只需要返回其中任意一棵的根结点即可。如果两棵树具有相同的结构和相同的结点值，则它们是重复的。</p>
+<p><img data-src="https://s1.ax1x.com/2022/06/30/jMlYvR.jpg" alt></p>
+<ul>
+<li>我们可以用深度优先遍历，去遍历一个节点及其子树，将数值拼接起来得到一个字符串。如果存在相同的字符串，就说明存在相同的子树</li>
+<li>根据题意，我们知道需要检查每一个节点对应的子树的结果</li>
+<li>也就是说，检查每一个节点需要遍历，而生成节点对应的结果又需要一次遍历，总共需要两次遍历。第一次遍历是为了遍历节点，第二次遍历是为了得到字符串。这两次遍历的任务不同，我们要写两个遍历函数</li>
+<li>那么在第一次遍历二叉树的时候，加入第二次遍历去得到字符串即可</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;TreeNode*&gt; res;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt; m;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;TreeNode*&gt; <span class="title">findDuplicateSubtrees</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        build(root);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第一次遍历</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">build</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">string</span> s = <span class="string">""</span>;</span><br><span class="line">        <span class="comment">// 得到当前节点的结果，第二次遍历</span></span><br><span class="line">        dfs(root, s);</span><br><span class="line">        m[s] += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (m[s] == <span class="number">2</span>) &#123;</span><br><span class="line">            res.push_back(root);</span><br><span class="line">        &#125;</span><br><span class="line">        build(root-&gt;left);</span><br><span class="line">        build(root-&gt;right);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(TreeNode* root, <span class="built_in">string</span>&amp; s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            s += <span class="string">"+"</span>;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        s += <span class="string">"="</span>;</span><br><span class="line">        s += to_string(root-&gt;val);</span><br><span class="line">        dfs(root-&gt;left, s);</span><br><span class="line">        dfs(root-&gt;right, s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h2><h3 id="116-填充每个节点的下一个右侧节点指针"><a href="#116-填充每个节点的下一个右侧节点指针" class="headerlink" title="116. 填充每个节点的下一个右侧节点指针"></a>116. 填充每个节点的下一个右侧节点指针</h3><p>给定一个 完美二叉树 ，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：填充它的每个 <code>next</code> 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 <code>next</code> 指针设置为 <code>NULL</code>。初始状态下，所有 <code>next</code> 指针都被设置为 <code>NULL</code>。</p>
+<p><img data-src="https://s1.ax1x.com/2022/06/30/jMlUDx.png" alt></p>
+<p>根据前文我们知道，递归是自己调用自己，且需要明确参数的数量和内容，这样才能方便的调用。如果理解不了递归的细节，就知道要让递归实现什么，直接调用即可，不要陷入递归的细节。</p>
+<p>在这个题中，我们发现需要造作两个指针 <code>a</code> 和 <code>b</code>，这两个指针是根节点的孩子，而且需要让 <code>a</code> 指向 <code>b</code>，子树也是如此。也就是说，递归有两个参数。因此，只需要传入两个参数，递归的处理左右子树即可，在递归函数中，完成 <code>a</code> 指向 <code>b</code> 的功能即可。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Node* <span class="title">connect</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 由于是完美二叉树，因此根节点必然有两个孩子</span></span><br><span class="line">        build(root-&gt;left, root-&gt;right);</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">build</span><span class="params">(Node* left, Node* right)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (left == <span class="literal">nullptr</span> || right == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 修改指针方向</span></span><br><span class="line">        left-&gt;next = right;</span><br><span class="line">        <span class="comment">// 处理左子树</span></span><br><span class="line">        build(left-&gt;left, left-&gt;right);</span><br><span class="line">        <span class="comment">// 处理右子树</span></span><br><span class="line">        build(right-&gt;left, right-&gt;right);</span><br><span class="line">        <span class="comment">// 左子树的右节点，需要指向右子树的左节点，参考图片的最后一行叶子节点中间部分</span></span><br><span class="line">        build(left-&gt;right, right-&gt;left);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="114-二叉树展开为链表"><a href="#114-二叉树展开为链表" class="headerlink" title="114. 二叉树展开为链表"></a>114. 二叉树展开为链表</h3><p>给你二叉树的根结点 <code>root</code> ，请你将它展开为一个单链表：展开后的单链表应该同样使用 <code>TreeNode</code> ，其中 <code>right</code> 子指针指向链表中下一个结点，而左子指针始终为 <code>null</code> 。展开后的单链表应该与二叉树 先序遍历 顺序相同。</p>
+<p><img data-src="https://s1.ax1x.com/2022/06/30/jMlab6.jpg" alt></p>
+<p>同样，我们只需要定义递归函数，并实现其功能即可。根据题意，这个递归函数的作用就是展平子树，实现这个函数后，递归的实现左右子树的展平，不必陷入递归的细节。而且，是先要展平子树，在展平当前节点，因为只有保证子树是展平的，才能保障当前节点可以展平。</p>
+<p><img data-src="https://s1.ax1x.com/2022/06/30/jMlwVK.jpg" alt></p>
+<ul>
+<li>如上图所示，先展平左右子树，直接 <code>flatten(left)</code> 和 <code>flatten(right)</code> 即可</li>
+<li>在展平之后，根节点的右指针指向左子树，然后移动到左子树的末尾，在指向右子树即可</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">flatten</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 展平子树</span></span><br><span class="line">        flatten(root-&gt;left);</span><br><span class="line">        flatten(root-&gt;right);</span><br><span class="line">        <span class="comment">// 根节点对应的左右子树</span></span><br><span class="line">        TreeNode* l = root-&gt;left;</span><br><span class="line">        TreeNode* r = root-&gt;right;</span><br><span class="line">        <span class="comment">// 右指针指向左子树</span></span><br><span class="line">        root-&gt;right = l;</span><br><span class="line">        <span class="comment">// 左子树为空</span></span><br><span class="line">        root-&gt;left = <span class="literal">nullptr</span>;</span><br><span class="line">        <span class="comment">// 移动到左子树的末尾</span></span><br><span class="line">        TreeNode* p = root;</span><br><span class="line">        <span class="keyword">while</span> (p-&gt;right != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            p = p-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 左子树指向右子树</span></span><br><span class="line">        p-&gt;right = r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h1><h2 id="208-实现-Trie-前缀树"><a href="#208-实现-Trie-前缀树" class="headerlink" title="208. 实现 Trie (前缀树)"></a>208. 实现 Trie (前缀树)</h2><p><code>Trie</code>（发音类似 “try”）或者说 前缀树 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。请你实现 Trie 类：</p>
+<ul>
+<li><code>Trie()</code> 初始化前缀树对象。</li>
+<li><code>void insert(String word)</code> 向前缀树中插入字符串 <code>word</code> 。</li>
+<li><code>boolean search(String word)</code> 如果字符串 <code>word</code> 在前缀树中，返回 <code>true</code>（即，在检索之前已经插入）；否则，返回 <code>false</code> 。</li>
+<li><code>boolean startsWith(String prefix)</code> 如果之前已经插入的字符串 <code>word</code> 的前缀之一为 <code>prefix</code> ，返回 <code>true</code>；否则，返回 <code>false</code> 。</li>
+</ul>
+<p>我想不到什么好的语言来描述前缀树。简单说一下就是，假设用树来查单词，单词字母都是小写。那么树的每个节点都有 26 个孩子，初始化为空。</p>
+<p>比如对于 <code>cat</code> 这个单词，根节点有 26 个孩子，<code>c</code> 节点不为空，<code>c</code> 节点有 26 个孩子，<code>a</code> 不为空，<code>a</code> 节点有 26 个孩子，<code>t</code> 不为空，且 <code>t</code> 节点设置一个结束符，表示 <code>cat</code> 这个单词到 <code>t</code> 这里就结束了。</p>
+<p>因此我们能在这个树中查到 <code>cat</code> 这个单词。浪费空间？不是的，转念一想，为 <code>cat</code> 这个单词建的树，是不是能容纳所有的长度为 3 的单词？<code>and,but,how</code> 等单词都能存进来，且能实现 $O(1)$ 时间的查找。</p>
+<p>说了这么多，看一下这个树如何实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Trie</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;Trie*&gt; child;</span><br><span class="line">    <span class="keyword">bool</span> end;</span><br><span class="line">    <span class="comment">// 26 个孩子和结束符</span></span><br><span class="line">    Trie() &#123;</span><br><span class="line">        child.resize(<span class="number">26</span>);</span><br><span class="line">        end = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="built_in">string</span> word)</span> </span>&#123;</span><br><span class="line">        Trie* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : word) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="comment">// 所有的孩子节点中，这个字母对应的节点不为空</span></span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                node-&gt;child[a] = <span class="keyword">new</span> Trie();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 构建孩子节点的子节点</span></span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 结束符，表示这个单词到此结束</span></span><br><span class="line">        node-&gt;end = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 搜索同理</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">search</span><span class="params">(<span class="built_in">string</span> word)</span> </span>&#123;</span><br><span class="line">        Trie* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : word) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果搜索的不是结束符，返回 false</span></span><br><span class="line">        <span class="comment">// 如 apple 在词表中，但 app 不在</span></span><br><span class="line">        <span class="comment">// 不能返回 true</span></span><br><span class="line">        <span class="keyword">if</span> (node-&gt;end == <span class="literal">false</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">startsWith</span><span class="params">(<span class="built_in">string</span> prefix)</span> </span>&#123;</span><br><span class="line">        Trie* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : prefix) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="211-添加与搜索单词-数据结构设计"><a href="#211-添加与搜索单词-数据结构设计" class="headerlink" title="211. 添加与搜索单词 - 数据结构设计"></a>211. 添加与搜索单词 - 数据结构设计</h2><p>请你设计一个数据结构，支持 添加新单词 和 查找字符串是否与任何先前添加的字符串匹配 。</p>
+<p>实现词典类 <code>WordDictionary</code> ：</p>
+<ul>
+<li><code>WordDictionary()</code> 初始化词典对象</li>
+<li><code>void addWord(word)</code> 将 <code>word</code> 添加到数据结构中，之后可以对它进行匹配</li>
+<li><code>bool search(word)</code> 如果数据结构中存在字符串与 <code>word</code> 匹配，则返回 <code>true</code> ；否则，返回 <code>false</code> 。<code>word</code> 中可能包含一些 ‘.’ ，每个 . 都可以表示任何一个字母。</li>
+</ul>
+<p>由于 <code>.</code> 可以代表任何一个字符，因此需要对 <code>.</code> 进行处理，使其可以表示任何一个字母。不过这就需要递归处理来使得程序优美一些：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代表 26 个字母</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; i++) &#123;</span><br><span class="line">    <span class="comment">// 只要不为空，就依次检查</span></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;child[i] != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (subsearch(word, idx + <span class="number">1</span>, node-&gt;child[i]) == <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WordDictionary</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;WordDictionary*&gt; child;</span><br><span class="line">    <span class="keyword">bool</span> end = <span class="literal">false</span>;</span><br><span class="line">    WordDictionary() &#123;</span><br><span class="line">        child.resize(<span class="number">26</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addWord</span><span class="params">(<span class="built_in">string</span> word)</span> </span>&#123;</span><br><span class="line">        WordDictionary* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : word) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                node-&gt;child[a] = <span class="keyword">new</span> WordDictionary();</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">        &#125;</span><br><span class="line">        node-&gt;end = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">subsearch</span><span class="params">(<span class="built_in">string</span> word, <span class="keyword">int</span> idx, WordDictionary* node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (idx &gt;= word.size()) &#123;</span><br><span class="line">            <span class="keyword">return</span> node-&gt;end;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">auto</span> ch = word[idx];</span><br><span class="line">        <span class="keyword">if</span> (ch == <span class="string">'.'</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">26</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (node-&gt;child[i] != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (subsearch(word, idx + <span class="number">1</span>, node-&gt;child[i]) == <span class="literal">true</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (subsearch(word, idx + <span class="number">1</span>, node-&gt;child[a]) == <span class="literal">true</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">search</span><span class="params">(<span class="built_in">string</span> word)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> subsearch(word, <span class="number">0</span>, <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your WordDictionary object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * WordDictionary* obj = new WordDictionary();</span></span><br><span class="line"><span class="comment"> * obj-&gt;addWord(word);</span></span><br><span class="line"><span class="comment"> * bool param_2 = obj-&gt;search(word);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<h3 id="648-单词替换"><a href="#648-单词替换" class="headerlink" title="648. 单词替换"></a>648. 单词替换</h3><p>在英语中，我们有一个叫做 词根(root) 的概念，可以词根后面添加其他一些词组成另一个较长的单词——我们称这个词为 继承词(successor)。例如，词根 an，跟随着单词 other(其他)，可以形成新的单词 another (另一个)。</p>
+<p>现在，给定一个由许多词根组成的词典 <code>dictionary</code> 和一个用空格分隔单词形成的句子 <code>sentence</code>。你需要将句子中的所有继承词用词根替换掉。如果继承词有许多可以形成它的词根，则用最短的词根替换它。你需要输出替换之后的句子。</p>
+<p>就是前缀树的基础应用了，因为需要寻找最短的前缀，因此遇到结束符就立刻返回；如果查找不到这个单词，那么就返回空。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tree</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;Tree*&gt; child;</span><br><span class="line">    <span class="keyword">bool</span> end = <span class="literal">false</span>;</span><br><span class="line">    Tree() &#123;</span><br><span class="line">        child.resize(<span class="number">26</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span> <span class="params">(<span class="built_in">string</span>&amp; word)</span> </span>&#123;</span><br><span class="line">        Tree* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : word) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                node-&gt;child[a] = <span class="keyword">new</span> Tree();</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">        &#125;</span><br><span class="line">        node-&gt;end = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">search</span><span class="params">(<span class="built_in">string</span>&amp; word)</span> </span>&#123;</span><br><span class="line">        Tree* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="built_in">string</span> res = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : word) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                res += ch;</span><br><span class="line">                node = node-&gt;child[a];</span><br><span class="line">                <span class="keyword">if</span> (node-&gt;end == <span class="literal">true</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> res;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">replaceWords</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; dictionary, <span class="built_in">string</span> sentence)</span> </span>&#123;</span><br><span class="line">        Tree node;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> it : dictionary) &#123;</span><br><span class="line">            node.insert(it);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">string</span> res, tmp;</span><br><span class="line">        <span class="built_in">stringstream</span> ss&#123;sentence&#125;;</span><br><span class="line">        <span class="keyword">while</span> (ss &gt;&gt; tmp) &#123;</span><br><span class="line">            res += <span class="string">" "</span>;</span><br><span class="line">            <span class="keyword">auto</span> a = node.search(tmp);</span><br><span class="line">            <span class="keyword">if</span> (a != <span class="string">""</span>) &#123;</span><br><span class="line">                res += a; </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                res += tmp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res.substr(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="677-键值映射"><a href="#677-键值映射" class="headerlink" title="677. 键值映射"></a>677. 键值映射</h2><p>设计一个 <code>map</code> ，满足以下几点:</p>
+<ul>
+<li>字符串表示键，整数表示值</li>
+<li>返回具有前缀等于给定字符串的键的值的总和</li>
+<li><p>实现一个 <code>MapSum</code> 类：</p>
+</li>
+<li><p><code>MapSum()</code> 初始化 <code>MapSum</code> 对象</p>
+</li>
+<li><code>void insert(String key, int val)</code> 插入 <code>key-val</code> 键值对，字符串表示键 <code>key</code> ，整数表示值 <code>val</code> 。如果键 <code>key</code> 已经存在，那么原来的键值对 <code>key-value</code> 将被替代成新的键值对。</li>
+<li><code>int sum(string prefix)</code> 返回所有以该前缀 <code>prefix</code> 开头的键 <code>key</code> 的值的总和。</li>
+</ul>
+<p>这个题也比较简单，假设 <code>apple</code> 对应的值为 5，而后插入 <code>app</code> 值为 <code>3</code>，那么 <code>ap</code> 前缀对应的和就是 8，也就是在 5 的基础上加了 3。如果再次插入 <code>apple</code> 此时值为 4，那么 <code>ap</code> 前缀对应的和就是 7，且 <code>apple</code> 对应的值是 4。</p>
+<p>如此我们可以看到，只有插入存在过的单词时，才会修改数值。由于插入不存在的单词，数值的更新方式是 <code>+=</code>，参考上述例子。为了统一这一点，我们需要设置一个 <code>map</code>，并记录本次插入的值。</p>
+<p>如果这个字符串是第二次插入，那么就需要对值进行修改，比如 <code>apple</code> 第一次是 5，<code>map</code> 存入 5；第二次是 3，那么 <code>+=</code> 的值就应该是 -2，<code>map</code> 存入 3。如果第三次是 6，那么加等于的值就是 3，<code>map</code> 存入 6。也就是，<code>+=</code> 的数值就是本次插入的值减去 <code>map</code> 中存入的值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MapSum</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">vector</span>&lt;MapSum*&gt; child;</span><br><span class="line">    <span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt; m;</span><br><span class="line">    MapSum() &#123;</span><br><span class="line">        child.resize(<span class="number">26</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="built_in">string</span> key, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        MapSum* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">int</span> v = val;</span><br><span class="line">        <span class="keyword">if</span> (m.count(key)) &#123;</span><br><span class="line">            v = val - m[key];</span><br><span class="line">        &#125;</span><br><span class="line">        m[key] = val;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : key) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                node-&gt;child[a] = <span class="keyword">new</span> MapSum();</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">            node-&gt;cnt += v;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">sum</span><span class="params">(<span class="built_in">string</span> prefix)</span> </span>&#123;</span><br><span class="line">        MapSum* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch : prefix) &#123;</span><br><span class="line">            <span class="keyword">int</span> a = ch - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;child[a] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;child[a];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node-&gt;cnt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your MapSum object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * MapSum* obj = new MapSum();</span></span><br><span class="line"><span class="comment"> * obj-&gt;insert(key,val);</span></span><br><span class="line"><span class="comment"> * int param_2 = obj-&gt;sum(prefix);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>本文构最初思于 2019 年 6 月通过刷题学习数据结构时期，第一次整理发表于 2020 年 2 月。本文全部参考了<a href="https://github.com/liuchuo/PAT/tree/master/AdvancedLevel_C%2B%2B" target="_blank" rel="noopener">柳神</a>的程序，而非我本人的原创。但是我都花精力研究了程序、重写程序、最后做了归纳整理。</p>
+<p>时间流转，2022 年由于找工作的需要，又开始整理一些 <code>leetcode</code> 题目，<code>PAT</code> 题目过于简单也从本文中删去退出了历史舞台，但我依然敬佩柳神，也从她的程序中受益颇多。</p>
+<p>如果你初学数据结构或刷题，我强烈建议做一下 <code>PAT</code> 的基础题目掌握数据结构，也建议观摩柳神的程序。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2018/11/03/AVL-RB-tree/" rel="bookmark">AVL树的Python实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/03/02/algorithm-time-complexity/" rel="bookmark">简易理解算法时间复杂度的重要性</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2022/05/22/array-series/" rel="bookmark">算法系列：数组类题目</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/17/cg/" rel="prev" title="计算机图形学笔记">
+      <i class="fa fa-chevron-left"></i> 计算机图形学笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/02/algorithm-time-complexity/" rel="next" title="简易理解算法时间复杂度的重要性">
+      简易理解算法时间复杂度的重要性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#树"><span class="nav-number">1.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#构建"><span class="nav-number">1.1.</span> <span class="nav-text">构建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#654-最大二叉树"><span class="nav-number">1.1.1.</span> <span class="nav-text">654. 最大二叉树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遍历"><span class="nav-number">1.2.</span> <span class="nav-text">遍历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#剑指-Offer-68-I-二叉搜索树的最近公共祖先"><span class="nav-number">1.2.1.</span> <span class="nav-text">剑指 Offer 68 - I. 二叉搜索树的最近公共祖先</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#652-寻找重复的子树"><span class="nav-number">1.3.</span> <span class="nav-text">652. 寻找重复的子树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#递归"><span class="nav-number">1.4.</span> <span class="nav-text">递归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#116-填充每个节点的下一个右侧节点指针"><span class="nav-number">1.4.1.</span> <span class="nav-text">116. 填充每个节点的下一个右侧节点指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#114-二叉树展开为链表"><span class="nav-number">1.4.2.</span> <span class="nav-text">114. 二叉树展开为链表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前缀树"><span class="nav-number">2.</span> <span class="nav-text">前缀树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#208-实现-Trie-前缀树"><span class="nav-number">2.1.</span> <span class="nav-text">208. 实现 Trie (前缀树)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#211-添加与搜索单词-数据结构设计"><span class="nav-number">2.2.</span> <span class="nav-text">211. 添加与搜索单词 - 数据结构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#648-单词替换"><span class="nav-number">2.2.1.</span> <span class="nav-text">648. 单词替换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#677-键值映射"><span class="nav-number">2.3.</span> <span class="nav-text">677. 键值映射</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">898k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'fcf0796a001f40f3858151270612daa6',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

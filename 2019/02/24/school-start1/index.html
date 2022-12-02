@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="开学前的瞎折腾第二弹，爬取博客数据，分析作者喜好。 在写这个的时候，突然想起来开学的英文单词怎么说来？百度翻译居然是open school，我自己瞎翻译的school start，话说正确的翻译应该是啥。 然后还是闲的没事开始写起了爬虫，恩，记得是上Web编程课的时候没兴趣听，自己开始在下面瞎鼓捣爬虫技术，当时爬了几个小例子但是也没搞太明白，不如实战一下。 回归正题，本文收录内容：使用爬虫爬取我自">
+<meta name="keywords" content="Python,Resptile">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫系列（一）——简单的爬取与页面解析">
+<meta property="og:url" content="https://muyuuuu.github.io/2019/02/24/school-start1/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="开学前的瞎折腾第二弹，爬取博客数据，分析作者喜好。 在写这个的时候，突然想起来开学的英文单词怎么说来？百度翻译居然是open school，我自己瞎翻译的school start，话说正确的翻译应该是啥。 然后还是闲的没事开始写起了爬虫，恩，记得是上Web编程课的时候没兴趣听，自己开始在下面瞎鼓捣爬虫技术，当时爬了几个小例子但是也没搞太明白，不如实战一下。 回归正题，本文收录内容：使用爬虫爬取我自">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-20T23:35:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="爬虫系列（一）——简单的爬取与页面解析">
+<meta name="twitter:description" content="开学前的瞎折腾第二弹，爬取博客数据，分析作者喜好。 在写这个的时候，突然想起来开学的英文单词怎么说来？百度翻译居然是open school，我自己瞎翻译的school start，话说正确的翻译应该是啥。 然后还是闲的没事开始写起了爬虫，恩，记得是上Web编程课的时候没兴趣听，自己开始在下面瞎鼓捣爬虫技术，当时爬了几个小例子但是也没搞太明白，不如实战一下。 回归正题，本文收录内容：使用爬虫爬取我自">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2019/02/24/school-start1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>爬虫系列（一）——简单的爬取与页面解析 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2019/02/24/school-start1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          爬虫系列（一）——简单的爬取与页面解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-24 19:17:38" itemprop="dateCreated datePublished" datetime="2019-02-24T19:17:38+08:00">2019-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-21 07:35:40" itemprop="dateModified" datetime="2020-03-21T07:35:40+08:00">2020-03-21</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>开学前的瞎折腾第二弹，爬取博客数据，分析作者喜好。</p>
+<p>在写这个的时候，突然想起来开学的英文单词怎么说来？百度翻译居然是open school，我自己瞎翻译的school start，话说正确的翻译应该是啥。</p>
+<p>然后还是闲的没事开始写起了爬虫，恩，记得是上<strong>Web</strong>编程课的时候没兴趣听，自己开始在下面瞎鼓捣爬虫技术，当时爬了几个小例子但是也没搞太明白，不如实战一下。</p>
+<p>回归正题，本文收录内容：使用爬虫爬取我自己的博客，当然给出最通用的爬虫分析和程序，内容如下：</p>
+<ul>
+<li>博客的主要发表时间</li>
+<li>博客的数量，标题；</li>
+<li>标签的数量种类，用户偏好等</li>
+<li>使用<code>matplotlib</code>粗暴的绘图分析一下</li>
+</ul>
+<p>因不蒜子暂时没有开放第三方的API，所以没办法爬取每篇博客的访问量，分析博主哪类文章写的比较受欢迎，等不蒜子开放API后再来完善此工作。</p>
+<p>注意，以下python程序最好在<code>jupyter lab</code>中运行，写一句看一句，而且后面的程序还会用到前面的变量。</p>
+<a id="more"></a>
+<h2 id="爬虫"><a href="#爬虫" class="headerlink" title="爬虫"></a>爬虫</h2><p>我最通俗的理解，一个程序，这个程序将想要访问的网址（一个或多个）下载下来，然后解析一下网址内容，获取里面想要的数据。当然也可能自己在海量的网页里手动下载数据，那么我在这里祝你长命百岁。</p>
+<p>上面提到了两个概念，下载网页内容和解析网页内容，这个时候python依靠强大的计算生态很好的完成了任务，目前比较受欢迎的下载请求库为<code>requests</code>，解析库为<code>BeautifulSoup</code>。</p>
+<p>一个简单的例子，在中国大学排名网中爬取前十名的学校。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line">allUniv = []</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getHTMLText</span><span class="params">(url)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    encoding是编码方式</span></span><br><span class="line"><span class="string">    status_code属性是返回状态，200正常，404失败</span></span><br><span class="line"><span class="string">    text是文本对应页面内容</span></span><br><span class="line"><span class="string">    raise_for_status()是方法，与status_code相同</span></span><br><span class="line"><span class="string">    timeout是请求超时时间</span></span><br><span class="line"><span class="string">    get主要是获得数据</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        r = requests.get(url, timeout=<span class="number">30</span>)</span><br><span class="line">        r.raise_for_status()</span><br><span class="line">        r.encoding = <span class="string">'utf-8'</span></span><br><span class="line">        <span class="keyword">return</span> r.text</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fillUnivList</span><span class="params">(soup)</span>:</span></span><br><span class="line">    <span class="comment"># 解析后 搜索所有的tr标签和td标签内容</span></span><br><span class="line">    <span class="comment"># 因为在网址中，我们发现想要的数据在&lt;tr&gt;&lt;td&gt;所组成的标签中</span></span><br><span class="line">    <span class="comment"># 网页中，tr表示换行，td表示换列，这俩组合起来就是一个表格</span></span><br><span class="line">    data = soup.find_all(<span class="string">'tr'</span>)</span><br><span class="line">    <span class="keyword">for</span> tr <span class="keyword">in</span> data:</span><br><span class="line">        ltd = tr.find_all(<span class="string">'td'</span>)</span><br><span class="line">        <span class="keyword">if</span> len(ltd) == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        singleUniv = []</span><br><span class="line">        <span class="keyword">for</span> td <span class="keyword">in</span> ltd:</span><br><span class="line">            singleUniv.append(td.string)</span><br><span class="line">        allUniv.append(singleUniv)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">printUnivList</span><span class="params">(num)</span>:</span></span><br><span class="line">    print(<span class="string">"&#123;:^4&#125;&#123;:^10&#125;&#123;:^5&#125;&#123;:^8&#125;&#123;:^10&#125;"</span>.format(<span class="string">"排名"</span>,<span class="string">"学校名称"</span>,<span class="string">"省市"</span>,<span class="string">"总分"</span>,<span class="string">"培养规模"</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(num):</span><br><span class="line">        u = allUniv[i]</span><br><span class="line">        print(<span class="string">"&#123;:^4&#125;&#123;:^10&#125;&#123;:^5&#125;&#123;:^8&#125;&#123;:^10&#125;"</span>.format(u[<span class="number">0</span>],u[<span class="number">1</span>],u[<span class="number">2</span>],u[<span class="number">3</span>],u[<span class="number">6</span>]))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    url = <span class="string">'http://www.zuihaodaxue.cn/zuihaodaxuepaiming2016.html'</span></span><br><span class="line">    html = getHTMLText(url)</span><br><span class="line">    <span class="comment"># 直接解析网址内容</span></span><br><span class="line">    soup = BeautifulSoup(html, <span class="string">"html.parser"</span>)</span><br><span class="line">    fillUnivList(soup)</span><br><span class="line">    printUnivList(<span class="number">10</span>)</span><br><span class="line">    </span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<p><img data-src="/2019/02/24/school-start1/1.png" alt></p>
+<hr>
+<h2 id="爬取标题"><a href="#爬取标题" class="headerlink" title="爬取标题"></a>爬取标题</h2><p>先访问（下载）一下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">home_url = <span class="string">"https://muyuuuu.github.io/"</span></span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line">r = requests.get(home_url)</span><br></pre></td></tr></table></figure></p>
+<p>访问成功后开始解析，访问不成功的话，抱歉我不知道怎么解决。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">soup = BeautifulSoup(r.text, <span class="string">"lxml"</span>)</span><br></pre></td></tr></table></figure>
+<p>接下来借助正则表达式，来爬取博客的标题：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="comment"># 这个正则表达式能匹配所有的&lt;title&gt;在尖括号里面的标签</span></span><br><span class="line">p_ = re.compile(<span class="string">'&lt;[^&gt;]+&gt;'</span>)  </span><br><span class="line"><span class="comment"># 匹配之后，在soup.title里面去掉这个尖括号，得到的就是标题</span></span><br><span class="line">blog_title = p_.sub(<span class="string">""</span>, str(soup.title))</span><br><span class="line"><span class="comment"># 为了对比清晰，也输出一下soup.title</span></span><br><span class="line">print(str(home_url) + <span class="string">'Blog Title is : \n'</span> + str(blog_title))</span><br><span class="line">print(soup.title)</span><br></pre></td></tr></table></figure>
+<p>输出如下：</p>
+<p><img data-src="/2019/02/24/school-start1/2.png" alt></p>
+<hr>
+<h2 id="爬取标签"><a href="#爬取标签" class="headerlink" title="爬取标签"></a>爬取标签</h2><p>在我的博客中，标签页是使用<code>tags</code>命名的，如果标签页不一样记得修改。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tags_url = home_url + <span class="string">r'tags/'</span></span><br></pre></td></tr></table></figure>
+<p>然后开始访问标签页和解析：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r_tags = requests.get(tags_url)</span><br><span class="line">soup = BeautifulSoup(r_tags.text, <span class="string">"lxml"</span>)</span><br><span class="line">body = soup.body</span><br></pre></td></tr></table></figure>
+<h3 id="爬取标签数量"><a href="#爬取标签数量" class="headerlink" title="爬取标签数量"></a>爬取标签数量</h3><p>然后我们查看<code>body</code>中的内容，发现所有的标签是这样的，标签都位于<code>div</code>中类名是<code>tag-cloud-tags</code>里面，然后还需要获取标签的内容：标签都位于tag-cloud-tags中的a部分。图太大了，没截全。</p>
+<p><img data-src="/2019/02/24/school-start1/3.png" alt></p>
+<p>然后就毫不留情的获取这里的内容，看看这里有几个标签：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data = body.find(<span class="string">'div'</span>, &#123;<span class="string">'class'</span>:<span class="string">'tag-cloud-tags'</span>&#125;)</span><br><span class="line">a = data.find_all(<span class="string">'a'</span>)  </span><br><span class="line">print(str(home_url) + <span class="string">'Blog tag number : '</span> + str(len(a)))</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<p><img data-src="/2019/02/24/school-start1/4.png" alt></p>
+<h3 id="爬取标签内容"><a href="#爬取标签内容" class="headerlink" title="爬取标签内容"></a>爬取标签内容</h3><p>首先我们来看看<code>a</code>里面的内容都是啥：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tag_size = []</span><br><span class="line">tag_name = []</span><br><span class="line">print(a[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/5.png" alt></p>
+<p>如果是这样的话，接着用上面的<code>p_</code>正则表达式去除尖括号，留下的就是标签内容啦：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p_ = re.compile(<span class="string">'&lt;[^&gt;]+&gt;'</span>)  </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(a)):</span><br><span class="line">    tag_name.append(p_.sub(<span class="string">""</span>, str(a[i])))</span><br><span class="line">    </span><br><span class="line">print(tag_name)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/6.png" alt></p>
+<p>然后细心的会发现，在<code>hexo-next</code>主题中，标签字的大小能体现出标签的数量多少，比如在上面的<code>a</code>中，我们发现，<code>Algorithm</code>的字体大小是<code>22.29px</code>，<code>C51</code>的大小是<code>12px</code>，因为我经常写算法的文章，自从参加完比赛写了个小车后就没碰过<code>C51</code>，所以<code>C51</code>的标签就比较少。</p>
+<p>接着利用正则表达式匹配出这些数字来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p_size = re.compile(<span class="string">'\s\d&#123;2&#125;.*px'</span>)</span><br><span class="line">tag_size = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(a)):</span><br><span class="line">    tag_size.append(p_size.findall(str(a[i]))) </span><br><span class="line">print(tag_size)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/7.png" alt></p>
+<p>发现这么处理都是字符串加列表，不利于后面写代码，稍微预处理一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用于匹配数字</span></span><br><span class="line">test = re.compile(<span class="string">r'\d+\.?\d+'</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(tag_size)):</span><br><span class="line">    tag_size[i] = (test.findall(str(tag_size[i][<span class="number">0</span>])))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(tag_size)):</span><br><span class="line">    tag_size[i] = float(tag_size[i][<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<p>然后一切正常：</p>
+<p><img data-src="/2019/02/24/school-start1/8.png" alt></p>
+<p>接下来画个图，统计一下标签：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"> </span><br><span class="line">name_list = tag_name</span><br><span class="line">num_list = tag_size</span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>, <span class="number">10</span>))</span><br><span class="line">plt.bar(range(len(num_list)), num_list, width=<span class="number">0.8</span>, tick_label=name_list)</span><br><span class="line"><span class="comment"># plt.show()</span></span><br><span class="line"></span><br><span class="line">font2 = &#123;</span><br><span class="line"><span class="string">'weight'</span> : <span class="string">'normal'</span>,</span><br><span class="line"><span class="string">'size'</span>   : <span class="number">30</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># plt.xlabel(tag_name,font2)</span></span><br><span class="line"></span><br><span class="line">plt.tick_params(labelsize=<span class="number">23</span>)</span><br><span class="line">plt.xticks(rotation=<span class="number">270</span>)</span><br><span class="line">plt.savefig(<span class="string">'test.png'</span>, dpi=<span class="number">200</span>)</span><br></pre></td></tr></table></figure>
+<p>分析结果如下：</p>
+<p><img data-src="/2019/02/24/school-start1/9.png" alt></p>
+<hr>
+<h2 id="爬取时间"><a href="#爬取时间" class="headerlink" title="爬取时间"></a>爬取时间</h2><p>在我的hexo-next主题下的博客中，使用了创建时间和更新时间，所以我能爬取到我每个博客的创建时间，如果博客没有创建时间的这个接口的话，就别瞎折腾了。</p>
+<p>而且，每篇博客的创建时间在当前主页面中都有，也就是打开我博客第一页，第二页也好，都会发现五篇博客的创建时间。</p>
+<p>同样，查看<code>home_url</code>返回的解析内容，发现创建时间位于<code>time</code>标签下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">r = requests.get(home_url)</span><br><span class="line">soup = BeautifulSoup(r.text, <span class="string">"lxml"</span>)</span><br><span class="line">body = soup.body</span><br><span class="line"><span class="comment"># 搜索所有的time标签</span></span><br><span class="line">data = body.find_all(<span class="string">'time'</span>)</span><br><span class="line">print(data)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/10.png" alt></p>
+<p>然后利用正则表达式匹配创建时间：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">publish_time = []</span><br><span class="line">time = re.compile(<span class="string">'创建时间：\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;'</span>)</span><br><span class="line">publish_time.extend(time.findall(str(data)))</span><br><span class="line">print(publish_time)</span><br></pre></td></tr></table></figure>
+<h3 id="爬取博客数量"><a href="#爬取博客数量" class="headerlink" title="爬取博客数量"></a>爬取博客数量</h3><p>因为目前我的博客页数为<code>6</code>页，每页最多<code>5</code>篇博客，所以，我需要让程序模拟人的行为，自动点击下一页，一共爬取这六页博客中的创建时间：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># page2表示第二页，模拟浏览器点击下一页</span></span><br><span class="line"><span class="keyword">for</span> page <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">7</span>):</span><br><span class="line">    url = home_url + <span class="string">r'/page/'</span> + str(page) + <span class="string">r'/'</span></span><br><span class="line">    r = requests.get(url)</span><br><span class="line">    soup = BeautifulSoup(r.text, <span class="string">"lxml"</span>)</span><br><span class="line">    body = soup.body</span><br><span class="line">    data = body.find_all(<span class="string">'time'</span>)</span><br><span class="line">    publish_time.extend(time.findall(str(data)))</span><br><span class="line">print(publish_time)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/11.png" alt></p>
+<p>根据博客的创建时间，就能得到博客的数量(一个博客肯定，只能对应一个创建时间)：</p>
+<p><img data-src="/2019/02/24/school-start1/12.png" alt></p>
+<h3 id="分析时间因素"><a href="#分析时间因素" class="headerlink" title="分析时间因素"></a>分析时间因素</h3><p>然后就开始统计，博主经常在哪年哪月经常发博客了，其实上面对时间的正则匹配上，亦可以多匹配出时间点，就能分析出博主经常在几点发博客了，是上午发，下午发，还是标准的夜猫子。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">time_sub = re.compile(<span class="string">r'创建时间：'</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(publish_time)):</span><br><span class="line">    publish_time[i] = time_sub.sub(<span class="string">""</span>, publish_time[i])</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/13.png" alt></p>
+<p>然后就从上面的结果中分离出年份和月份。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">year = []</span><br><span class="line">month = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># 匹配年</span></span><br><span class="line">year_pattern = re.compile(<span class="string">r'\d&#123;4&#125;'</span>)</span><br><span class="line"><span class="comment"># 匹配月</span></span><br><span class="line">month_pattern = re.compile(<span class="string">r'-\d&#123;2&#125;-'</span>)</span><br><span class="line"><span class="comment"># 删除月份中的短线</span></span><br><span class="line">month_sub = re.compile(<span class="string">r'-'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> date <span class="keyword">in</span> range(len(publish_time)):</span><br><span class="line">    year.extend(year_pattern.findall(publish_time[date]))</span><br><span class="line">    month.extend(month_pattern.findall(publish_time[date]))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> date <span class="keyword">in</span> range(len(month)):</span><br><span class="line">    month[date] = month_sub.sub(<span class="string">""</span>,month[date])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 匹配后是字符串，此处转换为数值</span></span><br><span class="line">year = list(map(eval, year))</span><br><span class="line">month = list(map(int, month))</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/14.png" alt></p>
+<p>然后就开始数据分析专场的开车了，是时候导入pandas了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">year_result = pd.value_counts(year)</span><br><span class="line"></span><br><span class="line">name_list = year_result.index</span><br><span class="line">num_list = year_result.values</span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>, <span class="number">10</span>))</span><br><span class="line">plt.bar(range(len(num_list)), num_list, width=<span class="number">0.6</span>, tick_label=name_list)</span><br><span class="line"><span class="comment"># plt.show()</span></span><br><span class="line"></span><br><span class="line">font2 = &#123;</span><br><span class="line"><span class="string">'weight'</span> : <span class="string">'normal'</span>,</span><br><span class="line"><span class="string">'size'</span>   : <span class="number">30</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># plt.xlabel(tag_name,font2)</span></span><br><span class="line"></span><br><span class="line">plt.tick_params(labelsize=<span class="number">23</span>)</span><br><span class="line">plt.xticks(rotation=<span class="number">270</span>)</span><br><span class="line">plt.savefig(<span class="string">'test1.png'</span>, dpi=<span class="number">200</span>)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/15.png" alt></p>
+<p>没错，我2018年9月搭建的博客，所以目前2018年的博客数量最多。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">month_result = pd.value_counts(month)</span><br><span class="line"></span><br><span class="line">name_list = month_result.index</span><br><span class="line">num_list = month_result.values</span><br><span class="line">plt.figure(figsize=(<span class="number">20</span>, <span class="number">10</span>))</span><br><span class="line">plt.bar(range(len(num_list)), num_list, width=<span class="number">0.6</span>, tick_label=name_list)</span><br><span class="line"><span class="comment"># plt.show()</span></span><br><span class="line"></span><br><span class="line">font2 = &#123;</span><br><span class="line"><span class="string">'weight'</span> : <span class="string">'normal'</span>,</span><br><span class="line"><span class="string">'size'</span>   : <span class="number">30</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># plt.xlabel(tag_name,font2)</span></span><br><span class="line"></span><br><span class="line">plt.tick_params(labelsize=<span class="number">23</span>)</span><br><span class="line">plt.xticks(rotation=<span class="number">270</span>)</span><br><span class="line">plt.savefig(<span class="string">'test2.png'</span>, dpi=<span class="number">200</span>)</span><br></pre></td></tr></table></figure>
+<p><img data-src="/2019/02/24/school-start1/16.png" alt></p>
+<p>看来目前集中在秋冬两季写博客。</p>
+<hr>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>留下三个坑等自己填吧：</p>
+<ul>
+<li><p>在时间分析的角度，可以更换正则表达式匹配，匹配出时间点，分析博主经常在几点发博客，进而分析作息规律。（貌似又回到了数据分析的老本行）</p>
+</li>
+<li><p>等待不蒜子开放第三方API，爬取每篇博客的访问人数，就能知道博主写的哪方面的博客最受欢迎了。</p>
+</li>
+<li><p>分析每篇博客的创建时间和更新时间，能够反映出博主对博客的维护程度与热爱与否。</p>
+</li>
+</ul>
+<p>其实爬虫更像是数据结构的过程，先查看网页源代码，分析网页的结构，利用库解析结构后，怎么导出数据就看自己编程功底了。又是在变相的考察数据结构这个计算机的送命课。</p>
+<hr>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/05/19/basic-nlp/" rel="bookmark">从分词到自然语言的世界</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/07/23/generator-and-iterator/" rel="bookmark">迭代器与生成器</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/10/06/pyqt5-basic/" rel="bookmark">PyQt5的基本控件整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/10/11/pyqt-pit/" rel="bookmark">PyQt5踩坑</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/Resptile/" rel="tag"># Resptile</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/24/school-start/" rel="prev" title="临近开学的瞎折腾——软件开发(PyQt5)">
+      <i class="fa fa-chevron-left"></i> 临近开学的瞎折腾——软件开发(PyQt5)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/02/latex-supplement3/" rel="next" title="LaTeX补充:中英文不同的字体设置">
+      LaTeX补充:中英文不同的字体设置 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#爬虫"><span class="nav-number">1.</span> <span class="nav-text">爬虫</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#爬取标题"><span class="nav-number">2.</span> <span class="nav-text">爬取标题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#爬取标签"><span class="nav-number">3.</span> <span class="nav-text">爬取标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#爬取标签数量"><span class="nav-number">3.1.</span> <span class="nav-text">爬取标签数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#爬取标签内容"><span class="nav-number">3.2.</span> <span class="nav-text">爬取标签内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#爬取时间"><span class="nav-number">4.</span> <span class="nav-text">爬取时间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#爬取博客数量"><span class="nav-number">4.1.</span> <span class="nav-text">爬取博客数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析时间因素"><span class="nav-number">4.2.</span> <span class="nav-text">分析时间因素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">898k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'fd43822d78036d22da9a013dee820e6e',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
