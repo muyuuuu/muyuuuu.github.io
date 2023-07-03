@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本来是被老师安排了写毕业论文的，但是歪打正着发现了个有趣的东西，决定先更新一下再去写(毕竟谁闲的没事想写那两万字的论文)。  通过两个新旧CPU的对比分析算法时间复杂度的重要性； 以顺序结构实现 插入排序 算法（非正解），时间复杂度$O(n^3)$； 以链式结构（双向链表）实现 插入排序 算法，时间复杂度$O(n^2)$； 对比两者，分析时间复杂度的影响。  首先，默认本文的读者有数据结构的基础，">
+<meta name="keywords" content="DataStructure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简易理解算法时间复杂度的重要性">
+<meta property="og:url" content="https://muyuuuu.github.io/2020/03/02/algorithm-time-complexity/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="本来是被老师安排了写毕业论文的，但是歪打正着发现了个有趣的东西，决定先更新一下再去写(毕竟谁闲的没事想写那两万字的论文)。  通过两个新旧CPU的对比分析算法时间复杂度的重要性； 以顺序结构实现 插入排序 算法（非正解），时间复杂度$O(n^3)$； 以链式结构（双向链表）实现 插入排序 算法，时间复杂度$O(n^2)$； 对比两者，分析时间复杂度的影响。  首先，默认本文的读者有数据结构的基础，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-13T14:35:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简易理解算法时间复杂度的重要性">
+<meta name="twitter:description" content="本来是被老师安排了写毕业论文的，但是歪打正着发现了个有趣的东西，决定先更新一下再去写(毕竟谁闲的没事想写那两万字的论文)。  通过两个新旧CPU的对比分析算法时间复杂度的重要性； 以顺序结构实现 插入排序 算法（非正解），时间复杂度$O(n^3)$； 以链式结构（双向链表）实现 插入排序 算法，时间复杂度$O(n^2)$； 对比两者，分析时间复杂度的影响。  首先，默认本文的读者有数据结构的基础，">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2020/03/02/algorithm-time-complexity/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>简易理解算法时间复杂度的重要性 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/03/02/algorithm-time-complexity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          简易理解算法时间复杂度的重要性
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-02 20:11:50" itemprop="dateCreated datePublished" datetime="2020-03-02T20:11:50+08:00">2020-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-13 22:35:42" itemprop="dateModified" datetime="2020-04-13T22:35:42+08:00">2020-04-13</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本来是被老师安排了写毕业论文的，但是歪打正着发现了个有趣的东西，决定先更新一下再去写(毕竟谁闲的没事想写那两万字的论文)。</p>
+<ul>
+<li>通过两个新旧CPU的对比分析算法时间复杂度的重要性；</li>
+<li>以顺序结构实现 插入排序 算法（非正解），时间复杂度$O(n^3)$；</li>
+<li>以链式结构（双向链表）实现 插入排序 算法，时间复杂度$O(n^2)$；</li>
+<li>对比两者，分析时间复杂度的影响。</li>
+</ul>
+<p>首先，默认本文的读者有数据结构的基础，或者从任何一本《数据结构》教材里寻找：时间复杂度、插入排序、双向链表的定义。对于外行人(数据结构基础四舍五入等于没有或者只想来看热闹)，可以选择只看本文你能看懂得部分，同样很有意思。</p>
+<a id="more"></a>
+<h1 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h1><p>参考任何一本《数据结构》的教材都能得到时间复杂度、空间复杂度的详细定义，这里不再解释。</p>
+<p>那么，不如深刻来了解下算法复杂度对时间的影响。假设有两块<code>CPU</code>，第一块破旧的<code>CPU</code>为<code>A</code>，第二块<code>CPU</code>为<code>B</code>，<code>B</code>的性能比<code>A</code>好上10倍，这里假设为：<code>B</code>的计算速度是<code>A</code>的<code>10</code>倍。假设<code>A</code>计算规模为$N$的问题所需时间为$t$，理想情况下不难得到以下表格：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>问题规模</th>
+<th>CPU: A执行时间</th>
+<th>CPU: B执行时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$N$</td>
+<td>$t$</td>
+<td>$t/10$</td>
+</tr>
+<tr>
+<td>$N^2$</td>
+<td>$t^2$</td>
+<td>$t^2/10$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>那么对于同一个问题涉及了两种算法，第一种算法的时间复杂度为$O(n^2)$，而经过优化的算法的时间复杂度为$O(n)$，降低了一个数量级。那么，优化好的算法$O(n)$在<code>CPU A</code>上执行的时间为$t$，而另一个人感觉自己<code>CPU</code>很好没必要优化算法，那么没优化的算法$O(n^2)$在<code>CPU B</code>上执行的时间为$t^2/10$，设函数$g(t)$为$g(t)=t-t^2/10$，可以知道$g(t)$是开口向下的二次函数，也不难求出函数$g(t)$的两个根为$0, 10$。</p>
+<p>当问题规模逐渐增加，问题逐步复杂，处理数据逐步增多时，即$n&gt;10$时，函数$g(t)&lt;0$，意味着优化过的算法在破旧的<code>CPU A</code>上的执行时间，要远小于性能好上十倍的<code>CPU B</code>。这里可以体现算法的时间复杂度的重要性。好的算法胜过好的处理器。所以，要想设计一款好软件，算法是必不可缺的功底，所以，只要还在计算机这个圈子里，数据结构就是逃不掉的。</p>
+<p>况且在技术飞速发展的今天，硬盘空间显得不在像当初那么昂亏，可以花很便宜的价格买到容量几百个G的硬盘。所以，在不要求存储空间的问题中，可以放肆的使用硬盘空间来提升算法执行时间的效率，如：哈希算法、虚拟内存等技术，所以，一般情况下空间复杂度显得不是很重要。</p>
+<h1 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h1><p>通过一个图片简单的理解插入排序：遍历数组，把当前元素移动到合适位置即可。</p>
+<p><img data-src="/2020/03/02/algorithm-time-complexity/1.png" alt></p>
+<h2 id="顺序结构实现"><a href="#顺序结构实现" class="headerlink" title="顺序结构实现"></a>顺序结构实现</h2><h3 id="正解"><a href="#正解" class="headerlink" title="正解"></a>正解</h3><p>以下是顺序结构实现插入排序算法正解的核心代码，时间复杂度不难看出为$O(n^2)$：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; len; i++)&#123;</span><br><span class="line">    <span class="keyword">int</span> key = arr[i];</span><br><span class="line">    <span class="keyword">int</span> j = i - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>((j &gt;= <span class="number">0</span>) &amp;&amp; (key &lt; arr[j]))&#123;</span><br><span class="line">        arr[j+<span class="number">1</span>] = arr[j];</span><br><span class="line">        j--;</span><br><span class="line">    &#125;</span><br><span class="line">    arr[j+<span class="number">1</span>] = key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="错解"><a href="#错解" class="headerlink" title="错解"></a>错解</h3><p>错解的意思是：代码实现的逻辑不好，但是代码执行的结果是对的。</p>
+<p>一个人编程水平不咋地，如我(我是真的写错了)，我用一种错误的逻辑写出了顺序结构的插入排序代码，时间复杂度为$O(n^3)$，对序列<code>3, 5, 4, 7, 1, 6, 8, 5, 9, 2</code>进行插入排序，好在得到了正确的结果。如本文开头所说，本文的内容纯属歪打正着，所以之后会使用如下的错解代码，得到另外的有趣的东西。</p>
+<p><img data-src="/2020/03/02/algorithm-time-complexity/2.jpg" alt></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">int</span> arr[<span class="number">10</span>] = &#123;<span class="number">3</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">2</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> temp;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; len; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Remove "</span> &lt;&lt; arr[i] &lt;&lt; <span class="string">" : "</span>;</span><br><span class="line">        <span class="keyword">if</span> (arr[i] &gt;= arr[i - <span class="number">1</span>])&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len; j++)</span><br><span class="line">                <span class="built_in">cout</span> &lt;&lt; arr[j] &lt;&lt; <span class="string">"  "</span>;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            temp = arr[i];</span><br><span class="line">            <span class="keyword">int</span> k = i;</span><br><span class="line">            <span class="comment">// 不知道为啥写了这么个没用的循环</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--)&#123;</span><br><span class="line">                <span class="keyword">if</span> (arr[j] &lt;= arr[i] || (j == <span class="number">0</span> &amp;&amp; arr[j] &gt; arr[i]))&#123;   </span><br><span class="line">                    <span class="keyword">if</span> (j == <span class="number">0</span> &amp;&amp; arr[j] &gt; arr[i]) </span><br><span class="line">                        j = <span class="number">-1</span>;</span><br><span class="line">                    <span class="keyword">while</span> (k &gt; j + <span class="number">1</span>)&#123;</span><br><span class="line">                        arr[k] = arr[k - <span class="number">1</span>];</span><br><span class="line">                        k--;</span><br><span class="line">                    &#125;</span><br><span class="line">                    arr[j + <span class="number">1</span>] = temp;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; len; j++)</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; arr[j] &lt;&lt; <span class="string">"  "</span>;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="链式结构实现"><a href="#链式结构实现" class="headerlink" title="链式结构实现"></a>链式结构实现</h2><p>因为在插入的过程中会访问当前元素之前的元素，所以有必要使用双向链表(任何一本《数据结构》的教材都能得到双向链表的定义，这里不在解释)。移动元素仔细分析指针该如何移动即可。对序列<code>3, 5, 4, 7, 1, 6, 8, 5, 9, 2</code>进行插入排序，不难看出我实现的代码的时间复杂度为$O(n)$。指针恐惧者慎用链式结构。</p>
+<p><img data-src="/2020/03/02/algorithm-time-complexity/4.jpg" alt></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 每个节点的类型 存储数据 指向前者 指向后者</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    node *pre;</span><br><span class="line">    <span class="keyword">int</span> data;</span><br><span class="line">    node *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 头节点 用于寻找链表在哪</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">head</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    node *first;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> arr[<span class="number">10</span>] = &#123;<span class="number">6</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">8</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">2</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">10</span>;</span><br><span class="line">    node ans[len];</span><br><span class="line">    head L;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ans[i].data = arr[i];</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 类型为指针 所以ans取地址</span></span><br><span class="line">            L.first = &amp;ans[i];</span><br><span class="line">            ans[i].next = &amp;ans[i + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (i == len - <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ans[i].pre = &amp;ans[i - <span class="number">1</span>];</span><br><span class="line">            ans[i].next = <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            ans[i].pre = &amp;ans[i - <span class="number">1</span>];</span><br><span class="line">            ans[i].next = &amp;ans[i + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        L.len++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"The length of link is : "</span> &lt;&lt; L.len &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    node *p;</span><br><span class="line">    p = L.first;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span> &lt;&lt; <span class="string">"Raw Data : "</span>;</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; (*p).data &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">        p = (*p).next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">// 读取完毕 开始排序</span></span><br><span class="line">    p = L.first;</span><br><span class="line">    <span class="comment">// 从第二个元素开始插入</span></span><br><span class="line">    p = (*p).next;</span><br><span class="line">    node *s, *t;</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> ((*p).data &lt; (*(*p).pre).data)</span><br><span class="line">        &#123;</span><br><span class="line">            node *q;</span><br><span class="line">            q = L.first;</span><br><span class="line">            <span class="comment">// 用 q 表示合适的插入位置</span></span><br><span class="line">            <span class="comment">// q p 的位置不同时，操作不同，分四种情况</span></span><br><span class="line">            <span class="keyword">while</span> ((*q).data &lt;= (*p).data)</span><br><span class="line">                q = (*q).next;</span><br><span class="line">            <span class="comment">// case 1 pass</span></span><br><span class="line">            <span class="keyword">if</span> ((*p).next == <span class="literal">NULL</span> &amp;&amp; q == L.first)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).pre;</span><br><span class="line">                (*p).next = L.first;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">                (*(*p).pre).next = <span class="literal">NULL</span>;</span><br><span class="line">                (*p).pre = <span class="literal">NULL</span>;</span><br><span class="line">                L.first = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// case 2 pass</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> ((*p).next == <span class="literal">NULL</span> &amp;&amp; q != L.first)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).pre;</span><br><span class="line">                (*(*p).pre).next = <span class="literal">NULL</span>;</span><br><span class="line">                (*p).pre = (*q).pre;</span><br><span class="line">                (*(*q).pre).next = p;</span><br><span class="line">                (*p).next = q;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// case 3 pass</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (q == L.first &amp;&amp; (*p).next != <span class="literal">NULL</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).next;</span><br><span class="line">                (*(*p).pre).next = (*p).next;</span><br><span class="line">                (*(*p).next).pre = (*p).pre;</span><br><span class="line">                (*p).next = q;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">                (*p).pre = <span class="literal">NULL</span>;</span><br><span class="line">                L.first = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// case 4</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (q != L.first &amp;&amp; (*p).next != <span class="literal">NULL</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).next;</span><br><span class="line">                (*(*p).next).pre = (*p).pre;</span><br><span class="line">                (*(*p).pre).next = (*p).next;</span><br><span class="line">                (*p).next = q;</span><br><span class="line">                (*p).pre = (*q).pre;</span><br><span class="line">                (*(*q).pre).next = p;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="string">"Remove "</span> &lt;&lt; (*p).data &lt;&lt; <span class="string">" :"</span>;</span><br><span class="line">            p = s;</span><br><span class="line">            t = L.first;</span><br><span class="line">            <span class="keyword">while</span> (t != <span class="literal">NULL</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="built_in">cout</span> &lt;&lt; <span class="string">" "</span> &lt;&lt; (*t).data;</span><br><span class="line">                t = (*t).next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            p = (*p).next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h1><p>此时，我想起了上《算法设计》这门课老师很爱干的事情，实现一个xxx算法，然后分别读入：十万、百万的数据，记录算法执行时间，对比结果。那么，既然我都写错顺序结构实现插入排序的代码了，不如歪打正着，正好对比下$O(n^3)$的算法和$O(n^2)$的算法差异。</p>
+<p>首先用<code>python</code>（别问，问就是不会C++）产生随机整数，规模分别为10万，11万，15万，20万，30万，将结果保存至<code>txt</code>文件中。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 第一个参数是左区间 a，第二个参数是右区间 b，第三个参数是个数 c</span></span><br><span class="line"><span class="comment"># 即会产生 c 个 [a, b) 区间内的整数</span></span><br><span class="line">a = np.random.randint(<span class="number">0</span>, <span class="number">500000</span>, <span class="number">500000</span>)</span><br><span class="line"><span class="comment"># fmt 表示取消科学计数法的保存形式</span></span><br><span class="line">np.savetxt(<span class="string">'Five_hundred_thousand.txt'</span>, a, fmt=<span class="string">'%d'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>之后，在<code>C++</code>内读取文件数据，并对排序部分进行计时，顺序结构代表了$O(n^3)$的算法，链式结构代表了$O(n^2)$的算法，修改后的代码如下：</p>
+<h2 id="顺序结构计时"><a href="#顺序结构计时" class="headerlink" title="顺序结构计时"></a>顺序结构计时</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> arr[<span class="number">1000002</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// path 是读取的文件</span></span><br><span class="line">    <span class="built_in">string</span> path = <span class="string">"Five_hundred_thousand.txt"</span>;</span><br><span class="line">    <span class="comment">// out 是输出结构的文件</span></span><br><span class="line">    <span class="built_in">string</span> out = <span class="string">"Five_hundred_thousand_seq.txt"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function">ifstream <span class="title">in</span><span class="params">(path.c_str())</span></span>;</span><br><span class="line">    <span class="function">ofstream <span class="title">ou</span><span class="params">(out.c_str())</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!in.is_open())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cerr</span> &lt;&lt; <span class="string">"open file failed!"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!ou.is_open())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cerr</span> &lt;&lt; <span class="string">"create file failed!"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取文件 存入数组</span></span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (in &gt;&gt; a)</span><br><span class="line">        arr[len++] = a;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> temp;</span><br><span class="line">    <span class="comment">// 开始计时</span></span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; len; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (arr[i] &gt;= arr[i - <span class="number">1</span>])&#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            temp = arr[i];</span><br><span class="line">            <span class="keyword">int</span> k = i;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--)&#123;</span><br><span class="line">                <span class="keyword">if</span> (arr[j] &lt;= arr[i] || (j == <span class="number">0</span> &amp;&amp; arr[j] &gt; arr[i]))&#123;   </span><br><span class="line">                    <span class="keyword">if</span> (j == <span class="number">0</span> &amp;&amp; arr[j] &gt; arr[i]) </span><br><span class="line">                        j = <span class="number">-1</span>;</span><br><span class="line">                    <span class="keyword">while</span> (k &gt; j + <span class="number">1</span>)&#123;</span><br><span class="line">                        arr[k] = arr[k - <span class="number">1</span>];</span><br><span class="line">                        k--;</span><br><span class="line">                    &#125;</span><br><span class="line">                    arr[j + <span class="number">1</span>] = temp;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">clock_t</span> end   = clock();</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt;  (<span class="keyword">double</span>)(end - start) / CLOCKS_PER_SEC &lt;&lt; <span class="string">" seconds"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    in.close();</span><br><span class="line">    <span class="comment">// 把结果记录到文件 检查算法是否正确</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)</span><br><span class="line">        ou &lt;&lt; arr[i] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    ou.close();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="链式结构计时"><a href="#链式结构计时" class="headerlink" title="链式结构计时"></a>链式结构计时</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 同样 记录前驱、后继、和本身的数据</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    node *pre;</span><br><span class="line">    <span class="keyword">int</span> data;</span><br><span class="line">    node *next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 头节点记录链表在哪</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">head</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    node *first;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 占据的空间大 所以声明在主函数外部</span></span><br><span class="line"><span class="keyword">int</span> arr[<span class="number">1000002</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">node ans[<span class="number">300002</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">string</span> path = <span class="string">"one_hundred_thousand.txt"</span>;</span><br><span class="line">    <span class="built_in">string</span> out = <span class="string">"one_hundred_thousand_link.txt"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function">ifstream <span class="title">in</span><span class="params">(path.c_str())</span></span>;</span><br><span class="line">    <span class="function">ofstream <span class="title">ou</span><span class="params">(out.c_str())</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!in.is_open())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cerr</span> &lt;&lt; <span class="string">"open file failed!"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!ou.is_open())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cerr</span> &lt;&lt; <span class="string">"create file failed!"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (in &gt;&gt; a)</span><br><span class="line">        arr[len++] = a;</span><br><span class="line">    </span><br><span class="line">    head L;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ans[i].data = arr[i];</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            L.first = &amp;ans[i];</span><br><span class="line">            ans[i].next = &amp;ans[i + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (i == len - <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ans[i].pre = &amp;ans[i - <span class="number">1</span>];</span><br><span class="line">            ans[i].next = <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            ans[i].pre = &amp;ans[i - <span class="number">1</span>];</span><br><span class="line">            ans[i].next = &amp;ans[i + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        L.len++;</span><br><span class="line">    &#125;</span><br><span class="line">    node *p;</span><br><span class="line">    p = L.first;</span><br><span class="line">    p = (*p).next;</span><br><span class="line">    <span class="comment">// s 表示 p 下一步该指向哪里</span></span><br><span class="line">    node *s;</span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> ((*p).data &lt; (*(*p).pre).data)</span><br><span class="line">        &#123;</span><br><span class="line">            node *q;</span><br><span class="line">            q = L.first;</span><br><span class="line">            <span class="keyword">while</span> ((*q).data &lt;= (*p).data)</span><br><span class="line">                q = (*q).next;</span><br><span class="line">            <span class="comment">// q p 的位置不同时，操作不同，分四种情况</span></span><br><span class="line">            <span class="comment">// case 1 pass</span></span><br><span class="line">            <span class="keyword">if</span> ((*p).next == <span class="literal">NULL</span> &amp;&amp; q == L.first)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).pre;</span><br><span class="line">                (*p).next = L.first;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">                (*(*p).pre).next = <span class="literal">NULL</span>;</span><br><span class="line">                (*p).pre = <span class="literal">NULL</span>;</span><br><span class="line">                L.first = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// case 2 pass</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> ((*p).next == <span class="literal">NULL</span> &amp;&amp; q != L.first)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).pre;</span><br><span class="line">                (*(*p).pre).next = <span class="literal">NULL</span>;</span><br><span class="line">                (*p).pre = (*q).pre;</span><br><span class="line">                (*(*q).pre).next = p;</span><br><span class="line">                (*p).next = q;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// case 3 pass</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (q == L.first &amp;&amp; (*p).next != <span class="literal">NULL</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).next;</span><br><span class="line">                (*(*p).pre).next = (*p).next;</span><br><span class="line">                (*(*p).next).pre = (*p).pre;</span><br><span class="line">                (*p).next = q;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">                (*p).pre = <span class="literal">NULL</span>;</span><br><span class="line">                L.first = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// case 4</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (q != L.first &amp;&amp; (*p).next != <span class="literal">NULL</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                s = (*p).next;</span><br><span class="line">                (*(*p).next).pre = (*p).pre;</span><br><span class="line">                (*(*p).pre).next = (*p).next;</span><br><span class="line">                (*p).next = q;</span><br><span class="line">                (*p).pre = (*q).pre;</span><br><span class="line">                (*(*q).pre).next = p;</span><br><span class="line">                (*q).pre = p;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 每种情况对应的 s 都不一样 但最后都要指向 s</span></span><br><span class="line">            p = s;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            p = (*p).next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">clock_t</span> end = clock();</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt;  (<span class="keyword">double</span>)(end - start) / CLOCKS_PER_SEC &lt;&lt; <span class="string">" seconds"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    in.close();</span><br><span class="line">    p = L.first;</span><br><span class="line">    <span class="keyword">while</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ou &lt;&lt; (*p).data &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        p = (*p).next;</span><br><span class="line">    &#125;</span><br><span class="line">    ou.close();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h1><p>文档结构如下：(每个数据规模产生一个<code>txt</code>文件，用于读取，输出结果加<code>seq</code>或者<code>link</code>的后缀保存到<code>txt</code>文件中，用于检查排序是否正确，事实证明结果是正确的，尽管代码逻辑不好，但能保证执行结果对)</p>
+<p><img data-src="/2020/03/02/algorithm-time-complexity/3.jpg" alt></p>
+<p>在<code>i7-9750H</code>的CPU上执行结果如下：（执行三次，取平均）</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>数据规模</th>
+<th>链式结构计时，单位：秒</th>
+<th>顺序结构计时，单位：秒</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10万</td>
+<td>24.7</td>
+<td>8.477</td>
+</tr>
+<tr>
+<td>11万</td>
+<td>30.8</td>
+<td>10.247</td>
+</tr>
+<tr>
+<td>15万</td>
+<td>62</td>
+<td>19</td>
+</tr>
+<tr>
+<td>20万</td>
+<td>116.112</td>
+<td>33.765</td>
+</tr>
+<tr>
+<td>30万</td>
+<td>272</td>
+<td>75.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>也许你会感到意外，为何$O(n^2)$的算法比$O(n^3)$的算法还要慢？不是不符合前文的规律？显然，这里$O(n^2)$的算法比$O(n^3)$的算法慢的原因是：链式结构要经常操作指针，来寻找下一个地址，时间耗费在地址空间的寻找上；而顺序结构中，逻辑相邻即物理相邻，不用浪费多余的时间去寻找下一个元素的地址，使用下标访问即可。</p>
+<p>那么，如何证明前文的思想是对的？我本来是想用三次函数拟合顺序结构的数据，用二次函数拟合链式结构的数据，求两个函数的交点。结果发现数据量太少，居然只能拟合出开口向下的二次函数和单调递减的三次函数，这显然是不对的，因为这两个函数都在随着问题规模的增加，耗时逐步减少。</p>
+<p>然而我还不想做更多的数据，拟合不对并不代表数据是错误的，所以，我决定用链式结构的时间减去顺序结构的时间，得到一个时间差。对时间差进行三次函数拟合（三次函数减二次函数仍然为三次函数），得到拟合结果：$g(t)=-0.0007601 x^3 + 0.2858 x^2 - 1.431  x + 2.719$，通过<code>sympy</code>求解，得到一个实数根为$370.95$，绘制$[10, 380]$区间内的函数图像：</p>
+<p><img data-src="/2020/03/02/algorithm-time-complexity/4.png" alt></p>
+<p>可以发现，在$n&gt;371$后，函数值小于0，说明在问题规模大于某个阈值后，$O(n^2)$的算法比$O(n^3)$的算法耗时要少，速度要快。那么这个时候，不管操作指针寻找地址多么的麻烦，时间开销总会比$O(n^3)$的算法小，只是前期可能会因为操作指针的关系影响执行的效率。</p>
+<p>当然实际情况中，371并不代表三千多万的数据，毕竟实际情况会比单独的数据排序复杂得多。所以，也有必要根据实际问题的规模，合理的选择算法。</p>
+<h1 id="程序下载"><a href="#程序下载" class="headerlink" title="程序下载"></a>程序下载</h1><p><a href="https://github.com/muyuuuu/Algorithm/tree/master/Insert_sort" target="_blank" rel="noopener">下载</a>。我把全部文件，包括原始的随机数据、排列好的数据都放上了，后缀为seq表示顺序结构排列的结果，后缀为link表示为链式结构排列的结果。第一是证明我写的代码是对的，第二是预留这些数据，供后来者玩耍。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.geeksforgeeks.org/insertion-sort/" target="_blank" rel="noopener">https://www.geeksforgeeks.org/insertion-sort/</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2018/11/03/AVL-RB-tree/" rel="bookmark">AVL树的Python实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/09/07/PAT-advanced/" rel="bookmark">PAT甲级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/08/21/PAT-basic/" rel="bookmark">PAT乙级整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2022/05/22/array-series/" rel="bookmark">算法系列：数组类题目</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2022/05/28/backtrack/" rel="bookmark">算法系列：回溯</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/29/tree-algorithm/" rel="prev" title="算法系列：树">
+      <i class="fa fa-chevron-left"></i> 算法系列：树
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/12/blog-optimize/" rel="next" title="一些不常见的进阶博客优化">
+      一些不常见的进阶博客优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#时间复杂度"><span class="nav-number">1.</span> <span class="nav-text">时间复杂度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插入排序"><span class="nav-number">2.</span> <span class="nav-text">插入排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序结构实现"><span class="nav-number">2.1.</span> <span class="nav-text">顺序结构实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正解"><span class="nav-number">2.1.1.</span> <span class="nav-text">正解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#错解"><span class="nav-number">2.1.2.</span> <span class="nav-text">错解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链式结构实现"><span class="nav-number">2.2.</span> <span class="nav-text">链式结构实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对比"><span class="nav-number">3.</span> <span class="nav-text">对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序结构计时"><span class="nav-number">3.1.</span> <span class="nav-text">顺序结构计时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链式结构计时"><span class="nav-number">3.2.</span> <span class="nav-text">链式结构计时</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果"><span class="nav-number">4.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序下载"><span class="nav-number">5.</span> <span class="nav-text">程序下载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">218</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">900k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:38</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '94f7c6de189ee79dca2ec1a0fd2967cc',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

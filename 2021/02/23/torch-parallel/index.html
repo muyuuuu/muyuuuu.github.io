@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。语言这么正规的原因是：这是从大作业里面摘出来的。神经网络那部分我就不写了，跑题，最后直接给代码。">
+<meta name="keywords" content="DeepLearning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch并行训练">
+<meta property="og:url" content="https://muyuuuu.github.io/2021/02/23/torch-parallel/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。语言这么正规的原因是：这是从大作业里面摘出来的。神经网络那部分我就不写了，跑题，最后直接给代码。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-04-16T21:59:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pytorch并行训练">
+<meta name="twitter:description" content="本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。语言这么正规的原因是：这是从大作业里面摘出来的。神经网络那部分我就不写了，跑题，最后直接给代码。">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2021/02/23/torch-parallel/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>pytorch并行训练 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2021/02/23/torch-parallel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pytorch并行训练
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-23 22:22:20" itemprop="dateCreated datePublished" datetime="2021-02-23T22:22:20+08:00">2021-02-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-17 05:59:24" itemprop="dateModified" datetime="2021-04-17T05:59:24+08:00">2021-04-17</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文以 pytorch 为框架，分别从数据并行训练的方法(DataParallel, DistributedDataParallel)、并行加载数据两个角度，阐述了本次实验中并行算法的设计思想，并对并行实现的原理进行了解析，包括多进程的工作流程和通信方法等。<del>语言这么正规的原因是：这是从大作业里面摘出来的。</del>神经网络那部分我就不写了，跑题，最后直接给代码。</p>
+<a id="more"></a>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><h2 id="硬件设备"><a href="#硬件设备" class="headerlink" title="硬件设备"></a>硬件设备</h2><ul>
+<li>CPU：2个Intel(R) Xeon(R) Gold 5115 CPU \@ 2.40GHz，10核心20线程。</li>
+<li>GPU：4路Tesla P40，每路显存容量22GB，共88GB。</li>
+<li>内存：128GB。</li>
+<li>外存：520TB可用，已用15TB。</li>
+</ul>
+<h2 id="软件环境与版本"><a href="#软件环境与版本" class="headerlink" title="软件环境与版本"></a>软件环境与版本</h2><ul>
+<li>运行程序的系统为 CentOS Linux release 7.3.1611。</li>
+<li>开发程序的系统为 Arch 5.9.6。</li>
+<li>python：3.8.2：作为开发语言。</li>
+<li>pytorch：1.6.0：作为模型实现的工具，借助其提供的API实现并行。</li>
+<li>ssh：OpenSSH_8.3p1, OpenSSL 1.1.1h，实现远程登录功能，即本地登录到服务器。</li>
+<li>scp：实现文件传输功能，将本地文件传输至服务器，或将服务器文件传输至本地。</li>
+</ul>
+<h1 id="并行加载数据"><a href="#并行加载数据" class="headerlink" title="并行加载数据"></a>并行加载数据</h1><p>在加载数据时，可以使用多进程来加载数据。不使用多线程的目的是：python 的多线程因为 GIL（Global Interpreter Lock）的存在，只能在单核运行。不能发挥多核处理器的优势，因此只适合 I/O 型任务，不适合密集计算型任务。</p>
+<p>首先以 torch.utils.data.Dataset 为父类，创建一个加载数据集的子类：MiniImagenet。在 MiniImagenet中，设置__getitem__方法来支持数据集的切片访问，即批量加载数据。</p>
+<p>在训练阶段，实例化加载数据集的类，得到一个实例对象。在 torch.utils.data.DataLoader 中传入实例对象来加载数据，并设置其他参数来提升加载数据的速度和数量。设置 num_workers=8 可以使用 8 进程来加载数据，设置 batch_size=batchsz 对应 MiniImagenet 类的 __getitem__ 切片访问，即一次获取的训练数据的大小。</p>
+<p>在创建 num_workers 个进程之后，多个进程共享一份数据集，将指定 batch（一批待加载的目标数据）分配给指定 worker（一个进程），worker 将对应 batch 的数据加载进内存。因此增大 num_workers 的数量，内存的占用率也会增加。在第一个 batch 的数据加载完成后，会等待主进程将该 batch 取走并汇总，而后此 worker 开始加载下一个 batch，不断迭代。</p>
+<p>主进程采集完最后一个 worker 的数据后，此时需要返回并采集第一个 worker 加载的第二个 batch。如果第一个 worker 此时没有加载完，主线程将阻塞等待当前 worker 的数据加载完毕。最后所有数据加载完毕后，汇总到一起供用户使用。</p>
+<p>当 num_worker 设置的很大时，优点时可以快速的寻找目标 batch；缺点是内存开销大，也加重了 CPU 维护进程的开销，如创建、初始化、通信、分配任务、接受任务反馈和销毁进程等。num_workers 的经验设置值是服务器的 CPU 核心数，如果 CPU 性能强大且内存充足，可以设置为较大的数值。</p>
+<h1 id="DataParallel"><a href="#DataParallel" class="headerlink" title="DataParallel"></a>DataParallel</h1><p>DataParallel 并行方式实现较为简单。首先将模型放到主 GPU 中，一般是 GPU-0；而后将模型复制得到副本，将模型副本放到另外的$n$张 GPU 中，将输入的batchsz大小的数据平均分为$n$份依次作为每个模型副本的输入。因此要求 batchsz 的大小要大于 GPU 的数量，否则数据无法分配，会导致有的模型副本得不到数据。</p>
+<p>每个模型副本独立的进行前向计算，得到各自的 loss值。在$n$个GPU完成计算后，将 loss 汇总到 GPU-0 中，由 GPU-0 中的模型进行反向传播和更新参数。更新好参数后，由 GPU-0 将参数分发至其他$n$个 GPU 卡，开始新一轮的计算。DataParallel 并行结构示意图如图所示：</p>
+<p><img data-src="https://s3.ax1x.com/2021/02/23/yLsmwD.png" alt></p>
+<p>DataParallel基于单进程多线程实现，因为python的多线程无法利用多核处理器，只能在单核上进行任务调度和参数更新的通信，所以此种方式并行效率较低，且0号卡负担较大。</p>
+<h1 id="DistributedDataParallel"><a href="#DistributedDataParallel" class="headerlink" title="DistributedDataParallel"></a>DistributedDataParallel</h1><p>DistributedDataParallel 并行方式实现较为复杂，且相对于 DataParallel 需要更大的显存空间。DistributedDataParallel 使用的进程数量一般和GPU数量相等，对每个进程创建一个 DistributedDataParallel 实例，通过进程通信来同步梯度，通信方式为 AllReduce 。</p>
+<p>在任务初始化阶段，即并行程序执行之前首先要创建通信群组，通信群组中的每一个进程创建一个 DistributedDataParallel 实例。DistributedDataParallel 通过rank0（进程ID）将当前模型的结构和参数等状态通过广播通信的形式发送到进程组的所有进程中，确保其他进程中的模型副本和当前模型保持一致。而后，每个进程创建一个本地的Reducer，用于反向传播阶段同步参数的梯度。因此相比于DataParallel， DistributedDataParallel 需要更大的显存容量。为了提升通信效率，Reducer将参数放到多个桶中，每次以桶为单位进行通信。</p>
+<p>模型参数需要额外附加 unready 和 ready 两种状态，默认为 unready 状态。若参数在反向传播阶段计算了梯度，则参数由 unready 状态变为 ready 状态，表示这个参数可以同步到其他模型；否则保持 unready 状态。当模型完成一次训练后，参数由 ready 状态变为 unready 状态，为下一次训练做准备。</p>
+<p>因为在反向传播阶段，DistributedDataParallel 只会等待 unready 状态的参数更新，所以在前向计算阶段首先要分析计算图，将不进行梯度更新的参数状态永久设为 ready 状态，防止这些参数影响反向传播。DistributedDataParallel 在获取输入数据后，将输入数据分发到每个 GPU 中，模型副本开始前向计算得到各自的 loss 值，而后开始反向传播。</p>
+<p>DistributedDataParallel 在初始化阶段会为每一个可求导的参数申请一个自动求导的钩子，来发射同步梯度的信号。在反向传播阶段，当一个参数计算梯度后会为 ready 状态，对应梯度的钩子就会发射信号，DistributedDataParallel 会标记该参数的状态，表示该参数的梯度可以用于同步。当一个桶内的参数全部由 unready 状态变为 ready 状态后，Reducer通过AllReduce的通信方式来更新桶内的参数，来计算所有模型副本中参数梯度的平均值。</p>
+<p>以4个GPU为例，其 AllReduce 通信方式如下图所示。</p>
+<p><img data-src="https://s3.ax1x.com/2021/02/23/yLsc0U.png" alt></p>
+<p>在上图中，rank0 将自己模型副本的梯度 D0 发送给 rank1，rank2和rank3，其他进程同理。因此在 AllReduce 通信后，所有的模型副本的梯度值保持一致。</p>
+<p>当所有的桶更新完毕后，Reducer 会阻塞等待 AllReduce 的所有操作结束，如重新将参数设为 unready 状态。因为所有模型副本的梯度值相同，所以在梯度更新阶段，只需更新本卡中的模型参数。因为所有的模型副本来自相同的初始状态，且具有相同的平均梯度值，所以在梯度更新后所的模型副本状态都会保持一致，以此来实现并行。</p>
+<h1 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h1><p>DataParallel 和 DistributedDataParallel 都属于数据并行的方法，在分析完各自的实现原理后，可以得到二者的对比。对比情况如下表所示：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>DataParallel</th>
+<th>DistributedParallel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>机器支持</td>
+<td>只支持单机</td>
+<td>可支持多机</td>
+</tr>
+<tr>
+<td>模型支持</td>
+<td>不支持拆分模型</td>
+<td>可以将模型放到多张GPU中</td>
+</tr>
+<tr>
+<td>通信方式</td>
+<td>scatter input 和 gather output</td>
+<td>scatter input 和 AllReduce</td>
+</tr>
+<tr>
+<td>并行支持</td>
+<td>只支持数据并行</td>
+<td>支持数据并行和模型并行</td>
+</tr>
+<tr>
+<td>进程与线程</td>
+<td>单进程、多线程</td>
+<td>多进程</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这里需要注意的是，如果将batchsz太小，由此可见，AllReduce在数据量很小的情况下，每一次梯度更新带来的进程通信、任务调度与分配的开销占比会增大，而用于数据通信的开销占比却很小，导致并行效率没有明显提升。因此AllReduce不适合数据量较小情况下的通信。这里我尝试过。</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/muyuuuu/Algorithm/tree/master/meta-learning/Metric-based/Relation-Netowrk" target="_blank" rel="noopener">https://github.com/muyuuuu/Algorithm/tree/master/meta-learning/Metric-based/Relation-Netowrk</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/23/MPI-basics/" rel="prev" title="MPI基础，以 mpi4py 为例（操作系统番外篇）">
+      <i class="fa fa-chevron-left"></i> MPI基础，以 mpi4py 为例（操作系统番外篇）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/10/causal-dilated-conv/" rel="next" title="因果扩张卷积">
+      因果扩张卷积 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#环境"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件设备"><span class="nav-number">1.1.</span> <span class="nav-text">硬件设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#软件环境与版本"><span class="nav-number">1.2.</span> <span class="nav-text">软件环境与版本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#并行加载数据"><span class="nav-number">2.</span> <span class="nav-text">并行加载数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DataParallel"><span class="nav-number">3.</span> <span class="nav-text">DataParallel</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DistributedDataParallel"><span class="nav-number">4.</span> <span class="nav-text">DistributedDataParallel</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对比"><span class="nav-number">5.</span> <span class="nav-text">对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">6.</span> <span class="nav-text">代码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">218</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">900k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:38</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '34912c1c0032d53eba81a435f34ff150',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

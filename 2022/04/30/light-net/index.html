@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="很久之前我觉得移动端应用几百兆的模型不切实际，在不考虑蒸馏、量化等压缩方法下，发现了 MobileNet 设计的很神奇，大小只有几 MB，可以说是一股清流了。就整理发布了一下，然后今天发现找不到了，神奇。（于是顺手和 ShuffleNet 一并整理到轻量化的神经网络中）">
+<meta name="keywords" content="DeepLearning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="轻量的神经网络">
+<meta property="og:url" content="https://muyuuuu.github.io/2022/04/30/light-net/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="很久之前我觉得移动端应用几百兆的模型不切实际，在不考虑蒸馏、量化等压缩方法下，发现了 MobileNet 设计的很神奇，大小只有几 MB，可以说是一股清流了。就整理发布了一下，然后今天发现找不到了，神奇。（于是顺手和 ShuffleNet 一并整理到轻量化的神经网络中）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2022-05-11T14:47:09.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="轻量的神经网络">
+<meta name="twitter:description" content="很久之前我觉得移动端应用几百兆的模型不切实际，在不考虑蒸馏、量化等压缩方法下，发现了 MobileNet 设计的很神奇，大小只有几 MB，可以说是一股清流了。就整理发布了一下，然后今天发现找不到了，神奇。（于是顺手和 ShuffleNet 一并整理到轻量化的神经网络中）">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2022/04/30/light-net/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>轻量的神经网络 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2022/04/30/light-net/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          轻量的神经网络
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-30 20:43:59" itemprop="dateCreated datePublished" datetime="2022-04-30T20:43:59+08:00">2022-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-11 22:47:09" itemprop="dateModified" datetime="2022-05-11T22:47:09+08:00">2022-05-11</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>很久之前我觉得移动端应用几百兆的模型不切实际，在不考虑蒸馏、量化等压缩方法下，发现了 MobileNet 设计的很神奇，大小只有几 MB，可以说是一股清流了。就整理发布了一下，然后今天发现找不到了，神奇。（于是顺手和 ShuffleNet 一并整理到轻量化的神经网络中）</p>
+<a id="more"></a>
+<h1 id="MobileNet-V1"><a href="#MobileNet-V1" class="headerlink" title="MobileNet-V1"></a>MobileNet-V1</h1><p>基本上可以说这个版本是后面几个版本的出发点。先来看一下创新点：提出 depthwise separable conv 和 pointwise conv 来降低网络的计算次数。还是直接画图吧：</p>
+<p><img data-src="https://s1.ax1x.com/2022/04/30/OpcCxU.png" alt></p>
+<p>对于传统卷积而言，输入一个三通道的图片，如果想要输出五通道，那么就需要 5 个 $3\times 3 \times 3$ 的卷积核。一般一些，假设传统卷积处理图像的大小是 $D_F\times D_F$，有 $M$ 个通道，卷积核的大小是 $D_K$，输出的通道数数 $N$，那么计算量就是 $D_K \cdot D_K \cdot M \cdot N \cdot D_F \cdot D_F$。</p>
+<p>在得到相同大小输出的情况下，使用 DW 卷积和 PW 卷积来简化一下这个计算过程：</p>
+<p><img data-src="https://s1.ax1x.com/2022/04/30/OpcFr4.png" alt></p>
+<p>如果换成深度可分离卷积和逐点卷积，可以看到达到同样的输出，参数量从 $27\times 5$ 减少到了 $27+15$，而且计算量为 $D_K \cdot D_K \cdot M \cdot D_F \cdot D_F + M \cdot N \cdot D_F \cdot D_F$。两者的比值是 $1/N+1/D_K^2$。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MobileNetV1</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, ch_in, n_classes)</span>:</span></span><br><span class="line">        super(MobileNetV1, self).__init__()</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">conv_bn</span><span class="params">(inp, oup, stride)</span>:</span></span><br><span class="line">            <span class="keyword">return</span> nn.Sequential(</span><br><span class="line">                nn.Conv2d(inp, oup, <span class="number">3</span>, stride, <span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">                nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">conv_dw</span><span class="params">(inp, oup, stride)</span>:</span></span><br><span class="line">            <span class="keyword">return</span> nn.Sequential(</span><br><span class="line">                <span class="comment"># dw</span></span><br><span class="line">                <span class="comment"># 输入通道和输出通道相等，groups 表示每个卷积核只处理一个通道</span></span><br><span class="line">                nn.Conv2d(inp, inp, <span class="number">3</span>, stride, <span class="number">1</span>, groups=inp, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(inp),</span><br><span class="line">                nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line"></span><br><span class="line">                <span class="comment"># pw</span></span><br><span class="line">                <span class="comment"># 卷积核大小为 1X1</span></span><br><span class="line">                nn.Conv2d(inp, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">                nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                )</span><br><span class="line"></span><br><span class="line">        self.model = nn.Sequential(</span><br><span class="line">            conv_bn(ch_in, <span class="number">32</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">32</span>, <span class="number">64</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">64</span>, <span class="number">128</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">128</span>, <span class="number">128</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">128</span>, <span class="number">256</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">256</span>, <span class="number">256</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">256</span>, <span class="number">512</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">1024</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">1</span>),</span><br><span class="line">            nn.AdaptiveAvgPool2d(<span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line">        self.fc = nn.Linear(<span class="number">1024</span>, n_classes)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        x = self.model(x)</span><br><span class="line">        x = x.view(<span class="number">-1</span>, <span class="number">1024</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h1 id="MobileNet-V2"><a href="#MobileNet-V2" class="headerlink" title="MobileNet-V2"></a>MobileNet-V2</h1><p>V1 的思想可以概括为：首先利用 3×3 的深度可分离卷积提取特征，然后利用 1×1 的卷积来扩张通道。但是有人在实际使用的时候，发现训完之后发现 dw 卷积核有不少是空的。</p>
+<p>作者认为这是 ReLU 激活函数导致的。于是做了一个实验，就是对一个 n 维空间中的一个东西乘以矩阵 $T$，而后做 ReLU 运算，然后利用 $T$ 的逆矩阵恢复，对比 ReLU 之后的结果与 Input 的结果相差有多大。作者发现：低维度做 ReLU 运算，很容易造成信息的丢失。而在高维度进行 ReLU 运算的话，信息的丢失则会很少。</p>
+<p>由于卷积本身没有改变通道的能力，来的是多少通道输出就是多少通道。上面又得出低维通道不好的结论，因此使用 PW 卷积升维再降维，这也就形成了 Inverted Residuals 这种结构，因为传统的残差结构和本文相反，传统的是先降维在升维。</p>
+<p>这样高维的仍然使用 ReLU 激活函数，低维的换成线性激活函数。因为有先升维在降维的结构，因此使用了残差连接来提升性能。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InvertedResidual</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inp, oup, stride, expand_ratio)</span>:</span></span><br><span class="line">        super(InvertedResidual, self).__init__()</span><br><span class="line">        self.stride = stride</span><br><span class="line">        <span class="keyword">assert</span> stride <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        hidden_dim = int(inp * expand_ratio)</span><br><span class="line">        self.use_res_connect = self.stride == <span class="number">1</span> <span class="keyword">and</span> inp == oup</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> expand_ratio == <span class="number">1</span>:</span><br><span class="line">            self.conv = nn.Sequential(</span><br><span class="line">                <span class="comment"># dw</span></span><br><span class="line">                nn.Conv2d(hidden_dim, hidden_dim, <span class="number">3</span>, stride, <span class="number">1</span>, groups=hidden_dim, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                nn.ReLU6(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># pw-linear</span></span><br><span class="line">                nn.Conv2d(hidden_dim, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv = nn.Sequential(</span><br><span class="line">                <span class="comment"># pw 升维</span></span><br><span class="line">                nn.Conv2d(inp, hidden_dim, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                nn.ReLU6(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># dw 深度可分离卷积</span></span><br><span class="line">                nn.Conv2d(hidden_dim, hidden_dim, <span class="number">3</span>, stride, <span class="number">1</span>, groups=hidden_dim, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                nn.ReLU6(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># pw-linear 激活</span></span><br><span class="line">                nn.Conv2d(hidden_dim, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.use_res_connect:</span><br><span class="line">            <span class="keyword">return</span> x + self.conv(x)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> self.conv(x)</span><br></pre></td></tr></table></figure>
+<h1 id="MobileNet-V3"><a href="#MobileNet-V3" class="headerlink" title="MobileNet-V3"></a>MobileNet-V3</h1><p>主要做了两点创新，一个是在 MobileNet V2 残差分支加入了 SE（Squeeze-and-Excitation） 注意力机制的模块，一个是更新了激活函数。SE 注意力就是通过池化得到每个通道的值，并输入到全连接层学习到每个通道的权重，对每个通道的数值进行更新。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SELayer</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, channel, reduction=<span class="number">4</span>)</span>:</span></span><br><span class="line">        super(SELayer, self).__init__()</span><br><span class="line">        self.avg_pool = nn.AdaptiveAvgPool2d(<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 输入维度和输出维度相同</span></span><br><span class="line">        self.fc = nn.Sequential(</span><br><span class="line">            nn.Linear(channel, _make_divisible(channel // reduction, <span class="number">8</span>)),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Linear(_make_divisible(channel // reduction, <span class="number">8</span>), channel),</span><br><span class="line">            h_sigmoid()</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        b, c, _, _ = x.size()</span><br><span class="line">        y = self.avg_pool(x).view(b, c)</span><br><span class="line">        y = self.fc(y).view(b, c, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="comment"># y 是每个通道的权重</span></span><br><span class="line">        <span class="keyword">return</span> x * y</span><br></pre></td></tr></table></figure>
+<p>在重新设计激活函数方面，使用 h-swish 激活函数代替了 swish 激活函数，因为更容易计算。对于 swish 激活函数：</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>        \text{swish} x &amp;= x \cdot \sigma(x) \<br>        \sigma(x) &amp;= \frac{1}{1+e^{-x}}<br>    \end{aligned}<br>\end{equation}</p>
+<p>这个反向传播和激活的计算过程略显复杂，对量化不够友好。于是使用较为接近的 h-swish 激活函数代替：</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>        \text{h-sigmoid} &amp;= \frac{\text{ReLU6}(x+3)}{6} \<br>        \text{h-swish} &amp;= x \cdot \text{h-sigmoid}<br>    \end{aligned}<br>\end{equation}</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">h_sigmoid</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inplace=True)</span>:</span></span><br><span class="line">        super(h_sigmoid, self).__init__()</span><br><span class="line">        self.relu = nn.ReLU6(inplace=inplace)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.relu(x + <span class="number">3</span>) / <span class="number">6</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">h_swish</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inplace=True)</span>:</span></span><br><span class="line">        super(h_swish, self).__init__()</span><br><span class="line">        self.sigmoid = h_sigmoid(inplace=inplace)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> x * self.sigmoid(x)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">InvertedResidual</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, inp, hidden_dim, oup, kernel_size, stride, use_se, use_hs)</span>:</span></span><br><span class="line">        super(InvertedResidual, self).__init__()</span><br><span class="line">        <span class="keyword">assert</span> stride <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        self.identity = stride == <span class="number">1</span> <span class="keyword">and</span> inp == oup</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> inp == hidden_dim:</span><br><span class="line">            self.conv = nn.Sequential(</span><br><span class="line">                <span class="comment"># dw</span></span><br><span class="line">                nn.Conv2d(hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - <span class="number">1</span>) // <span class="number">2</span>, groups=hidden_dim, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                h_swish() <span class="keyword">if</span> use_hs <span class="keyword">else</span> nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># Squeeze-and-Excite</span></span><br><span class="line">                SELayer(hidden_dim) <span class="keyword">if</span> use_se <span class="keyword">else</span> nn.Identity(),</span><br><span class="line">                <span class="comment"># pw-linear</span></span><br><span class="line">                nn.Conv2d(hidden_dim, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.conv = nn.Sequential(</span><br><span class="line">                <span class="comment"># pw 升维</span></span><br><span class="line">                nn.Conv2d(inp, hidden_dim, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                h_swish() <span class="keyword">if</span> use_hs <span class="keyword">else</span> nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># dw 提取特征</span></span><br><span class="line">                nn.Conv2d(hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - <span class="number">1</span>) // <span class="number">2</span>, groups=hidden_dim, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(hidden_dim),</span><br><span class="line">                <span class="comment"># Squeeze-and-Excite</span></span><br><span class="line">                SELayer(hidden_dim) <span class="keyword">if</span> use_se <span class="keyword">else</span> nn.Identity(),</span><br><span class="line">                h_swish() <span class="keyword">if</span> use_hs <span class="keyword">else</span> nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">                <span class="comment"># pw-linear 先行激活，降维</span></span><br><span class="line">                nn.Conv2d(hidden_dim, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">                nn.BatchNorm2d(oup),</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.identity:</span><br><span class="line">            <span class="keyword">return</span> x + self.conv(x)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> self.conv(x)</span><br></pre></td></tr></table></figure>
+<h1 id="ShuffleNet-V1"><a href="#ShuffleNet-V1" class="headerlink" title="ShuffleNet-V1"></a>ShuffleNet-V1</h1><p>group 卷积能有效的减少卷积参数。假设输入图像的大小为 $c_1\times H \times W$，卷积核大小为 $c_1 \times h \times w$，想要得到 $c_2 \times H \times W$ 的输出目标，那么需要的卷积层参数量就是：$c_2 \times c_1 \times h \times w$。</p>
+<p>如果使用 group 卷积，将通道分成 $g$ 组，那么每个输入就是 $c_1/g \times H \times W$，对应的卷积核大小为 $c_1/g \times h \times w$，为了得到同样大小的输出，一组卷积的输出大小就是 $c_2/g \times H \times W$，将 $g$ 组卷积核的输出拼接到一起得到同等大小的输出 $c_2 \times H \times W$，此时的参数量为 $c_2 \times c_1 / g\times h \times w$。</p>
+<p><img data-src="https://s1.ax1x.com/2022/05/02/OFVjDH.jpg" alt></p>
+<ul>
+<li>图 a 中，对于 group 卷积而言，channel 特征只在组内传递</li>
+<li>图 b 中，对 channel 进行打乱，特征在多个 channel 中传递</li>
+</ul>
+<p>综上，使用 group 卷积替换传统卷积，并在 group 卷积后使用 channel shuffle 操作。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">channel_shuffle</span><span class="params">(x, groups)</span>:</span></span><br><span class="line">    batchsize, num_channels, height, width = x.data.size()</span><br><span class="line"></span><br><span class="line">    channels_per_group = num_channels // groups</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># reshape</span></span><br><span class="line">    x = x.view(batchsize, groups, </span><br><span class="line">        channels_per_group, height, width)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 通道那个矩阵发生了转置</span></span><br><span class="line">    <span class="comment"># - contiguous() required if transpose() is used before view()</span></span><br><span class="line">    x = torch.transpose(x, <span class="number">1</span>, <span class="number">2</span>).contiguous()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># flatten</span></span><br><span class="line">    x = x.view(batchsize, <span class="number">-1</span>, height, width)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h1 id="ShuffleNet-V2"><a href="#ShuffleNet-V2" class="headerlink" title="ShuffleNet-V2"></a>ShuffleNet-V2</h1><p>在众多影响模型推理速度的因素中，理论计算量只是一部分，额外的还有内存访问（memory access cost, MAC）、平台架构和并行等级；而 数据 IO、逐元素运算也会占用时间。因此作者给出了设计轻量网络的四条准则和实验验证：</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>        \text{MAC} &amp;= hw(c_1+c_2)+c_1c_2 \<br>        { } &amp; \geq 2hw\sqrt{c_1c_2}+c_1c_2\<br>        { } &amp; \geq 2\sqrt{hwB} + \frac{B}{hw}\<br>        B &amp;= hwc_1c_2 (\text{FLOPs})<br>    \end{aligned}<br>\end{equation}</p>
+<ol>
+<li>如上的 MAC 计算中，可以发现当 $c_1=c_2$ 的时候取等号。也就是当卷积的输入和输出 channel 相等时，内存访问代价最低，因此尽可能使通道不变</li>
+</ol>
+<p>\begin{equation}<br>    \begin{aligned}<br>        \text{Group-MAC} &amp;= hw(c_1+c_2)+c_1c_2/g \<br>        { } &amp;=hwc_1 + \frac{Bg}{c_1} + \frac{B}{hw}\<br>        B &amp;= hwc_1c_2/g (\text{FLOPs})<br>    \end{aligned}<br>\end{equation}</p>
+<ol>
+<li>在 Group-MAC 计算中，因为其他是定植，那么大小取决于 $g$，因此分组卷积分的越多时，内存访问代价会增大</li>
+<li>网络的碎片化程度越高（分支越多的意思），速度越慢。对于 GPU 的并行计算不友好，而且涉及不同分支的同步问题</li>
+<li>逐元素相加也会带来不可忽视的开销，如 relu，残差的 add 运算</li>
+</ol>
+<p><img data-src="https://s1.ax1x.com/2022/05/02/OFVXKe.jpg" alt></p>
+<p>图左侧的 a（stride=1） 和 b（stride=2） 是 ShuffleNetV1 的结构，右侧的 c（stride=1） 和 d（stride=2） 是 ShuffleNetV2 的结构。</p>
+<p>图 c 中，为了减少碎片化，在 c 中取消了左侧分支没有运算，右侧分支满足第一个准则，而最开始的 channel split 到最后的 concat，再次满足第一个准则，不选择 add 操作满足第 4 个准则。只对右侧的分支进行 relu 激活，并取消最终输出的 relu，满足第 4 个准则。而 concat，channel shuffle 和下一层输入的 channel split 可以合并为一个逐元素操作，不得不说太细了。</p>
+<p>然后 ShuffleNetV2+ 在借鉴 MobileNetV3 的想法，也使用了 h-swish 激活函数和 SE 注意力机制，结果上超过了 MobileNetV3，这一部分可以在旷视的 github 上找到。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2020/06/16/GCN/" rel="bookmark">GCN的通俗理解，无复杂公式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/02/09/Start-deep-learning/" rel="bookmark">DeepLearning准备进坑</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeepLearning/" rel="tag"># DeepLearning</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/04/23/iou-loss/" rel="prev" title="IoU Loss 系列">
+      <i class="fa fa-chevron-left"></i> IoU Loss 系列
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/03/python-gc/" rel="next" title="从 python 中的垃圾回收回顾下内存碎片化">
+      从 python 中的垃圾回收回顾下内存碎片化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MobileNet-V1"><span class="nav-number">1.</span> <span class="nav-text">MobileNet-V1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MobileNet-V2"><span class="nav-number">2.</span> <span class="nav-text">MobileNet-V2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MobileNet-V3"><span class="nav-number">3.</span> <span class="nav-text">MobileNet-V3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ShuffleNet-V1"><span class="nav-number">4.</span> <span class="nav-text">ShuffleNet-V1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ShuffleNet-V2"><span class="nav-number">5.</span> <span class="nav-text">ShuffleNet-V2</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">218</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">900k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13:38</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '17c22fd75ac7b2abfc46cee4b8a01e28',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
