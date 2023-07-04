@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="问题描述：并不是不蒜子域名的问题，就是那种即使修改了_config.yml文件的busuanzi为true，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使busuanzi显示正常，结果还真改出来了，我可真是个天才。 昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不">
-<meta name="keywords" content="Blog">
 <meta property="og:type" content="article">
 <meta property="og:title" content="修补hexo-next不蒜子不显示问题">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="问题描述：并不是不蒜子域名的问题，就是那种即使修改了_config.yml文件的busuanzi为true，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使busuanzi显示正常，结果还真改出来了，我可真是个天才。 昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-04T15:16:24.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/1.png">
+<meta property="article:published_time" content="2019-11-22T05:39:41.000Z">
+<meta property="article:modified_time" content="2021-04-04T15:16:24.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Blog">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="修补hexo-next不蒜子不显示问题">
-<meta name="twitter:description" content="问题描述：并不是不蒜子域名的问题，就是那种即使修改了_config.yml文件的busuanzi为true，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使busuanzi显示正常，结果还真改出来了，我可真是个天才。 昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/11/22/busuanzi-notdisplay/">
 
@@ -273,14 +275,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.7k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -294,7 +296,7 @@
       
         <p>问题描述：并不是不蒜子域名的问题，就是那种即使修改了<code>_config.yml</code>文件的<code>busuanzi为true</code>，它就是不显示，之前也是这个问题。而网上搜索不蒜子不显示这个问题，全是修改域名，但我不是域名的问题啊。毕竟自己是学计算机的，虽然没学过前端。但忍无可忍，决定改源代码使<code>busuanzi</code>显示正常，结果还真改出来了，我可真是个天才。</p>
 <p>昨天还给一个研究生学长改好了一个bug，那还是我没见过的算法，要不是我见过比那还烂的代码，不然真的镇不住场面了，日常感觉自己是个天才。之前一个同学说：我校都是本科生带研究生，别的学校都是老师和研究生带本科生，现在我多少信了，现在想想我帮过他们多少东西了，滑稽。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="版本依赖"><a href="#版本依赖" class="headerlink" title="版本依赖"></a>版本依赖</h1><p>不谈版本只说问题都是在耍流氓。确定使用本文的方法前，请确定版本是否适用。</p>
 <ul>
 <li>computer： Linux version 4.19.79-1-MANJARO</li>
@@ -303,7 +305,7 @@
 <li>Next：7.5.0</li>
 </ul>
 <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>每次修改不蒜子后，网页缓存可能没更新，需要重新<code>hexo s --watch</code>一下才能查看修改后的效果。</p>
-<h1 id="开始修改"><a href="#开始修改" class="headerlink" title="开始修改"></a>开始修改</h1><h2 id="主题的配置文件"><a href="#主题的配置文件" class="headerlink" title="主题的配置文件"></a>主题的配置文件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">busuanzi_count:</span><br><span class="line">  enable: <span class="literal">true</span></span><br><span class="line">  total_visitors: <span class="literal">true</span></span><br><span class="line">  total_visitors_icon: user</span><br><span class="line">  total_views: <span class="literal">true</span></span><br><span class="line">  total_views_icon: eye</span><br><span class="line">  post_views: <span class="literal">true</span></span><br><span class="line">  post_views_icon: eye</span><br></pre></td></tr></table></figure>
+<h1 id="开始修改"><a href="#开始修改" class="headerlink" title="开始修改"></a>开始修改</h1><h2 id="主题的配置文件"><a href="#主题的配置文件" class="headerlink" title="主题的配置文件"></a>主题的配置文件</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">busuanzi_count</span>:</span><br><span class="line">  <span class="attr">enable</span>: <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_visitors</span>: <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_visitors_icon</span>: user</span><br><span class="line">  <span class="attr">total_views</span>: <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_views_icon</span>: eye</span><br><span class="line">  <span class="attr">post_views</span>: <span class="literal">true</span></span><br><span class="line">  <span class="attr">post_views_icon</span>: eye</span><br></pre></td></tr></table></figure>
 <p>可是这样丝毫没用，还是不显示。没有浏览人数和浏览量的博客没有灵魂，于是决定在线Debug查找问题所在。</p>
 <h2 id="修复总访问量和总访问人数"><a href="#修复总访问量和总访问人数" class="headerlink" title="修复总访问量和总访问人数"></a>修复总访问量和总访问人数</h2><p>在网页中按下<code>F12</code>这个键，点击图中的鼠标，定位到要显示总访客人的地方。不要因为界面很复杂就感觉自己不会，在这之前我啥也不会，在这之后我还是不会。</p>
 <p><img data-src="/2019/11/22/busuanzi-notdisplay/1.png" alt></p>
@@ -311,17 +313,17 @@
 <p>两种去除方法：</p>
 <ol>
 <li><code>F12</code>出来的界面中，直接删除这个语句，回车确定，会发现去掉了，也可以显示了，但刷新后那句话又会回来，有没有什么一劳永逸的方法呢？有。</li>
-<li>打开<code>theme-next/layout/_third-party/statistics/busuanzi-counter.swig</code><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if theme.busuanzi_count.total_views %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item"</span> <span class="attr">id</span>=<span class="string">"busuanzi_container_site_pv"</span> <span class="attr">style</span>=<span class="string">"display: none;"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-icon"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-&#123;&#123; theme.busuanzi_count.total_views_icon &#125;&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-pv"</span> <span class="attr">title</span>=<span class="string">"&#123;&#123; __('footer.total_views') &#125;&#125;"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure>
+<li>打开<code>theme-next/layout/_third-party/statistics/busuanzi-counter.swig</code><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if theme.busuanzi_count.total_views %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item&quot;</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_container_site_pv&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display: none;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item-icon&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-&#123;&#123; theme.busuanzi_count.total_views_icon &#125;&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;site-pv&quot;</span> <span class="attr">title</span>=<span class="string">&quot;&#123;&#123; __(&#x27;footer.total_views&#x27;) &#125;&#125;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_value_site_pv&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>看到里面的<code>&lt;span class=&quot;post-meta-item&quot; id=&quot;busuanzi_container_site_pv&quot; style=&quot;display: none;&quot;&gt;</code>了没，对，去掉，直接去掉，明明开发出来了还设置不显示，不知道咋想的。</p>
-<p>我修改的<code>theme-next/layout/_third-party/statistics/busuanzi-counter.swig</code>内容如下，仅供参考：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if theme.busuanzi_count.enable %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"busuanzi-count"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">async</span> <span class="attr">src</span>=<span class="string">"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-uv"</span> <span class="attr">title</span>=<span class="string">"&#123;&#123; __('footer.total_visitors') &#125;&#125;"</span>&gt;</span></span><br><span class="line">    我的第<span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_uv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>位朋友, </span><br><span class="line">  <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-pv"</span> <span class="attr">title</span>=<span class="string">"&#123;&#123; __('footer.total_views') &#125;&#125;"</span>&gt;</span></span><br><span class="line">    经过<span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_site_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>次回眸与你相遇</span><br><span class="line">  <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我修改的<code>theme-next/layout/_third-party/statistics/busuanzi-counter.swig</code>内容如下，仅供参考：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if theme.busuanzi_count.enable %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;busuanzi-count&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">async</span> <span class="attr">src</span>=<span class="string">&quot;https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;site-uv&quot;</span> <span class="attr">title</span>=<span class="string">&quot;&#123;&#123; __(&#x27;footer.total_visitors&#x27;) &#125;&#125;&quot;</span>&gt;</span></span><br><span class="line">    我的第<span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_value_site_uv&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>位朋友, </span><br><span class="line">  <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;site-pv&quot;</span> <span class="attr">title</span>=<span class="string">&quot;&#123;&#123; __(&#x27;footer.total_views&#x27;) &#125;&#125;&quot;</span>&gt;</span></span><br><span class="line">    经过<span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_value_site_pv&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span>次回眸与你相遇</span><br><span class="line">  <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure></p>
 <h2 id="修复每篇文章的浏览人数"><a href="#修复每篇文章的浏览人数" class="headerlink" title="修复每篇文章的浏览人数"></a>修复每篇文章的浏览人数</h2><p>这个的设置没在<code>busuanzi.swig</code>中，再次定位，发现是一个div叫<code>post-meta</code>的东西，而所有发表的博客页面都和<code>post</code>有关（折腾多了，经验），所以，我们在去寻找有没有大概叫<code>post</code>文件名的，里面有没有<code>post-meta</code>，这次又找到了。</p>
 <p>打开<code>theme/next/layout/_macro/post.swig</code>，接着分析，首先找到不蒜子的代码。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item"</span> <span class="attr">title</span>=<span class="string">"&#123;&#123; __('post.views') &#125;&#125;"</span> <span class="attr">id</span>=<span class="string">"busuanzi_container_page_pv"</span> <span class="attr">style</span>=<span class="string">"display: none;"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-icon"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-&#123;&#123; theme.busuanzi_count.post_views_icon &#125;&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-text"</span>&gt;</span>&#123;&#123; __('post.views') + __('symbol.colon') &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_page_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item&quot;</span> <span class="attr">title</span>=<span class="string">&quot;&#123;&#123; __(&#x27;post.views&#x27;) &#125;&#125;&quot;</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_container_page_pv&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display: none;&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item-icon&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-&#123;&#123; theme.busuanzi_count.post_views_icon &#125;&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item-text&quot;</span>&gt;</span>&#123;&#123; __(&#x27;post.views&#x27;) + __(&#x27;symbol.colon&#x27;) &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_value_page_pv&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure>
 <p>对没错，又看到了<code>style display none</code>，二话不说直接删了，不删的话，会发现，网页源代码的确有不蒜子的信息，但就是不显示。</p>
 <p>我修改后的配置如下：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if  not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span><span class="symbol">&amp;emsp;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-icon"</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fa fa-eye"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-text"</span>&gt;</span>&#123;&#123; __('post.views') + __('symbol.colon') &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"busuanzi_value_page_pv"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;%- if  not is_index and theme.busuanzi_count.enable and theme.busuanzi_count.post_views %&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span>&gt;</span><span class="symbol">&amp;emsp;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item-icon&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-eye&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;post-meta-item-text&quot;</span>&gt;</span>&#123;&#123; __(&#x27;post.views&#x27;) + __(&#x27;symbol.colon&#x27;) &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">&quot;busuanzi_value_page_pv&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">&#123;%- endif %&#125;</span><br></pre></td></tr></table></figure>
 <p>如上，修改完毕。也能正常显示了。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>看着轻松嘛，但是我前后折腾了四个小时，学会了F12在线debug，至少还是有收获的。如果你还是不能显示，可以按照本文介绍的方法，一点点去寻找问题所在，然后解决掉。可能每个人和每个人面临的情况不一样。</p>
 <p>授人以鱼不如授人以渔，会独立分析，解决各种问题总比会查询解决一个问题来的实在。</p>
@@ -335,10 +337,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/10/13/blog-two-years/" rel="bookmark">博客两年了</a></div>
+      <div class="popular-posts-title"><a href="/2020/03/12/blog-optimize/" rel="bookmark">一些不常见的进阶博客优化</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/12/blog-optimize/" rel="bookmark">一些不常见的进阶博客优化</a></div>
+      <div class="popular-posts-title"><a href="/2020/10/13/blog-two-years/" rel="bookmark">博客两年了</a></div>
     </li>
   </ul>
 
@@ -464,7 +466,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#版本依赖"><span class="nav-number">1.</span> <span class="nav-text">版本依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意事项"><span class="nav-number">2.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始修改"><span class="nav-number">3.</span> <span class="nav-text">开始修改</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主题的配置文件"><span class="nav-number">3.1.</span> <span class="nav-text">主题的配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修复总访问量和总访问人数"><span class="nav-number">3.2.</span> <span class="nav-text">修复总访问量和总访问人数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修复每篇文章的浏览人数"><span class="nav-number">3.3.</span> <span class="nav-text">修复每篇文章的浏览人数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E4%BE%9D%E8%B5%96"><span class="nav-number">1.</span> <span class="nav-text">版本依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BF%AE%E6%94%B9"><span class="nav-number">3.</span> <span class="nav-text">开始修改</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">主题的配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E6%80%BB%E8%AE%BF%E9%97%AE%E9%87%8F%E5%92%8C%E6%80%BB%E8%AE%BF%E9%97%AE%E4%BA%BA%E6%95%B0"><span class="nav-number">3.2.</span> <span class="nav-text">修复总访问量和总访问人数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E6%AF%8F%E7%AF%87%E6%96%87%E7%AB%A0%E7%9A%84%E6%B5%8F%E8%A7%88%E4%BA%BA%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">修复每篇文章的浏览人数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -500,7 +502,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -534,14 +536,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -600,9 +602,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -715,7 +725,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

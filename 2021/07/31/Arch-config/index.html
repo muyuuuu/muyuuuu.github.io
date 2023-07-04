@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="想来想去，以壮士断腕的决心决定抛弃垃圾 windows 了，实在是 TMD 卡的要死，但是以我电脑的配置，不可能卡的。加上 C 盘的无理由暴增，TMD 空间锐减，加上每次系统动不动更新，每次更新都 TMD 出 bug 直接卡死。我宁肯花一周的时间打造一款我的主力 Arch Linux ，再 TMD 也不向 windows 低头了。以本文记录 Arch Linux 的折腾全记录。 包括：代理、终端、">
-<meta name="keywords" content="Computer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Arch 折腾全记录，彻底告别 Windows">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/07/31/Arch-config/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="想来想去，以壮士断腕的决心决定抛弃垃圾 windows 了，实在是 TMD 卡的要死，但是以我电脑的配置，不可能卡的。加上 C 盘的无理由暴增，TMD 空间锐减，加上每次系统动不动更新，每次更新都 TMD 出 bug 直接卡死。我宁肯花一周的时间打造一款我的主力 Arch Linux ，再 TMD 也不向 windows 低头了。以本文记录 Arch Linux 的折腾全记录。 包括：代理、终端、">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-08-29T13:38:37.524Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/07/31/Wv01K0.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/07/31/Wv07dS.jpg">
+<meta property="article:published_time" content="2021-07-31T11:51:26.000Z">
+<meta property="article:modified_time" content="2021-08-29T13:38:37.524Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Computer">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Arch 折腾全记录，彻底告别 Windows">
-<meta name="twitter:description" content="想来想去，以壮士断腕的决心决定抛弃垃圾 windows 了，实在是 TMD 卡的要死，但是以我电脑的配置，不可能卡的。加上 C 盘的无理由暴增，TMD 空间锐减，加上每次系统动不动更新，每次更新都 TMD 出 bug 直接卡死。我宁肯花一周的时间打造一款我的主力 Arch Linux ，再 TMD 也不向 windows 低头了。以本文记录 Arch Linux 的折腾全记录。 包括：代理、终端、">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/07/31/Wv01K0.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/07/31/Arch-config/">
 
@@ -294,21 +297,21 @@
       
         <p>想来想去，以壮士断腕的决心决定抛弃垃圾 <code>windows</code> 了，实在是 <code>TMD</code> 卡的要死，但是以我电脑的配置，不可能卡的。加上 <code>C</code> 盘的无理由暴增，<code>TMD</code> 空间锐减，加上每次系统动不动更新，每次更新都 <code>TMD</code> 出 <code>bug</code> 直接卡死。我宁肯花一周的时间打造一款我的主力 <code>Arch Linux</code> ，再 <code>TMD</code> 也不向 <code>windows</code> 低头了。以本文记录 <code>Arch Linux</code> 的折腾全记录。</p>
 <p>包括：代理、终端、字体、换源更新、软件、甚至是博客迁移等。最重要的是，关于向这个世界的妥协，如何使安装 QQ、微信和 word 等非必要但深入人心的软件。毕竟老板让你微信给他发文件还是很常见的，毕竟老板没手没脚，发一次不接收必须发第 $N$ 次，毕竟他用 LaTeX 也要手动编号。</p>
-<a id="more"></a>
-<h1 id="关于代理"><a href="#关于代理" class="headerlink" title="关于代理"></a>关于代理</h1><p>我用的是 <code>clash</code>，直接 <code>sudo pacman -s clash</code> 即可，而后将其设置为开机启动，后台自己执行。<a href="https://github.com/Sitoi/SystemdClash" target="_blank" rel="noopener">相关参考</a>。</p>
+<span id="more"></span>
+<h1 id="关于代理"><a href="#关于代理" class="headerlink" title="关于代理"></a>关于代理</h1><p>我用的是 <code>clash</code>，直接 <code>sudo pacman -s clash</code> 即可，而后将其设置为开机启动，后台自己执行。<a target="_blank" rel="noopener" href="https://github.com/Sitoi/SystemdClash">相关参考</a>。</p>
 <p>不过刚到新系统，一般会面临先有鸡还是先有蛋的问题，即：代理服务在国外，没有代理买不了服务，没有服务就出不去。所以，提前找同学接好代理，注意：有些代理只能在 <code>windows</code> 使用，一定要看好 <code>linux</code> 是否可以用。</p>
-<h1 id="关于输入法"><a href="#关于输入法" class="headerlink" title="关于输入法"></a>关于输入法</h1><p><a href="https://www.cnblogs.com/qscgy/p/13385905.html" target="_blank" rel="noopener">文章推荐</a>，关于安装和配置就这个写的比较好，网上其他教程太垃圾且过时。在配置输入法的时候记得选择里面的 <code>pinyin</code>，其他的中文输入不行，然后重启即可。</p>
+<h1 id="关于输入法"><a href="#关于输入法" class="headerlink" title="关于输入法"></a>关于输入法</h1><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/qscgy/p/13385905.html">文章推荐</a>，关于安装和配置就这个写的比较好，网上其他教程太垃圾且过时。在配置输入法的时候记得选择里面的 <code>pinyin</code>，其他的中文输入不行，然后重启即可。</p>
 <h1 id="关于更新与换源"><a href="#关于更新与换源" class="headerlink" title="关于更新与换源"></a>关于更新与换源</h1><p><code>sudo pacman -Syu</code>，同步仓库即同步本地软件和仓库中软件的最新状态，更新所有系统上被 <code>pacman</code> 管理的的软件。<code>Su</code> 升级系统；<code>Syy</code> 会只刷新数据库。</p>
 <p><strong>Arch Linux 中文社区仓库</strong> 是由 Arch Linux 中文社区驱动的非官方软件仓库，包含许多官方仓库未提供的额外的软件包，以及已有软件的 git 版本等变种。一部分软件包的打包脚本来源于 AUR，但也有许多包与 AUR 不一样。以清华大学的源为例，在 <code>/etc/pacman.conf</code> 文件末尾添加：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[archlinuxcn]</span><br><span class="line">Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[archlinuxcn]</span><br><span class="line">Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch</span><br></pre></td></tr></table></figure>
 <p>因为所有软件包都是经过开发者私钥签名，验证签名需要导入对应的公钥，即：安装 <code>archlinuxcn-keyring</code> 包以导入 GPG key。</p>
 <p>当然，有些软件不一定在 archlinuxcn 源中，所以其它软件的换源方式为：编辑 /etc/pacman.d/mirrorlist，文件顶端添加：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch</span><br></pre></td></tr></table></figure>
 <p>更新软件包缓存：<code>sudo pacman -Syy</code>。</p>
 <h1 id="关于浏览器"><a href="#关于浏览器" class="headerlink" title="关于浏览器"></a>关于浏览器</h1><p>我使用的浏览器是 <code>google-chrome-stable</code>，因为 <code>chromium</code> 不支持登录谷歌帐号，插件、书签无法同步，且 <code>chromium wiki</code> 上提供的解决方案也是曲线救国，我不喜欢。</p>
 <p><img data-src="https://z3.ax1x.com/2021/07/31/Wv01K0.png" alt></p>
 <p>在 <code>pacman -S google-chrome-stable</code> 后，因为浏览器不能使用代理而无法为了科学上网。我查了一下可以使用 <code>proxychains</code>，但是配合 <code>google-chrome-stable</code> 使用时会直接 <code>core dumped</code>，查了一下据说是这俩软件水火不容。而后我又查到了其它用法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">google-chrome-stable --proxy-server=&quot;socks5://127.0.0.1:7891&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">google-chrome-stable --proxy-server=&quot;socks5://127.0.0.1:7891&quot;</span><br></pre></td></tr></table></figure>
 <p>这样开启的浏览器是有代理的，然后登录 <code>chrome</code>，登录谷歌，直接同步，一切都很舒服。</p>
 <h1 id="关于字体"><a href="#关于字体" class="headerlink" title="关于字体"></a>关于字体</h1><p>掏出万能的 wiki 文档，发现安装字体的三种方式：</p>
 <ul>
@@ -317,7 +320,7 @@
 </ul>
 <p>安装完毕后，可以在设置-&gt;字体中，配置自己喜欢的字体，如果没有立即生效，记得重启。关于 <code>latex</code> 如何调用系统的字体，时而文件名、时而字体名，时而镜像中克隆的名字，等改天单独写吧。</p>
 <p>一般而言，<code>sans serif</code> 表示无衬线字体，<code>Serif</code> 表示衬线字体，<code>Noto</code> 表示谷歌命名的字体，<code>Mono</code> 是等宽字体。我一般使用的字体是：思源宋体黑体、<code>source code pro</code> 和 <code>IBM Plex Mono</code>，落霞孤鹜等。</p>
-<p>此外，还会遇到终端、软件里面时而衬线字体时而非衬线字体等极度丑陋的情况，这个时候需要进行一些配置，可以参考<a href="https://szclsya.me/zh-cn/posts/fonts/linux-config-guide/" target="_blank" rel="noopener">这篇博客</a>。</p>
+<p>此外，还会遇到终端、软件里面时而衬线字体时而非衬线字体等极度丑陋的情况，这个时候需要进行一些配置，可以参考<a target="_blank" rel="noopener" href="https://szclsya.me/zh-cn/posts/fonts/linux-config-guide/">这篇博客</a>。</p>
 <h1 id="关于终端"><a href="#关于终端" class="headerlink" title="关于终端"></a>关于终端</h1><ul>
 <li>更改系统默认终端：<code>sudo chsh -s /usr/bin/bash</code>，如果切换失败，可以尝试进入 <code>root</code> 切换或 <code>usermod -s /usr/bin/fish lanling</code> 命令，查看系统默认终端：<code>cat /etc/shells</code>；</li>
 <li><code>shell</code> 用的是 <code>fish</code> 毕竟是真的舒服，<code>oh my zsh</code> 太乱了。系统自带的 <code>konsole</code> 配和 <code>oh my zsh</code> 时常乱码，但是，不可否认，<code>konsole</code> 分屏、配色、标签页等各个方面都极度强大。</li>
@@ -348,7 +351,7 @@
 <li>而后自己折腾吧，<code>i3wm</code> 有点无从下手的样子。我尝试折腾了一下，直接黑屏，除了鼠标啥都没有，然后不知道动了哪个配置文件，<code>KDE</code> 都回不去了，系统会自动退出到登陆界面，登陆后还是退出，一个死循环。无奈，删除账户，新建账户，第六次重装系统。</li>
 </ul>
 <h1 id="关于博客搬家"><a href="#关于博客搬家" class="headerlink" title="关于博客搬家"></a>关于博客搬家</h1><p>我的博客是基于 <code>hexo</code> 的，而之前的博客在 windows 上，所以要进行博客搬家。博客搬家倒是很容易，先安装必要依赖：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -S nodejs</span><br><span class="line">sudo pacman -S npm</span><br><span class="line">npm config set registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -S nodejs</span><br><span class="line">sudo pacman -S npm</span><br><span class="line">npm config set registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
 <p>而后在安装 <code>hexo</code> 的时候有坑，有坑的是传统方案：<code>npm install -g hexo-cli</code>，这样会发现没权限，而后 <code>sudo npm install -g hexo-cli</code>，但这是很烂的行为，因为 <code>Arch</code> 的包最好用 <code>pacman</code> 管理起来，而 <code>npm</code> 安装的并不会被管理。所以，掏出万能的 <code>AUR</code>，发现里面有 <code>hexo</code>，安装即可。</p>
 <p>之后的东西就简单了，新建博客路径，拷贝原始博客的文件到新的路径下：</p>
 <ol>
@@ -360,10 +363,10 @@
 </ol>
 <p>最后进入博客目录，执行 <code>npm install</code>，而后就可以使用博客了，这也是我换系统后的第一篇博客。</p>
 <h1 id="关于善后"><a href="#关于善后" class="headerlink" title="关于善后"></a>关于善后</h1><p><code>word, excel, ppt, qq, wechat</code> 等软件如何使用或者寻找替代品也是必须要妥协的，毕竟很多人都在用，毕竟大部分人都不知道 latex 和 telegram 的存在。</p>
-<h2 id="wps"><a href="#wps" class="headerlink" title="wps"></a>wps</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p ~/Software/AUR</span><br><span class="line">cd ~/Software/AUR</span><br><span class="line">git clone https://aur.archlinux.org/wps-office-cn.git</span><br><span class="line">cd wps-office-cn</span><br><span class="line">makepkg -si</span><br></pre></td></tr></table></figure>
+<h2 id="wps"><a href="#wps" class="headerlink" title="wps"></a>wps</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p ~/Software/AUR</span><br><span class="line">cd ~/Software/AUR</span><br><span class="line">git clone https://aur.archlinux.org/wps-office-cn.git</span><br><span class="line">cd wps-office-cn</span><br><span class="line">makepkg -si</span><br></pre></td></tr></table></figure>
 <p>而后按下 <code>meta</code> 键，就可以搜到了。再把字体从自己的 <code>windows</code> 系统拷贝过来，这样 <code>wps</code> 就有字体了，我是把字体拷贝到了 <code>/usr/share/fonts</code>。注意，安装完毕之后，<code>Software/AUR</code> 是可以删除的。</p>
-<h2 id="qq"><a href="#qq" class="headerlink" title="qq"></a>qq</h2><p>无论是安装 QQ 还是 Tim，我试了网上和 wiki 说的那些什么用 <code>yay</code> 安装 <code>qq, deepin, office, wine, light</code> 乱七八糟的无法装成功，不如直接用官方构建好的包。去 <a href="https://im.qq.com/pcqq" target="_blank" rel="noopener">官方</a> 下载对应的发行版的包，<code>arch</code> 就下载 <code>pacman</code> 的，而后 <code>sudo pacman -U linuxqq_2.0.0-b2-1089_x86_64.pkg.tar</code>。</p>
-<h2 id="wechat"><a href="#wechat" class="headerlink" title="wechat"></a>wechat</h2><p>既然 QQ 都安装成功了，那么也就通过这种方式安装 wechat 吧。去 github 下载别人<a href="https://github.com/countstarlight/deepin-wine-wechat-arch" target="_blank" rel="noopener">打包好的</a>，安装方式同 QQ。因为 3.0+ 的不能发文件且我在 issue 里面也没看到啥特别好修复方法。建议下载 <code>2.9.5</code> 版本的，然后将 wine 替换为 deepin-wine5 修理一下，可以参考<a href="https://www.jianshu.com/p/11231b51ece0" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="qq"><a href="#qq" class="headerlink" title="qq"></a>qq</h2><p>无论是安装 QQ 还是 Tim，我试了网上和 wiki 说的那些什么用 <code>yay</code> 安装 <code>qq, deepin, office, wine, light</code> 乱七八糟的无法装成功，不如直接用官方构建好的包。去 <a target="_blank" rel="noopener" href="https://im.qq.com/pcqq">官方</a> 下载对应的发行版的包，<code>arch</code> 就下载 <code>pacman</code> 的，而后 <code>sudo pacman -U linuxqq_2.0.0-b2-1089_x86_64.pkg.tar</code>。</p>
+<h2 id="wechat"><a href="#wechat" class="headerlink" title="wechat"></a>wechat</h2><p>既然 QQ 都安装成功了，那么也就通过这种方式安装 wechat 吧。去 github 下载别人<a target="_blank" rel="noopener" href="https://github.com/countstarlight/deepin-wine-wechat-arch">打包好的</a>，安装方式同 QQ。因为 3.0+ 的不能发文件且我在 issue 里面也没看到啥特别好修复方法。建议下载 <code>2.9.5</code> 版本的，然后将 wine 替换为 deepin-wine5 修理一下，可以参考<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/11231b51ece0">这里</a>。</p>
 
     </div>
 
@@ -512,7 +515,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#关于代理"><span class="nav-number">1.</span> <span class="nav-text">关于代理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于输入法"><span class="nav-number">2.</span> <span class="nav-text">关于输入法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于更新与换源"><span class="nav-number">3.</span> <span class="nav-text">关于更新与换源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于浏览器"><span class="nav-number">4.</span> <span class="nav-text">关于浏览器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于字体"><span class="nav-number">5.</span> <span class="nav-text">关于字体</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于终端"><span class="nav-number">6.</span> <span class="nav-text">关于终端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于软件"><span class="nav-number">7.</span> <span class="nav-text">关于软件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于美化"><span class="nav-number">8.</span> <span class="nav-text">关于美化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于博客搬家"><span class="nav-number">9.</span> <span class="nav-text">关于博客搬家</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于善后"><span class="nav-number">10.</span> <span class="nav-text">关于善后</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#wps"><span class="nav-number">10.1.</span> <span class="nav-text">wps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qq"><span class="nav-number">10.2.</span> <span class="nav-text">qq</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wechat"><span class="nav-number">10.3.</span> <span class="nav-text">wechat</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E4%BB%A3%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">关于代理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">关于输入法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%9B%B4%E6%96%B0%E4%B8%8E%E6%8D%A2%E6%BA%90"><span class="nav-number">3.</span> <span class="nav-text">关于更新与换源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">关于浏览器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%AD%97%E4%BD%93"><span class="nav-number">5.</span> <span class="nav-text">关于字体</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%BB%88%E7%AB%AF"><span class="nav-number">6.</span> <span class="nav-text">关于终端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E8%BD%AF%E4%BB%B6"><span class="nav-number">7.</span> <span class="nav-text">关于软件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%BE%8E%E5%8C%96"><span class="nav-number">8.</span> <span class="nav-text">关于美化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%8D%9A%E5%AE%A2%E6%90%AC%E5%AE%B6"><span class="nav-number">9.</span> <span class="nav-text">关于博客搬家</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%96%84%E5%90%8E"><span class="nav-number">10.</span> <span class="nav-text">关于善后</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#wps"><span class="nav-number">10.1.</span> <span class="nav-text">wps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qq"><span class="nav-number">10.2.</span> <span class="nav-text">qq</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wechat"><span class="nav-number">10.3.</span> <span class="nav-text">wechat</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -548,7 +551,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -582,14 +585,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -648,9 +651,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -763,7 +774,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

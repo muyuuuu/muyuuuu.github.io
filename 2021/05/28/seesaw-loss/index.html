@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,22 @@
   </script>
 
   <meta name="description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面向长尾目标检测的 Seesaw Loss">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/28/seesaw-loss/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-06-08T23:02:56.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/28/2FWClj.jpg">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/28/2FhmQJ.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/28/2kVrNR.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/28/2keIpt.png">
+<meta property="article:published_time" content="2021-05-28T07:54:02.000Z">
+<meta property="article:modified_time" content="2021-06-08T23:02:56.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面向长尾目标检测的 Seesaw Loss">
-<meta name="twitter:description" content="论文好像是 2020 年底传到 arxiv 1 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/05/28/2FWClj.jpg">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/28/seesaw-loss/">
 
@@ -293,7 +298,7 @@
 
       
         <p>论文好像是 2020 年底传到 arxiv <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> 的，还比较新。正好最近遇到的问题是类别数量是长尾分布，恰好最近看到 mmdetection 也支持了这个损失函数，索性来看一看这篇论文，算是做个论文笔记吧。不过为了能更容易理解论文的思想，没有按照原论文的内容结构进行整理。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>在现实世界中，只有少部分类有充足的数据，大部分类别其实只有小部分数据，这就是类别数量呈现长尾分布。如下图 <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 所示：</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/28/2FWClj.jpg" alt></p>
 <p>而头部类实例在长尾数据集中占主导地位，这些实例为尾部类提供了大量的负样本。所以正样本和负样本在尾类上的梯度严重不平衡。说人话的意思是，含有尾部类别的样本本是正样本，头部类别的样本是负样本。由于负样本的数量大于正样本，所以负样本对尾部类别的影响大于正样本对尾部类别的影响，具体为啥可以看公式 $\eqref{why}$。由于交叉熵公式的原因，负样本的梯度在学习过程中起到了决定性影响，导致尾部类别被识别为背景或头部类别。如下图所示：</p>
@@ -302,7 +307,7 @@
 <li>那些鸟明明是正样本，但目标小，类别少，导致不如右侧常见的负样本的梯度大。负样本梯度指：就是负样本对当前类别的惩罚。</li>
 </ul>
 <p>以传统的交叉熵损失函数为例：</p>
-<p>\begin{equation}<br>L(z) = -\sum<em>{i=1}^C y_i \log(\sigma_i), \sigma_i = \frac{e^{z_i}}{\sum</em>{j=1}^Ce^{z_j}}<br>\end{equation}</p>
+<p>\begin{equation}<br>L(z) = -\sum_{i=1}^C y_i \log(\sigma_i), \sigma_i = \frac{e^{z_i}}{\sum_{j=1}^Ce^{z_j}}<br>\end{equation}</p>
 <p>$z$ 表示为网络的逻辑预测输出，$\sigma$ 表示网络对每个类别的预测概率。如果当前类别是 $i$，那么对 $z_i$ 和 $z_j$ 的梯度为：</p>
 <p>\begin{equation}\label{why}<br>\frac{\partial L}{\partial z_i} = \sigma_i - 1, \frac{\partial L}{\partial z_j} = \sigma_j<br>\end{equation}</p>
 <p>上述公式中可以看到，第 $i$ 类样本在分类时，也惩罚了类别 $j$，换句话说，类别 $j$ 的输出单元也要受到影响。如果类别 $i$ 是头部类别，类别 $j$ 是尾部类别，那么类别 $j$ 的输出单元、backbone 等网络参数将会在大多数样本中会受到惩罚，于是类别 $j$ 的预测就会受到抑制，导致上图所示的结果。<strong>务必看懂这一步，这也是论文要改进的点。</strong></p>
@@ -314,23 +319,23 @@
 <li>对不同的类别使用不同的分类器去预测</li>
 </ul>
 <h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><h2 id="创新点"><a href="#创新点" class="headerlink" title="创新点"></a>创新点</h2><ol>
-<li>对于每一个类别，通过缓解（mitigation）因子 $M<em>{ij}$ 和补偿（compensation）因子 $C</em>{ij}$ 动态的重新平衡正负样本的梯度</li>
+<li>对于每一个类别，通过缓解（mitigation）因子 $M_{ij}$ 和补偿（compensation）因子 $C_{ij}$ 动态的重新平衡正负样本的梯度</li>
 <li>$M_{ij}$ 在累积的训练过程中，在不同类别之间，减少对尾部类别的惩罚。</li>
 <li>但是只减轻惩罚是不够的，因为其他类别的样本在被误分类为尾类时，尾部类别受到的惩罚仍然较小。说人话的意思是，类别 $j$ 相关的神经元受到的惩罚小，神经网络为了最小化损失，所以不管输入的是什么类，有可能直接输出第 $j$ 类，所以盲目地降低负样本的梯度会增加导致尾类假阳性的风险。所以增加 $C_{ij}$ 增加对<strong>错分类</strong>实例的惩罚，避免假阳性的出现，算是一种补偿机制。</li>
 </ol>
 <p>所以 seesaw loss 有以下优点：</p>
 <ol>
 <li>是动态的，它可以汇总全部训练集的信息，知道哪些是尾类，哪些被错分类，能够更好的调整损失</li>
-<li>是自校准的，因为 $M<em>{ij}$ 和 $C</em>{ij}$ 能避免尾部类别被过度惩罚和假阳性</li>
+<li>是自校准的，因为 $M_{ij}$ 和 $C_{ij}$ 能避免尾部类别被过度惩罚和假阳性</li>
 <li>能更好的处理未知分布的数据集，毕竟在训练期间会统计各个类别的数目，所以能获得更好的正负样本梯度平衡</li>
 </ol>
 <h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>文中定义的 seesaw loss 是：</p>
-<p>\begin{equation}<br>L(z) = -\sum<em>{i=1}^C y_i \log(\hat{\sigma_i}), \hat{\sigma_i} = \frac{e^{z_i}}{\sum</em>{j\neq i}^CS_{ij}e^{z_j}+e^{z_i}}<br>\end{equation}</p>
+<p>\begin{equation}<br>L(z) = -\sum_{i=1}^C y_i \log(\hat{\sigma_i}), \hat{\sigma_i} = \frac{e^{z_i}}{\sum_{j\neq i}^CS_{ij}e^{z_j}+e^{z_i}}<br>\end{equation}</p>
 <p>所以对 $z_j$ 的偏导数就是：</p>
-<p>\begin{equation}<br>\frac{\partial L}{\partial z<em>j} = S</em>{ij} \frac{e^z<em>j}{e^z_i} \hat{\sigma_i}, S</em>{ij} = M<em>{ij} \cdot C</em>{ij}<br>\end{equation}</p>
-<p>$S<em>{ij}$ 表示一种可调节的因子，表示类别为 $i$ 的正样本对类别 $j$ 的惩罚。其中，$M</em>{ij}$ 表示头部类别 $i$ 降低对尾部类别 $j$ 的惩罚，$C_{ij}$ 表示增加对类别 $j$ 的惩罚，当类别 $i$ 被误分类为 $j$ 时。</p>
+<p>\begin{equation}<br>\frac{\partial L}{\partial z_j} = S_{ij} \frac{e^z_j}{e^z_i} \hat{\sigma_i}, S_{ij} = M_{ij} \cdot C_{ij}<br>\end{equation}</p>
+<p>$S_{ij}$ 表示一种可调节的因子，表示类别为 $i$ 的正样本对类别 $j$ 的惩罚。其中，$M_{ij}$ 表示头部类别 $i$ 降低对尾部类别 $j$ 的惩罚，$C_{ij}$ 表示增加对类别 $j$ 的惩罚，当类别 $i$ 被误分类为 $j$ 时。</p>
 <h3 id="缓和因子"><a href="#缓和因子" class="headerlink" title="缓和因子"></a>缓和因子</h3><p>seesaw loss 在训练期间，会统计类别 $i$ 的数量为 $N_i$，对于正样本，也就是当前网络正在处理的类别 $i$，通过缓解因子调整对其它类别的惩罚，公式如下：</p>
-<p>\begin{equation}<br>M_{ij} =<br>\begin{cases}<br>    1, &amp; N_i \leq N_j \\<br>    \biggl(\frac{N_j}{N_i}\biggr)^p, &amp; N_i &gt; N_j<br>\end{cases}<br>\end{equation}</p>
+<p>\begin{equation}<br>M_{ij} =<br>\begin{cases}<br>    1, &amp; N_i \leq N_j \\\\<br>    \biggl(\frac{N_j}{N_i}\biggr)^p, &amp; N_i &gt; N_j<br>\end{cases}<br>\end{equation}</p>
 <p>如上述公式，当类别 $i$ 的数量 $N_i$ 远远大于其它类别时，对其它类别的惩罚力度会降低。$p$ 是控制惩罚程度的超参数。需要注意的是，seesaw loss 会在训练期间统计类别数量，而不是事先统计。这样做有两个好处：</p>
 <ul>
 <li>能适应不可见数据集，如训练数据来自流数据</li>
@@ -338,7 +343,7 @@
 </ul>
 <p><img data-src="https://z3.ax1x.com/2021/05/28/2kVrNR.png" alt></p>
 <h3 id="补偿因子"><a href="#补偿因子" class="headerlink" title="补偿因子"></a>补偿因子</h3><p>这个计算就和上面的公式类似了，假设当前类别是 $i$ 时，被误分类为 $j$，那么缓和因子的计算公式为：</p>
-<p>\begin{equation}<br>C_{ij} =<br>\begin{cases}<br>    1, &amp; \sigma_j \leq \sigma_j \\<br>    \biggl(\frac{\sigma_j}{\sigma_i}\biggr)^q, &amp; \sigma_j &gt; \sigma_i<br>\end{cases}<br>\end{equation}</p>
+<p>\begin{equation}<br>C_{ij} =<br>\begin{cases}<br>    1, &amp; \sigma_j \leq \sigma_j \\\\<br>    \biggl(\frac{\sigma_j}{\sigma_i}\biggr)^q, &amp; \sigma_j &gt; \sigma_i<br>\end{cases}<br>\end{equation}</p>
 <p>$q$ 仍然是控制惩罚程度的超参数，被误分类的程度越大，补偿惩罚的力度就越大。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/28/2keIpt.png" alt></p>
 <h3 id="标准化线性层与输入"><a href="#标准化线性层与输入" class="headerlink" title="标准化线性层与输入"></a>标准化线性层与输入</h3><ul>
@@ -348,8 +353,8 @@
 <h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>不知道读到现在有没有发现论文的一个明显漏洞。在目标检测领域，从候选框到 ROI Pooling，到处都有背景类的存在，所以背景类会是头部类别，且数量远远大于其它类，对其它类产生抑制。所以，seesaw loss 会减少对<strong>所有</strong>前景类的抑制，但由于采样问题，背景类数量几乎不会低于前景类，所以不会有对前景类的<strong>补偿因子</strong>，这样，可能会将背景识别为前景。</p>
 <p>所以论文的想法是，增加一个前景背景的二分类器，预测目标属于前景的概率 $\sigma_i^{obj}$ 还是背景的概率，背景会被抛弃，前景会被保留。而预测阶段，会保留这个二分类器。最终预测的目标概率就是：</p>
 <p>\begin{equation}<br>\sigma_i = \sigma_i^{obj} \cdot \sigma_i^{class}<br>\end{equation}</p>
-<h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><p>这篇论文的想法讲真还是不错的。忙猜一下，会有论文说这篇论文的 $p,q$ 是手工设定的不太好，$M<em>{ij}$ 和 $C</em>{ij}$ 直接相乘不太好没有道理。然后写篇论文，用神经网络自适应的学习参数 $p,q$ 或 $M_{ij}$，然后说这是改进，性能好了一些。<del>这样的东西我见过太多了，没意思，不过都是为了混一碗饭。</del></p>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/abs/2008.10032" target="_blank" rel="noopener">Seesaw Loss for Long-Tailed Instance Segmentation 论文</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://tianchi.aliyun.com/competition/entrance/531888/information" target="_blank" rel="noopener">长尾分布图片来源</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li></ol></div></div>
+<h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><p>这篇论文的想法讲真还是不错的。忙猜一下，会有论文说这篇论文的 $p,q$ 是手工设定的不太好，$M_{ij}$ 和 $C_{ij}$ 直接相乘不太好没有道理。然后写篇论文，用神经网络自适应的学习参数 $p,q$ 或 $M_{ij}$，然后说这是改进，性能好了一些。<del>这样的东西我见过太多了，没意思，不过都是为了混一碗饭。</del></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2008.10032">Seesaw Loss for Long-Tailed Instance Segmentation 论文</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://tianchi.aliyun.com/competition/entrance/531888/information">长尾分布图片来源</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
     
@@ -362,16 +367,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -497,7 +502,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概要"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创新点"><span class="nav-number">2.1.</span> <span class="nav-text">创新点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">2.2.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓和因子"><span class="nav-number">2.2.1.</span> <span class="nav-text">缓和因子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#补偿因子"><span class="nav-number">2.2.2.</span> <span class="nav-text">补偿因子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准化线性层与输入"><span class="nav-number">2.2.3.</span> <span class="nav-text">标准化线性层与输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">2.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其它"><span class="nav-number">3.</span> <span class="nav-text">其它</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E6%96%B0%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">创新点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%92%8C%E5%9B%A0%E5%AD%90"><span class="nav-number">2.2.1.</span> <span class="nav-text">缓和因子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%81%BF%E5%9B%A0%E5%AD%90"><span class="nav-number">2.2.2.</span> <span class="nav-text">补偿因子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E7%BA%BF%E6%80%A7%E5%B1%82%E4%B8%8E%E8%BE%93%E5%85%A5"><span class="nav-number">2.2.3.</span> <span class="nav-text">标准化线性层与输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E5%AE%83"><span class="nav-number">3.</span> <span class="nav-text">其它</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -533,7 +538,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -567,14 +572,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -633,9 +638,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -748,7 +761,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

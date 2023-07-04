@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,24 @@
   </script>
 
   <meta name="description" content="阿里灵杰问天引擎电商搜索算法赛，来详细的记录一下参加这个天池比赛的流程以及我眼中的检索。因为之前从未涉足 NLP 领域，对 NLP 的了解也仅限于大二的时候看完《数学之美》手写过 TF-IDF 算法，我甚至不知道什么是 bert。 为了防止更多的人踩坑，能愉快的参与进来，于是决定把我的做法和程序分享出来，供参赛选手参考。之前在交流群里大概说了我的做法，私聊我的人我也都告诉了他们大概怎么去做，在那">
-<meta name="keywords" content="NLP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="电商搜索召回">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/03/24/E-commerce-Search-Recall/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="阿里灵杰问天引擎电商搜索算法赛，来详细的记录一下参加这个天池比赛的流程以及我眼中的检索。因为之前从未涉足 NLP 领域，对 NLP 的了解也仅限于大二的时候看完《数学之美》手写过 TF-IDF 算法，我甚至不知道什么是 bert。 为了防止更多的人踩坑，能愉快的参与进来，于是决定把我的做法和程序分享出来，供参赛选手参考。之前在交流群里大概说了我的做法，私聊我的人我也都告诉了他们大概怎么去做，在那">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-11T14:08:16.131Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/24/q806pT.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/24/q8D2w9.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/24/q8sADe.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/24/q8yfFs.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/24/q8ct5d.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/03/24/q82rNQ.png">
+<meta property="article:published_time" content="2022-03-24T03:50:43.000Z">
+<meta property="article:modified_time" content="2022-05-11T14:08:16.131Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="NLP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="电商搜索召回">
-<meta name="twitter:description" content="阿里灵杰问天引擎电商搜索算法赛，来详细的记录一下参加这个天池比赛的流程以及我眼中的检索。因为之前从未涉足 NLP 领域，对 NLP 的了解也仅限于大二的时候看完《数学之美》手写过 TF-IDF 算法，我甚至不知道什么是 bert。 为了防止更多的人踩坑，能愉快的参与进来，于是决定把我的做法和程序分享出来，供参赛选手参考。之前在交流群里大概说了我的做法，私聊我的人我也都告诉了他们大概怎么去做，在那">
+<meta name="twitter:image" content="https://s1.ax1x.com/2022/03/24/q806pT.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/03/24/E-commerce-Search-Recall/">
 
@@ -295,7 +302,7 @@
         <p><img data-src="https://s1.ax1x.com/2022/03/24/q806pT.png" alt></p>
 <p>阿里灵杰问天引擎电商搜索算法赛，来详细的记录一下参加这个天池比赛的流程以及我眼中的检索。因为之前从未涉足 NLP 领域，对 NLP 的了解也仅限于大二的时候看完《数学之美》手写过 TF-IDF 算法，我甚至不知道什么是 bert。</p>
 <p>为了防止更多的人踩坑，能愉快的参与进来，于是决定把我的做法和程序分享出来，供参赛选手参考。之前在交流群里大概说了我的做法，私聊我的人我也都告诉了他们大概怎么去做，在那几天看到好多人在排名突飞猛进保送到了 0.2 分左右，甚至超过了我，还是比较开心的。这次做一个系统的分享，我甚至会告诉你怎么做是不对的，也希望你能有更创新的想法。<strong>走过路过给我的 github 点个 star 就行了，孩子要秋招了，这对我比较重要</strong>。（2022年3月20日，0.22的得分排名 21，3月24日，这个得分只能90名，大家太卷了）。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>每天坐在电脑面前查方案、读论文、写代码，每天都加班到凌晨，提交了近一周的 0.0X 的成绩，提交这么多成绩意味着我写了更多的代码。可还是排名倒数，提交成绩的时候一度不敢看排行榜。还有很多反向优化的操作，期间写错代码的次数更是数不胜数。单刷比赛确实感觉不容易，尤其是对我这种到处借显卡的人。除了思路出错和程序出错，读论文和尝试代码的速度也不如组队，写完程序满心欢喜，出来结果满眼失望，经历了一周这样的反反复复，还好稳住了心态，坚持了下来。<del>大型诉苦现场。</del></p>
 <p>在 21 年 7 月的时候，接到了某互联网研究院的项目。我这里简化一下，给定一张图片，在数据库中快速的检索出相似的图片。因为对面采用的方法是使用欧式距离一张一张的比对，速度很慢，我表示对这种做法很震惊，从大学随便找个本科生至少也知道不应该这么做。而检索任务可以分为两阶段，第一阶段为特征提取，第二阶段为特征比对。因为当时对面提供了原始数据提取后的特征，于是当时只完成了特征比对任务。</p>
 <p>时隔半年，我又遇到了相同场景的任务，不过此时要解决的是第一阶段，如何将原始数据提取为一个好的表示，也是这个比赛的关键内容。本文从数据、损失、模型等多个方面来阐述一下如何才能 work，以及为什么能 work。</p>
@@ -306,7 +313,7 @@
 <li>存储高效，要求构建的向量索引模型数据压缩比高，达到大幅缩减内存使占用的目的；</li>
 <li>召回精度好，top@K有比较好的召回率；</li>
 </ol>
-<p>目前主要的方法有：基于树的索引（KD 树）、基于哈希的索引（局部敏感哈希方法）、矢量量化方法（OPQ）和基于图的索引（HNSW ）等。更多内容可以参考这里：<a href="https://yongyuan.name/blog/vector-ann-search.html" target="_blank" rel="noopener">https://yongyuan.name/blog/vector-ann-search.html</a></p>
+<p>目前主要的方法有：基于树的索引（KD 树）、基于哈希的索引（局部敏感哈希方法）、矢量量化方法（OPQ）和基于图的索引（HNSW ）等。更多内容可以参考这里：<a target="_blank" rel="noopener" href="https://yongyuan.name/blog/vector-ann-search.html">https://yongyuan.name/blog/vector-ann-search.html</a></p>
 <p>当时通过编写线程池、空间换时间等操作优化了他人开源的局部敏感哈希算法，修复了他人开源线程池存在的 bug，达到了令人满意的速度和精度。</p>
 <h1 id="关于特征提取"><a href="#关于特征提取" class="headerlink" title="关于特征提取"></a>关于特征提取</h1><p>这是一个很经典也很实用的问题，在 2022 年的今天，随着对比学习的发展，特征提取也迎来了新的热度。而 TF-IDF（文本），SIFT（图像）等非深度学习提取特征的方法本文就不谈了。</p>
 <p>如果使用深度学习来提取特征，如果是图像，模型可以使用 resnet 或者 ViT 等成功的模型，如果是本文，那么可以使用他人预训练好的 bert，我比较推荐 hugging face 和 Nezha。因为前些日子看了 CV 领域的自监督论文，随着模型结构越来越简单，改进集中体现在损失函数上，常用的就是 SimCLR 论文中的对比损失，也叫 InfoNCE 损失函数，而好巧不巧，SimCSE 也用的是这个损失函数。因此，详细来讨论一下这些损失函数，<del>我也没有足够的算力去调网络结构</del>。</p>
@@ -324,7 +331,7 @@
 <p>别看这种损失函数差劲，triplet loss 也一样，面临模型坍塌损失持续为零的现象。至少我两次在工程中使用 triplet loss 都出现了这种情况，而 triplet loss 模型坍塌在 ECCV 2020 的一篇论文【Semi-Siamese Training for Shallow Face Learning】中也解释过，出现坍塌的场景均为：样本种类多，但是每类的样本很少。而实际证明，这种方案做出来的特征向量，检索的 MRR@10 指标很低，大概在 0.05 就是极限了。心态爆炸的一周：</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/24/q8yfFs.png" alt></p>
 <h2 id="CoSENT-使用"><a href="#CoSENT-使用" class="headerlink" title="CoSENT 使用"></a>CoSENT 使用</h2><p>顺着这个思路，查到了苏神的 CoSENT，不得不说从思路到代码都很新颖。如果让我总结一下，那么就是只需要让负样本之间的距离比正样本之间的距离更远就好了，远多少让模型去决定。遂有如下的损失函数（以我的使用经验，损失值会收敛到 0.0X 左右，而且很稳定），而且这个损失函数的代码写法也很棒，建议仔细阅读源码。</p>
-<p>\begin{equation}<br>\log \Biggl(1 + \sum<em>{(i,j)\in \Omega</em>{pos}, (k,l)\in \Omega_{neg}} e^{\lambda (\cos(x_k, x_l)-\cos(x_i, x_j))}\Biggr)<br>\end{equation}</p>
+<p>\begin{equation}<br>\log \Biggl(1 + \sum_{(i,j)\in \Omega_{pos}, (k,l)\in \Omega_{neg}} e^{\lambda (\cos(x_k, x_l)-\cos(x_i, x_j))}\Biggr)<br>\end{equation}</p>
 <p>在最开始的时候，我设置正样本和负样本的比例为 1：1，效果不怎么好，可以说是负优化。我又读了一些论文，发现公司的模型都有两部分，其中离线的部分数据量大且训练慢，这么做的好处是训练到更多的数据。那么思路来了，我把正负样本调节到 1：10，负样本并不随机选取，而是顺序遍历全部语料库，因为 1:10 的比例可以囊括所有的样本，这种方法训练时常线性增加，毕竟数据量大了，但是效果好了很多。在 3080 卡，batch size = 2 的情况下，训练时间为 36 小时，得分在 0.15 左右。</p>
 <p><img data-src="https://s1.ax1x.com/2022/03/24/q8ct5d.png" alt></p>
 <h2 id="SimCSE"><a href="#SimCSE" class="headerlink" title="SimCSE"></a>SimCSE</h2><p>SimCSE 是做 NLP 的，但是仔细看了它的损失函数，会发现这种对比损失在 CV 领域也是存在的，比如 SimCLR 算法。这篇论文的想法简单却有效：</p>
@@ -342,7 +349,7 @@
 <h1 id="其他-trick"><a href="#其他-trick" class="headerlink" title="其他 trick"></a>其他 trick</h1><p>数据不做任何形式的预处理，为什么呢？因为 query 来自用户的输入，这里面存在特殊字符、语序错误、错别字等现象很正常，处理掉反而不好。至于 item 则是商品信息，大家逛淘宝也会发现，商品信息的标注文字几乎没有标点符号，而是很多形容词的堆叠，处理掉也不好。比如：优质木制办公室家用卧室可调接高度带灯光插座多功能折叠桌，它是病句吗？是的，但是就是要查找这样的句子，没必要纠错和预处理。（我没有做消融实验，也没有做数据预处理的实验，这一点仅凭个人分析）。</p>
 <p>使用 pool output 而不是 max pool 最后的隐层输出，也许你会问：使用 max pool 捕获最强的特征，也就是捕获句子中最关键的词，只要词匹配对就匹配完成了。但是想一个例子：优质木制办公室家用卧室可调接高度带灯光插座多功能<strong>折叠桌</strong> 和 优质木制办公室家用卧室可调接高度带灯光插座多功能<strong>支架</strong>，如果使用 max pool，模型初始阶段很容易捕捉错关键词，但是 pool output 就不一样了，我是全部的语义表示，哪怕只有一个词不一样，输出的表示也不一样。（这个我做了实验）。</p>
 <p>模型输出的最后经过 normalization（p=2），为什么呢？我们来看个例子：假设 anchor 的表示是 <code>[0.5, 0.8]</code>，positive 的表示是 <code>[0.6, 0.7]</code>，如果计算欧式距离，此时是 0.14。如果我标准化之后，anchor 的表示是 <code>[0.53, 0.85]</code>，positive 的表示是 <code>[0.65, 0.76]</code>，此时的欧氏距离是 0.15。那么有什么用呢？<code>[0.6, 0.7]</code> 和 <code>[0.5, 0.8]</code> 虽然在每一维都很接近，但是维度间的差距却很大，因此 <code>[0.6, 0.7]</code> 并不是很好的表示，需要加大惩罚力度。而 <code>[0.4, 0.9]</code> 这样的 positive 的表示在标准化之后，和 anchor 的距离是 0.14。可见，如果不标准化，那么 <code>[0.4, 0.9]</code> 和 <code>[0.6, 0.7]</code> 等价；如果标准化，<code>[0.6, 0.7]</code> 就不是一个好表示。（这个也做了实验）。</p>
-<p>交互式匹配（我没有尝试）。这个灵感来自于早年间看过的一个<a href="https://github.com/Lanping-Tech/Multi-modal-Valuation-Forecast-System" target="_blank" rel="noopener">多模态项目</a>，这个项目通过评论和股票的时序数据作为两个模态来预测股价，两个模态进行了四不像的 <a href="https://github.com/Lanping-Tech/Multi-modal-Valuation-Forecast-System/blob/main/models/fusion.py#L37-L45" target="_blank" rel="noopener">transformer</a> 操作，我没理解这是为什么，两者进行了注意力的融合，但是取得了不错的结果。我在想，这次任务没办法进行交互式匹配，但我可以在模型的隐层进行这样的注意力融合，并增加一个分类的分支给注意力提供标签。</p>
+<p>交互式匹配（我没有尝试）。这个灵感来自于早年间看过的一个<a target="_blank" rel="noopener" href="https://github.com/Lanping-Tech/Multi-modal-Valuation-Forecast-System">多模态项目</a>，这个项目通过评论和股票的时序数据作为两个模态来预测股价，两个模态进行了四不像的 <a target="_blank" rel="noopener" href="https://github.com/Lanping-Tech/Multi-modal-Valuation-Forecast-System/blob/main/models/fusion.py#L37-L45">transformer</a> 操作，我没理解这是为什么，两者进行了注意力的融合，但是取得了不错的结果。我在想，这次任务没办法进行交互式匹配，但我可以在模型的隐层进行这样的注意力融合，并增加一个分类的分支给注意力提供标签。</p>
 <ul>
 <li>Dense Passage Retrieval for Open-Domain Question Answering 这个论文我看了，想法粗暴简洁，和 SimCSE 差不多，但我没算力去尝试。</li>
 <li>SWA（stochastic weight averaging），我查别人的比赛代码看到了它，效果看着不错。而且早年间用 mmdetection 的时候，确实发现模型在最后几个 epoch 涨分很厉害，但是调参不够友好，在最后阶段我会尝试，现阶段不考虑。</li>
@@ -353,13 +360,13 @@
 <li>双塔结构不要尝试了，即 query 一个全连接，doc 一个全连接，两者共享一个 bert，企图让两者的表示分开不混杂在一起，但效果奇差无比。</li>
 <li>SimCSE 的损失函数在 CV 的自监督领域也有应用，我尝试把 CV 自监督领域最新的损失套用到这里，但结果很难收敛。</li>
 </ul>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><a href="https://github.com/muyuuuu/E-commerce-Search-Recall" target="_blank" rel="noopener">https://github.com/muyuuuu/E-commerce-Search-Recall</a></p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><a target="_blank" rel="noopener" href="https://github.com/muyuuuu/E-commerce-Search-Recall">https://github.com/muyuuuu/E-commerce-Search-Recall</a></p>
 <p>为什么不用 tensorflow？我 17 年 10 月学 tf 的时候，它那个 with session 和 placeholder 我实在理解不了，那会儿才大二，编程功底很差。19 年 4 月再去看的时候，编程风格和语法大改，好像是什么磁带？梯度一会儿有一会儿没有，混乱的api设计导致代码写的晕晕的，而且和 keras 的关系我也没理解。20 年 7 月的时候我又去看，仿佛完全 keras 化，<code>tf.keras</code> 我实在是被震惊到了，编程风格和语法又又又有改动。我怕我学会了它又出现了 <code>tf.torch</code>，20 年 10 月左右入坑 pytorch，API 稳定，用着也很顺手，也就放弃了学 tf。</p>
 <p>不过还是建议各位用 tf，毕竟这个项目最终要落地到工程，这就涉及到部署和性能优化，不是简简单单实现一个算法就可以完美解决所有问题。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li>CoSENT：<a href="https://kexue.fm/archives/8847/comment-page-1" target="_blank" rel="noopener">https://kexue.fm/archives/8847/comment-page-1</a></li>
-<li>Pytorch CoSENT 损失函数：<a href="https://github.com/shawroad/CoSENT_Pytorch" target="_blank" rel="noopener">https://github.com/shawroad/CoSENT_Pytorch</a></li>
-<li>simcse 的有监督和无监督训练：<a href="https://github.com/zhengyanzhao1997/NLP-model/tree/main/model/model/Torch_model/SimCSE-Chinese" target="_blank" rel="noopener">https://github.com/zhengyanzhao1997/NLP-model/tree/main/model/model/Torch_model/SimCSE-Chinese</a></li>
+<li>CoSENT：<a target="_blank" rel="noopener" href="https://kexue.fm/archives/8847/comment-page-1">https://kexue.fm/archives/8847/comment-page-1</a></li>
+<li>Pytorch CoSENT 损失函数：<a target="_blank" rel="noopener" href="https://github.com/shawroad/CoSENT_Pytorch">https://github.com/shawroad/CoSENT_Pytorch</a></li>
+<li>simcse 的有监督和无监督训练：<a target="_blank" rel="noopener" href="https://github.com/zhengyanzhao1997/NLP-model/tree/main/model/model/Torch_model/SimCSE-Chinese">https://github.com/zhengyanzhao1997/NLP-model/tree/main/model/model/Torch_model/SimCSE-Chinese</a></li>
 </ol>
 
     </div>
@@ -497,7 +504,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于向量索引"><span class="nav-number">2.</span> <span class="nav-text">关于向量索引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于特征提取"><span class="nav-number">3.</span> <span class="nav-text">关于特征提取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单的优化距离"><span class="nav-number">3.1.</span> <span class="nav-text">简单的优化距离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CoSENT-使用"><span class="nav-number">3.2.</span> <span class="nav-text">CoSENT 使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SimCSE"><span class="nav-number">3.3.</span> <span class="nav-text">SimCSE</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他-trick"><span class="nav-number">4.</span> <span class="nav-text">其他 trick</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#排雷"><span class="nav-number">5.</span> <span class="nav-text">排雷</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">6.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%90%91%E9%87%8F%E7%B4%A2%E5%BC%95"><span class="nav-number">2.</span> <span class="nav-text">关于向量索引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96"><span class="nav-number">3.</span> <span class="nav-text">关于特征提取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E4%BC%98%E5%8C%96%E8%B7%9D%E7%A6%BB"><span class="nav-number">3.1.</span> <span class="nav-text">简单的优化距离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CoSENT-%E4%BD%BF%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">CoSENT 使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SimCSE"><span class="nav-number">3.3.</span> <span class="nav-text">SimCSE</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96-trick"><span class="nav-number">4.</span> <span class="nav-text">其他 trick</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%92%E9%9B%B7"><span class="nav-number">5.</span> <span class="nav-text">排雷</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">6.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -533,7 +540,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -567,14 +574,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -633,9 +640,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -748,7 +763,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,24 @@
   </script>
 
   <meta name="description" content="不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="实例分割篇：Mask R-CNN">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/25/Mask-R-CNN/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-11T13:57:27.959Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/25/gxXEss.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/25/gxOoa6.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/25/gxvu2F.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/25/gzSIZd.gif">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/25/gzptwd.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/25/gziG9I.gif">
+<meta property="article:published_time" content="2021-05-25T02:15:16.000Z">
+<meta property="article:modified_time" content="2022-05-11T13:57:27.959Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="实例分割篇：Mask R-CNN">
-<meta name="twitter:description" content="不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/05/25/gxXEss.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/25/Mask-R-CNN/">
 
@@ -295,7 +302,7 @@
         <p>不同于 FCN 的语义分割，Mask R-CNN 是用于实体分割的。借鉴 FCN 的思想，通过在 Faster R-CNN 的用于边界框识别分支上添加了一个并行的用于预测目标掩码的分支 Mask，在实现目标检测的同时，实现实例分割（object instance segmentation），即把每个目标像素分割出来。而 Faster R-CNN 和 FCN 在之前介绍过，所以本文的重点将会放在损失函数的设计和 ROI-Align 上。</p>
 <p>实体分割不同于语义分割的是，不仅要检测出所属类别，还要区分同一类别下的不同实例。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gxXEss.png" alt></p>
-<a id="more"></a>
+<span id="more"></span>
 <p>按着前文描述，网络结构如下，蓝色分支是 Faster R-CNN 中用于预测类别和回归框的分支，红色分支是新加入的预测掩码的分支。而且还可以增加其它分支完成新的任务，如关键点检测等。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gxOoa6.png" alt></p>
 <h1 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h1><p>语义分割问题只需要在语义上对像素点进行区分即可。而实例分割问题不仅需要正确地检测出所有的目标，还需要在单个目标的基础上对每一个实例进行准确的分割。而作者基于 Faster R-CNN 目标检测的框架和 FCN 的语义分割提出了 Mask R-CNN。所以流程就是：</p>
@@ -314,17 +321,17 @@
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gzptwd.png" alt></p>
 <p>这个过程佷繁琐不易理解，但其实并不难，可以来这篇博客看下动图。<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
 <p><img data-src="https://z3.ax1x.com/2021/05/25/gziG9I.gif" alt></p>
-<h1 id="Mask-损失"><a href="#Mask-损失" class="headerlink" title="Mask 损失"></a>Mask 损失</h1><p>Mask R-CNN 的分支由三部分组成，其中 $L<em>{\text{cls}}$ 和 $L</em>{\text{box}}$ 与 Faster R-CNN 没有本质区别，所以重点是 $ L_{\text{mask}}$，它是平均二分类交叉熵损失。</p>
-<p>\begin{equation}<br>L = L<em>{\text{cls}} + L</em>{\text{box}} + L_{\text{mask}}<br>\end{equation}</p>
+<h1 id="Mask-损失"><a href="#Mask-损失" class="headerlink" title="Mask 损失"></a>Mask 损失</h1><p>Mask R-CNN 的分支由三部分组成，其中 $L_{\text{cls}}$ 和 $L_{\text{box}}$ 与 Faster R-CNN 没有本质区别，所以重点是 $ L_{\text{mask}}$，它是平均二分类交叉熵损失。</p>
+<p>\begin{equation}<br>L = L_{\text{cls}} + L_{\text{box}} + L_{\text{mask}}<br>\end{equation}</p>
 <p>假设一共有 $K$ 个类别，则 Mask 分割分支的输出维度是 $K m m$。所以对于 $m\times m$ 中的每个点，都会输出 $K$ 个二值 Mask（每个类别使用 <code>sigmoid</code> 输出）。这里与 FCN 的做法不同，FCN 在每个像素点上应用 softmax 函数，整体采用多任务交叉熵，这样会导致类间竞争（class competition），最终导致分割效果差。而 Mask RCNN 实现了 mask 预测和类别预测的解耦，类别概率来自 Faster RCNN 分支的预测，假设是第 $i$ 类，那么直接取出 Mask RCNN 预测结果的第 $i$ 个通道，进行 mask 预测即可。</p>
 <blockquote>
 <p>在 Faster RCNN 做 object detection 的时候，已经把某一块 RoI 识别为汽车，但这个 RoI 内可能存在其他物体的一部分，因此分割的 mask 中，除了要将汽车分割出来外，还要把另外那个物体也分割出来。这就导致这样的情况，在 object detection 的分支中，这块 RoI 整体被识别为汽车，但在 segmentation 的时候，这块 RoI 一部分被识别为汽车，一部分又要当作其他物体。如此一来，这两个分支回传到前面的梯度多少存在冲突，而前面的特征提取网络可是共享的，结果网络在学习的时候就可能出现左右为难的情况。</p>
 </blockquote>
 <h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><ol>
-<li><a href="https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html" target="_blank" rel="noopener">torchvision</a> 上有现成的示例。</li>
+<li><a target="_blank" rel="noopener" href="https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html">torchvision</a> 上有现成的示例。</li>
 <li>等我以后用到语义分割的时候再回来补冲这里的程序，那时候肯定是 open-mmlab 系列的东西了。</li>
 </ol>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://en.wikipedia.org/wiki/File:RoI_pooling_animated.gif" target="_blank" rel="noopener">ROI pooling 动图</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://towardsdatascience.com/understanding-region-of-interest-part-2-roi-align-and-roi-warp-f795196fc193" target="_blank" rel="noopener">ROI Align 动图</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="https://zhuanlan.zhihu.com/p/65321082" target="_blank" rel="noopener">二分类损失代替多分类损失</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li></ol></div></div>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/File:RoI_pooling_animated.gif">ROI pooling 动图</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://towardsdatascience.com/understanding-region-of-interest-part-2-roi-align-and-roi-warp-f795196fc193">ROI Align 动图</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/65321082">二分类损失代替多分类损失</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
     
@@ -337,16 +344,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -472,7 +479,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本思想"><span class="nav-number">1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ROI-Align"><span class="nav-number">2.</span> <span class="nav-text">ROI-Align</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mask-损失"><span class="nav-number">3.</span> <span class="nav-text">Mask 损失</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">4.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ROI-Align"><span class="nav-number">2.</span> <span class="nav-text">ROI-Align</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mask-%E6%8D%9F%E5%A4%B1"><span class="nav-number">3.</span> <span class="nav-text">Mask 损失</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -508,7 +515,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -542,14 +549,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -608,9 +615,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -723,7 +738,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

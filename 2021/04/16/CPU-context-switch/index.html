@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="进程 CPU 调度和资源分配的单位，是一个程序在一个数据集上的一次执行；线程是CPU上运行和调度的基本执行单位，进程内的一个代码片段可创建为线程，线程由进程创建，寄生在进程身上。 CPU 从一个任务切换到另一个任务，俗称上下文切换。理论上而言，进程负载了程序运行所有内容，开销较大。线程较轻量，和父进程共享各类资源，上下文切换的成本较低。可实际情况中具体如何？今天一探究竟。">
-<meta name="keywords" content="OS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统『五』：CPU 上下文切换">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/04/16/CPU-context-switch/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="进程 CPU 调度和资源分配的单位，是一个程序在一个数据集上的一次执行；线程是CPU上运行和调度的基本执行单位，进程内的一个代码片段可创建为线程，线程由进程创建，寄生在进程身上。 CPU 从一个任务切换到另一个任务，俗称上下文切换。理论上而言，进程负载了程序运行所有内容，开销较大。线程较轻量，和父进程共享各类资源，上下文切换的成本较低。可实际情况中具体如何？今天一探究竟。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-16T22:48:24.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/04/16/chAMcR.png">
+<meta property="article:published_time" content="2021-04-16T13:52:58.000Z">
+<meta property="article:modified_time" content="2021-04-16T22:48:24.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="操作系统『五』：CPU 上下文切换">
-<meta name="twitter:description" content="进程 CPU 调度和资源分配的单位，是一个程序在一个数据集上的一次执行；线程是CPU上运行和调度的基本执行单位，进程内的一个代码片段可创建为线程，线程由进程创建，寄生在进程身上。 CPU 从一个任务切换到另一个任务，俗称上下文切换。理论上而言，进程负载了程序运行所有内容，开销较大。线程较轻量，和父进程共享各类资源，上下文切换的成本较低。可实际情况中具体如何？今天一探究竟。">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/04/16/chAMcR.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/04/16/CPU-context-switch/">
 
@@ -294,7 +296,7 @@
       
         <p>进程 CPU 调度和资源分配的单位，是一个程序在一个数据集上的一次执行；线程是CPU上运行和调度的基本执行单位，进程内的一个代码片段可创建为线程，线程由进程创建，寄生在进程身上。</p>
 <p>CPU 从一个<strong>任务</strong>切换到另一个<strong>任务</strong>，俗称上下文切换。理论上而言，进程负载了程序运行所有内容，开销较大。线程较轻量，和父进程共享各类资源，上下文切换的成本较低。可实际情况中具体如何？今天一探究竟。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="多任务系统与上下文切换"><a href="#多任务系统与上下文切换" class="headerlink" title="多任务系统与上下文切换"></a>多任务系统与上下文切换</h1><p>我们都知道，现代操作系统是一个多任务操作系统，它支持远大于 CPU 数量的任务同时运行。当然，这些任务实际上并不是真的在同时运行，而是因为系统在很短的时间内，将 CPU 轮流分配给它们，每秒可能发生几百次上下文切换，造成多任务同时运行的错觉。</p>
 <p>其中上下文的意思是指：某一时刻，寄存器内的数据和程序计数器的值；寄存器保留了CPU的指令，程序计数器表明了指令所在的地址，即当前指令之后立即执行的指令的地址。它们都是 CPU 在运行任何任务前，必须的依赖环境。</p>
 <p>而在每个任务运行前，CPU 都需要知道任务从哪里加载、又从哪里开始运行，也就是说，需要系统事先帮它设置好 CPU 寄存器和程序计数器，也就是上下文。涉及到具体的切换，就是先把前一个任务的 CPU 上下文（也就是 CPU 寄存器和程序计数器）保存起来，然后加载新任务的上下文到这些寄存器和程序计数器，最后再跳转到程序计数器所指的位置，运行新任务。而这些保存下来的上下文，会存储在系统内核中，并在任务重新调度执行时再次加载进来。这样就能保证任务原来的状态不受影响，让任务看起来还是连续运行。</p>
@@ -355,15 +357,15 @@
 <p>中断上下文，其实只包括内核态中断服务程序执行所必需的状态，包括 CPU 寄存器、内核堆栈、硬件中断参数等。跟进程上下文不同，中断上下文切换的东西不需要涉及到用户态。所以，即便中断过程打断了一个正处在用户态的进程，也不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源；只需在内核态记录：当前进程的寄存器和程序计数器。如喜闻乐见的，硬盘传输文件时突然拔掉硬盘，传输文件进程的虚拟内存、全局变量等用户态资源都没有被保存，相当于白传输了。<del>例子有点生硬。</del></p>
 <p>由于中断会打断正常进程的调度和执行，所以大部分中断处理程序都短小精悍，以便尽可能快的执行结束。另外，跟进程上下文切换一样，中断上下文切换也需要消耗 CPU，切换次数过多也会耗费大量的 CPU，甚至严重降低系统的整体性能。所以，当你发现中断次数过多时，就需要注意去排查它是否会给你的系统带来严重的性能问题。</p>
 <h1 id="一些讨论"><a href="#一些讨论" class="headerlink" title="一些讨论"></a>一些讨论</h1><ul>
-<li>CPU 上下文切换，是保证现代系统正常工作的核心功能之一，一般情况下不需要我们特别关注。根据 <a href="https://blog.tsunanet.net/2010/11/how-long-does-it-take-to-make-context.html" target="_blank" rel="noopener">Tsuna</a> 的测试报告，每次上下文切换都需要几十纳秒到数微秒的 CPU 时间。这个时间还是相当可观的，特别是在进程上下文切换次数较多的情况下，会把 CPU 时间消耗在寄存器、内核栈以及虚拟内存等数据的保存和恢复上，从而缩短进程真正运行的时间，导致系统的整体性能大幅下降。</li>
+<li>CPU 上下文切换，是保证现代系统正常工作的核心功能之一，一般情况下不需要我们特别关注。根据 <a target="_blank" rel="noopener" href="https://blog.tsunanet.net/2010/11/how-long-does-it-take-to-make-context.html">Tsuna</a> 的测试报告，每次上下文切换都需要几十纳秒到数微秒的 CPU 时间。这个时间还是相当可观的，特别是在进程上下文切换次数较多的情况下，会把 CPU 时间消耗在寄存器、内核栈以及虚拟内存等数据的保存和恢复上，从而缩短进程真正运行的时间，导致系统的整体性能大幅下降。</li>
 <li>CPU 执行的最小逻辑单元是线程，并不是一个 CPU 核心。所以切换进程，只是切换一个进程里的一个线程到另一个进程里的一个线程，说白了还是线程切换。如果对比的是单个进程和进程内线程的切换，线程共享资源，cache命中率会高很多；进程切换，不共享资源，cache命中率低。</li>
 <li>上下文切换说的是 CPU 寄存器的切换，跟 cache 和内存没啥关系，后者只是上下文切换带来的副作用。也许你会有疑问，当切换到新的进程，进程所需的资源不在内存里，这不就开始调度了，调度的开销呢？但实际是，新建进程不会分配 CPU，进程就绪后等等待分配处理器，此时资源已经进内存了。</li>
 <li>切换进程可能要刷 TLB，进程内线程切换不需要。进程切换要切页表，所以可能同时要刷 TLB，这个根据实现定。</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://yang-docs.readthedocs.io/en/latest/linux/contextswitch.html" target="_blank" rel="noopener">本文大量参考，CPU切换</a></li>
-<li><a href="https://whatis.techtarget.com/definition/context-switch" target="_blank" rel="noopener">什么是上下文</a></li>
-<li><a href="https://freemandealer.github.io/2015/07/14/context-switch/" target="_blank" rel="noopener">中断上下文</a></li>
+<li><a target="_blank" rel="noopener" href="https://yang-docs.readthedocs.io/en/latest/linux/contextswitch.html">本文大量参考，CPU切换</a></li>
+<li><a target="_blank" rel="noopener" href="https://whatis.techtarget.com/definition/context-switch">什么是上下文</a></li>
+<li><a target="_blank" rel="noopener" href="https://freemandealer.github.io/2015/07/14/context-switch/">中断上下文</a></li>
 </ol>
 
     </div>
@@ -513,7 +515,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多任务系统与上下文切换"><span class="nav-number">1.</span> <span class="nav-text">多任务系统与上下文切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#系统调用"><span class="nav-number">2.</span> <span class="nav-text">系统调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程上下文切换与系统调用"><span class="nav-number">3.</span> <span class="nav-text">进程上下文切换与系统调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程上下文切换"><span class="nav-number">4.</span> <span class="nav-text">线程上下文切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#中断上下文切换"><span class="nav-number">5.</span> <span class="nav-text">中断上下文切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些讨论"><span class="nav-number">6.</span> <span class="nav-text">一些讨论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E4%BB%BB%E5%8A%A1%E7%B3%BB%E7%BB%9F%E4%B8%8E%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">多任务系统与上下文切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">系统调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E4%B8%8E%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">进程上下文切换与系统调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">4.</span> <span class="nav-text">线程上下文切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">5.</span> <span class="nav-text">中断上下文切换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E8%AE%A8%E8%AE%BA"><span class="nav-number">6.</span> <span class="nav-text">一些讨论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -549,7 +551,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -583,14 +585,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -649,9 +651,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -764,7 +774,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

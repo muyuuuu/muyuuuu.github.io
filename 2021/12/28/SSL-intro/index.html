@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,21 @@
   </script>
 
   <meta name="description" content="还是要认真的学习一会儿，降低多巴胺的分泌。在使用 triplet loss 学表示的时候，出现了模型坍塌的情况，也就是说，模型对任何输入的输出都是一样的，损失恒定的现象。在网上搜了一些解决方案后，需要用户去花精力构造正负样本，我不喜欢这样的东西，所以开始看了自监督的论文，毕竟都是学表示。也发现自监督会在一段时间内成为未来的视觉领域的主流，正好我做的东西和自监督也算相关，做一个论文整理。包括了 Mo">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CV 领域的自监督">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/12/28/SSL-intro/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="还是要认真的学习一会儿，降低多巴胺的分泌。在使用 triplet loss 学表示的时候，出现了模型坍塌的情况，也就是说，模型对任何输入的输出都是一样的，损失恒定的现象。在网上搜了一些解决方案后，需要用户去花精力构造正负样本，我不喜欢这样的东西，所以开始看了自监督的论文，毕竟都是学表示。也发现自监督会在一段时间内成为未来的视觉领域的主流，正好我做的东西和自监督也算相关，做一个论文整理。包括了 Mo">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-01-03T08:45:41.381Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s4.ax1x.com/2021/12/28/TsYsxS.png">
+<meta property="og:image" content="https://s4.ax1x.com/2021/12/28/TsYr28.png">
+<meta property="og:image" content="https://s4.ax1x.com/2021/12/28/TsYD8f.png">
+<meta property="article:published_time" content="2021-12-28T07:09:23.000Z">
+<meta property="article:modified_time" content="2022-01-03T08:45:41.381Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CV 领域的自监督">
-<meta name="twitter:description" content="还是要认真的学习一会儿，降低多巴胺的分泌。在使用 triplet loss 学表示的时候，出现了模型坍塌的情况，也就是说，模型对任何输入的输出都是一样的，损失恒定的现象。在网上搜了一些解决方案后，需要用户去花精力构造正负样本，我不喜欢这样的东西，所以开始看了自监督的论文，毕竟都是学表示。也发现自监督会在一段时间内成为未来的视觉领域的主流，正好我做的东西和自监督也算相关，做一个论文整理。包括了 Mo">
+<meta name="twitter:image" content="https://s4.ax1x.com/2021/12/28/TsYsxS.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/12/28/SSL-intro/">
 
@@ -273,7 +277,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
+              <span>3.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -296,24 +300,24 @@
 <blockquote>
 <p>模型崩塌，也就是模型为了偷懒，无论什么图片都会输出同样表示，这样结果 loss 很小，然后却没学到任何东西。</p>
 </blockquote>
-<a id="more"></a>
+<span id="more"></span>
 <p>图像领域的自监督主要由两部分组成，对比损失和数据增强，而那四篇论文也是基于这两个东西去做的，无非是如何对比。</p>
 <h1 id="MoCo"><a href="#MoCo" class="headerlink" title="MoCo"></a>MoCo</h1><p>首先是 <code>MoCo</code>，简单的看一下模型的结构</p>
 <p><img data-src="https://s4.ax1x.com/2021/12/28/TsYsxS.png" alt="TsYsxS.png"></p>
 <p>对同一个样本做两次数据增强，会得到两个样本 $x_q$ 和 $x_k$，创建两个 <code>encoder</code>，左边那个 <code>encoder</code> 接入 $x_q$，右边的 <code>encoder</code> 接入 $x_k$，使得这两个的相似性越高越好，与此同时，期望 $x_q$ 与负样本的相似性越低越好。那么如何衡量相似性呢？使用的是 <code>InfoNCE</code> 这个损失函数。</p>
-<p>\begin{aligned}<br>{L}<em>{InfoNCE} =-{E}_X\left[\log \frac{f</em>{k}\left(x<em>{t+k}, c</em>{t}\right)}{\sum<em>{x</em>{j} \in X} f<em>{k}\left(x</em>{j}, c_{t}\right)}\right] \<br>\end{aligned}</p>
+<p>\begin{aligned}<br>{L}_{InfoNCE} =-{E}_X\left[\log \frac{f_{k}\left(x_{t+k}, c_{t}\right)}{\sum_{x_{j} \in X} f_{k}\left(x_{j}, c_{t}\right)}\right] \\<br>\end{aligned}</p>
 <p>分子是正样本的相似度，分母是负样本的相似度，这个比值越大，log 就越大，对应的损失函数就越小。<code>MoCo</code> 的改动如下，用点积来衡量 $x_q$ 和正负样本的距离。也就是说，使用对比损失来区分图像的高维特征。</p>
-<p>\begin{equation}<br>{L}<em>q = -\log \frac{ \exp(q\cdot k</em>{+}/\tau) }{\sum<em>{i=0}^K \exp(q\cdot k</em>{i}/\tau)}<br>\end{equation}</p>
-<p>那么与众不同的地方呢？换句话说，负样本从哪里来呢？模型会设计一个队列，队列负责维护将刚进入的样本视为负样本放入队列（最开始没负样本的话，用的是随机数），并弹出之前的负样本，这就需要很大的显存以及代码编写的难度，我不是很喜欢这两点。不信你来看他们官方的<a href="https://github.com/facebookresearch/moco" target="_blank" rel="noopener">程序</a>。</p>
+<p>\begin{equation}<br>{L}_q = -\log \frac{ \exp(q\cdot k_{+}/\tau) }{\sum_{i=0}^K \exp(q\cdot k_{i}/\tau)}<br>\end{equation}</p>
+<p>那么与众不同的地方呢？换句话说，负样本从哪里来呢？模型会设计一个队列，队列负责维护将刚进入的样本视为负样本放入队列（最开始没负样本的话，用的是随机数），并弹出之前的负样本，这就需要很大的显存以及代码编写的难度，我不是很喜欢这两点。不信你来看他们官方的<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/moco">程序</a>。</p>
 <p>此外需要注意的是，作者提出了动量的更新方式，来更新右侧的网络：</p>
 <p>\begin{equation}<br>\theta_k \leftarrow m\theta_k + (1-m)\theta_q , m\in[0,1)<br>\end{equation}</p>
 <p>也许你会有疑问，都计算好梯度了，更新左侧的网络就没事，更新右侧的网络就有事，莫非在耍流氓？这个梯度给谁不是给，为什么不用梯度更新两个网络？论文上写的是：由于样本很多，右侧网络不容易更新。很多网上的论文解析也是人云亦云，看了代码就知道存储负样本的队列和右侧的网络没半毛钱关系，队列在计算梯度的时候已经 <code>detach</code> 了。所以，论文写的更新困难并不是梯度回传困难，那么为什么不能用梯度更新右侧的网络呢？</p>
 <p>先来解释为什么不把左侧网络的参数拷贝给右侧网络的参数。这么做的目的是因为不同 <code>epoch</code> 之间数据分布差异可能很大，<code>encoder</code> 的参数有可能会发生突变，不能将多个 <code>epoch</code> 的数据特征近似成一个静止的大 <code>batch</code> 数据特征，因此就使用了这么一个类似于滑动平均的方法来更新右侧网络。</p>
 <p>再来回答为什么不用梯度更新右侧的网络。$x_k$ 经过右侧网络后，然后我们就得到了它们相对应的表示。而对于这个表示，它们不光包含了这个 <code>mini-batch</code> 的表示，也包含了一些之前处理过的 <code>mini-batch</code> 中的表示。换句极端的话说，右侧的网络掌握了全部数据的表示，来调控左侧网络该学到什么样的表示。这些表示通过右侧网络后放入队列中，相对于只在本 <code>mini-batch</code> 内做比较的方法而言，<code>moco</code> 能用较小的管理开销来获得更多的负样本。如果只用一个 <code>mini-batch</code> 的梯度更新右侧网络，或者说右侧网络只掌握一个 <code>mini-batch</code> 的表示，那右侧网络直接输出和左侧网络一样的东西不就行了，这样损失很小，但什么也没学到。因此，不能用一个 <code>mini-batch</code> 的梯度去更新右侧网络。</p>
 <h2 id="损失函数解析"><a href="#损失函数解析" class="headerlink" title="损失函数解析"></a>损失函数解析</h2><p>此外是本文较为迷惑的损失函数，文章写的没啥迷惑，迷惑的是代码。我第一眼过去，直接理解为不管是正样本还是负样本，都和 0 去接近，正样本明明越大越好，应该和 1 去接近，这么写肯定不对呀。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">l_pos = torch.einsum(<span class="string">'nc,nc-&gt;n'</span>, [q, k]).unsqueeze(<span class="number">-1</span>)</span><br><span class="line">l_neg = torch.einsum(<span class="string">'nc,ck-&gt;nk'</span>, [q, self.queue.clone().detach()])</span><br><span class="line">logits = torch.cat([l_pos, l_neg], dim=<span class="number">1</span>)</span><br><span class="line">labels = torch.zeros(logits.shape[<span class="number">0</span>], dtype=torch.long)</span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">loss = criterion(logits, target)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">l_pos = torch.einsum(<span class="string">&#x27;nc,nc-&gt;n&#x27;</span>, [q, k]).unsqueeze(-<span class="number">1</span>)</span><br><span class="line">l_neg = torch.einsum(<span class="string">&#x27;nc,ck-&gt;nk&#x27;</span>, [q, self.queue.clone().detach()])</span><br><span class="line">logits = torch.cat([l_pos, l_neg], dim=<span class="number">1</span>)</span><br><span class="line">labels = torch.zeros(logits.shape[<span class="number">0</span>], dtype=torch.long)</span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">loss = criterion(logits, target)</span><br></pre></td></tr></table></figure>
 <p>后来仔细抠的代码才理解，<code>torch</code> 的交叉熵损失函数由 <code>logsoftmax</code> 和 <code>nllloss</code> 组成，前者完成 <code>logsoftmax</code> 的计算，后者 <code>nllloss</code> 取出对应的标签，在 <code>nllloss</code> 的时候，标签为 0 的意思是取出 <code>batch</code> 中的第一列，而这一列正好是正样本，<code>nlloss</code> 期望这列的值越小越好，那么回退到 <code>logsoftmax</code>，就是期望这列的值越大越好，也就是，正样本的相似度很高。<strong>并不是像网上那种垃圾博客说的，无监督任务都分成 0 类即可。</strong> 这里还是建议理解一下，因为自监督的损失大多是这么设计的。</p>
-<h1 id="SimCLR"><a href="#SimCLR" class="headerlink" title="SimCLR"></a>SimCLR</h1><p>推荐一个比较好的<a href="https://github.com/Spijkervet/SimCLR" target="_blank" rel="noopener">实现</a>。因为反感 <code>MoCo</code> 那种开显存的操作，毕竟不是所有人都有  <code>facebook</code> 的财力，所以继续去读了其他自监督的论文，较为相似的一篇论文是 <code>SimCLR</code>。还是先来看模型结构图：</p>
+<h1 id="SimCLR"><a href="#SimCLR" class="headerlink" title="SimCLR"></a>SimCLR</h1><p>推荐一个比较好的<a target="_blank" rel="noopener" href="https://github.com/Spijkervet/SimCLR">实现</a>。因为反感 <code>MoCo</code> 那种开显存的操作，毕竟不是所有人都有  <code>facebook</code> 的财力，所以继续去读了其他自监督的论文，较为相似的一篇论文是 <code>SimCLR</code>。还是先来看模型结构图：</p>
 <p><img data-src="https://s4.ax1x.com/2021/12/28/TsYr28.png" alt="TsYr28.png"></p>
 <p>注意，左右两边的网络都是相同的，也就不存在梯度该传给谁的问题。一个 <code>batch</code> 的样本，经过数据增强得到两个 <code>batch</code> 的样本，这两个 <code>batch</code> 的样本进入网络会得到两个 <code>batch</code> 的表示，期待这两组表示中，同一数据的表示很接近，放大不同数据的差异。损失同样是用的类似 <code>InfoNCE</code> 的损失函数。不过论文中有比较奇怪的点，放一段原文：</p>
 <blockquote>
@@ -325,11 +329,11 @@
 <p>提前声明，相似度用的是余弦函数，因为余弦函数相似性越高数值越大，因此损失函数取了负数，最后的损失值也是负的。思路很简单，对同一个图像做两次增强得到俩个正样本，$x_1$ 和 $x_2$，$x_1$ 经过 <code>encoder</code> 得到表示 $z1$，$z1$ 经过 <code>predictor</code> 得到 $p_1$，同理得到 $p_2$ 和 $z_2$，计算 $p_1$ 和 $z_2$ 以及 $p_2$ 和 $z_1$ 的相似度，然后就没了。</p>
 <p>简单吗？简单。有坑吗？有。我当时在想，如果 <code>predictor</code> 的权重全部是 1，那么相似度不就会很小了，但仍然是模型坍塌的情况。然后带着疑问去看代码，结果人家直接冻结了 <code>predictor</code> 某一层的权重，是我大意了。后来我以抄袭的形式复现的时候，没有冻结权重，效果比 SimCLR 要好一些。</p>
 <h1 id="Barlow-Twins"><a href="#Barlow-Twins" class="headerlink" title="Barlow Twins"></a>Barlow Twins</h1><p>到这篇论文，思路更加简单，东西和 SimCLR 比较类似，损失函数用的是大二学过的协方差矩阵，对角线越大越好，其余位置越小越好。它虽然很简洁，但我感觉他比 SimSiam 更令人喜欢。</p>
-<p>\begin{equation}<br>L=\sum<em>{i}(1-C</em>{ii})^2 + \lambda \sum<em>i \sum</em>{j\neq i} C_{ij}^2<br>\end{equation}</p>
+<p>\begin{equation}<br>L=\sum_{i}(1-C_{ii})^2 + \lambda \sum_i \sum_{j\neq i} C_{ij}^2<br>\end{equation}</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://kakack.github.io/2021/05/Moco-%E5%9F%BA%E4%BA%8E%E5%8A%BF%E8%83%BD%E6%9B%B4%E6%96%B0%E7%9A%84%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/" target="_blank" rel="noopener">MoCo 参考</a></li>
-<li><a href="https://blog.csdn.net/qq_22210253/article/details/85229988" target="_blank" rel="noopener">NLLLoss 解析</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/357088620" target="_blank" rel="noopener">SimSiam 为什么 stop grad</a></li>
+<li><a target="_blank" rel="noopener" href="https://kakack.github.io/2021/05/Moco-%E5%9F%BA%E4%BA%8E%E5%8A%BF%E8%83%BD%E6%9B%B4%E6%96%B0%E7%9A%84%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">MoCo 参考</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_22210253/article/details/85229988">NLLLoss 解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/357088620">SimSiam 为什么 stop grad</a></li>
 </ol>
 
     </div>
@@ -344,16 +348,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -479,7 +483,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MoCo"><span class="nav-number">1.</span> <span class="nav-text">MoCo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数解析"><span class="nav-number">1.1.</span> <span class="nav-text">损失函数解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SimCLR"><span class="nav-number">2.</span> <span class="nav-text">SimCLR</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SimSiam"><span class="nav-number">3.</span> <span class="nav-text">SimSiam</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Barlow-Twins"><span class="nav-number">4.</span> <span class="nav-text">Barlow Twins</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MoCo"><span class="nav-number">1.</span> <span class="nav-text">MoCo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E8%A7%A3%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">损失函数解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SimCLR"><span class="nav-number">2.</span> <span class="nav-text">SimCLR</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SimSiam"><span class="nav-number">3.</span> <span class="nav-text">SimSiam</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Barlow-Twins"><span class="nav-number">4.</span> <span class="nav-text">Barlow Twins</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -515,7 +519,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -549,14 +553,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -615,9 +619,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -730,7 +742,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

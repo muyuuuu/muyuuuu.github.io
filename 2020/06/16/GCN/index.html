@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
-<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GCN的通俗理解，无复杂公式">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/06/16/GCN/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-07-03T10:08:42.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-16T15:57:28.000Z">
+<meta property="article:modified_time" content="2020-07-03T10:08:42.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="DeepLearning">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GCN的通俗理解，无复杂公式">
-<meta name="twitter:description" content="近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/06/16/GCN/">
 
@@ -293,7 +293,7 @@
 
       
         <p>近期在鼓捣图神经网络，发现直接读state-of-art的论文基本读不懂，于是先决定搞懂图神经网络的最基本概念，即工作原理、处理数据流程等。因网上的众多文章（包括原论文）都有复杂的数学公式，我不是否认数学公式不好，而是胡乱的堆公式对讲明白原理没有丝毫帮助。于是决定做一篇GCN的简单阐述，意在用最简单的语言，表达最清晰的思路。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>图的表示为$G=(V,E)$，将图的节点表示和邻接矩阵作为网络的输入：</p>
 <ul>
 <li>对于每一个节点$i$的特征描述$x_i$，组成一个$N\times D$的矩阵$X$，$N$是节点的数量，$D$是特征的维度；</li>
@@ -323,7 +323,7 @@
 <li>之后数据经过<code>doupout</code>，传入<code>GraphConvolution</code>层；</li>
 </ol>
 <h2 id="GraphConvolution-解析"><a href="#GraphConvolution-解析" class="headerlink" title="GraphConvolution 解析"></a><code>GraphConvolution</code> 解析</h2><p>重要的一点是，图卷积网络和卷积核无关。而是直接矩阵相乘，在得到节点的嵌入表示后，再去划分就很容易了。可以参看原文的代码（我删除了一部分无关紧要的代码）：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GraphConvolution</span><span class="params">(Layer)</span>:</span></span><br><span class="line">    <span class="string">"""Basic graph convolution layer as in https://arxiv.org/abs/1609.02907"""</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compute_output_shape</span><span class="params">(self, input_shapes)</span>:</span></span><br><span class="line">        features_shape = input_shapes[<span class="number">0</span>]</span><br><span class="line">        output_shape = (features_shape[<span class="number">0</span>], self.units)</span><br><span class="line">        <span class="keyword">return</span> output_shape  <span class="comment"># (batch_size, output_dim)</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shapes)</span>:</span></span><br><span class="line">        features_shape = input_shapes[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">assert</span> len(features_shape) == <span class="number">2</span></span><br><span class="line">        input_dim = features_shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        self.kernel = self.add_weight(shape=(input_dim * self.support,</span><br><span class="line">                                             self.units),</span><br><span class="line">                                      initializer=self.kernel_initializer,</span><br><span class="line">                                      name=<span class="string">'kernel'</span>,</span><br><span class="line">                                      regularizer=self.kernel_regularizer,</span><br><span class="line">                                      constraint=self.kernel_constraint)</span><br><span class="line"></span><br><span class="line">        self.bias = self.add_weight(shape=(self.units,),</span><br><span class="line">                                        initializer=self.bias_initializer,</span><br><span class="line">                                        name=<span class="string">'bias'</span>,</span><br><span class="line">                                        regularizer=self.bias_regularizer,</span><br><span class="line">                                        constraint=self.bias_constraint)</span><br><span class="line"></span><br><span class="line">        self.built = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">call</span><span class="params">(self, inputs, mask=None)</span>:</span></span><br><span class="line">        features = inputs[<span class="number">0</span>]</span><br><span class="line">        basis = inputs[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">        supports = list()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.support):</span><br><span class="line">            supports.append(K.dot(basis[i], features))</span><br><span class="line">        supports = K.concatenate(supports, axis=<span class="number">1</span>)</span><br><span class="line">        output = K.dot(supports, self.kernel)</span><br><span class="line"></span><br><span class="line">        output += self.bias</span><br><span class="line">        <span class="keyword">return</span> self.activation(output)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GraphConvolution</span>(<span class="title class_ inherited__">Layer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Basic graph convolution layer as in https://arxiv.org/abs/1609.02907&quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute_output_shape</span>(<span class="params">self, input_shapes</span>):</span><br><span class="line">        features_shape = input_shapes[<span class="number">0</span>]</span><br><span class="line">        output_shape = (features_shape[<span class="number">0</span>], self.units)</span><br><span class="line">        <span class="keyword">return</span> output_shape  <span class="comment"># (batch_size, output_dim)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">build</span>(<span class="params">self, input_shapes</span>):</span><br><span class="line">        features_shape = input_shapes[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(features_shape) == <span class="number">2</span></span><br><span class="line">        input_dim = features_shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        self.kernel = self.add_weight(shape=(input_dim * self.support,</span><br><span class="line">                                             self.units),</span><br><span class="line">                                      initializer=self.kernel_initializer,</span><br><span class="line">                                      name=<span class="string">&#x27;kernel&#x27;</span>,</span><br><span class="line">                                      regularizer=self.kernel_regularizer,</span><br><span class="line">                                      constraint=self.kernel_constraint)</span><br><span class="line"></span><br><span class="line">        self.bias = self.add_weight(shape=(self.units,),</span><br><span class="line">                                        initializer=self.bias_initializer,</span><br><span class="line">                                        name=<span class="string">&#x27;bias&#x27;</span>,</span><br><span class="line">                                        regularizer=self.bias_regularizer,</span><br><span class="line">                                        constraint=self.bias_constraint)</span><br><span class="line"></span><br><span class="line">        self.built = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">call</span>(<span class="params">self, inputs, mask=<span class="literal">None</span></span>):</span><br><span class="line">        features = inputs[<span class="number">0</span>]</span><br><span class="line">        basis = inputs[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">        supports = <span class="built_in">list</span>()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.support):</span><br><span class="line">            supports.append(K.dot(basis[i], features))</span><br><span class="line">        supports = K.concatenate(supports, axis=<span class="number">1</span>)</span><br><span class="line">        output = K.dot(supports, self.kernel)</span><br><span class="line"></span><br><span class="line">        output += self.bias</span><br><span class="line">        <span class="keyword">return</span> self.activation(output)</span><br></pre></td></tr></table></figure>
 <p>如上，我么很容易看出 <code>GCN</code> 的工作就是矩阵相乘，将输出的维度不断的压缩，得到节点的嵌入表示。也许你会很疑惑？众多科普文章中的拉普拉斯算子什么的呢？关于这一点，原作者也做出了解释：</p>
 <p><code>spectral graph convolution</code>（我不知道该怎么翻译了）：定义为信号与图的傅立叶空间中的滤波器相乘。说人话的意思是：矩阵$X$要和矩阵$U$相乘，矩阵$U$是图灵拉普拉斯矩阵$L$的特征向量矩阵，$L$的计算方式是：$L=I-\hat{A}$，但是具有高昂的计算代价。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>也许你会疑问，图网络是用来干什么的？正如作者所说，GCN仅仅是一个开始。据我个人的粗俗分析，可以用来：</p>
@@ -336,11 +336,11 @@
 <p>当然，距离实现以上这些还有很长的路要走。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
 <ol>
-<li>参考论文: <a href="https://arxiv.org/pdf/1609.02907.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1609.02907.pdf</a></li>
-<li>参考博客(原文讲的很好): <a href="http://tkipf.github.io/graph-convolutional-networks/" target="_blank" rel="noopener">http://tkipf.github.io/graph-convolutional-networks/</a></li>
-<li>数据集(cora): <a href="http://www.cs.umd.edu/~sen/lbc-proj/LBC.html" target="_blank" rel="noopener">http://www.cs.umd.edu/~sen/lbc-proj/LBC.html</a></li>
-<li>代码参考(tensorflow): <a href="https://github.com/tkipf/gcn" target="_blank" rel="noopener">https://github.com/tkipf/gcn</a></li>
-<li>代码参考(keras): <a href="https://github.com/tkipf/keras-gcn" target="_blank" rel="noopener">https://github.com/tkipf/keras-gcn</a></li>
+<li>参考论文: <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1609.02907.pdf">https://arxiv.org/pdf/1609.02907.pdf</a></li>
+<li>参考博客(原文讲的很好): <a target="_blank" rel="noopener" href="http://tkipf.github.io/graph-convolutional-networks/">http://tkipf.github.io/graph-convolutional-networks/</a></li>
+<li>数据集(cora): <a target="_blank" rel="noopener" href="http://www.cs.umd.edu/~sen/lbc-proj/LBC.html">http://www.cs.umd.edu/~sen/lbc-proj/LBC.html</a></li>
+<li>代码参考(tensorflow): <a target="_blank" rel="noopener" href="https://github.com/tkipf/gcn">https://github.com/tkipf/gcn</a></li>
+<li>代码参考(keras): <a target="_blank" rel="noopener" href="https://github.com/tkipf/keras-gcn">https://github.com/tkipf/keras-gcn</a></li>
 </ol>
 
     </div>
@@ -352,10 +352,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
@@ -490,7 +490,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简单实例"><span class="nav-number">2.</span> <span class="nav-text">简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型操作"><span class="nav-number">3.</span> <span class="nav-text">模型操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#半监督学习"><span class="nav-number">3.1.</span> <span class="nav-text">半监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">3.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GraphConvolution-解析"><span class="nav-number">3.3.</span> <span class="nav-text">GraphConvolution 解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%93%8D%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">模型操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0"><span class="nav-number">3.1.</span> <span class="nav-text">半监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GraphConvolution-%E8%A7%A3%E6%9E%90"><span class="nav-number">3.3.</span> <span class="nav-text">GraphConvolution 解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -526,7 +526,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -560,14 +560,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -626,9 +626,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -741,7 +749,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

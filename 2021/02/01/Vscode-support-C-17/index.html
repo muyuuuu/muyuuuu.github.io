@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="我当时也想用宇宙第一IDE，可实在是太大了，i7-9750H的CPU配32GB内存运行起来都很卡顿，我人傻了，这得啥配置才能驾驭visual studio。后来想想还是废点劲去配轻量工具吧。">
-<meta name="keywords" content="C++">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vscode支持C++17特性配置">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/02/01/Vscode-support-C-17/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="我当时也想用宇宙第一IDE，可实在是太大了，i7-9750H的CPU配32GB内存运行起来都很卡顿，我人傻了，这得啥配置才能驾驭visual studio。后来想想还是废点劲去配轻量工具吧。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-01T22:54:14.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static01.imgkr.com/temp/088d8f35322c47518deb7283e485c837.png">
+<meta property="og:image" content="https://static01.imgkr.com/temp/25d9d0e4f7fe4b1ca211c4889cede7f4.png">
+<meta property="article:published_time" content="2021-02-01T14:15:36.000Z">
+<meta property="article:modified_time" content="2021-02-01T22:54:14.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vscode支持C++17特性配置">
-<meta name="twitter:description" content="我当时也想用宇宙第一IDE，可实在是太大了，i7-9750H的CPU配32GB内存运行起来都很卡顿，我人傻了，这得啥配置才能驾驭visual studio。后来想想还是废点劲去配轻量工具吧。">
+<meta name="twitter:image" content="https://static01.imgkr.com/temp/088d8f35322c47518deb7283e485c837.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/02/01/Vscode-support-C-17/">
 
@@ -273,7 +276,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>950</span>
+              <span>1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -293,18 +296,17 @@
 
       
         <p>我当时也想用宇宙第一IDE，可实在是太大了，<code>i7-9750H</code>的CPU配32GB内存运行起来都很卡顿，我人傻了，这得啥配置才能驾驭visual studio。后来想想还是废点劲去配轻量工具吧。</p>
-<a id="more"></a>
-<h1 id="Vscode配置C-17环境"><a href="#Vscode配置C-17环境" class="headerlink" title="Vscode配置C++17环境"></a>Vscode配置C++17环境</h1><p>来这里下载<a href="https://nuwen.net/mingw.html" target="_blank" rel="noopener">mingw</a>，运行后会得到一个文件夹，这个文件夹放到C盘就可以了(其他盘应该也行)。而后将<code>C:\MinGW\bin</code>放到系统的环境变量，命令行输入<code>gcc --version</code>，如果有反应，就说明编译器这边配置成功了。</p>
+<span id="more"></span>
+<h1 id="Vscode配置C-17环境"><a href="#Vscode配置C-17环境" class="headerlink" title="Vscode配置C++17环境"></a>Vscode配置C++17环境</h1><p>来这里下载<a target="_blank" rel="noopener" href="https://nuwen.net/mingw.html">mingw</a>，运行后会得到一个文件夹，这个文件夹放到C盘就可以了(其他盘应该也行)。而后将<code>C:\MinGW\bin</code>放到系统的环境变量，命令行输入<code>gcc --version</code>，如果有反应，就说明编译器这边配置成功了。</p>
 <p><img data-src="https://static01.imgkr.com/temp/088d8f35322c47518deb7283e485c837.png" alt></p>
-<p>对于<code>vscode</code>，先安装<code>C/C++</code>这样必不可少的语法检查等插件，然后在安装<code>Code Runner</code>插件，在配置文件中添加以下命令：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"code-runner.runInTerminal"</span>: true,</span><br><span class="line"><span class="string">"code-runner.executorMap"</span>: &#123;</span><br><span class="line">        <span class="string">"cpp"</span>: <span class="string">"cd $dir &amp;&amp; g++ -std=c++17 $fileName -o $fileNameWithoutExt &amp;&amp; $dir$fileNameWithoutExt"</span></span><br><span class="line">    &#125;,</span><br></pre></td></tr></table></figure></p>
-<p>这样编译代码时就支持<code>c++17</code>了。<del>我要是会<code>vim</code>我还用这？</del></p>
+<p>对于<code>vscode</code>，先安装<code>C/C++</code>这样必不可少的语法检查等插件，然后在安装<code>Code Runner</code>插件，在配置文件中添加以下命令：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;code-runner.runInTerminal&quot;</span>: true,</span><br><span class="line"><span class="string">&quot;code-runner.executorMap&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;cpp&quot;</span>: <span class="string">&quot;cd $dir &amp;&amp; g++ -std=c++17 $fileName -o $fileNameWithoutExt &amp;&amp; $dir$fileNameWithoutExt&quot;</span></span><br><span class="line">    &#125;,</span><br></pre></td></tr></table></figure><br>这样编译代码时就支持<code>c++17</code>了。<del>我要是会<code>vim</code>我还用这？</del></p>
 <p><img data-src="https://static01.imgkr.com/temp/25d9d0e4f7fe4b1ca211c4889cede7f4.png" alt></p>
 <p>为了使编辑器不报红色波浪线的错误，键盘输入<code>ctrl+shift+p</code>，输入<code>C/C++ Edit Configurations(json)</code>，之后在弹出的<code>c_cpp_properties.json</code>文件中，写入支持C++17标准：<code>&quot;cppStandard&quot;: &quot;c++17&quot;</code>，然后就可以了。</p>
 <p>给段代码，如果代码不画红色波浪线，就说明配置成功了：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;filesystem&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">cout</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::string_literals;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">namespace</span> fs = <span class="built_in">std</span>::filesystem;</span><br><span class="line"></span><br><span class="line">    fs::path p&#123; <span class="string">R"(D:\Github\Cpp-Notes\codes\Chapter-07)"</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;filesystem&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> std::endl;</span><br><span class="line"><span class="keyword">using</span> std::cout;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std::string_literals;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">namespace</span> fs = std::filesystem;</span><br><span class="line"></span><br><span class="line">    fs::path p&#123; <span class="string">R&quot;(D:\Github\Cpp-Notes\codes\Chapter-07)&quot;</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://www.geeksforgeeks.org/complete-guide-to-install-c17-in-windows/" target="_blank" rel="noopener">minGW安装</a></li>
-<li><a href="https://0xboz.github.io/blog/how-to-run-debug-cpp-with-vscode-on-debian/" target="_blank" rel="noopener">Code Runner配置C++17</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/complete-guide-to-install-c17-in-windows/">minGW安装</a></li>
+<li><a target="_blank" rel="noopener" href="https://0xboz.github.io/blog/how-to-run-debug-cpp-with-vscode-on-debian/">Code Runner配置C++17</a></li>
 </ol>
 
     </div>
@@ -322,13 +324,13 @@
       <div class="popular-posts-title"><a href="/2021/02/01/CharArray-vs-ArrayName-vs-String/" rel="bookmark">字符数组，字符串与数组名</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">从虚函数的角度聊聊 C++ 中的 protected 继承</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
     </li>
   </ul>
 
@@ -454,7 +456,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Vscode配置C-17环境"><span class="nav-number">1.</span> <span class="nav-text">Vscode配置C++17环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Vscode%E9%85%8D%E7%BD%AEC-17%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">Vscode配置C++17环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -490,7 +492,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -524,14 +526,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -590,9 +592,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -705,7 +715,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

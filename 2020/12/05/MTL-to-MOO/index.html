@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,21 @@
   </script>
 
   <meta name="description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
-<meta name="keywords" content="PaperNote">
 <meta property="og:type" content="article">
 <meta property="og:title" content="论文笔记：Multi-Task Learning as Multi-Objective Optimization">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/12/05/MTL-to-MOO/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-30T13:54:36.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static01.imgkr.com/temp/20a8a63f1da840e08fdda5ae5a314ae4.png">
+<meta property="og:image" content="https://static01.imgkr.com/temp/3fd47e446a944c3bad7af6bc4ca8c543.png">
+<meta property="og:image" content="https://static01.imgkr.com/temp/39ef45740d8b404bbbf4b4a3a0311aba.png">
+<meta property="article:published_time" content="2020-12-05T05:26:18.000Z">
+<meta property="article:modified_time" content="2021-05-30T13:54:36.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="PaperNote">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="论文笔记：Multi-Task Learning as Multi-Objective Optimization">
-<meta name="twitter:description" content="自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的N">
+<meta name="twitter:image" content="https://static01.imgkr.com/temp/20a8a63f1da840e08fdda5ae5a314ae4.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/12/05/MTL-to-MOO/">
 
@@ -293,8 +297,8 @@
 
       
         <p>自从学了『工程优化』这门课程，也意识到优化是一潭很深的水。只是简单的将几个目标线性加权优化，或优化完一个目标在优化另一个目标是很愚蠢的做法，<strong>亲身试验后的确发现这是最差的解法，解会出现不收敛、随机性、震荡等各种情况</strong>。如果在神经网络中恰好遇到了多任务学习的问题，且两个问题相互制约，那么可以考虑将多任务学习转换为多目标优化，融合成最终的一个loss函数，这会比线性加权好上很多。本论文发表在2018年的NIPS上，个人认为具有借鉴意义和开创性工作，所以记录于此。</p>
-<a id="more"></a>
-<p>论文地址：<a href="https://papers.nips.cc/paper/2018/file/432aca3a1e345e339f35a30c8f65edce-Paper.pdf" target="_blank" rel="noopener">https://papers.nips.cc/paper/2018/file/432aca3a1e345e339f35a30c8f65edce-Paper.pdf</a><br>代码地址：<a href="https://github.com/intel-isl/MultiObjectiveOptimization" target="_blank" rel="noopener">https://github.com/intel-isl/MultiObjectiveOptimization</a></p>
+<span id="more"></span>
+<p>论文地址：<a target="_blank" rel="noopener" href="https://papers.nips.cc/paper/2018/file/432aca3a1e345e339f35a30c8f65edce-Paper.pdf">https://papers.nips.cc/paper/2018/file/432aca3a1e345e339f35a30c8f65edce-Paper.pdf</a><br>代码地址：<a target="_blank" rel="noopener" href="https://github.com/intel-isl/MultiObjectiveOptimization">https://github.com/intel-isl/MultiObjectiveOptimization</a></p>
 <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>在这篇论文中，明确的将神经网络的多任务学习转换为多目标优化问题。将文章提出的方法用到多任务的深度学习场景中，如图像分类，语义分割、实体分割识别等、多标签分类等。<strong>和其他多任务学习或单任务逐步训练的方法相比</strong>，能获得性能更好的模型。</p>
 <p>在多任务学习中，通常情况是在约束情况下分别解决每一个任务企图获取每个任务的优化解，但这很大程度上并不可行，因为多任务学习本质是一个多目标问题。多目标优化问题中，需要权衡多个目标之间可能存在的冲突。对每个优化目标进行线性加权得到一个代理目标，最小化每个目标的加权后的损失这种方案仅仅适用于目标之间不冲突的情况，目标之间相互冲突时就超出了线性组合的范畴。</p>
 <p>多任务学习MTL(multi-task learning)的潜在优势是，即使是看起来毫不相关的任务，也由于共享输入数据而具有很强的依赖性。在神经网络学习时，将多个任务视为<strong>归纳偏见</strong>(inductive bias)成为了一种解决问题可行的方案。个人理解归纳偏见的意思就是：将各个任务中数据信息所包含的偏差去除，得到所有任务的最优解。</p>
@@ -305,11 +309,11 @@
 </ul>
 <p>在文章中提出了一种基于Frank-Wolfe的优化方法，<strong>能适应大规模问题</strong>。此外，文章为优化目标提供了一个上限，通过优化上限可以<strong>通过单次反向传播来更新梯度</strong>，而无需单独更新特定任务的梯度，减小了MGDA的计算开销。文章也证明了在现实条件的假设下，算法可以使得神经网络找到多目标优化任务的<strong>Pareto最优解</strong>。</p>
 <h1 id="方法介绍"><a href="#方法介绍" class="headerlink" title="方法介绍"></a>方法介绍</h1><p>设数据的输入空间为$X$，任务的集合为$Y_t,t\in [T]$，$T$是任务数量，$N$表示数据集的数量，$y_i^t$表示第$t$个任务的第$i$个数据的标签，数据集可以写为$[x_i,y_i^1,\cdots,y_i^T]$。对每一个任务，可以用参数表示为：$f^t(x;\theta^{sh},\theta^t):X\to Y^t$。$\theta^{sh}$是所有任务共享的参数，$\theta^t$是每个任务独有的参数，每一个任务的损失值为$L^t$。通常的论文会将损失函数设计为：</p>
-<p>\begin{equation}<br>\min<em>{\theta^{sh},\theta^1\cdots\theta^T}=\sum</em>{i=1}^Tc^tL^t<br>\end{equation}</p>
+<p>\begin{equation}<br>\min_{\theta^{sh},\theta^1\cdots\theta^T}=\sum_{i=1}^Tc^tL^t<br>\end{equation}</p>
 <p>$c^t$表示每个任务的权重。公式很直观，当网络层数和任务逐步增多时，它通常需要在成比例缩放的空间中进行搜索，要么使用启发式算法，要么很难在多任务学习中找到最优解。但是对于两个参数$\theta,\bar{\theta}$，很可能会有 $L^1(\theta^{sh},\theta^{t_1})&lt;L^2(\bar{\theta}^{sh},\bar{\theta}^{t_1})$，此时$\theta$在任务$t_1$中更好；</p>
 <p>但 $L^2(\theta^{sh},\theta^{t_2})&gt;L^2(\bar{\theta}^{sh},\bar{\theta}^{t_2})$ 也可能发生，$\bar{\theta}$在任务$t_2$中更好。如果不知道两个任务的重要性，那么就无法比较$\theta$和$\bar{\theta}$哪个更好。</p>
 <p>因此<strong>将多任务学习写成多目标优化问题</strong>，选用的方式是使用一个向量$L$来表示多目标的损失：</p>
-<p>\begin{equation}<br>\min<em>{\theta^{sh},\theta^1\cdots\theta^T}L(\theta^{sh},\theta^1\cdots\theta^T)=\min</em>{\theta^{sh},\theta^1\cdots\theta^T}\Bigl(L^1(\theta^{sh},\theta^1),\cdots,L^T(\theta^{sh},\theta^T)\Bigr)<br>\end{equation}</p>
+<p>\begin{equation}<br>\min_{\theta^{sh},\theta^1\cdots\theta^T}L(\theta^{sh},\theta^1\cdots\theta^T)=\min_{\theta^{sh},\theta^1\cdots\theta^T}\Bigl(L^1(\theta^{sh},\theta^1),\cdots,L^T(\theta^{sh},\theta^T)\Bigr)<br>\end{equation}</p>
 <p>同样，本文使用梯度下降法来优化多目标任务，对于多目标优化问题的最优解，有以下两个定义：</p>
 <ol>
 <li>对于所有的任务$t$，如果$L^T(\theta^{sh},\theta^T)&lt;L^T(\bar\theta^{sh},\bar\theta^T)$，那么$\theta$优于$\bar\theta$。</li>
@@ -317,15 +321,15 @@
 </ol>
 <h2 id="多梯度下降算法"><a href="#多梯度下降算法" class="headerlink" title="多梯度下降算法"></a>多梯度下降算法</h2><p>文章提出的方法在multiple gradient descent algorithm (MGDA)的基础上，假设对于每一个任务，有KKT(Karush-Huhn-Tucker，是非线性规划最优解的必要条件)条件成立：</p>
 <ul>
-<li>存在$\alpha<em>1\cdots,\alpha_T\geq 0$存在，使得$\sum</em>{i=1}^T\alpha<em>i=1$，$\sum</em>{i=1}^T\alpha<em>i\nabla</em>{\theta^{sh}}L^i(\theta^{sh},\theta^i)=0$，公式的含义是：在共享层，没有可行的下降方向，即处于全局最优点，达到了所有任务的最优解。<del>优化课程应该都讲过这些</del></li>
+<li>存在$\alpha_1\cdots,\alpha_T\geq 0$存在，使得$\sum_{i=1}^T\alpha_i=1$，$\sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^i(\theta^{sh},\theta^i)=0$，公式的含义是：在共享层，没有可行的下降方向，即处于全局最优点，达到了所有任务的最优解。<del>优化课程应该都讲过这些</del></li>
 <li>对于任意任务$t$，$\nabla_{\theta^t}L^t(\theta^{sh},\theta^t)=0$</li>
 </ul>
 <p>任意解满足以上条件就是Pareto平稳点，每一个优化解都是平稳点，反之不成立。优化问题改写为：</p>
-<p>\begin{equation}<br>\min<em>{\alpha_1\cdots,\alpha_T}\Bigl(  \Bigl| \sum</em>{i=1}^T\alpha^i\nabla<em>{\theta^{sh}}L^t(\theta^{sh},\theta^i) \Bigr|^2 \Bigl| \sum</em>{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i\Bigr)<br>\label{KKT}<br>\end{equation}</p>
-<p>这个优化问题已经被证明任何一个优化解取值都是0且结果满足KKT条件；或者当前解能提供一个下降的方向来优化所有的任务。于是MTL算法将计算式\eqref{KKT}得到每一个任务的梯度，并使用$\sum<em>{i=1}^T\alpha^i\nabla</em>{\theta^{sh}}$来更新共享参数的梯度。</p>
+<p>\begin{equation}<br>\min_{\alpha_1\cdots,\alpha_T}\Bigl(  \Bigl| \sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}L^t(\theta^{sh},\theta^i) \Bigr|^2 \Bigl| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i\Bigr)<br>\label{KKT}<br>\end{equation}</p>
+<p>这个优化问题已经被证明任何一个优化解取值都是0且结果满足KKT条件；或者当前解能提供一个下降的方向来优化所有的任务。于是MTL算法将计算式\eqref{KKT}得到每一个任务的梯度，并使用$\sum_{i=1}^T\alpha^i\nabla_{\theta^{sh}}$来更新共享参数的梯度。</p>
 <h2 id="算法应用到大规模任务中"><a href="#算法应用到大规模任务中" class="headerlink" title="算法应用到大规模任务中"></a>算法应用到大规模任务中</h2><p>\eqref{KKT}中定义的优化问题等价于在<strong>输入空间的凸组合中找到最小范数</strong>。因此使用基于凸优化的一种方法来求解。</p>
-<p>在处理一般情况之前，先处理只有两个优化目标的一般情况。此时的优化目标是一个一元二次函数：$min<em>{\alpha\in [0,1]}||\alpha\nabla</em>{\theta^{sh}} L^1+(1-\alpha)\nabla_{\theta^{sh}}L^2||_2^2$，$\alpha$的解为：</p>
-<p>\begin{equation}<br>\hat\alpha=\biggl( \frac{\nabla<em>{\theta^{sh}}L^2-\nabla</em>{\theta^{sh}}L^1}{||\nabla<em>{\theta^{sh}}L^1-\nabla</em>{\theta^{sh}}L^2||^2}\nabla<em>{\theta^{sh}}L^2 \biggr)</em>+<br>\label{two}<br>\end{equation}</p>
+<p>在处理一般情况之前，先处理只有两个优化目标的一般情况。此时的优化目标是一个一元二次函数：$min_{\alpha\in [0,1]}||\alpha\nabla_{\theta^{sh}} L^1+(1-\alpha)\nabla_{\theta^{sh}}L^2||_2^2$，$\alpha$的解为：</p>
+<p>\begin{equation}<br>\hat\alpha=\biggl( \frac{\nabla_{\theta^{sh}}L^2-\nabla_{\theta^{sh}}L^1}{||\nabla_{\theta^{sh}}L^1-\nabla_{\theta^{sh}}L^2||^2}\nabla_{\theta^{sh}}L^2 \biggr)_+<br>\label{two}<br>\end{equation}</p>
 <p>$[a]_+$表示$\max(\min(a,1),0)$。以\eqref{two}作为优化求解的示例，在算法2中给出了Frank-Wolfe求解大规模问题的一般化算法(见算法2)：</p>
 <p><img data-src="https://static01.imgkr.com/temp/20a8a63f1da840e08fdda5ae5a314ae4.png" alt="example-image"></p>
 <p><img data-src="https://static01.imgkr.com/temp/3fd47e446a944c3bad7af6bc4ca8c543.png" alt="example-image"></p>
@@ -333,9 +337,9 @@
 <p>为降低计算复杂度，提出了一种有效的方法来确定优化目标的上界，且此时的模型只需要一次反向传播。将模型的结构分为：<strong>共享的表示层函数与特定任务的决策函数。</strong>此类架构涵盖了大多数现有的MTL模型，定义为：</p>
 <p>\begin{equation}<br>    f^t(x;\theta^{sh},\theta^t)=f^t(g(x;\theta^{sh});\theta^t)<br>\end{equation}</p>
 <p>$g$是共享的多任务表示层函数，$f^t$是第$t$个任务的决策函数，且输入为$g$的输出。如果表示层的函数输出为$[z_1,z_2,\cdots,z_n]$，$z_i=g(x_i;\theta^{sh})$，则优化问题的上界为：</p>
-<p>\begin{equation}<br>    \Bigl| \sum<em>{i=1}^T\alpha_i\nabla</em>{\theta^{sh}}L^t \Bigr|^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|^2 \Bigl| \sum<em>{i=1}^T\alpha_i\nabla</em>{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
+<p>\begin{equation}<br>    \Bigl| \sum_{i=1}^T\alpha_i\nabla_{\theta^{sh}}L^t \Bigr|^2 \leq \Bigl| \frac{\partial Z}{\partial \theta^{sh}} \Bigl|^2 \Bigl| \sum_{i=1}^T\alpha_i\nabla_{Z}L^t \Bigr|_2^2<br>\end{equation}</p>
 <p>$\nabla_{Z}L^t$能够在单向反向传播中计算得出，$\frac{\partial Z}{\partial \theta^{sh}}$与$\alpha$无关，不会影响到优化过程，所以在优化过程中会被移除。因此使用上界来代替优化目标：</p>
-<p>\begin{equation}<br>    \min<em>{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum</em>{i=1}^T\alpha^i\nabla<em>{Z}L^t(\theta^{sh},\theta^i) \Big|^2  \Big| \sum</em>{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
+<p>\begin{equation}<br>    \min_{\alpha_1,\cdots,\alpha^T}\biggl( \Big| \sum_{i=1}^T\alpha^i\nabla_{Z}L^t(\theta^{sh},\theta^i) \Big|^2  \Big| \sum_{i=1}^T\alpha_i=1,\alpha_i\geq0 \forall i \biggr)<br>\end{equation}</p>
 <p>改进的模型称为<strong>MGDA-UB:Multiple Gradient Descent Algorithm – Upper Bound</strong>。使用共享表示层来代替共享参数后，模型计算复杂度将大大降低。虽然MGDA-UB是原始优化问题的一个估计，文末给出了仍然能产生Pareto最优解的证明。此时网络结构为：</p>
 <p><img data-src="https://static01.imgkr.com/temp/39ef45740d8b404bbbf4b4a3a0311aba.png" alt></p>
 <p>能将网络结构和公式推导结合到一起，这个想法是真的可以。还是说：先想出了网络结构，而后给出了数学公式的推导和证明。</p>
@@ -480,7 +484,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法介绍"><span class="nav-number">2.</span> <span class="nav-text">方法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#多梯度下降算法"><span class="nav-number">2.1.</span> <span class="nav-text">多梯度下降算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法应用到大规模任务中"><span class="nav-number">2.2.</span> <span class="nav-text">算法应用到大规模任务中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在Encoder和Decoder结构中优化"><span class="nav-number">2.3.</span> <span class="nav-text">在Encoder和Decoder结构中优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">方法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">多梯度下降算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%BA%94%E7%94%A8%E5%88%B0%E5%A4%A7%E8%A7%84%E6%A8%A1%E4%BB%BB%E5%8A%A1%E4%B8%AD"><span class="nav-number">2.2.</span> <span class="nav-text">算法应用到大规模任务中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8Encoder%E5%92%8CDecoder%E7%BB%93%E6%9E%84%E4%B8%AD%E4%BC%98%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">在Encoder和Decoder结构中优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -516,7 +520,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -550,14 +554,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -616,9 +620,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -731,7 +743,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

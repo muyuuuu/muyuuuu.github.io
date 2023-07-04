@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？">
-<meta name="keywords" content="Modeling">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为什么梯度方向是函数的最速上升方向">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/10/15/why-gradient-direction-is-the-fastest-ascent-direction/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-16T14:32:32.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-15T12:32:44.000Z">
+<meta property="article:modified_time" content="2021-02-16T14:32:32.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Modeling">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="为什么梯度方向是函数的最速上升方向">
-<meta name="twitter:description" content="在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/10/15/why-gradient-direction-is-the-fastest-ascent-direction/">
 
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
+              <span>2.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -293,20 +293,20 @@
 
       
         <p>在用神经网络的时候，权重的更新方向一直是沿着负梯度进行更新，可有想过为什么要沿着梯度进行更新吗？或者说，为什么负梯度方向就是函数下降最快的方向呢？</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>这学期选课有毒，在各种不可抗力影响下，选了《大数据建模优化》这门课，上了几周发现跟大数据丝毫不沾边，无论是数据存储、挖掘、分析、处理和代码等一个不讲，都在讲本科数学建模竞赛那些基本模型，线性规划、二分类、SVM什么的，就是现在手推公式我能看懂了。后来发现这课的老师之前是数学系的，带《工程优化》这门课，据说讲的很不错，后来的老师都继承了他的风格。好巧不巧，我也选了《工程优化》，也是线性规划、凸集那些。然后选了《数据驱动优化》这门课，我以为是数据分析，玩玩<code>hadoop</code>什么的，结果发现也是跟数据没关系，也是在约束条件下优化目标，遗传算法、粒子群算法，就是本科建模那些常见算法。我寻思能开个专题好好整理下了，就开了个 <code>Math</code> 的标签。</p>
 <p><del>其实我想选《Linux 内核分析》这种只有计科人才能玩懂的直面怼代码的硬核课程，懂操作系统懂计算机原理才能写出好程序。</del></p>
-<h1 id="偏导"><a href="#偏导" class="headerlink" title="偏导"></a>偏导</h1><p>对于一个多元函数$z=f(x<em>1,x_2,\ldots,x_n)$，对第$i$个分量$x_i$的偏导为$\frac{\partial f}{\partial x_i}$，可以写成：<br>\begin{equation}<br>\frac{\partial f}{\partial x_i}=\lim</em>{t\to 0} \frac{f(x+te_i)-f(x)}{t}<br>\end{equation}<br>其中，$e=(0,\ldots,1,\ldots,0)$，只有第$i$个元素为1。</p>
+<h1 id="偏导"><a href="#偏导" class="headerlink" title="偏导"></a>偏导</h1><p>对于一个多元函数$z=f(x_1,x_2,\ldots,x_n)$，对第$i$个分量$x_i$的偏导为$\frac{\partial f}{\partial x_i}$，可以写成：<br>\begin{equation}<br>\frac{\partial f}{\partial x_i}=\lim_{t\to 0} \frac{f(x+te_i)-f(x)}{t}<br>\end{equation}<br>其中，$e=(0,\ldots,1,\ldots,0)$，只有第$i$个元素为1。</p>
 <h1 id="可微"><a href="#可微" class="headerlink" title="可微"></a>可微</h1><p>以二元函数为例（我懒，多元写着费劲），若函数$z=f(x,y)$在点$(x_0,y_0)$的全增量$\Delta z=f(x_0+\Delta x,y_0+\Delta y)-f(x_0,y_0)$可表示为$\Delta z =A\Delta x+B \Delta y +o(p)$，则$f(x,y)$在点$(x_0,y_0)$处可微，在这一点的全微分记作$\text{d} z=A\Delta x+B\Delta y$，等价于：</p>
 <p>\begin{equation}<br>\lim_{||(\Delta x,\Delta y)|| \to 0} \frac{f(x_0+\Delta x,y_0+\Delta y)-f(x_0,y_0)-A\Delta x-B \Delta y}{||(\Delta x,\Delta y)||}=0<br>\end{equation}</p>
 <p>记$x=(x,y)^T,\Delta x=(\Delta x,\Delta y)^T,l=(A,B)^T$，再次得到：</p>
 <p>\begin{equation}<br>\lim_{\Delta x \to 0} \frac{f(x+\Delta x)-f(x)-l^T\Delta x}{||\Delta x||}=0<br>\end{equation}</p>
-<h1 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h1><p>若函数$z=f(x,y)$在点$(x<em>0,y_0)$处可微，在该点的偏导必然存在，$\text{d}z$可以改写成$\text{z}=\frac{\partial z}{\partial x}|</em>{x=x<em>0}\Delta x+\frac{\partial z}{\partial y}|</em>{y=y_0}\Delta y$：</p>
-<p>\begin{equation}<br>l=(A,B)^T=(\frac{\partial z}{\partial x}|<em>{x=x_0},\frac{\partial z}{\partial y}|</em>{y=y_0})^T<br>\end{equation}</p>
-<p>则向量$l=(\frac{\partial z}{\partial x}|<em>{x=x_0},\frac{\partial z}{\partial y}|</em>{y=y_0})^T$称为函数$f(x,y)$在点$(x_0,y_0)$处的梯度。</p>
+<h1 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h1><p>若函数$z=f(x,y)$在点$(x_0,y_0)$处可微，在该点的偏导必然存在，$\text{d}z$可以改写成$\text{z}=\frac{\partial z}{\partial x}|_{x=x_0}\Delta x+\frac{\partial z}{\partial y}|_{y=y_0}\Delta y$：</p>
+<p>\begin{equation}<br>l=(A,B)^T=(\frac{\partial z}{\partial x}|_{x=x_0},\frac{\partial z}{\partial y}|_{y=y_0})^T<br>\end{equation}</p>
+<p>则向量$l=(\frac{\partial z}{\partial x}|_{x=x_0},\frac{\partial z}{\partial y}|_{y=y_0})^T$称为函数$f(x,y)$在点$(x_0,y_0)$处的梯度。</p>
 <p><strong>注：对于任意多元函数，以上的梯度和可微定理均成立。</strong></p>
 <h1 id="方向导数"><a href="#方向导数" class="headerlink" title="方向导数"></a>方向导数</h1><p>设多元函数$f$在点$x$处可微，向量$p=te$，$t$是$p$的模，$e$是$p$的单位向量，函数$f$在点$x$沿$p$方向的方向导数记为：</p>
-<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\lim<em>{t \to 0^+}\frac{f(x+p)-f(x)}{t}=\lim</em>{t \to 0^+}\frac{f(x+te)-f(x)}{t}<br>\end{equation}</p>
+<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\lim_{t \to 0^+}\frac{f(x+p)-f(x)}{t}=\lim_{t \to 0^+}\frac{f(x+te)-f(x)}{t}<br>\end{equation}</p>
 <ul>
 <li>若$\frac{\partial f(x)}{\partial p}&lt;0$，可以得到$f(x+te)-f(x)&lt;0$，函数$f$在点$x$附近沿着$p$方向是下降的；</li>
 <li>若$\frac{\partial f(x)}{\partial p}&gt;0$，可以得到$f(x+te)-f(x)&gt;0$，函数$f$在点$x$附近沿着$p$方向是上升的。</li>
@@ -316,7 +316,7 @@
 <p>多元函数$f$在点$x$处可微，可以得到：</p>
 <p>\begin{equation}<br>f(x+p)=f(x)+l^Tp=f(x)+\nabla f(x)^Tp<br>\end{equation}</p>
 <p>将$p$替换为$te$，可以得到：</p>
-<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\lim<em>{t\to 0^+}\frac{f(x+p)-f(x)}{t}=\lim</em>{t\to 0^+}\frac{t\nabla f(x)^Te}{t}=\nabla f(x)^Te<br>\end{equation}</p>
+<p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\lim_{t\to 0^+}\frac{f(x+p)-f(x)}{t}=\lim_{t\to 0^+}\frac{t\nabla f(x)^Te}{t}=\nabla f(x)^Te<br>\end{equation}</p>
 <p>继续：</p>
 <p>\begin{equation}<br>\frac{\partial f(x)}{\partial p}=\nabla f(x)^T e \text{向量内积} =||\nabla f(x)||\cos \beta (e\text{的模是1})<br>\end{equation}</p>
 <p>我们已经知道：<strong>方向导数正负决定了函数升降；升降速度的快慢由方向导数绝对值大小来决定，绝对值越大升降速度越大。</strong>所以：</p>
@@ -473,7 +473,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#偏导"><span class="nav-number">1.</span> <span class="nav-text">偏导</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可微"><span class="nav-number">2.</span> <span class="nav-text">可微</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度"><span class="nav-number">3.</span> <span class="nav-text">梯度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方向导数"><span class="nav-number">4.</span> <span class="nav-text">方向导数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结论证明"><span class="nav-number">5.</span> <span class="nav-text">结论证明</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%81%8F%E5%AF%BC"><span class="nav-number">1.</span> <span class="nav-text">偏导</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%AF%E5%BE%AE"><span class="nav-number">2.</span> <span class="nav-text">可微</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">梯度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E5%90%91%E5%AF%BC%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">方向导数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA%E8%AF%81%E6%98%8E"><span class="nav-number">5.</span> <span class="nav-text">结论证明</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -509,7 +509,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -543,14 +543,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -609,9 +609,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -724,7 +732,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

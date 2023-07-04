@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，早日毕业吧。">
-<meta name="keywords" content="AdversarialExample">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些攻击算法">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/09/22/some-attack-methods/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，早日毕业吧。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-11T14:08:26.791Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/09/22/4US1kF.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/09/22/4U9gdf.png">
+<meta property="article:published_time" content="2021-09-22T07:15:31.000Z">
+<meta property="article:modified_time" content="2022-05-11T14:08:26.791Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="AdversarialExample">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一些攻击算法">
-<meta name="twitter:description" content="又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，早日毕业吧。">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/09/22/4US1kF.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/09/22/some-attack-methods/">
 
@@ -293,7 +296,7 @@
 
       
         <p>又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，<del>早日毕业吧</del>。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="Natural-ADV"><a href="#Natural-ADV" class="headerlink" title="Natural ADV"></a>Natural ADV</h1><p>GENERATING NATURAL ADVERSARIAL EXAMPLES，发表在 ICLR 2018。众所周知，神经网络的输入层含有的信息和和隐层含有的信息是不同的，且常见攻击算法生成的对抗样本并不具有语义特征。所以这篇论文尝试生成 natural 的对抗样本。</p>
 <p>与传统算法不同的是：传统算法在输入空间搜索对抗样本，而本文的算法尝试在隐空间进行搜索。即输入的为干净样本的分布 $P(x)$，搜索一个 $z^\star$，并通过生成器将其映射回 $x^\star$，并期望对抗样本是合法且和原始输入较为接近。</p>
 <p>为了达到这个目标，作者选用 WGAN 作为生成器。首先训练一个 $G$，可以由 $z$ 生成 $x$；同时训练一个与 $G$ 相反的 $I$，由 $x$ 生成 $z$。通过最小化重构 $x$ 和 $z$ 与 $I(G(z))$ 的误差作为损失函数训练模型。</p>
@@ -484,7 +487,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -518,14 +521,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -584,9 +587,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -699,7 +710,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

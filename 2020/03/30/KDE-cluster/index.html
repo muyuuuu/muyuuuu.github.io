@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,21 @@
   </script>
 
   <meta name="description" content="当问题需要自动地确定聚类数目时，传统的KMeans等聚类方法不在适用。因此，使用“核概率密度估计”的思路自行设计了两种聚类方法。本文收录：  核是什么 核密度估计 基于核密度估计的两种聚类方法 代码实现">
-<meta name="keywords" content="Algorithm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="核密度聚类">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/03/30/KDE-cluster/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="当问题需要自动地确定聚类数目时，传统的KMeans等聚类方法不在适用。因此，使用“核概率密度估计”的思路自行设计了两种聚类方法。本文收录：  核是什么 核密度估计 基于核密度估计的两种聚类方法 代码实现">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-30T22:15:10.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/30/KDE-cluster/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/30/KDE-cluster/2.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/30/KDE-cluster/3.png">
+<meta property="article:published_time" content="2020-03-30T10:11:13.000Z">
+<meta property="article:modified_time" content="2020-03-30T22:15:10.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Algorithm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="核密度聚类">
-<meta name="twitter:description" content="当问题需要自动地确定聚类数目时，传统的KMeans等聚类方法不在适用。因此，使用“核概率密度估计”的思路自行设计了两种聚类方法。本文收录：  核是什么 核密度估计 基于核密度估计的两种聚类方法 代码实现">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/03/30/KDE-cluster/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/03/30/KDE-cluster/">
 
@@ -273,7 +277,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
+              <span>4.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -299,7 +303,7 @@
 <li>基于核密度估计的两种聚类方法</li>
 <li>代码实现</li>
 </ul>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="核函数"><a href="#核函数" class="headerlink" title="核函数"></a>核函数</h1><p>有一些数据，想“看看”它长什么样，基于高中的知识，我们一般会画频率分布直方图（Histogram）。但基于大学的知识，此时也可以用核密度估计，因为之前的知识水平让我们默认为频率等于概率，但实际情况不一定如此。</p>
 <p>这里的“核”是一个函数，用来提供权重。例如高斯函数 (Gaussian) 就是一个常用的核函数。举个例子，假设我们现在想买房，钱不够要找亲戚朋友借，我们用一个数组来表示 5 个亲戚的财产状况： [8, 2, 5, 6, 4]。我们是中间这个数 5。“核”是一个权重函数，假设这个核函数的取值为[0.1, 0.4, 1, 0.3, 0.2]，以此来代表同的亲戚朋友亲疏有别。</p>
 <p>在借钱的时候，关系好的朋友出力多，关系不好的朋友出力少，于是我们可以用权重来表示。总共能借到的钱是： $8\times 0.1 + 2\times 0.4 + 5\times 1 + 6\times 0.3 + 4\times 0.2 = 9.2$。</p>
@@ -324,9 +328,9 @@
 </ol>
 <h2 id="核密度估计-1"><a href="#核密度估计-1" class="headerlink" title="核密度估计"></a>核密度估计</h2><p>本文着重实现第二种聚类方法，第一种其实同理。</p>
 <p>首先产生一组随机数：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">N = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line"><span class="comment"># concatenate 用来组合两种数据，第一组数据均值0方差1，数量占 30% </span></span><br><span class="line"><span class="comment"># 第二组数据均值 5 方差1 数量占 70%</span></span><br><span class="line"><span class="comment"># [:, np.newaxis] 把数据维度更新为二维一列的数据</span></span><br><span class="line">X = np.concatenate((np.random.normal(<span class="number">0</span>, <span class="number">1</span>, int(<span class="number">0.3</span> * N)), np.random.normal(<span class="number">5</span>, <span class="number">1</span>, int(<span class="number">0.7</span> * N))))[:, np.newaxis]</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">N = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line"><span class="comment"># concatenate 用来组合两种数据，第一组数据均值0方差1，数量占 30% </span></span><br><span class="line"><span class="comment"># 第二组数据均值 5 方差1 数量占 70%</span></span><br><span class="line"><span class="comment"># [:, np.newaxis] 把数据维度更新为二维一列的数据</span></span><br><span class="line">X = np.concatenate((np.random.normal(<span class="number">0</span>, <span class="number">1</span>, <span class="built_in">int</span>(<span class="number">0.3</span> * N)), np.random.normal(<span class="number">5</span>, <span class="number">1</span>, <span class="built_in">int</span>(<span class="number">0.7</span> * N))))[:, np.newaxis]</span><br></pre></td></tr></table></figure>
 <p>其次调用sklearn这个库实现核密度估计即可：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">X_plot = np.linspace(<span class="number">-5</span>, <span class="number">10</span>, <span class="number">1000</span>)[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">colors = [<span class="string">'blue'</span>]</span><br><span class="line">kernels = [<span class="string">'gaussian'</span>]</span><br><span class="line">lw = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> color, kernel <span class="keyword">in</span> zip(colors, kernels):</span><br><span class="line">    <span class="comment"># Fit the Kernel Density model on the data.</span></span><br><span class="line">    kde = KernelDensity(kernel=kernel, bandwidth=<span class="number">0.5</span>).fit(X)</span><br><span class="line">    <span class="comment"># Evaluate the log density model on the data. </span></span><br><span class="line">    log_dens = kde.score_samples(X_plot)</span><br><span class="line">    plt.plot(X_plot[:, <span class="number">0</span>], np.exp(log_dens), color=color, lw=lw,</span><br><span class="line">            linestyle=<span class="string">'-'</span>, label=<span class="string">"kernel = '&#123;0&#125;'"</span>.format(kernel))</span><br><span class="line">    arr = np.exp(log_dens)</span><br><span class="line">    np.save(<span class="string">'data.npy'</span>, arr)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">X_plot = np.linspace(-<span class="number">5</span>, <span class="number">10</span>, <span class="number">1000</span>)[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">colors = [<span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line">kernels = [<span class="string">&#x27;gaussian&#x27;</span>]</span><br><span class="line">lw = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> color, kernel <span class="keyword">in</span> <span class="built_in">zip</span>(colors, kernels):</span><br><span class="line">    <span class="comment"># Fit the Kernel Density model on the data.</span></span><br><span class="line">    kde = KernelDensity(kernel=kernel, bandwidth=<span class="number">0.5</span>).fit(X)</span><br><span class="line">    <span class="comment"># Evaluate the log density model on the data. </span></span><br><span class="line">    log_dens = kde.score_samples(X_plot)</span><br><span class="line">    plt.plot(X_plot[:, <span class="number">0</span>], np.exp(log_dens), color=color, lw=lw,</span><br><span class="line">            linestyle=<span class="string">&#x27;-&#x27;</span>, label=<span class="string">&quot;kernel = &#x27;&#123;0&#125;&#x27;&quot;</span>.<span class="built_in">format</span>(kernel))</span><br><span class="line">    arr = np.exp(log_dens)</span><br><span class="line">    np.save(<span class="string">&#x27;data.npy&#x27;</span>, arr)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>X_plot ：An array of points to query；</li>
 <li>kde = KernelDensity(kernel=kernel, bandwidth=0.5).fit(X) 完成训练工作，计算核密度；</li>
@@ -334,23 +338,23 @@
 <li>np.exp 是因为kde.score_samples反馈结果的概率值取了ln(可参看源码实现)，所以计算真实概率值要exp一下；</li>
 <li>保存数据用于后期聚类处理。</li>
 </ul>
-<p>完整代码如下：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KernelDensity</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> norm</span><br><span class="line"></span><br><span class="line">N = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line">X = np.concatenate((np.random.normal(<span class="number">0</span>, <span class="number">1</span>, int(<span class="number">0.3</span> * N)), np.random.normal(<span class="number">5</span>, <span class="number">1</span>, int(<span class="number">0.7</span> * N))))[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">X_plot = np.linspace(<span class="number">-5</span>, <span class="number">10</span>, <span class="number">1000</span>)[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">colors = [<span class="string">'blue'</span>]</span><br><span class="line">kernels = [<span class="string">'gaussian'</span>]</span><br><span class="line">lw = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> color, kernel <span class="keyword">in</span> zip(colors, kernels):</span><br><span class="line">    kde = KernelDensity(kernel=kernel, bandwidth=<span class="number">0.5</span>).fit(X)</span><br><span class="line">    log_dens = kde.score_samples(X_plot)</span><br><span class="line">    plt.plot(X_plot[:, <span class="number">0</span>], np.exp(log_dens), color=color, lw=lw,</span><br><span class="line">            linestyle=<span class="string">'-'</span>, label=<span class="string">"kernel = '&#123;0&#125;'"</span>.format(kernel))</span><br><span class="line">    arr = np.exp(log_dens)</span><br><span class="line">    np.save(<span class="string">'data.npy'</span>, arr)</span><br><span class="line"></span><br><span class="line">plt.legend(loc=<span class="string">'upper left'</span>)</span><br><span class="line">plt.hist(X, <span class="number">70</span>, normed = <span class="number">1</span>, histtype=<span class="string">'bar'</span>, facecolor=<span class="string">'salmon'</span>, rwidth=<span class="number">0.9</span>)  </span><br><span class="line"><span class="comment"># plt.set_xlim(-4, 9)</span></span><br><span class="line"><span class="comment"># plt.set_ylim(-0.02, 0.4)</span></span><br><span class="line"></span><br><span class="line">plt.title(<span class="string">"$N$ = 1000 points"</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">plt.xlabel(<span class="string">"Data"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.ylabel(<span class="string">"Density Function"</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.savefig(<span class="string">'test.png'</span>, dpi=<span class="number">300</span>)</span><br></pre></td></tr></table></figure></p>
+<p>完整代码如下：<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KernelDensity</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> norm</span><br><span class="line"></span><br><span class="line">N = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line">X = np.concatenate((np.random.normal(<span class="number">0</span>, <span class="number">1</span>, <span class="built_in">int</span>(<span class="number">0.3</span> * N)), np.random.normal(<span class="number">5</span>, <span class="number">1</span>, <span class="built_in">int</span>(<span class="number">0.7</span> * N))))[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">X_plot = np.linspace(-<span class="number">5</span>, <span class="number">10</span>, <span class="number">1000</span>)[:, np.newaxis]</span><br><span class="line"></span><br><span class="line">colors = [<span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line">kernels = [<span class="string">&#x27;gaussian&#x27;</span>]</span><br><span class="line">lw = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> color, kernel <span class="keyword">in</span> <span class="built_in">zip</span>(colors, kernels):</span><br><span class="line">    kde = KernelDensity(kernel=kernel, bandwidth=<span class="number">0.5</span>).fit(X)</span><br><span class="line">    log_dens = kde.score_samples(X_plot)</span><br><span class="line">    plt.plot(X_plot[:, <span class="number">0</span>], np.exp(log_dens), color=color, lw=lw,</span><br><span class="line">            linestyle=<span class="string">&#x27;-&#x27;</span>, label=<span class="string">&quot;kernel = &#x27;&#123;0&#125;&#x27;&quot;</span>.<span class="built_in">format</span>(kernel))</span><br><span class="line">    arr = np.exp(log_dens)</span><br><span class="line">    np.save(<span class="string">&#x27;data.npy&#x27;</span>, arr)</span><br><span class="line"></span><br><span class="line">plt.legend(loc=<span class="string">&#x27;upper left&#x27;</span>)</span><br><span class="line">plt.hist(X, <span class="number">70</span>, normed = <span class="number">1</span>, histtype=<span class="string">&#x27;bar&#x27;</span>, facecolor=<span class="string">&#x27;salmon&#x27;</span>, rwidth=<span class="number">0.9</span>)  </span><br><span class="line"><span class="comment"># plt.set_xlim(-4, 9)</span></span><br><span class="line"><span class="comment"># plt.set_ylim(-0.02, 0.4)</span></span><br><span class="line"></span><br><span class="line">plt.title(<span class="string">&quot;$N$ = 1000 points&quot;</span>, fontsize=<span class="number">16</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;Data&quot;</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;Density Function&quot;</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.savefig(<span class="string">&#x27;test.png&#x27;</span>, dpi=<span class="number">300</span>)</span><br></pre></td></tr></table></figure></p>
 <h2 id="求极值以聚类"><a href="#求极值以聚类" class="headerlink" title="求极值以聚类"></a>求极值以聚类</h2><p>之后借助scipy求出核密度估计的点中的几个极大值和极小值（极值并不唯一）</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.signal <span class="keyword">import</span> argrelextrema</span><br><span class="line"><span class="comment"># 加载数据</span></span><br><span class="line">data = np.load(<span class="string">'data.npy'</span>)</span><br><span class="line"><span class="comment"># 求极大值</span></span><br><span class="line">maxn = argrelextrema(data, np.greater)</span><br><span class="line"><span class="comment"># 求极小值</span></span><br><span class="line">minn = argrelextrema(data, np.less)</span><br><span class="line"><span class="comment"># 打印极大值的索引</span></span><br><span class="line">print(maxn)</span><br><span class="line"><span class="comment"># 打印极小值的索引</span></span><br><span class="line">print(minn)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.signal <span class="keyword">import</span> argrelextrema</span><br><span class="line"><span class="comment"># 加载数据</span></span><br><span class="line">data = np.load(<span class="string">&#x27;data.npy&#x27;</span>)</span><br><span class="line"><span class="comment"># 求极大值</span></span><br><span class="line">maxn = argrelextrema(data, np.greater)</span><br><span class="line"><span class="comment"># 求极小值</span></span><br><span class="line">minn = argrelextrema(data, np.less)</span><br><span class="line"><span class="comment"># 打印极大值的索引</span></span><br><span class="line"><span class="built_in">print</span>(maxn)</span><br><span class="line"><span class="comment"># 打印极小值的索引</span></span><br><span class="line"><span class="built_in">print</span>(minn)</span><br></pre></td></tr></table></figure>
 <p>输出结果如下：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(array([<span class="number">340</span>, <span class="number">667</span>], dtype=int64),)</span><br><span class="line">(array([<span class="number">480</span>], dtype=int64),)</span><br></pre></td></tr></table></figure>
 <p>得到的结果显示有两个极大值两个极小值，与概率密度估计图象相吻合。按照返回的极值索引访问极值即可。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(data[minn])</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(data[minn])</span><br></pre></td></tr></table></figure>
 <p>进而按照极值划分数据，即可完成聚类。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>站在巨人的肩膀上，我们能更好的前行：</p>
 <ol>
-<li><a href="https://lotabout.me/2018/kernel-density-estimation/" target="_blank" rel="noopener">https://lotabout.me/2018/kernel-density-estimation/</a></li>
-<li><a href="https://spaces.ac.cn/archives/3785" target="_blank" rel="noopener">https://spaces.ac.cn/archives/3785</a></li>
-<li><a href="https://scikit-learn.org/stable/auto_examples/neighbors/plot_kde_1d.html" target="_blank" rel="noopener">https://scikit-learn.org/stable/auto_examples/neighbors/plot_kde_1d.html</a></li>
-<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KernelDensity.html" target="_blank" rel="noopener">https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KernelDensity.html</a></li>
-<li><a href="https://docs.scipy.org/doc/scipy/referenc/generated/scipy.signal.argrelextrema.html" target="_blank" rel="noopener">https://docs.scipy.org/doc/scipy/referenc/generated/scipy.signal.argrelextrema.html</a></li>
-<li><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html" target="_blank" rel="noopener">https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html</a></li>
-<li><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html" target="_blank" rel="noopener">https://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://lotabout.me/2018/kernel-density-estimation/">https://lotabout.me/2018/kernel-density-estimation/</a></li>
+<li><a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/3785">https://spaces.ac.cn/archives/3785</a></li>
+<li><a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/auto_examples/neighbors/plot_kde_1d.html">https://scikit-learn.org/stable/auto_examples/neighbors/plot_kde_1d.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KernelDensity.html">https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KernelDensity.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/referenc/generated/scipy.signal.argrelextrema.html">https://docs.scipy.org/doc/scipy/referenc/generated/scipy.signal.argrelextrema.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html">https://docs.scipy.org/doc/numpy/reference/generated/numpy.concatenate.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html">https://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html</a></li>
 </ol>
 <p>你也可以看到我查看翻阅了大量的官方文档，其实对于这种技术东西，官方文档的解释往往是最好的，不懂的问题就多动动手多思考嘛，哪能不懂就问。</p>
 
@@ -501,7 +505,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#核函数"><span class="nav-number">1.</span> <span class="nav-text">核函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核密度估计"><span class="nav-number">2.</span> <span class="nav-text">核密度估计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核密度聚类"><span class="nav-number">3.</span> <span class="nav-text">核密度聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#核密度估计-1"><span class="nav-number">3.1.</span> <span class="nav-text">核密度估计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求极值以聚类"><span class="nav-number">3.2.</span> <span class="nav-text">求极值以聚类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">核函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%B8%E5%AF%86%E5%BA%A6%E4%BC%B0%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">核密度估计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%B8%E5%AF%86%E5%BA%A6%E8%81%9A%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">核密度聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%AF%86%E5%BA%A6%E4%BC%B0%E8%AE%A1-1"><span class="nav-number">3.1.</span> <span class="nav-text">核密度估计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%82%E6%9E%81%E5%80%BC%E4%BB%A5%E8%81%9A%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">求极值以聚类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -537,7 +541,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -571,14 +575,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -637,9 +641,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -752,7 +764,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

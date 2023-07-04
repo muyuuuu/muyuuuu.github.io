@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="最近会有一些去年 11 月写的的存货博客发布，我眼中匿名函数最重要的一点：对数据的闭包。">
-<meta name="keywords" content="C++">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ 中的匿名函数">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/10/25/cpp-lambda/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="最近会有一些去年 11 月写的的存货博客发布，我眼中匿名函数最重要的一点：对数据的闭包。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-16T15:32:16.540Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-10-25T13:30:33.000Z">
+<meta property="article:modified_time" content="2022-05-16T15:32:16.540Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ 中的匿名函数">
-<meta name="twitter:description" content="最近会有一些去年 11 月写的的存货博客发布，我眼中匿名函数最重要的一点：对数据的闭包。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/10/25/cpp-lambda/">
 
@@ -293,16 +293,16 @@
 
       
         <p>最近会有一些去年 11 月写的的存货博客发布，我眼中匿名函数最重要的一点：对数据的闭包。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="函数对象"><a href="#函数对象" class="headerlink" title="函数对象"></a>函数对象</h1><p>在类中，可以重载函数调用运算符 <code>()</code>，此时类的对象可以将具有类似函数的行为，我们称这些对象为函数对象 <code>Function Object</code> 或者仿函数 <code>Functor</code>。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">int</span> x&#123;<span class="number">12</span>&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">this</span>-&gt;x &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Demo a;</span><br><span class="line">    a();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="type">int</span> x&#123;<span class="number">12</span>&#125;;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="keyword">this</span>-&gt;x &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Demo a;</span><br><span class="line">    <span class="built_in">a</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个类的对象在执行时，所用的数据封闭在这个类内，我们可以称其为闭包类型。那么有没有一种方法，想调用个东西，但又不想定义函数或类，且能像上面例子一样可以操作数据呢？答案是匿名函数。</p>
-<h1 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> demo = [] &#123;<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"hello world"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;&#125;;</span><br><span class="line">    demo();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> demo = [] &#123;std::cout &lt;&lt; <span class="string">&quot;hello world&quot;</span> &lt;&lt; std::endl;&#125;;</span><br><span class="line">    <span class="built_in">demo</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>增加参数和返回值类型：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> demo = [](<span class="keyword">int</span> a, <span class="keyword">int</span> b) -&gt; <span class="keyword">int</span> &#123;<span class="keyword">return</span> a - b;&#125;;</span><br><span class="line">    <span class="keyword">int</span> c = demo(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; c &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> demo = [](<span class="type">int</span> a, <span class="type">int</span> b) -&gt; <span class="type">int</span> &#123;<span class="keyword">return</span> a - b;&#125;;</span><br><span class="line">    <span class="type">int</span> c = <span class="built_in">demo</span>(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    std::cout &lt;&lt; c &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>-&gt;</code> 表示后置返回值类型，当然也可以忽略，由 <code>cpp</code> 自己推断。</p>
 <p>那么来解析一下这个匿名函数，每当你定义一个 <code>lambda</code> 表达式后，编译器会自动生成一个匿名类（这个类当然重载了 <code>()</code> 运算符），我们称为闭包类型 <code>closure type</code>。那么在运行时，这个 <code>lambda</code> 表达式就会返回一个匿名的闭包实例，其实一个右值。所以，我们上面的 <code>lambda</code> 表达式的结果就是一个个闭包。闭包的一个强大之处是其可以通过传值或者引用的方式捕捉其封装作用域内的变量，前面的方括号就是用来定义捕捉模式以及变量。当 <code>lambda</code> 捕捉块为空时，表示没有捕捉任何变量。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x&#123;<span class="number">11</span>&#125;;</span><br><span class="line">    <span class="comment">// 如果不是捕获引用想修改值，可以使用 mutable</span></span><br><span class="line">    <span class="keyword">auto</span> demo = [&amp;x](<span class="keyword">int</span> a, <span class="keyword">int</span> b) -&gt; <span class="keyword">int</span> &#123;</span><br><span class="line">        x--;</span><br><span class="line">        <span class="keyword">return</span> a - b + x;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">int</span> c = demo(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; c &lt;&lt; <span class="string">" "</span> &lt;&lt; x &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> x&#123;<span class="number">11</span>&#125;;</span><br><span class="line">    <span class="comment">// 如果不是捕获引用想修改值，可以使用 mutable</span></span><br><span class="line">    <span class="keyword">auto</span> demo = [&amp;x](<span class="type">int</span> a, <span class="type">int</span> b) -&gt; <span class="type">int</span> &#123;</span><br><span class="line">        x--;</span><br><span class="line">        <span class="keyword">return</span> a - b + x;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="type">int</span> c = <span class="built_in">demo</span>(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    std::cout &lt;&lt; c &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; x &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>对于复制传值捕捉方式，类中会相应添加对应类型的非静态数据成员。在运行时，会用复制的值初始化这些成员变量，从而生成闭包。这不可避免有一些开销，因此在 <code>leetcode</code> 刷题使用匿名函数排序时，可能会超时。</p>
 <ul>
 <li><code>[]</code>，不捕获任何外部变量</li>
@@ -314,22 +314,22 @@
 <li><code>[&amp;, x]</code>，变量x以值的形式捕获，其余变量以引用形式捕获</li>
 </ul>
 <p>一些用法，对一个 <code>vector</code> 按照另一个 <code>vector</code> 的顺序进行排序：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sort(v1.begin(), v1.end(), [&amp;](<span class="keyword">int</span> i, <span class="keyword">int</span> j)&#123;</span><br><span class="line">    <span class="keyword">return</span> v2[i] &gt; v2[j];</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sort</span>(v1.<span class="built_in">begin</span>(), v1.<span class="built_in">end</span>(), [&amp;](<span class="type">int</span> i, <span class="type">int</span> j)&#123;</span><br><span class="line">    <span class="keyword">return</span> v2[i] &gt; v2[j];</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <h1 id="进阶用法"><a href="#进阶用法" class="headerlink" title="进阶用法"></a>进阶用法</h1><ol>
 <li>函数返回匿名函数时，避免引用捕获，会出现悬挂引用问题。</li>
 </ol>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// x 是临时变量，会消失，应该用值捕获</span></span><br><span class="line"><span class="function"><span class="built_in">std</span>::function&lt;<span class="title">int</span><span class="params">(<span class="keyword">int</span>)</span>&gt; <span class="title">add_x</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [&amp;](<span class="keyword">int</span> a) &#123; <span class="keyword">return</span> x + a; &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// x 是临时变量，会消失，应该用值捕获</span></span><br><span class="line"><span class="function">std::function&lt;<span class="title">int</span><span class="params">(<span class="type">int</span>)</span>&gt; <span class="title">add_x</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [&amp;](<span class="type">int</span> a) &#123; <span class="keyword">return</span> x + a; &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ol>
 <li><p>类内的匿名函数，使用 <code>this</code> 捕获当前类对象，进而捕获成员</p>
 </li>
 <li><p>捕捉不能复制的对象</p>
 </li>
 </ol>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化外部没有的变量</span></span><br><span class="line"><span class="keyword">auto</span> z = [str = <span class="string">"string"</span>]&#123; <span class="keyword">return</span> str; &#125;;</span><br><span class="line"><span class="comment">// 捕获不能复制的对象</span></span><br><span class="line"><span class="keyword">auto</span> myPi = <span class="built_in">std</span>::make_unique&lt;<span class="keyword">double</span>&gt;(<span class="number">3.1415</span>);</span><br><span class="line"><span class="keyword">auto</span> circle_area = [pi = <span class="built_in">std</span>::move(myPi)](<span class="keyword">double</span> r) &#123; <span class="keyword">return</span> *pi * r * r; &#125;;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; circle_area(<span class="number">1.0</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// 3.1415</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化外部没有的变量</span></span><br><span class="line"><span class="keyword">auto</span> z = [str = <span class="string">&quot;string&quot;</span>]&#123; <span class="keyword">return</span> str; &#125;;</span><br><span class="line"><span class="comment">// 捕获不能复制的对象</span></span><br><span class="line"><span class="keyword">auto</span> myPi = std::<span class="built_in">make_unique</span>&lt;<span class="type">double</span>&gt;(<span class="number">3.1415</span>);</span><br><span class="line"><span class="keyword">auto</span> circle_area = [pi = std::<span class="built_in">move</span>(myPi)](<span class="type">double</span> r) &#123; <span class="keyword">return</span> *pi * r * r; &#125;;</span><br><span class="line">cout &lt;&lt; <span class="built_in">circle_area</span>(<span class="number">1.0</span>) &lt;&lt; endl; <span class="comment">// 3.1415</span></span><br></pre></td></tr></table></figure>
 <ol>
 <li>自动推断类型</li>
 </ol>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> add = [](<span class="keyword">auto</span> x, <span class="keyword">auto</span> y) &#123; <span class="keyword">return</span> x + y; &#125;;</span><br><span class="line"><span class="keyword">int</span> x = add(<span class="number">2</span>, <span class="number">3</span>);   <span class="comment">// 5</span></span><br><span class="line"><span class="keyword">double</span> y = add(<span class="number">2.5</span>, <span class="number">3.5</span>);  <span class="comment">// 6.0</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> add = [](<span class="keyword">auto</span> x, <span class="keyword">auto</span> y) &#123; <span class="keyword">return</span> x + y; &#125;;</span><br><span class="line"><span class="type">int</span> x = <span class="built_in">add</span>(<span class="number">2</span>, <span class="number">3</span>);   <span class="comment">// 5</span></span><br><span class="line"><span class="type">double</span> y = <span class="built_in">add</span>(<span class="number">2.5</span>, <span class="number">3.5</span>);  <span class="comment">// 6.0</span></span><br></pre></td></tr></table></figure>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
 <li>匿名函数没有名字</li>
 <li>具名函数可以有自己的变量，可以有外部变量的引用，因此这是闭包的</li>
@@ -337,7 +337,7 @@
 <li>闭包可以被理解为一个附带数据的操作</li>
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://www.jianshu.com/p/d686ad9de817" target="_blank" rel="noopener">https://www.jianshu.com/p/d686ad9de817</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d686ad9de817">https://www.jianshu.com/p/d686ad9de817</a></li>
 </ol>
 
     </div>
@@ -355,13 +355,13 @@
       <div class="popular-posts-title"><a href="/2021/02/01/CharArray-vs-ArrayName-vs-String/" rel="bookmark">字符数组，字符串与数组名</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2022/05/12/Cpp-this-and-python-self/" rel="bookmark">C++ 中的 this 和 Python 中的 self</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/05/01/Cpp-Sequential-Container/" rel="bookmark">C++数据结构篇『二』顺序容器：向量、链表与双端队列</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/01/29/Cpp-public-vs-protected/" rel="bookmark">从虚函数的角度聊聊 C++ 中的 protected 继承</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/07/15/Cpp-refer/" rel="bookmark">C++ 中的引用</a></div>
     </li>
   </ul>
 
@@ -487,7 +487,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#函数对象"><span class="nav-number">1.</span> <span class="nav-text">函数对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#匿名函数"><span class="nav-number">2.</span> <span class="nav-text">匿名函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进阶用法"><span class="nav-number">3.</span> <span class="nav-text">进阶用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">函数对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">匿名函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E7%94%A8%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">进阶用法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -523,7 +523,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -557,14 +557,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -623,9 +623,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -738,7 +746,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

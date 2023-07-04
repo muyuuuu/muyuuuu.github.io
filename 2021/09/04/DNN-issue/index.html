@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。 比如：为何网络的误差一直是一个定值？为何同样的网络、同样的优化器和学习率，训练得到的准确率比别人低 20% ？">
-<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神经网络常见问题">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/09/04/DNN-issue/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。 比如：为何网络的误差一直是一个定值？为何同样的网络、同样的优化器和学习率，训练得到的准确率比别人低 20% ？">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-09-05T13:02:20.894Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-09-04T12:36:07.000Z">
+<meta property="article:modified_time" content="2021-09-05T13:02:20.894Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="DeepLearning">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="神经网络常见问题">
-<meta name="twitter:description" content="写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。 比如：为何网络的误差一直是一个定值？为何同样的网络、同样的优化器和学习率，训练得到的准确率比别人低 20% ？">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/09/04/DNN-issue/">
 
@@ -294,11 +294,11 @@
       
         <p>写深度学习的代码多了，经常会发现网络准确率低、难以收敛等错误，大多时候不是算法问题，而是人为的 bug，特此记录。</p>
 <p>比如：为何网络的误差一直是一个定值？为何同样的网络、同样的优化器和学习率，训练得到的准确率比别人低 20% ？</p>
-<a id="more"></a>
+<span id="more"></span>
 <ol>
 <li>神经网络处理数据时不进行<a href="https://muyuuuu.github.io/2021/05/07/DNN-data-normal/">标准化</a>，准确率会下降很多；</li>
-<li>神经网络的学习率至关重要，batch 大而学习率小，batch 小而学习率大，都会导致不收敛问题。此外，学习率衰减很重要，能有效提升<a href="https://github.com/bearpaw/pytorch-classification" target="_blank" rel="noopener">卡在瓶颈</a>中的神经网络的准确率。</li>
-<li>复现去噪器时，噪音数据在损失函数<a href="https://github.com/muyuuuu/Paper-ReImplement/tree/main/ADP-ICML-2021" target="_blank" rel="noopener">内部生成</a>。如果在损失外部生成噪音并输入网络，会导致网络的误差恒定为噪音的方差。</li>
+<li>神经网络的学习率至关重要，batch 大而学习率小，batch 小而学习率大，都会导致不收敛问题。此外，学习率衰减很重要，能有效提升<a target="_blank" rel="noopener" href="https://github.com/bearpaw/pytorch-classification">卡在瓶颈</a>中的神经网络的准确率。</li>
+<li>复现去噪器时，噪音数据在损失函数<a target="_blank" rel="noopener" href="https://github.com/muyuuuu/Paper-ReImplement/tree/main/ADP-ICML-2021">内部生成</a>。如果在损失外部生成噪音并输入网络，会导致网络的误差恒定为噪音的方差。</li>
 </ol>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>本文持续整理中。</p>
 
@@ -449,7 +449,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">1.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">1.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -485,7 +485,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -519,14 +519,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -585,9 +585,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -700,7 +708,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

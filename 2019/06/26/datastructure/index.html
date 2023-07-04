@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="计算机网络的坑还没有填完，于是我决定开个新坑。二刷完了数据结构，来一个粗暴的整理。高能慎入，只是简单的总结，并没有复杂的推导过程和代码。">
-<meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据结构">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/06/26/datastructure/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="计算机网络的坑还没有填完，于是我决定开个新坑。二刷完了数据结构，来一个粗暴的整理。高能慎入，只是简单的总结，并没有复杂的推导过程和代码。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-28T17:19:40.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-26T07:33:56.000Z">
+<meta property="article:modified_time" content="2020-03-28T17:19:40.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="DataStructure">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="数据结构">
-<meta name="twitter:description" content="计算机网络的坑还没有填完，于是我决定开个新坑。二刷完了数据结构，来一个粗暴的整理。高能慎入，只是简单的总结，并没有复杂的推导过程和代码。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/06/26/datastructure/">
 
@@ -293,7 +293,7 @@
 
       
         <p>计算机网络的坑还没有填完，于是我决定开个新坑。<br>二刷完了数据结构，来一个粗暴的整理。<br>高能慎入，只是简单的总结，并没有复杂的推导过程和代码。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><p>程序设计 = 算法 + 数据结构。<br><code>数据</code>：描述事物的符号，可以输出计算机并处理。<br><code>数据元素</code>：组成数据的有意义的基本单位。人群中的数据元素就是人。<br><code>数据项</code>：描述数据元素的最小单位，不可切分。<br><code>数据对象</code>：性质相同的数据元素的结合，是数据的子集。<br><code>数据结构</code>：相互之间存在一种或多种特定关系的数据元素的集合。<br><code>数据类型</code>：性质相同的值的集合及定义在上面的操作。<br><code>抽象数据类型</code>：一个数学模型及在上面的操作。</p>
 <p>逻辑结构面向问题，物理结构面向计算机</p>
 <h2 id="逻辑结构"><a href="#逻辑结构" class="headerlink" title="逻辑结构"></a>逻辑结构</h2><p>图、树、集合、线性结构。线性结构中常用的为：队列、栈、线性表。</p>
@@ -316,7 +316,7 @@
 <p><code>后缀表达式的应用</code>：也称为逆波兰表达式，Reverse Polish Notation。无括号表达式。数字压栈，遇到操作符取出来，后者操作前者。</p>
 <p><code>中缀表达式转后缀</code>：是正常的小学算术的四则运算。1.数字直接输出。2.遇到<code>)</code>，输出遇到第一个<code>(</code>之间所有的符号。3.<code>(</code>直接压栈。4.后来者优先级高则压栈，优先级低，弹两个。完成转后缀表达式。</p>
 <h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><p>一端进，一端出，先进先出。如操作系统的任务序列，键盘输入到记事本的显示同样为队列。简单的顺序存储会造成存储资源的浪费，循环队列可以对空白位置利用。位置计算<code>(rear+1)%QueueSize==front</code>。链式结构同样，先进先出，包括了指针与值。</p>
-<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max{k|p<em>{k+1}=p</em>{j-k+1}}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
+<h1 id="串"><a href="#串" class="headerlink" title="串"></a>串</h1><p>零个字符或多个字符组成的有限序列，序列表明了元素的前驱后继的关系。<br><code>子串的位置</code>：子串对应到主串中，第一个字符的位置。<br><code>顺序存储</code>：”\0”表示结束，不计入长度。<br><code>链式存储</code>：一个节点可以存储多个字符。<br><code>朴素匹配</code>：最好的复杂度为$O(1)$，平均复杂度为$O(m+n)$，最坏为$O((n-m+1)\cdot m)$<br><code>KMP匹配</code>： 两个步骤，根据字符串中重复元素计算<code>next</code>数组，根据<code>next</code>数组计算字串中$j$的位置。主串中的$i$不回溯提高效率。<br>计算<code>next</code>方法：$next[1]=0,next[j]=max\{k|p_{k+1}=p_{j-k+1}\}$，其余情况为1。时间复杂度为$O(m+n)$。在许多部分匹配下能体现优势。</p>
 <h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>一对多的层次关系，有限集合，结点$n\geq 0$。根节点下的子树没有交集，不构成环。</p>
 <p><code>节点的度</code>：节点拥有孩子的数量称为节点的<code>度</code>。所有节点中最大的度为树的<code>度</code>。度为0是叶子节点或，度不为0的非根节点是分支节点。<br><code>树的深度</code>：根在第一层，根的孩子是第二层，依次类推到树中的最大层，得到树的深度。<br><code>森林</code>：多个不相交的树的结合。<br><code>节点的关系</code>：节点的子树称为节点的孩子，节点是子树的父亲。</p>
 <p>如果将树中结点的各子树看成从左至右是有次序的，不能互换的，则称该树为有序树，否则称为无序树。</p>
@@ -358,7 +358,7 @@
 <h2 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h2><p>也叫哈希。存储位置=f（关键字），对应的存储空间称为哈希表，数据元素没有逻辑关系。适合存储与查找，需要考虑关键字的长度，函数需要的时间，是否分布均匀。函数要求计算简单，可以处理冲突，散列地址分布均匀，如平方取中，数字分析。面临冲突时线性探测或者链式解决。查找的复杂度为$O(1)$。</p>
 <p>散列表的平均查找长度取决于填充因子，填入个数除以总长度，不取决于填入元素的总长度。</p>
 <h1 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h1><p>稳定排序：排序之前$r_1$先于$r_2$，在排序之后$r_1$仍然先于$r_2$。</p>
-<p>给个不错的链接：<a href="https://hit-alibaba.github.io/interview/basic/algo/Sorting.html" target="_blank" rel="noopener">https://hit-alibaba.github.io/interview/basic/algo/Sorting.html</a></p>
+<p>给个不错的链接：<a target="_blank" rel="noopener" href="https://hit-alibaba.github.io/interview/basic/algo/Sorting.html">https://hit-alibaba.github.io/interview/basic/algo/Sorting.html</a></p>
 <div class="table-container">
 <table>
 <thead>
@@ -537,7 +537,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑结构"><span class="nav-number">1.1.</span> <span class="nav-text">逻辑结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#物理结构"><span class="nav-number">1.2.</span> <span class="nav-text">物理结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#算法"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法的特性"><span class="nav-number">2.1.</span> <span class="nav-text">算法的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法的目标"><span class="nav-number">2.2.</span> <span class="nav-text">算法的目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间复杂度"><span class="nav-number">2.3.</span> <span class="nav-text">时间复杂度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线性表"><span class="nav-number">3.</span> <span class="nav-text">线性表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#栈"><span class="nav-number">4.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#队列"><span class="nav-number">5.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#串"><span class="nav-number">6.</span> <span class="nav-text">串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#树"><span class="nav-number">7.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">7.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉树"><span class="nav-number">7.2.</span> <span class="nav-text">二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特殊二叉树"><span class="nav-number">7.3.</span> <span class="nav-text">特殊二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉树的性质"><span class="nav-number">7.4.</span> <span class="nav-text">二叉树的性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遍历二叉树"><span class="nav-number">7.5.</span> <span class="nav-text">遍历二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#树、森林、二叉树的转换"><span class="nav-number">7.6.</span> <span class="nav-text">树、森林、二叉树的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哈夫曼树"><span class="nav-number">7.7.</span> <span class="nav-text">哈夫曼树</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图"><span class="nav-number">8.</span> <span class="nav-text">图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#图的基本概念"><span class="nav-number">8.1.</span> <span class="nav-text">图的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图的结构"><span class="nav-number">8.2.</span> <span class="nav-text">图的结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查找"><span class="nav-number">9.</span> <span class="nav-text">查找</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#多路查找树"><span class="nav-number">9.1.</span> <span class="nav-text">多路查找树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#散列表"><span class="nav-number">9.2.</span> <span class="nav-text">散列表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#排序"><span class="nav-number">10.</span> <span class="nav-text">排序</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">逻辑结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">物理结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.1.</span> <span class="nav-text">算法的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">2.2.</span> <span class="nav-text">算法的目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">2.3.</span> <span class="nav-text">时间复杂度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">线性表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%88"><span class="nav-number">4.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number">5.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%B2"><span class="nav-number">6.</span> <span class="nav-text">串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%91"><span class="nav-number">7.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">7.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">7.2.</span> <span class="nav-text">二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">7.3.</span> <span class="nav-text">特殊二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="nav-number">7.4.</span> <span class="nav-text">二叉树的性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">7.5.</span> <span class="nav-text">遍历二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%91%E3%80%81%E6%A3%AE%E6%9E%97%E3%80%81%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">7.6.</span> <span class="nav-text">树、森林、二叉树的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%88%E5%A4%AB%E6%9B%BC%E6%A0%91"><span class="nav-number">7.7.</span> <span class="nav-text">哈夫曼树</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE"><span class="nav-number">8.</span> <span class="nav-text">图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">8.1.</span> <span class="nav-text">图的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">8.2.</span> <span class="nav-text">图的结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE"><span class="nav-number">9.</span> <span class="nav-text">查找</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E6%9F%A5%E6%89%BE%E6%A0%91"><span class="nav-number">9.1.</span> <span class="nav-text">多路查找树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%A3%E5%88%97%E8%A1%A8"><span class="nav-number">9.2.</span> <span class="nav-text">散列表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">10.</span> <span class="nav-text">排序</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -573,7 +573,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -607,14 +607,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -673,9 +673,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -788,7 +796,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

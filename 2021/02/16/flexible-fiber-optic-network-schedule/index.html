@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="本博客来自于某课程的大作业。按照我之前建模的习惯，会直接『元胞自动机』设置规则直接模拟；但是却看到了通过优化来建立模型的做法。前者是基于规则的模拟，后者是凸规划问题下的求解。对于获得的解而言，在理论上还是后者更好一些，毕竟存在最优解。">
-<meta name="keywords" content="Modeling">
 <meta property="og:type" content="article">
 <meta property="og:title" content="弹性光网络选路和频谱分配问题建模">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/02/16/flexible-fiber-optic-network-schedule/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="本博客来自于某课程的大作业。按照我之前建模的习惯，会直接『元胞自动机』设置规则直接模拟；但是却看到了通过优化来建立模型的做法。前者是基于规则的模拟，后者是凸规划问题下的求解。对于获得的解而言，在理论上还是后者更好一些，毕竟存在最优解。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-16T15:02:24.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/02/16/ycY8iD.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/02/16/yctjjs.png">
+<meta property="article:published_time" content="2021-02-16T06:35:23.000Z">
+<meta property="article:modified_time" content="2021-02-16T15:02:24.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Modeling">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="弹性光网络选路和频谱分配问题建模">
-<meta name="twitter:description" content="本博客来自于某课程的大作业。按照我之前建模的习惯，会直接『元胞自动机』设置规则直接模拟；但是却看到了通过优化来建立模型的做法。前者是基于规则的模拟，后者是凸规划问题下的求解。对于获得的解而言，在理论上还是后者更好一些，毕竟存在最优解。">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/02/16/ycY8iD.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/02/16/flexible-fiber-optic-network-schedule/">
 
@@ -267,7 +270,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.8k</span>
+              <span>4.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -287,7 +290,7 @@
 
       
         <p>本博客来自于某课程的大作业。按照我之前建模的习惯，会直接『元胞自动机』设置规则直接模拟；但是却看到了通过优化来建立模型的做法。前者是基于规则的模拟，后者是凸规划问题下的求解。对于获得的解而言，在理论上还是后者更好一些，毕竟存在最优解。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p><img data-src="https://s3.ax1x.com/2021/02/16/ycY8iD.png" alt></p>
 <p>在上图中，一个网络中含有多个节点，如：交换机、路由等设备。当网络中的业务仅仅需要从各自源结点到达各自目的结点传输一定的数据时，利用这个网络就能实现数据传输的目的。该网络具有以下特性：</p>
 <ol>
@@ -314,8 +317,8 @@
 <li>$e_{ij}$，网络中起始点为$i$，目标点为$j$的边</li>
 <li>$F$，网络链路中频隙数量，频隙编号为1到$F$</li>
 <li>$M$，需要实现的任务数量</li>
-<li>$A$，业务请求集合：${A_1, A_2, \cdots, A_M}$</li>
-<li>$A_k$，第$k$个业务，$A_k={s_k, t_k, b_k},(1\leqslant k \leqslant M)$</li>
+<li>$A$，业务请求集合：$\{A_1, A_2, \cdots, A_M\}$</li>
+<li>$A_k$，第$k$个业务，$A_k=\{s_k, t_k, b_k\},(1\leqslant k \leqslant M)$</li>
 <li>$s_k$，第$k$个业务的起始节点$(1\leqslant s_k \leqslant N)$</li>
 <li>$t_k$，第$k$个业务中的目的节点$(1\leqslant t_k \leqslant N)$</li>
 <li>$b_k$，第$k$个业务中需要占用的频隙数$(1\leqslant b_k \leqslant F)$</li>
@@ -326,12 +329,12 @@
 <li>假设按编号顺序依次分配任务所需占用的频隙，除保护频隙外无空余频隙。举例说明：当一条链路有10条频隙时，第一个任务占用5个频隙，则分配1-5号频隙，而不是3-7号等不按顺序编号的频隙；第二个任务也占用此条链路时，若其需要占用3条频隙，考虑到保护频隙，第二个任务将占用7-9号频隙，而不是选用8-10号等产生空余频隙的方案。</li>
 </ol>
 <h1 id="模型建立"><a href="#模型建立" class="headerlink" title="模型建立"></a>模型建立</h1><h2 id="优化目标"><a href="#优化目标" class="headerlink" title="优化目标"></a>优化目标</h2><p>在光纤网实现传输数据的任务中，应从时间和成本两个方便考虑。以时间角度出发，应尽可能快的完成传输任务；从成本角度出发，使用的资源尽可能的少且均衡，即不能频繁使用一条链路，而其余链路一直处于空闲状态。而在本次建立的模型中，为简化优化目标的复杂性，将时间因素转换为约束条件，即尽可能的减少传输时间作为约束条件。</p>
-<p>从成本角度出发，首先考虑尽可能减少使用带宽资源这一目标，以减少带宽的使用。以$F<em>{ij}$表示链路$e</em>{ij}$上被占用的最大频隙号。则此时的优化目标为：</p>
-<p>\begin{equation}<br>    \min\Bigl(\max<em>{e</em>{ij}\in E}(F_{ij})\Bigr)<br>\end{equation}</p>
-<p>而在实际工程中频繁使用同一条链路，势必因负担过大而造成性能损耗。应均匀的使用所有链路，避免某些链路一直处于空闲状态。因此针对均衡使用链路资源这一目标，以$D<em>{ij}$表示起点为$i$，终点为$j$的链路$e</em>{ij}$的使用次数。计算所有链路使用次数的方差，使方差最小作为第二个优化目标：</p>
-<p>\begin{equation}<br>    \min\Bigl(\text{Var}<em>{(i,j)\in E}(D</em>{ij})\Bigr)<br>\end{equation}<br>其中，$\text{Var}$表示求方差。</p>
+<p>从成本角度出发，首先考虑尽可能减少使用带宽资源这一目标，以减少带宽的使用。以$F_{ij}$表示链路$e_{ij}$上被占用的最大频隙号。则此时的优化目标为：</p>
+<p>\begin{equation}<br>    \min\Bigl(\max_{e_{ij}\in E}(F_{ij})\Bigr)<br>\end{equation}</p>
+<p>而在实际工程中频繁使用同一条链路，势必因负担过大而造成性能损耗。应均匀的使用所有链路，避免某些链路一直处于空闲状态。因此针对均衡使用链路资源这一目标，以$D_{ij}$表示起点为$i$，终点为$j$的链路$e_{ij}$的使用次数。计算所有链路使用次数的方差，使方差最小作为第二个优化目标：</p>
+<p>\begin{equation}<br>    \min\Bigl(\text{Var}_{(i,j)\in E}(D_{ij})\Bigr)<br>\end{equation}<br>其中，$\text{Var}$表示求方差。</p>
 <p>如网络中有两组任务，第一组任务：从$v_i(1\leqslant i \leqslant N)$节点出发，到$v_j(1\leqslant j \leqslant N)$节点，需要占用路径中的全部频隙；第二组任务：仍然从$v_i(1\leqslant i \leqslant N)$节点出发，仍然到达$v_j(1\leqslant j \leqslant N)$节点，同样需要占中路径中的全部频隙。此时，两组任务的执行必须有先后的顺序关系。所以路径中涉及的链路必然会被多次使用，故第二个优化目标具有一定的合理性。综上所述，优化目标为：</p>
-<p>\begin{equation}<br>  \min\Bigl(\max<em>{e</em>{ij}\in E}(F<em>{ij})+\text{Var}</em>{(i,j)\in E}(D_{ij})\Bigr)<br>\end{equation}</p>
+<p>\begin{equation}<br>  \min\Bigl(\max_{e_{ij}\in E}(F_{ij})+\text{Var}_{(i,j)\in E}(D_{ij})\Bigr)<br>\end{equation}</p>
 <h2 id="约束条件"><a href="#约束条件" class="headerlink" title="约束条件"></a>约束条件</h2><p>如果只是简单的设置节点之间的转发规则，当满足条件时转发数据。此类基于规则的贪心算法只能寻找到问题的可行解，甚至不是局部最优解，或容易陷入局部最优解而非全局最优解。因此，应该建立约束条件，在约束条件下借助优化算法寻找目标函数的优化解，如借助遗传算法、粒子群算法等。但需要注意的是，因为优化目标和约束条件本身具备的复杂性，此类算法不能保证一定能寻找到问题的最优解，求得的解往往是局部最优解。</p>
 <p>根据问题描述，应考虑以下4个约束条件：</p>
 <ol>
@@ -340,17 +343,17 @@
 <li>一条链路中使用的频隙数要小于链路允许的最大频隙数；</li>
 <li>一个频隙在同一时刻只能执行一组任务，不能有多个任务同时使用一条频隙。</li>
 </ol>
-<h3 id="路径可行性约束"><a href="#路径可行性约束" class="headerlink" title="路径可行性约束"></a>路径可行性约束</h3><p>业务$A_k(\forall A_k\in A)$的起始节点和目标节点之间的路径应该是相通的。设$P_k={P_k^1, P_k^2, \cdots, P_k^{N_k}}$为起始节点和目的节点之间可行的路径集合，$N_k$表示可行路径的数量。$x_k^q$为布尔变量，当选择第$q$条路径时，其值为1；若不选择第$q$条路径，$x_k^q$的取值为0，且只能选择一条路径。</p>
+<h3 id="路径可行性约束"><a href="#路径可行性约束" class="headerlink" title="路径可行性约束"></a>路径可行性约束</h3><p>业务$A_k(\forall A_k\in A)$的起始节点和目标节点之间的路径应该是相通的。设$P_k=\{P_k^1, P_k^2, \cdots, P_k^{N_k}\}$为起始节点和目的节点之间可行的路径集合，$N_k$表示可行路径的数量。$x_k^q$为布尔变量，当选择第$q$条路径时，其值为1；若不选择第$q$条路径，$x_k^q$的取值为0，且只能选择一条路径。</p>
 <p>考虑到应该尽可能快的完成传输任务，对于每一个任务$k$，即当源节点到目标节点有多条路径时，应选择传输速率最快的路径。综合考虑两者，列出约束条件：</p>
-<p>\begin{equation}<br>    \sum_{1=1}^{N_k}x_k^q=1,x_k^q=\min{t(P_k^1), t(P_k^2), \cdots, t(P_k^{N_k})},\forall A_k \in A<br>    \label{time}<br>\end{equation}</p>
+<p>\begin{equation}<br>    \sum_{1=1}^{N_k}x_k^q=1,x_k^q=\min\{t(P_k^1), t(P_k^2), \cdots, t(P_k^{N_k})\},\forall A_k \in A<br>    \label{time}<br>\end{equation}</p>
 <p>其中，$t(P_k^i)$表示单位大小的数据在路径$P_k^i(1\leqslant i \leqslant N_k)$上传输的时间。</p>
-<h3 id="频隙连续性约束"><a href="#频隙连续性约束" class="headerlink" title="频隙连续性约束"></a>频隙连续性约束</h3><p>设$f<em>k^q(ij)$为任务$A_k$在路径$Q_k^q$中的链路$e</em>{ij}$上可用的起始频隙编号，则$(1\leqslant f_k^q(ij) \leqslant F)$。若在此链路中分配该任务，应保证该任务占用的频隙号是连续的。因此，从$f_k^q(ij)$开始，按编号顺序连续分配其他频隙，应保证分配的频隙数和任务$A_k$需要的频隙数$b_k$相等。列出约束条件：</p>
-<p>\begin{equation}<br>    \sum<em>{p=f_k^q(ij)}^{f_k^q(ij)+b_k-1}H</em>{qp}=b<em>k,\forall e</em>{ij}\in Q<em>k^q<br>\end{equation}<br>其中，$H</em>{qj}$为布尔变量，取值为0或1。当路径$Q<em>k^q$中的频隙$p$被选择时，取值为1，否则取值为0，以此来满足分配的频隙数和所需的频隙数相等的约束。需要注意的是，路径$Q_k^q$中的所有链路$e</em>{ij}$应该均满足这一约束。</p>
+<h3 id="频隙连续性约束"><a href="#频隙连续性约束" class="headerlink" title="频隙连续性约束"></a>频隙连续性约束</h3><p>设$f_k^q(ij)$为任务$A_k$在路径$Q_k^q$中的链路$e_{ij}$上可用的起始频隙编号，则$(1\leqslant f_k^q(ij) \leqslant F)$。若在此链路中分配该任务，应保证该任务占用的频隙号是连续的。因此，从$f_k^q(ij)$开始，按编号顺序连续分配其他频隙，应保证分配的频隙数和任务$A_k$需要的频隙数$b_k$相等。列出约束条件：</p>
+<p>\begin{equation}<br>    \sum_{p=f_k^q(ij)}^{f_k^q(ij)+b_k-1}H_{qp}=b_k,\forall e_{ij}\in Q_k^q<br>\end{equation}<br>其中，$H_{qj}$为布尔变量，取值为0或1。当路径$Q_k^q$中的频隙$p$被选择时，取值为1，否则取值为0，以此来满足分配的频隙数和所需的频隙数相等的约束。需要注意的是，路径$Q_k^q$中的所有链路$e_{ij}$应该均满足这一约束。</p>
 <h3 id="频隙数与任务不重叠约束"><a href="#频隙数与任务不重叠约束" class="headerlink" title="频隙数与任务不重叠约束"></a>频隙数与任务不重叠约束</h3><p>因为变量$f_k^q(ij)$表示路径$Q_k^q$允许任务$k$的起始频隙编号，所以并不会存在同一时刻一个频隙内有多个任务重叠的情况，如下图所示。在左图中，一条链路中共有$F$个频隙，一个任务已经占用了$n$个频隙。若之后的任务若使用此条链路，则允许的起始频隙号$f_k^q(ij)=n+1$。在右图中，若链路尚未被使用，则允许的起始频隙号$f_k^q(ij)=1$。</p>
 <p><img data-src="https://s3.ax1x.com/2021/02/16/yctjjs.png" alt></p>
-<p>因此当有多个任务使用同一条链路时，对于之后进入的任务，允许使用的起始频隙号会自动增加，因此避免了同一时刻多任务重叠在一个频隙内的错误情况。但对于可行路径$Q<em>k^q$中的所有链路$e</em>{ij}$，要满足使用频隙数不小于最大频隙数的约束，列出约束条件：</p>
-<p>\begin{equation}<br>    f<em>k^q(ij)+b_k-1 \leqslant F, \forall A_k \in A, \forall e</em>{ij} \in E<br>\end{equation}</p>
-<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>因此，得到的最终优化模型为：<br>\begin{align}\notag<br>&amp;\min\Bigl(\max<em>{e</em>{ij}\in E}(F<em>{ij})+\text{Var}</em>{(i,j)\in E}(D<em>{ij})\Bigr) \<br>&amp;\text{s.t.}\quad<br>\begin{cases}<br>\displaystyle{\sum</em>{1=1}^{N<em>k}x_k^q=1,x_k^q=\min{t(P_k^1), t(P_k^2), \cdots, t(P_k^{N_k})}}\<br>\displaystyle{\sum</em>{p=f<em>k^q(ij)}^{f_k^q(ij)+b_k-1}H</em>{qp}=b<em>k,\forall e</em>{ij}\in Q<em>k^q} \<br>\displaystyle{f_k^q(ij)+b_k-1 \leqslant F, \forall A_k \in A, \forall e</em>{ij} \in E}<br>\end{cases}<br>\end{align}</p>
+<p>因此当有多个任务使用同一条链路时，对于之后进入的任务，允许使用的起始频隙号会自动增加，因此避免了同一时刻多任务重叠在一个频隙内的错误情况。但对于可行路径$Q_k^q$中的所有链路$e_{ij}$，要满足使用频隙数不小于最大频隙数的约束，列出约束条件：</p>
+<p>\begin{equation}<br>    f_k^q(ij)+b_k-1 \leqslant F, \forall A_k \in A, \forall e_{ij} \in E<br>\end{equation}</p>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>因此，得到的最终优化模型为：<br>\begin{align}\notag<br>&amp;\min\Bigl(\max_{e_{ij}\in E}(F_{ij})+\text{Var}_{(i,j)\in E}(D_{ij})\Bigr) \\<br>&amp;\text{s.t.}\quad<br>\begin{cases}<br>\displaystyle{\sum_{1=1}^{N_k}x_k^q=1,x_k^q=\min\{t(P_k^1), t(P_k^2), \cdots, t(P_k^{N_k})\}}\\<br>\displaystyle{\sum_{p=f_k^q(ij)}^{f_k^q(ij)+b_k-1}H_{qp}=b_k,\forall e_{ij}\in Q_k^q} \\<br>\displaystyle{f_k^q(ij)+b_k-1 \leqslant F, \forall A_k \in A, \forall e_{ij} \in E}<br>\end{cases}<br>\end{align}</p>
 <h1 id="灵敏性分析"><a href="#灵敏性分析" class="headerlink" title="灵敏性分析"></a>灵敏性分析</h1><h2 id="链路老化带来的问题"><a href="#链路老化带来的问题" class="headerlink" title="链路老化带来的问题"></a>链路老化带来的问题</h2><p>模型假设了链路在多次使用和传输大量数据后，链路并不会因老化而产生性能损耗，即在频繁使用的情况下，链路的传输速率和传输数据量始终保持恒定。但在实际工程的使用中，这一假设并不成立，链路会受到天气、人为、电磁场等影响，因而产生不可避免的老化与损耗。</p>
 <p>假设某一时刻链路因老化，传输数据量受到影响，对比进行分析。举例说明：针对大小相同的数据量，新链路用5条频隙就能传输完毕，而老化的链路则需要8条链路来传输。此时，只需要对链路老化程度进行监测，或通过历史数据建立链路老化程度与链路使用次数$D_{ij}$的关系函数（$i$为一条链路的起点，$j$为一条链路的终点，$ij$相邻）。举例说明此关系函数的含义：当链路的使用次数达到$B$次后，需要增加$C$条频隙来传输单位大小的数据量。之后通过软件更改任务$A_k$中$b_k$的大小即可，例如将5改成8，而不需要修改建立的模型。</p>
 <p>当链路的传输速率也受到影响时，会对路径可行性约束中的时间函数$t(x)$带来影响，从而影响最短路径的选择。同上需要建立传输单位数据的时间与链路使用次数$D_{ij}$的关系函数（$i$为一条链路的起点，$j$为一条链路的终点，$ij$相邻）。举例说明此关系函数的含义：当链路的使用次数达到$B$次后，传输单位大小数据量将减慢$g$倍。此时，因为速率减慢，在模型中的路径可行性约束中，公式\eqref{time}中路径$x_k^q$的选择将会受到影响。但只会影响路径选择的结果，而不用重新建立模型。</p>
@@ -503,7 +506,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#符号说明"><span class="nav-number">3.</span> <span class="nav-text">符号说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型假设"><span class="nav-number">4.</span> <span class="nav-text">模型假设</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型建立"><span class="nav-number">5.</span> <span class="nav-text">模型建立</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优化目标"><span class="nav-number">5.1.</span> <span class="nav-text">优化目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#约束条件"><span class="nav-number">5.2.</span> <span class="nav-text">约束条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#路径可行性约束"><span class="nav-number">5.2.1.</span> <span class="nav-text">路径可行性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#频隙连续性约束"><span class="nav-number">5.2.2.</span> <span class="nav-text">频隙连续性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#频隙数与任务不重叠约束"><span class="nav-number">5.2.3.</span> <span class="nav-text">频隙数与任务不重叠约束</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结论"><span class="nav-number">6.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#灵敏性分析"><span class="nav-number">7.</span> <span class="nav-text">灵敏性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#链路老化带来的问题"><span class="nav-number">7.1.</span> <span class="nav-text">链路老化带来的问题</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E8%AF%B4%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">符号说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%81%87%E8%AE%BE"><span class="nav-number">4.</span> <span class="nav-text">模型假设</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%BB%BA%E7%AB%8B"><span class="nav-number">5.</span> <span class="nav-text">模型建立</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87"><span class="nav-number">5.1.</span> <span class="nav-text">优化目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6"><span class="nav-number">5.2.</span> <span class="nav-text">约束条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E5%8F%AF%E8%A1%8C%E6%80%A7%E7%BA%A6%E6%9D%9F"><span class="nav-number">5.2.1.</span> <span class="nav-text">路径可行性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%91%E9%9A%99%E8%BF%9E%E7%BB%AD%E6%80%A7%E7%BA%A6%E6%9D%9F"><span class="nav-number">5.2.2.</span> <span class="nav-text">频隙连续性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%91%E9%9A%99%E6%95%B0%E4%B8%8E%E4%BB%BB%E5%8A%A1%E4%B8%8D%E9%87%8D%E5%8F%A0%E7%BA%A6%E6%9D%9F"><span class="nav-number">5.2.3.</span> <span class="nav-text">频隙数与任务不重叠约束</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">6.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%81%B5%E6%95%8F%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">7.</span> <span class="nav-text">灵敏性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%80%81%E5%8C%96%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">7.1.</span> <span class="nav-text">链路老化带来的问题</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -539,7 +542,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -573,14 +576,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -639,9 +642,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -754,7 +765,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

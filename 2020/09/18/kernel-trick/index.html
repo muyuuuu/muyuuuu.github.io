@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="打开搜索引擎搜索核函数，都会发现 SVM 会一起出现。但是核函数是一种技巧，并不只限于 SVM。其实，核技巧是一个非常纯粹的数学方法，不应该一上来就扯上 SVM，也没必要。因为这个技巧不仅应用在SVM中，它解决了数据映射到高维空间之后点积的计算量过于复杂的问题。很多人啰啰嗦嗦说了一大堆，把原本很简单的东西搞的很复杂，甚至还在推 SVM 的公式，就像孔乙己问茴香豆的『茴』有几种写法一样的没意思。">
-<meta name="keywords" content="Algorithm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="核函数">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/09/18/kernel-trick/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="打开搜索引擎搜索核函数，都会发现 SVM 会一起出现。但是核函数是一种技巧，并不只限于 SVM。其实，核技巧是一个非常纯粹的数学方法，不应该一上来就扯上 SVM，也没必要。因为这个技巧不仅应用在SVM中，它解决了数据映射到高维空间之后点积的计算量过于复杂的问题。很多人啰啰嗦嗦说了一大堆，把原本很简单的东西搞的很复杂，甚至还在推 SVM 的公式，就像孔乙己问茴香豆的『茴』有几种写法一样的没意思。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-18T11:42:26.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-18T03:11:40.000Z">
+<meta property="article:modified_time" content="2020-09-18T11:42:26.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Algorithm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="核函数">
-<meta name="twitter:description" content="打开搜索引擎搜索核函数，都会发现 SVM 会一起出现。但是核函数是一种技巧，并不只限于 SVM。其实，核技巧是一个非常纯粹的数学方法，不应该一上来就扯上 SVM，也没必要。因为这个技巧不仅应用在SVM中，它解决了数据映射到高维空间之后点积的计算量过于复杂的问题。很多人啰啰嗦嗦说了一大堆，把原本很简单的东西搞的很复杂，甚至还在推 SVM 的公式，就像孔乙己问茴香豆的『茴』有几种写法一样的没意思。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/09/18/kernel-trick/">
 
@@ -287,7 +287,7 @@
 
       
         <p>打开搜索引擎搜索核函数，都会发现 SVM 会一起出现。但是核函数是一种技巧，并不只限于 SVM。其实，核技巧是一个非常纯粹的数学方法，不应该一上来就扯上 SVM，也没必要。因为这个技巧不仅应用在SVM中，它解决了数据映射到高维空间之后点积的计算量过于复杂的问题。很多人啰啰嗦嗦说了一大堆，把原本很简单的东西搞的很复杂，甚至还在推 SVM 的公式，就像孔乙己问茴香豆的『茴』有几种写法一样的没意思。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>支持向量机为了解决数据在低维度不容易线性分割的情况下，会通过某非线性变换 $\phi(x)$，将输入空间映射到高维特征空间。但是映射的维度会很高，为了降低计算复杂度，解决映射后可能产生的维度爆炸问题，我们在求解的时候引入了核技巧。所以，核技巧的应用场景不限于 SVM，而是：需要处理高维映射计算的问题。</p>
 <p>给定两个向量 $x$ 和 $y$，我们的目标是要计算他们的内积 $\langle x,y\rangle $ 。如果原始空间内不可分，那么现在通过某种非线性变换把他们映射到某一个高维空间中去，那么映射后的向量就变成 $\phi(x)$和 $\phi(y)$，映射后的内积就变成 $\langle \phi(x),\phi(y)\rangle $。现在改如何计算映射后的内积呢？</p>
 <p>传统方法是先计算映射后的向量 $\phi(x)$和 $\phi(y)$，然后再计算它俩的内积。但是这样做计算很复杂，因为映射到高维空间后的数据维度很高。一旦达到一万多维计算起来简直浪费时间。</p>
@@ -295,12 +295,12 @@
 <p>庆幸的是，这样的函数是存在的。这样一来计算的复杂度就大大降低了，这种简化计算的方法被称为核技巧（The Kernel Trick），而函数 $K(x,y)$ 就是核函数（Kernel Function）。这里我们选用高斯核函数，可以将原始维度映射到无穷维。</p>
 <p>\begin{equation}<br>K(x,y)=\exp\Bigl(-\frac{||x-y||^2}{2\sigma^2}\Bigr)<br>\end{equation}</p>
 <p>这种东西最好是去看官方文档，有人把高斯核函数中的范数写成了$|x-y|^2$，第三方博客一点都不注重细节，我半天没看懂还以为取绝对值，艹。</p>
-<h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mapping</span><span class="params">(x, y, sigma=<span class="number">1</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> math.exp(-np.linalg.norm((x-y), ord = <span class="number">2</span>) / <span class="number">2</span> / sigma ** <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">x_1 = np.random.random_sample((<span class="number">10</span>, <span class="number">1</span>))</span><br><span class="line">x_2 = np.random.random_sample((<span class="number">10</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">a = mapping(x_1, x_2)</span><br><span class="line"></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+<h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mapping</span>(<span class="params">x, y, sigma=<span class="number">1</span></span>):</span><br><span class="line">    <span class="keyword">return</span> math.exp(-np.linalg.norm((x-y), <span class="built_in">ord</span> = <span class="number">2</span>) / <span class="number">2</span> / sigma ** <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">x_1 = np.random.random_sample((<span class="number">10</span>, <span class="number">1</span>))</span><br><span class="line">x_2 = np.random.random_sample((<span class="number">10</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">a = mapping(x_1, x_2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a)</span><br></pre></td></tr></table></figure>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>核函数是个好东西，之前还写过用核函数去聚类的文章，欢迎观看：<a href="https://muyuuuu.github.io/2020/03/30/KDE-cluster/">https://muyuuuu.github.io/2020/03/30/KDE-cluster/</a></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li>核技巧：<a href="http://www.fanyeong.com/2017/11/13/the-kernel-trick/" target="_blank" rel="noopener">http://www.fanyeong.com/2017/11/13/the-kernel-trick/</a></li>
-<li>核函数：<a href="https://en.wikipedia.org/wiki/Radial_basis_function_kernel" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Radial_basis_function_kernel</a></li>
-<li>numpy求范数：<a href="http://liao.cpython.org/numpy11/" target="_blank" rel="noopener">http://liao.cpython.org/numpy11/</a></li>
+<li>核技巧：<a target="_blank" rel="noopener" href="http://www.fanyeong.com/2017/11/13/the-kernel-trick/">http://www.fanyeong.com/2017/11/13/the-kernel-trick/</a></li>
+<li>核函数：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Radial_basis_function_kernel">https://en.wikipedia.org/wiki/Radial_basis_function_kernel</a></li>
+<li>numpy求范数：<a target="_blank" rel="noopener" href="http://liao.cpython.org/numpy11/">http://liao.cpython.org/numpy11/</a></li>
 </ol>
 
     </div>
@@ -312,10 +312,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/04/LSH-consine/" rel="bookmark">从代码角度理解局部敏感哈希算法</a></div>
+      <div class="popular-posts-title"><a href="/2020/03/30/KDE-cluster/" rel="bookmark">核密度聚类</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/30/KDE-cluster/" rel="bookmark">核密度聚类</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/04/LSH-consine/" rel="bookmark">从代码角度理解局部敏感哈希算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/11/20/Metis/" rel="bookmark">基于Metis的大规模图融合算法实现</a></div>
@@ -450,7 +450,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码实现"><span class="nav-number">2.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -486,7 +486,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -520,14 +520,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -586,9 +586,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -701,7 +709,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

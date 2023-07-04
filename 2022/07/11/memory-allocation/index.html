@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="闲来无事，在面经上看到了一个问题：在物理机只有 1G 内存的情况下，能否 malloc 出 4G 大小的数组。奇怪的是，这个问题在网上搜不到特别好的解答，于是突发奇想试着解答一下。">
-<meta name="keywords" content="OS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="由内存分配引发的回忆">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/07/11/memory-allocation/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="闲来无事，在面经上看到了一个问题：在物理机只有 1G 内存的情况下，能否 malloc 出 4G 大小的数组。奇怪的是，这个问题在网上搜不到特别好的解答，于是突发奇想试着解答一下。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-08-06T16:30:48.819Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-11T08:52:39.000Z">
+<meta property="article:modified_time" content="2022-08-06T16:30:48.819Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="由内存分配引发的回忆">
-<meta name="twitter:description" content="闲来无事，在面经上看到了一个问题：在物理机只有 1G 内存的情况下，能否 malloc 出 4G 大小的数组。奇怪的是，这个问题在网上搜不到特别好的解答，于是突发奇想试着解答一下。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/07/11/memory-allocation/">
 
@@ -293,7 +293,7 @@
 
       
         <p>闲来无事，在面经上看到了一个问题：在物理机只有 1G 内存的情况下，能否 <code>malloc</code> 出 4G 大小的数组。奇怪的是，这个问题在网上搜不到特别好的解答，于是突发奇想试着解答一下。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="内存分布"><a href="#内存分布" class="headerlink" title="内存分布"></a>内存分布</h1><p>先直接给出结论，<code>malloc</code> 的内存位于堆区，顺便简单了解下 C/C++ 的内存分布。对于 C/C++ 语言，程序内存分布如下：</p>
 <ul>
 <li>栈区(stack)：由编译器自动分配释放，存储函数的参数值，局部变量值等，其操作方法类似于数据结构中的栈</li>
@@ -463,7 +463,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存分布"><span class="nav-number">1.</span> <span class="nav-text">内存分布</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1G-内存-4G-数组"><span class="nav-number">2.</span> <span class="nav-text">1G 内存 4G 数组</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存扩展"><span class="nav-number">2.1.</span> <span class="nav-text">虚拟内存扩展</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83"><span class="nav-number">1.</span> <span class="nav-text">内存分布</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1G-%E5%86%85%E5%AD%98-4G-%E6%95%B0%E7%BB%84"><span class="nav-number">2.</span> <span class="nav-text">1G 内存 4G 数组</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%89%A9%E5%B1%95"><span class="nav-number">2.1.</span> <span class="nav-text">虚拟内存扩展</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -499,7 +499,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -533,14 +533,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -599,9 +599,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -714,7 +722,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,32 @@
   </script>
 
   <meta name="description" content="假期实在无聊，开始整理过去的文件，发现了自己原来是数学建模起家的。长话短说，翻阅了在过去时间里自己做过的模拟题，所有的模型是自己设计的，代码也是自己写的。而倾注了自己心血的东西，难免会有些有意思的地方。比如：  数据缺失，如何去除，如何补充，哪些去除，哪些补充，都是有学问的； 另外就是今天的主角，元胞自动机——万物皆可模拟。  另一方面是，当初在学习元胞自动机这个模型时，网上的资料是在少之又少，且">
-<meta name="keywords" content="Modeling">
 <meta property="og:type" content="article">
 <meta property="og:title" content="元胞自动机——万物皆可模拟">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/02/14/autocell/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="假期实在无聊，开始整理过去的文件，发现了自己原来是数学建模起家的。长话短说，翻阅了在过去时间里自己做过的模拟题，所有的模型是自己设计的，代码也是自己写的。而倾注了自己心血的东西，难免会有些有意思的地方。比如：  数据缺失，如何去除，如何补充，哪些去除，哪些补充，都是有学问的； 另外就是今天的主角，元胞自动机——万物皆可模拟。  另一方面是，当初在学习元胞自动机这个模型时，网上的资料是在少之又少，且">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-05T13:36:32.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/1.gif">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/2.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/3.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/4.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/2.gif">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/6.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/7.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/8.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/9.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/3.gif">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/10.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/11.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/02/14/autocell/12.png">
+<meta property="article:published_time" content="2020-02-14T06:13:11.000Z">
+<meta property="article:modified_time" content="2020-12-05T13:36:32.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Modeling">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="元胞自动机——万物皆可模拟">
-<meta name="twitter:description" content="假期实在无聊，开始整理过去的文件，发现了自己原来是数学建模起家的。长话短说，翻阅了在过去时间里自己做过的模拟题，所有的模型是自己设计的，代码也是自己写的。而倾注了自己心血的东西，难免会有些有意思的地方。比如：  数据缺失，如何去除，如何补充，哪些去除，哪些补充，都是有学问的； 另外就是今天的主角，元胞自动机——万物皆可模拟。  另一方面是，当初在学习元胞自动机这个模型时，网上的资料是在少之又少，且">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/02/14/autocell/1.gif">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/02/14/autocell/">
 
@@ -299,10 +314,10 @@
 </ul>
 <p>另一方面是，当初在学习元胞自动机这个模型时，网上的资料是在少之又少，且内容凌乱的不堪入目，我猜作者也不知道他在写啥，自己也走了很多弯路。遂决定，以实战的背景，演示元胞自动机的工作原理和使用方法。而在看本文之前，你只需要知道元胞自动机里面有很多格子，格子间通过某种规则相互影响即可。</p>
 <p><img data-src="/2020/02/14/autocell/1.gif" alt></p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>模拟题是2015年的MCM的A题，决定用元胞自动机去模拟埃博拉病毒的传播。但我不会把论文的全部内容放上来，只写关键的文字，什么参考文献，数据网址就不放了。且时过境迁，本文使用的数据为过去式，和今天对不上则选择性忽略。</p>
 <p>The world medical association has announced that their new medication could stop Ebola and cure patients whose disease is not advanced. Build a realistic, sensible, and useful model that considers not only the spread of the disease, the quantity of the medicine needed, possible feasible delivery systems (sending the medicine to where it is needed), (geographical) locations of delivery, speed of manufacturing of the vaccine or drug, but also any other critical factors your team considers necessary as part of the model to optimize the eradication of Ebola, or at least its current strain. In addition to your modeling approach for the contest, prepare a 1-2 page non-technical letter for the world medical association to use in their announcement.</p>
-<p>代码的原作者和链接：<a href="https://zeroto521.github.io/2018/09/23/MVC.html" target="_blank" rel="noopener">https://zeroto521.github.io/2018/09/23/MVC.html</a></p>
+<p>代码的原作者和链接：<a target="_blank" rel="noopener" href="https://zeroto521.github.io/2018/09/23/MVC.html">https://zeroto521.github.io/2018/09/23/MVC.html</a></p>
 <h1 id="符号说明"><a href="#符号说明" class="headerlink" title="符号说明"></a>符号说明</h1><ul>
 <li>$v_{psd}$：病毒传播速度。在正式确定埃博拉病毒导致疾病后，截止于2014年12月31日，每天感染病毒的人数。 </li>
 <li>$\eta_1$：埃博拉病毒的感染率，即与携带埃博拉病毒的宿主接触后被感染的几率。</li>
@@ -436,7 +451,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 <p>如图所示，当不存在人口流动现象时，元胞的存活率最高，即更少的人会被病毒感染，元胞的被感染几率最低，死亡率最低。而随着流动频率与流动范围的增加，元胞被感染几率上升，死亡率也上升。因此，人口流动现象影响了疾病传播情况，也影响了死亡率与感染率，因此，对于国家政府而言，应采取“戒严”形式，减少人口流动频率，对于减缓疾病传播与降低死亡率有着至关重要的作用。</p>
 <h2 id="加大治理力度"><a href="#加大治理力度" class="headerlink" title="加大治理力度"></a>加大治理力度</h2><p>在以上灵敏性分析中，我们提出了国家应采取戒严措施防治疾病的进一步蔓延。而在其他方面，如提供充足的医疗设施；及时建立急救站点；发动较多医生甚至志愿者及时为患者提供的医疗服务，提高医疗效率，都能提高染病患者的存活几率。因此，我们讨论在加大疾病治理力度的情况下，对疫情的控制情况。</p>
 <p><img data-src="/2020/02/14/autocell/12.png" alt></p>
-<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><a href="https://github.com/Zeroto521/Zeroto521.github.io/tree/master/assets/source/CellMachine" target="_blank" rel="noopener">下载</a>，程序的原作者不是我，模型关系复杂到这里，这种难度的程序已经不是我这种技术渣可以写出来的了。</p>
+<h1 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h1><p><a target="_blank" rel="noopener" href="https://github.com/Zeroto521/Zeroto521.github.io/tree/master/assets/source/CellMachine">下载</a>，程序的原作者不是我，模型关系复杂到这里，这种难度的程序已经不是我这种技术渣可以写出来的了。</p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>针对埃博拉病毒传染问题，建立了符合题目要求的CA模型。充分考虑了感染率、死亡率、人口流动现象、治愈率等多方面因素，将这些因素影响融入CA中传播规则，模拟对疾病传播的影响，并与实际情况对比调整参数；在埃博拉病毒传播基础上，考虑药物治疗因素，重新定义CA传播规则，进一步模拟治疗效果。整体而言，准确模拟了疾病传播情况，并模拟药物治疗效果，预计根除艾比拉病毒所需时间，完成了工作。</p>
 <p>并且在面临其他问题时，可对模型进行灵活的改动。根据需求重新定义传播规则，在改变元胞之间的联系规则后，可以模拟其他现象，并解决问题，具有很强的应用范围，如石油扩散、人口流动、交通运输等，因此，CA 模型具有很强的扩展性与灵活性。</p>
 
@@ -587,7 +602,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#符号说明"><span class="nav-number">2.</span> <span class="nav-text">符号说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型假设"><span class="nav-number">3.</span> <span class="nav-text">模型假设</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#前期工作"><span class="nav-number">4.</span> <span class="nav-text">前期工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#元胞自动机"><span class="nav-number">4.1.</span> <span class="nav-text">元胞自动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SIR状态"><span class="nav-number">4.2.</span> <span class="nav-text">SIR状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#埃博拉病毒"><span class="nav-number">4.3.</span> <span class="nav-text">埃博拉病毒</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#建立模型"><span class="nav-number">5.</span> <span class="nav-text">建立模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义CA规则"><span class="nav-number">5.1.</span> <span class="nav-text">定义CA规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义CA格子表达含义"><span class="nav-number">5.1.1.</span> <span class="nav-text">定义CA格子表达含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义CA颜色含义"><span class="nav-number">5.1.2.</span> <span class="nav-text">定义CA颜色含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义CA迭代含义"><span class="nav-number">5.1.3.</span> <span class="nav-text">定义CA迭代含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义CA中人口流动的频率与范围"><span class="nav-number">5.1.4.</span> <span class="nav-text">定义CA中人口流动的频率与范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数学表达CA所需的参数"><span class="nav-number">5.2.</span> <span class="nav-text">数学表达CA所需的参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理论死亡率"><span class="nav-number">5.2.1.</span> <span class="nav-text">理论死亡率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理论治愈率"><span class="nav-number">5.2.2.</span> <span class="nav-text">理论治愈率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算真实死亡率与真实治愈率"><span class="nav-number">5.3.</span> <span class="nav-text">计算真实死亡率与真实治愈率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开始CA模拟"><span class="nav-number">5.4.</span> <span class="nav-text">开始CA模拟</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果分析"><span class="nav-number">6.</span> <span class="nav-text">结果分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始治疗"><span class="nav-number">7.</span> <span class="nav-text">开始治疗</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#治疗模型建立"><span class="nav-number">8.</span> <span class="nav-text">治疗模型建立</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#改进感染率"><span class="nav-number">8.1.</span> <span class="nav-text">改进感染率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增加药物治疗效果"><span class="nav-number">8.2.</span> <span class="nav-text">增加药物治疗效果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模拟结果"><span class="nav-number">9.</span> <span class="nav-text">模拟结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#灵敏性分析"><span class="nav-number">10.</span> <span class="nav-text">灵敏性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#人口流动"><span class="nav-number">10.1.</span> <span class="nav-text">人口流动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大治理力度"><span class="nav-number">10.2.</span> <span class="nav-text">加大治理力度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">11.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">12.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E8%AF%B4%E6%98%8E"><span class="nav-number">2.</span> <span class="nav-text">符号说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%81%87%E8%AE%BE"><span class="nav-number">3.</span> <span class="nav-text">模型假设</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E6%9C%9F%E5%B7%A5%E4%BD%9C"><span class="nav-number">4.</span> <span class="nav-text">前期工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%83%E8%83%9E%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">4.1.</span> <span class="nav-text">元胞自动机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SIR%E7%8A%B6%E6%80%81"><span class="nav-number">4.2.</span> <span class="nav-text">SIR状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%83%E5%8D%9A%E6%8B%89%E7%97%85%E6%AF%92"><span class="nav-number">4.3.</span> <span class="nav-text">埃博拉病毒</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">5.</span> <span class="nav-text">建立模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89CA%E8%A7%84%E5%88%99"><span class="nav-number">5.1.</span> <span class="nav-text">定义CA规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89CA%E6%A0%BC%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%90%AB%E4%B9%89"><span class="nav-number">5.1.1.</span> <span class="nav-text">定义CA格子表达含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89CA%E9%A2%9C%E8%89%B2%E5%90%AB%E4%B9%89"><span class="nav-number">5.1.2.</span> <span class="nav-text">定义CA颜色含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89CA%E8%BF%AD%E4%BB%A3%E5%90%AB%E4%B9%89"><span class="nav-number">5.1.3.</span> <span class="nav-text">定义CA迭代含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89CA%E4%B8%AD%E4%BA%BA%E5%8F%A3%E6%B5%81%E5%8A%A8%E7%9A%84%E9%A2%91%E7%8E%87%E4%B8%8E%E8%8C%83%E5%9B%B4"><span class="nav-number">5.1.4.</span> <span class="nav-text">定义CA中人口流动的频率与范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E8%A1%A8%E8%BE%BECA%E6%89%80%E9%9C%80%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-number">5.2.</span> <span class="nav-text">数学表达CA所需的参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%AE%BA%E6%AD%BB%E4%BA%A1%E7%8E%87"><span class="nav-number">5.2.1.</span> <span class="nav-text">理论死亡率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%AE%BA%E6%B2%BB%E6%84%88%E7%8E%87"><span class="nav-number">5.2.2.</span> <span class="nav-text">理论治愈率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E7%9C%9F%E5%AE%9E%E6%AD%BB%E4%BA%A1%E7%8E%87%E4%B8%8E%E7%9C%9F%E5%AE%9E%E6%B2%BB%E6%84%88%E7%8E%87"><span class="nav-number">5.3.</span> <span class="nav-text">计算真实死亡率与真实治愈率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8BCA%E6%A8%A1%E6%8B%9F"><span class="nav-number">5.4.</span> <span class="nav-text">开始CA模拟</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">6.</span> <span class="nav-text">结果分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E6%B2%BB%E7%96%97"><span class="nav-number">7.</span> <span class="nav-text">开始治疗</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B2%BB%E7%96%97%E6%A8%A1%E5%9E%8B%E5%BB%BA%E7%AB%8B"><span class="nav-number">8.</span> <span class="nav-text">治疗模型建立</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B%E6%84%9F%E6%9F%93%E7%8E%87"><span class="nav-number">8.1.</span> <span class="nav-text">改进感染率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E8%8D%AF%E7%89%A9%E6%B2%BB%E7%96%97%E6%95%88%E6%9E%9C"><span class="nav-number">8.2.</span> <span class="nav-text">增加药物治疗效果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E7%BB%93%E6%9E%9C"><span class="nav-number">9.</span> <span class="nav-text">模拟结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%81%B5%E6%95%8F%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">10.</span> <span class="nav-text">灵敏性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%BA%E5%8F%A3%E6%B5%81%E5%8A%A8"><span class="nav-number">10.1.</span> <span class="nav-text">人口流动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%A4%A7%E6%B2%BB%E7%90%86%E5%8A%9B%E5%BA%A6"><span class="nav-number">10.2.</span> <span class="nav-text">加大治理力度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">11.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">12.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -623,7 +638,7 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -657,14 +672,14 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -723,9 +738,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -838,7 +861,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

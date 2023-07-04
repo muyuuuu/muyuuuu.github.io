@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="距离计算机网络考试结束一周了。大概从计算机系挑几门讲的比较好的课的话，也只有《计算机组成及结构》、《计算机网络》和《数据库原理》了。 其他老师在念ppt。或者，感觉其他任课老师当老师只是个养老的副业，主业是外面的公司或者项目。 先挖个坑，计算机的几大浪漫：《计算机组成及结构》，《操作系统》，《数据结构》，《编译原理》，《计算机接口》，《数据库原理》在之后会逐渐填完的。 顺便还能解答几个疑问：为什么">
-<meta name="keywords" content="Computer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="计算机网络原理">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/06/12/Computer-network/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="距离计算机网络考试结束一周了。大概从计算机系挑几门讲的比较好的课的话，也只有《计算机组成及结构》、《计算机网络》和《数据库原理》了。 其他老师在念ppt。或者，感觉其他任课老师当老师只是个养老的副业，主业是外面的公司或者项目。 先挖个坑，计算机的几大浪漫：《计算机组成及结构》，《操作系统》，《数据结构》，《编译原理》，《计算机接口》，《数据库原理》在之后会逐渐填完的。 顺便还能解答几个疑问：为什么">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-11T21:37:36.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/06/12/Computer-network/network.png">
+<meta property="article:published_time" content="2019-06-12T13:47:47.000Z">
+<meta property="article:modified_time" content="2020-03-11T21:37:36.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Computer">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="计算机网络原理">
-<meta name="twitter:description" content="距离计算机网络考试结束一周了。大概从计算机系挑几门讲的比较好的课的话，也只有《计算机组成及结构》、《计算机网络》和《数据库原理》了。 其他老师在念ppt。或者，感觉其他任课老师当老师只是个养老的副业，主业是外面的公司或者项目。 先挖个坑，计算机的几大浪漫：《计算机组成及结构》，《操作系统》，《数据结构》，《编译原理》，《计算机接口》，《数据库原理》在之后会逐渐填完的。 顺便还能解答几个疑问：为什么">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/06/12/Computer-network/network.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/06/12/Computer-network/">
 
@@ -298,8 +300,8 @@
 <p>顺便还能解答几个疑问：为什么有的时候网速慢，有时候网速快？为什么上网要有modem（俗称猫，专业术语是调制解调器）？校园网为什么要去联通or移动办理业务才能上网？本地网和外网如何接通？如何屏蔽某网？QQ发送的消息为啥不会出错？如何从网页上下载文档？什么是网卡？为何连不上校园网但是能连手机热点？</p>
 <p>以下内容纯属为作者背写的，理解的，并非考试重点。可能词汇不够严谨，但思维和观念是易于理解的。</p>
 <p>中间出了点插曲，写的内容过于详细发现写不完了，于是，写了个粗暴的汇总版本。关于其中具体的知识，还建议查阅相关书籍，不要企图靠网络资源能学会什么东西。</p>
-<a id="more"></a>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.jianshu.com/p/ad820267da1c" target="_blank" rel="noopener">https://www.jianshu.com/p/ad820267da1c</a></p>
+<span id="more"></span>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ad820267da1c">https://www.jianshu.com/p/ad820267da1c</a></p>
 <p>互联网相隔n公里路的两台计算机，是如何进行数据的传送的呢？在成千上万台的计算机中，一台计算机是如何正确着找到另外一个计算机，并把数据传给它的呢？</p>
 <p>学过计算机网络的同学可能知道，在这互联网中，计算机与计算机之间的数据传送，主要是基于各种“协议”串联起来的。不过今天要讲的，并不会详细去讲各种协议，而是通过各种简化之后，让你大概知道数据之间传送的原理。</p>
 <h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>互联网中数据的传送，其实分为好几层来处理数据的，每一层有它自己明确的功能。例如就像流水线生产一样，一部分人负责这部分的工作，处理完之后就把剩余的工作扔给另外一部分人来处理……</p>
@@ -347,10 +349,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/02/23/MPI-basics/" rel="bookmark">MPI基础，以 mpi4py 为例（操作系统番外篇）</a></div>
@@ -485,7 +487,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型"><span class="nav-number">2.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#物理层"><span class="nav-number">3.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据链路层"><span class="nav-number">4.</span> <span class="nav-text">数据链路层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以太网协议"><span class="nav-number">4.1.</span> <span class="nav-text">以太网协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAC地址"><span class="nav-number">4.2.</span> <span class="nav-text">MAC地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播与ARP协议"><span class="nav-number">4.3.</span> <span class="nav-text">广播与ARP协议</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#网络层"><span class="nav-number">5.</span> <span class="nav-text">网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IP协议"><span class="nav-number">5.1.</span> <span class="nav-text">IP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ARP协议"><span class="nav-number">5.2.</span> <span class="nav-text">ARP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS服务器"><span class="nav-number">5.3.</span> <span class="nav-text">DNS服务器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#传输层"><span class="nav-number">6.</span> <span class="nav-text">传输层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应用层"><span class="nav-number">7.</span> <span class="nav-text">应用层</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82"><span class="nav-number">3.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="nav-number">4.</span> <span class="nav-text">数据链路层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.1.</span> <span class="nav-text">以太网协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAC%E5%9C%B0%E5%9D%80"><span class="nav-number">4.2.</span> <span class="nav-text">MAC地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD%E4%B8%8EARP%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.3.</span> <span class="nav-text">广播与ARP协议</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="nav-number">5.</span> <span class="nav-text">网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IP%E5%8D%8F%E8%AE%AE"><span class="nav-number">5.1.</span> <span class="nav-text">IP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ARP%E5%8D%8F%E8%AE%AE"><span class="nav-number">5.2.</span> <span class="nav-text">ARP协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">5.3.</span> <span class="nav-text">DNS服务器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="nav-number">6.</span> <span class="nav-text">传输层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">7.</span> <span class="nav-text">应用层</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -521,7 +523,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -555,14 +557,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -621,9 +623,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -736,7 +746,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

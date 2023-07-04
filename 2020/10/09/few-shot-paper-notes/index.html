@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。  Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019 Adaptive Cross-Modal Few-shot Learning, NIPS, 2020 Meta-Learning o">
-<meta name="keywords" content="PaperNote">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2020年左右小样本问题顶会论文笔记">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/10/09/few-shot-paper-notes/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。  Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019 Adaptive Cross-Modal Few-shot Learning, NIPS, 2020 Meta-Learning o">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-05T13:38:04.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-09T08:45:37.000Z">
+<meta property="article:modified_time" content="2020-12-05T13:38:04.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="PaperNote">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2020年左右小样本问题顶会论文笔记">
-<meta name="twitter:description" content="一些论文的笔记，不会写的很详细，只会列出核心思想和我认为的优缺点，miniImageNet中5-way，1-shot的准确率，不会详细解读每一篇论文。  Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019 Adaptive Cross-Modal Few-shot Learning, NIPS, 2020 Meta-Learning o">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/10/09/few-shot-paper-notes/">
 
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -302,7 +302,7 @@
 <li>Zero and Few Shot Learning with Semantic Feature Synthesis and Competitive Learning, IEEE transactions on pattern analysis and machine intelligence, 2020</li>
 </ol>
 <p><strong>Warning：</strong>优缺点仅代表个人意见。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="第一篇"><a href="#第一篇" class="headerlink" title="第一篇"></a>第一篇</h1><blockquote>
 <p>Meta-Transfer Learning for Few-Shot Learning, CVPR, 2019</p>
 </blockquote>
@@ -348,8 +348,8 @@
 </blockquote>
 <h2 id="准确率-4"><a href="#准确率-4" class="headerlink" title="准确率"></a>准确率</h2><p>$68.11\%$</p>
 <h2 id="核心思想-4"><a href="#核心思想-4" class="headerlink" title="核心思想"></a>核心思想</h2><p>对经过标准交叉熵损失训练的深度网络进行微调，是进行少量学习的坚实基础。如果对它们进行超导地微调，它的性能将优于标准数据集中具有相同超参数的最新技术。传统交叉熵：</p>
-<p>\begin{equation}<br>    \theta^*(D<em>s)=\arg\min</em>\theta\frac{1}{N<em>s}\sum</em>{(s,y)\in D<em>s} -\log p</em>\theta(y|x)<br>\end{equation}</p>
-<p>其中$D<em>s$代表训练集，$N_s$表示训练集中数据量。传导式微调：假设有一个查询样本$(x,y)$属于$D_q$，<br>\begin{equation}<br>    \theta^*=\arg\min</em>\theta\frac{1}{N<em>s}\sum</em>{(s,y)\in D<em>s} -\log p</em>\theta(y|x)+\frac{1}{N<em>q}\sum</em>{(x,y)\in D<em>q} H(p</em>\theta(\cdot|x))<br>\end{equation}<br>其中，$H$代表香农熵，作为损失函数的正则化项。</p>
+<p>\begin{equation}<br>    \theta^*(D_s)=\arg\min_\theta\frac{1}{N_s}\sum_{(s,y)\in D_s} -\log p_\theta(y|x)<br>\end{equation}</p>
+<p>其中$D_s$代表训练集，$N_s$表示训练集中数据量。传导式微调：假设有一个查询样本$(x,y)$属于$D_q$，<br>\begin{equation}<br>    \theta^*=\arg\min_\theta\frac{1}{N_s}\sum_{(s,y)\in D_s} -\log p_\theta(y|x)+\frac{1}{N_q}\sum_{(x,y)\in D_q} H(p_\theta(\cdot|x))<br>\end{equation}<br>其中，$H$代表香农熵，作为损失函数的正则化项。</p>
 <h1 id="第六篇"><a href="#第六篇" class="headerlink" title="第六篇"></a>第六篇</h1><blockquote>
 <p>Zero and Few Shot Learning with Semantic Feature Synthesis and Competitive Learning, IEEE transactions on pattern analysis and machine intelligence, 2020</p>
 </blockquote>
@@ -498,7 +498,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第一篇"><span class="nav-number">1.</span> <span class="nav-text">第一篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率"><span class="nav-number">1.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想"><span class="nav-number">1.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点"><span class="nav-number">1.3.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">1.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">1.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第二篇"><span class="nav-number">2.</span> <span class="nav-text">第二篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-1"><span class="nav-number">2.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-1"><span class="nav-number">2.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点-1"><span class="nav-number">2.3.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第三篇"><span class="nav-number">3.</span> <span class="nav-text">第三篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-2"><span class="nav-number">3.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-2"><span class="nav-number">3.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优缺点-2"><span class="nav-number">3.3.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第四篇"><span class="nav-number">4.</span> <span class="nav-text">第四篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-3"><span class="nav-number">4.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-3"><span class="nav-number">4.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第五篇"><span class="nav-number">5.</span> <span class="nav-text">第五篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-4"><span class="nav-number">5.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-4"><span class="nav-number">5.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第六篇"><span class="nav-number">6.</span> <span class="nav-text">第六篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准确率-5"><span class="nav-number">6.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心思想-5"><span class="nav-number">6.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">第一篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87"><span class="nav-number">1.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">1.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">1.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">第二篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87-1"><span class="nav-number">2.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-1"><span class="nav-number">2.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9-1"><span class="nav-number">2.3.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">第三篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87-2"><span class="nav-number">3.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-2"><span class="nav-number">3.2.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9-2"><span class="nav-number">3.3.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">第四篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87-3"><span class="nav-number">4.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-3"><span class="nav-number">4.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">第五篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87-4"><span class="nav-number">5.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-4"><span class="nav-number">5.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">第六篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87-5"><span class="nav-number">6.1.</span> <span class="nav-text">准确率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-5"><span class="nav-number">6.2.</span> <span class="nav-text">核心思想</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -534,7 +534,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -568,14 +568,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -634,9 +634,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -749,7 +757,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

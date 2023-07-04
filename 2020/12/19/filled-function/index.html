@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="在本科建模学优化的时候，老师说复杂情况下不可能求出目标函数的最优解，用优化解代替就可以了，当时我还信了。直到研究生『工程优化』学了填充函数法，才知道在『多决策变量、单目标函数』的复杂情况下，理论上是可以求出目标函数的最优值的。 而对于『多决策变量、多目标优化』的问题中，还是进化算法等方法较为实用。以遗传算法为例，直接一波种群撒到可行域中，这样会比传统方法便捷一些。">
-<meta name="keywords" content="Modeling">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一种求目标函数最优值的方法（填充函数法">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/12/19/filled-function/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="在本科建模学优化的时候，老师说复杂情况下不可能求出目标函数的最优解，用优化解代替就可以了，当时我还信了。直到研究生『工程优化』学了填充函数法，才知道在『多决策变量、单目标函数』的复杂情况下，理论上是可以求出目标函数的最优值的。 而对于『多决策变量、多目标优化』的问题中，还是进化算法等方法较为实用。以遗传算法为例，直接一波种群撒到可行域中，这样会比传统方法便捷一些。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-16T14:32:14.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static01.imgkr.com/temp/65b961a32fcf4540827b803ed573e924.png">
+<meta property="og:image" content="https://static01.imgkr.com/temp/1593a692f0cf405e9747b1593238c173.png">
+<meta property="article:published_time" content="2020-12-19T11:18:53.000Z">
+<meta property="article:modified_time" content="2021-02-16T14:32:14.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Modeling">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一种求目标函数最优值的方法（填充函数法">
-<meta name="twitter:description" content="在本科建模学优化的时候，老师说复杂情况下不可能求出目标函数的最优解，用优化解代替就可以了，当时我还信了。直到研究生『工程优化』学了填充函数法，才知道在『多决策变量、单目标函数』的复杂情况下，理论上是可以求出目标函数的最优值的。 而对于『多决策变量、多目标优化』的问题中，还是进化算法等方法较为实用。以遗传算法为例，直接一波种群撒到可行域中，这样会比传统方法便捷一些。">
+<meta name="twitter:image" content="https://static01.imgkr.com/temp/65b961a32fcf4540827b803ed573e924.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/12/19/filled-function/">
 
@@ -294,7 +297,7 @@
       
         <p>在本科建模学优化的时候，老师说复杂情况下不可能求出目标函数的最优解，用优化解代替就可以了，当时我还信了。直到研究生『工程优化』学了<strong>填充函数法</strong>，才知道在『多决策变量、单目标函数』的复杂情况下，理论上是可以求出目标函数的最优值的。</p>
 <p>而对于『多决策变量、多目标优化』的问题中，还是进化算法等方法较为实用。以遗传算法为例，直接一波种群撒到可行域中，这样会比传统方法便捷一些。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="填充函数定义"><a href="#填充函数定义" class="headerlink" title="填充函数定义"></a>填充函数定义</h1><p>在难以直接求解$\min f(x)$时，我们可以使用填充函数法。</p>
 <p>假设，$f(x)$在$R^n$中连续可微，且在可行域内有有限个极值点，所以每一个极值点都是孤立的。设 $x_k^\ast$ 是目前得到的 $f(x)$ 的一个局部极小点。在此处构造一个新的函数$p(x,x_k^\ast)$，称为填充函数。填充函数应具有的性质如下：</p>
 <ul>
@@ -305,15 +308,15 @@
 <p>用数学语言描述：</p>
 <ul>
 <li>$x_k^\ast$是$p(x,x_k^\ast)$的严格极大点；</li>
-<li>$\forall x \in \Omega_1,\nabla p(x,x_k^\ast)\neq 0$，$\Omega_1={x\in \Omega | f(x) &gt; f(x_k^\ast),x\neq x_k^\ast}$，$\Omega$为可行域；</li>
-<li>若$\Omega_2={x\in\Omega|f(x)&lt;f(x_k^\ast),x\in\Omega}$非空，则存在一点$x_k’\in\Omega_2$，它是$p(x,x_k^\ast)$的局部最小点。</li>
+<li>$\forall x \in \Omega_1,\nabla p(x,x_k^\ast)\neq 0$，$\Omega_1=\{x\in \Omega | f(x) &gt; f(x_k^\ast),x\neq x_k^\ast\}$，$\Omega$为可行域；</li>
+<li>若$\Omega_2=\{x\in\Omega|f(x)&lt;f(x_k^\ast),x\in\Omega\}$非空，则存在一点$x_k’\in\Omega_2$，它是$p(x,x_k^\ast)$的局部最小点。</li>
 </ul>
 <p>则称$p(x,x_k^\ast)$是$f(x)$在$x_k^\ast$处的一个填充函数。画图如下，蓝色为函数图象，红色为填充函数图象。</p>
 <p><img data-src="https://static01.imgkr.com/temp/65b961a32fcf4540827b803ed573e924.png" alt></p>
 <h1 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h1><ol>
 <li>第$k$次迭代：求$f(x)$一个局部极小点$x_k^\ast$；</li>
 <li>构造$x_k^\ast$处的填充函数$P(x,x_k^\ast)$，求填充函数的极小点$x_k’$。根据前述条件，此时该点对$f(x)$而言，是比$x_k^\ast$更好的点，它在$f(x)$一个更深的谷里；</li>
-<li>以$x<em>k’$为初始点，对$f(x)$求极小点得$x</em>{k+1}^\ast$，此点比$x_k^\ast$位于$f(x)$更深的谷里。令$k=k+1$，转Step2。</li>
+<li>以$x_k’$为初始点，对$f(x)$求极小点得$x_{k+1}^\ast$，此点比$x_k^\ast$位于$f(x)$更深的谷里。令$k=k+1$，转Step2。</li>
 </ol>
 <p>这样逐步迭代，直到函数再也没有局部最小点。如上图第二次迭代后的结果：<br><img data-src="https://static01.imgkr.com/temp/1593a692f0cf405e9747b1593238c173.png" alt></p>
 <h1 id="Q函数"><a href="#Q函数" class="headerlink" title="Q函数"></a>Q函数</h1><p>一种只有一个参数的填充函数是（$a$是参数）：</p>
@@ -467,7 +470,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#填充函数定义"><span class="nav-number">1.</span> <span class="nav-text">填充函数定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#算法步骤"><span class="nav-number">2.</span> <span class="nav-text">算法步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q函数"><span class="nav-number">3.</span> <span class="nav-text">Q函数</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A1%AB%E5%85%85%E5%87%BD%E6%95%B0%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">填充函数定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">算法步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">Q函数</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -503,7 +506,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -537,14 +540,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -603,9 +606,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -718,7 +729,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

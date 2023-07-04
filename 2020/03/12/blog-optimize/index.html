@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,21 @@
   </script>
 
   <meta name="description" content="首先，如果你是想来搭建博客的小白，那么这篇文章不适合你，这篇文章写的优化博客是一些进阶操作。常见的：文章字体、打赏按钮、图片加载、数学公式、音乐链接、不蒜子统计等等等等，网上一搜一大把的我都认为是常规设置，本文在详细描述。而本文收录的进阶优化有：  降低网页功耗 快速加载博客  此外，本次优化仅针对next主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。">
-<meta name="keywords" content="Blog">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些不常见的进阶博客优化">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="首先，如果你是想来搭建博客的小白，那么这篇文章不适合你，这篇文章写的优化博客是一些进阶操作。常见的：文章字体、打赏按钮、图片加载、数学公式、音乐链接、不蒜子统计等等等等，网上一搜一大把的我都认为是常规设置，本文在详细描述。而本文收录的进阶优化有：  降低网页功耗 快速加载博客  此外，本次优化仅针对next主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-10-13T01:35:26.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/2.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/3.png">
+<meta property="article:published_time" content="2020-03-12T06:47:08.000Z">
+<meta property="article:modified_time" content="2020-10-13T01:35:26.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Blog">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一些不常见的进阶博客优化">
-<meta name="twitter:description" content="首先，如果你是想来搭建博客的小白，那么这篇文章不适合你，这篇文章写的优化博客是一些进阶操作。常见的：文章字体、打赏按钮、图片加载、数学公式、音乐链接、不蒜子统计等等等等，网上一搜一大把的我都认为是常规设置，本文在详细描述。而本文收录的进阶优化有：  降低网页功耗 快速加载博客  此外，本次优化仅针对next主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/03/12/blog-optimize/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/03/12/blog-optimize/">
 
@@ -298,7 +302,7 @@
 <li>快速加载博客</li>
 </ul>
 <p>此外，本次优化仅针对<code>next</code>主题，但其他主题也可参考借鉴优化思路，只是操作方法不敢保证完全一致。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="降低网页功耗"><a href="#降低网页功耗" class="headerlink" title="降低网页功耗"></a>降低网页功耗</h1><p>起初，我还真没在意网页的功耗问题，首先举个例子明白功耗是干什么用的。假设，你打开电脑，不管是写<code>word</code>，听音乐还是看电影，只要电脑在工作就会产生功耗，单位是瓦(W)。一般打开网页和浏览网页的功耗是10W~15W左右(我亲手测过)，而你笔记本的电池是60Wh的，那么你笔记本在满电、不充电的情况下，浏览网页的时长大约为6小时（$60\text{Wh} \div 10\text{W} = 6\text{h}$）。而浏览网页的同时，如果再有一些写<code>word</code>，听音乐或者跑程序的操作，那么电脑的续航时长也就4小时左右。</p>
 <p>这就是笔记本续航的粗暴计算方法。但是很遗憾，市面上常见轻薄本的电池均为60Wh左右，但都在宣传自己笔记本续航高达10小时以上，我实在不能理解这是怎么计算出来的。所以，买电脑的时候不要看它吹嘘的续航时间多长，应该看电池是多少Wh的。</p>
 <p>扯远了，回归正题，如何降低博客的功耗呢？我第一次发现问题是在<code>Linux</code>系统中，打开我的博客后发现，电脑风扇在飞速旋转，键盘也开始发烫。嗯？这是为何，我也没载入杀病毒啊。找了一个查看功耗的命令显示下现在的功耗。右上角为查看<code>CPU</code>，内存等利用率，右下角为功耗，单位W。可以看到，我博客当初的功耗为55W。</p>
@@ -322,7 +326,7 @@
 <p><img data-src="/2020/03/12/blog-optimize/3.png" alt></p>
 <p>这只是我实践出来的结论，所以，我选择关闭<code>pjax</code>，开启<code>quicklink</code>和<code>lazyload</code>也同样能秒开博客～。</p>
 <p>但是，在我更新<code>Next</code>后，就又没这个问题了，我现在是<code>pjax</code>和<code>lazyload</code>都在启用。</p>
-<h1 id="代码参考"><a href="#代码参考" class="headerlink" title="代码参考"></a>代码参考</h1><p>我把上述全部的配置代码放到了网上，如果还是不懂如何设置可以对照参考。<a href="https://github.com/muyuuuu/My-Next-theme-blog-config-files/blob/master/_config.yml" target="_blank" rel="noopener">点我过去</a>。</p>
+<h1 id="代码参考"><a href="#代码参考" class="headerlink" title="代码参考"></a>代码参考</h1><p>我把上述全部的配置代码放到了网上，如果还是不懂如何设置可以对照参考。<a target="_blank" rel="noopener" href="https://github.com/muyuuuu/My-Next-theme-blog-config-files/blob/master/_config.yml">点我过去</a>。</p>
 
     </div>
 
@@ -462,7 +466,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#降低网页功耗"><span class="nav-number">1.</span> <span class="nav-text">降低网页功耗</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化博客访问速度"><span class="nav-number">2.</span> <span class="nav-text">优化博客访问速度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#其余杂项优化"><span class="nav-number">2.1.</span> <span class="nav-text">其余杂项优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意事项"><span class="nav-number">3.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码参考"><span class="nav-number">4.</span> <span class="nav-text">代码参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E7%BD%91%E9%A1%B5%E5%8A%9F%E8%80%97"><span class="nav-number">1.</span> <span class="nav-text">降低网页功耗</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%8D%9A%E5%AE%A2%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6"><span class="nav-number">2.</span> <span class="nav-text">优化博客访问速度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BD%99%E6%9D%82%E9%A1%B9%E4%BC%98%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">其余杂项优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">代码参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -498,7 +502,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -532,14 +536,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -598,9 +602,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -713,7 +725,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

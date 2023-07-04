@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
-<meta name="keywords" content="DataStructure">
 <meta property="og:type" content="article">
 <meta property="og:title" content="降低算法时间复杂度，以图数据处理为例">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-08-16T17:51:24.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/graph.png">
+<meta property="article:published_time" content="2020-08-11T13:33:34.000Z">
+<meta property="article:modified_time" content="2020-08-16T17:51:24.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="DataStructure">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="降低算法时间复杂度，以图数据处理为例">
-<meta name="twitter:description" content="鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。 在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译pytorch的文档写一下pytorch快速入门的文章，的确很吸引流量，">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/graph.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/08/11/decrease-time-complexity-when-process-graph/">
 
@@ -294,7 +296,7 @@
       
         <p>鲁迅有云：能用的程序不等于好的程序（他没说过）。在近期处理图数据时，经常性的要遍历边和点，这就很容易造成高时间复杂度的算法。且，当数据在一万左右时，复杂度$O(n^2)$的算法根本跑不动，在中等规模的服务器上也会卡死。</p>
 <p>在不断的写程序中，降时间复杂度降出了经验，遂整理如下。我也发现了，我不喜欢写XX快速入门之类的文章，比如翻译<code>pytorch</code>的文档写一下<code>pytorch</code>快速入门的文章，的确很吸引流量，但我不喜欢，更喜欢整理自己的经验。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><ol>
 <li>以处理图数据为例，尤其是需要不断遍历边和点的场景；</li>
 <li>没有真实的代码，全部是伪代码；（直接放工程代码会很大，从工程里摘出对应代码来仍然是伪代码）</li>
@@ -302,11 +304,11 @@
 </ol>
 <h1 id="借助数据结构"><a href="#借助数据结构" class="headerlink" title="借助数据结构"></a>借助数据结构</h1><p>众所周知，图的节点是有度的，这里我们以无向图为例。假设，此时在做图数据的融合，将邻接链表相同的节点视为双胞胎节点融合在一起。此时最明显的哦优化就是借助桶排序，因为邻接链表相同，则节点的度必然相同。按照节点度进行分类，能有效降低复杂度。</p>
 <p>假设只融合度数在$[2, 64]$之间的节点。首先，创建基数为 2 到 64 的桶。并按照节点的度，将节点放到对应桶中，即节点度为2就放到基数为2的桶，节点度为16就放到基数为16的桶。这里一切正常：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创造节点度的桶</span></span><br><span class="line">radix = [[] <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">67</span>)]</span><br><span class="line"><span class="comment"># 按照是否被访问选取节点, 并按照度数放入桶</span></span><br><span class="line"><span class="keyword">for</span> ver <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="comment"># 取节点索引</span></span><br><span class="line">    ver_idx = graph.vertex_index[ver]</span><br><span class="line">    <span class="comment"># 按照是否被访问和节点的度进行筛选</span></span><br><span class="line">    degree = len(graph.get_all_neighbors(ver_idx))</span><br><span class="line">    <span class="keyword">if</span> visited[ver_idx] == <span class="literal">False</span> <span class="keyword">and</span> degree &gt;= <span class="number">2</span> <span class="keyword">and</span> degree &lt;= <span class="number">64</span>:</span><br><span class="line">        <span class="comment"># 添加节点的索引</span></span><br><span class="line">        radix[degree].append(ver_idx)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创造节点度的桶</span></span><br><span class="line">radix = [[] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, <span class="number">67</span>)]</span><br><span class="line"><span class="comment"># 按照是否被访问选取节点, 并按照度数放入桶</span></span><br><span class="line"><span class="keyword">for</span> ver <span class="keyword">in</span> graph.vertices():</span><br><span class="line">    <span class="comment"># 取节点索引</span></span><br><span class="line">    ver_idx = graph.vertex_index[ver]</span><br><span class="line">    <span class="comment"># 按照是否被访问和节点的度进行筛选</span></span><br><span class="line">    degree = <span class="built_in">len</span>(graph.get_all_neighbors(ver_idx))</span><br><span class="line">    <span class="keyword">if</span> visited[ver_idx] == <span class="literal">False</span> <span class="keyword">and</span> degree &gt;= <span class="number">2</span> <span class="keyword">and</span> degree &lt;= <span class="number">64</span>:</span><br><span class="line">        <span class="comment"># 添加节点的索引</span></span><br><span class="line">        radix[degree].append(ver_idx)</span><br></pre></td></tr></table></figure>
 <p>一般思路，在每个桶内，节点的度是相同的。这时候只需要遍历桶，计算桶内每个节点的邻接链表，若邻接链表相同，则融合。此时便是创建一个字典，以节点的索引为 key，以邻接链表为 value。之后遍历桶生成字典，在遍历字典的 value ，相同则融合。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_list[i].append(set(graph.get_out_neighbors(i)))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 邻接列表相同的进行融合</span></span><br><span class="line">        <span class="comment"># （这里我实在不知道怎么写了，于是暴力循环了）</span></span><br><span class="line">        <span class="comment"># 复杂度太高，大图测试直接卡死</span></span><br><span class="line">        <span class="keyword">for</span> key1 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">            <span class="keyword">for</span> key2 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">                <span class="keyword">if</span> key1 != key2 <span class="keyword">and</span> adj_list[key1] == adj_list[key2]:</span><br><span class="line">                    <span class="keyword">if</span> visited[key1] == <span class="literal">False</span> <span class="keyword">and</span> visited[key2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[key1] = visited[key2] = <span class="literal">True</span></span><br><span class="line">                        M[key1], M[key2] = key2, key1</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_list[i].append(<span class="built_in">set</span>(graph.get_out_neighbors(i)))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 邻接列表相同的进行融合</span></span><br><span class="line">        <span class="comment"># （这里我实在不知道怎么写了，于是暴力循环了）</span></span><br><span class="line">        <span class="comment"># 复杂度太高，大图测试直接卡死</span></span><br><span class="line">        <span class="keyword">for</span> key1 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">            <span class="keyword">for</span> key2 <span class="keyword">in</span> adj_list.keys():</span><br><span class="line">                <span class="keyword">if</span> key1 != key2 <span class="keyword">and</span> adj_list[key1] == adj_list[key2]:</span><br><span class="line">                    <span class="keyword">if</span> visited[key1] == <span class="literal">False</span> <span class="keyword">and</span> visited[key2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[key1] = visited[key2] = <span class="literal">True</span></span><br><span class="line">                        M[key1], M[key2] = key2, key1</span><br></pre></td></tr></table></figure>
 <p>如上代码，直接遍历一个桶内部的邻接列表并判断是否相等，复杂度为$O(n^2+n)$。思路很正常，但这种写法实在愚蠢。如果我们换种思路，在字典中，以邻接列表为 key，以节点的索引为 value 呢？那么当两个节点的邻接列表相同时，节点的索引会自动放到字典对应 key 的 value 中，这样就省去了比较的过程。此时时间复杂度为$O(n^2)$。（radix代表基数是 2 到 64 的桶，取值是常数，故计算复杂度时忽略最外层循环）。由此可见，不用额外的数据结构，仅需要简单的变换，就能将时间复杂度从$O(n^2+n)$降低到$O(n^2)$。但实际中这样的点很少，即融合的<code>for</code>循环可以视为$O(1)$，所以算法的执行时间和$O(n)$复杂度的算法相似。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> len(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        adj_reverse = defaultdict(list)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_reverse[str(set(graph.get_out_neighbors(i)))].append(i)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 以邻接列表为键，节点索引为 values</span></span><br><span class="line">        <span class="keyword">for</span> values <span class="keyword">in</span> adj_reverse.values():</span><br><span class="line">            <span class="keyword">if</span> len(values) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(values) - <span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">                    ver1, ver2 = values[i], values[i+<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">if</span> visited[ver1] == <span class="literal">False</span> <span class="keyword">and</span> visited[ver2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[ver1] = visited[ver2] = <span class="literal">True</span></span><br><span class="line">                        M[ver1], M[ver2] = ver2, ver1</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按照桶内的邻接列表进行融合</span></span><br><span class="line"><span class="keyword">for</span> bucket <span class="keyword">in</span> radix:</span><br><span class="line">    <span class="comment"># 两个以上的节点才能融合</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(bucket) &gt;= <span class="number">2</span>:</span><br><span class="line">        <span class="comment"># 相反，由项找索引，不然时间复杂度太高</span></span><br><span class="line">        adj_reverse = defaultdict(<span class="built_in">list</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> bucket:</span><br><span class="line">            <span class="comment"># 按照索引取节点</span></span><br><span class="line">            <span class="comment"># 集合的意思是取消元素顺序的影响，不然顺序会影响判断是否相等 </span></span><br><span class="line">            <span class="comment"># str保证可哈稀</span></span><br><span class="line">            adj_reverse[<span class="built_in">str</span>(<span class="built_in">set</span>(graph.get_out_neighbors(i)))].append(i)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 以邻接列表为键，节点索引为 values</span></span><br><span class="line">        <span class="keyword">for</span> values <span class="keyword">in</span> adj_reverse.values():</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(values) &gt;= <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(values) - <span class="number">1</span>, <span class="number">2</span>):</span><br><span class="line">                    ver1, ver2 = values[i], values[i+<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">if</span> visited[ver1] == <span class="literal">False</span> <span class="keyword">and</span> visited[ver2] == <span class="literal">False</span>:</span><br><span class="line">                        visited[ver1] = visited[ver2] = <span class="literal">True</span></span><br><span class="line">                        M[ver1], M[ver2] = ver2, ver1</span><br></pre></td></tr></table></figure>
 <p>其实这个优化的并不所最好的，另一个是，但涉及的问题背景太深了，直接拿出来怕读者看不懂，就用这个例子凑合了。</p>
 <h1 id="好的逻辑"><a href="#好的逻辑" class="headerlink" title="好的逻辑"></a>好的逻辑</h1><p>问题描述：此时我们要生成一个图的 k 跳邻接信息，即常见的邻接矩阵是一跳信息。二跳信息就是隔着一个节点还能相邻，那么邻接矩阵中，这两个节点对应的索引取值为 1。可以直接看图，节点 1 和节点 5 就是二跳连接，<code>adj[1][5] = 1</code>，这个意思。假设我们要找三跳信息。</p>
 <p><img data-src="/2020/08/11/decrease-time-complexity-when-process-graph/graph.png" alt></p>
@@ -467,7 +469,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借助数据结构"><span class="nav-number">2.</span> <span class="nav-text">借助数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#好的逻辑"><span class="nav-number">3.</span> <span class="nav-text">好的逻辑</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%80%9F%E5%8A%A9%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">借助数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A5%BD%E7%9A%84%E9%80%BB%E8%BE%91"><span class="nav-number">3.</span> <span class="nav-text">好的逻辑</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -503,7 +505,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -537,14 +539,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -603,9 +605,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -718,7 +728,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

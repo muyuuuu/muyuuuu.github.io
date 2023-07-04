@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="继上次了解完信息熵后，没想到在对抗训练中又回到了损失函数的分析上。torch实现的有点迷惑，正好趁这次机会，连着代码和公式好好推导下。这种损失的优缺点日后会放上来，主要取决论文进度。">
-<meta name="keywords" content="Algorithm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="交叉熵优缺点分析">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/04/02/cross-entropy/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="继上次了解完信息熵后，没想到在对抗训练中又回到了损失函数的分析上。torch实现的有点迷惑，正好趁这次机会，连着代码和公式好好推导下。这种损失的优缺点日后会放上来，主要取决论文进度。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-02T22:46:50.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-02T13:49:37.000Z">
+<meta property="article:modified_time" content="2021-04-02T22:46:50.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Algorithm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="交叉熵优缺点分析">
-<meta name="twitter:description" content="继上次了解完信息熵后，没想到在对抗训练中又回到了损失函数的分析上。torch实现的有点迷惑，正好趁这次机会，连着代码和公式好好推导下。这种损失的优缺点日后会放上来，主要取决论文进度。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/04/02/cross-entropy/">
 
@@ -293,11 +293,11 @@
 
       
         <p>继上次了解完<a href="https://muyuuuu.github.io/2020/05/09/entropy/">信息熵</a>后，没想到在对抗训练中又回到了损失函数的分析上。<code>torch</code>实现的有点迷惑，正好趁这次机会，连着代码和公式好好推导下。这种损失的优缺点日后会放上来，主要取决论文进度。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="一个简单实例"><a href="#一个简单实例" class="headerlink" title="一个简单实例"></a>一个简单实例</h1><p>交叉熵的公式定义耳熟能详了：</p>
 <p>\begin{equation}\label{ce}<br>H(p,q) = -\sum_{x\in X} p(x) \log q(x)<br>\end{equation}</p>
 <p>这里带入一个实例算一下：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># example of calculating cross entropy</span></span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> log2</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cross_entropy</span><span class="params">(p, q)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> -sum([p[i] * log2(q[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(len(p))])</span><br><span class="line"></span><br><span class="line"><span class="comment"># define data</span></span><br><span class="line">p = [<span class="number">0.10</span>, <span class="number">0.40</span>, <span class="number">0.50</span>]</span><br><span class="line">q = [<span class="number">0.80</span>, <span class="number">0.15</span>, <span class="number">0.05</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy H(P, Q)</span></span><br><span class="line">ce_pq = cross_entropy(p, q)</span><br><span class="line">print(<span class="string">'H(P, Q): %.3f bits'</span> % ce_pq)  <span class="comment"># H(P, Q): 3.288 bits</span></span><br><span class="line"><span class="comment"># calculate cross entropy H(Q, P)</span></span><br><span class="line">ce_qp = cross_entropy(q, p)</span><br><span class="line">print(<span class="string">'H(Q, P): %.3f bits'</span> % ce_qp)  <span class="comment"># H(Q, P): 2.906 bits</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3 bit 的信息差异</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># example of calculating cross entropy</span></span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> log2</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cross_entropy</span>(<span class="params">p, q</span>):</span><br><span class="line">    <span class="keyword">return</span> -<span class="built_in">sum</span>([p[i] * log2(q[i]) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(p))])</span><br><span class="line"></span><br><span class="line"><span class="comment"># define data</span></span><br><span class="line">p = [<span class="number">0.10</span>, <span class="number">0.40</span>, <span class="number">0.50</span>]</span><br><span class="line">q = [<span class="number">0.80</span>, <span class="number">0.15</span>, <span class="number">0.05</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate cross entropy H(P, Q)</span></span><br><span class="line">ce_pq = cross_entropy(p, q)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;H(P, Q): %.3f bits&#x27;</span> % ce_pq)  <span class="comment"># H(P, Q): 3.288 bits</span></span><br><span class="line"><span class="comment"># calculate cross entropy H(Q, P)</span></span><br><span class="line">ce_qp = cross_entropy(q, p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;H(Q, P): %.3f bits&#x27;</span> % ce_qp)  <span class="comment"># H(Q, P): 2.906 bits</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3 bit 的信息差异</span></span><br></pre></td></tr></table></figure>
 <p>需要注意的是，$H(p,q) \neq H(q,p)$。那么再来看深度学习中的定义，其实都一样，只是深度学习中要求真实标签不能是 $\log$ 那一项，因为 $\log$ 的定义域不能取 0。</p>
 <p>\begin{equation}<br>H = -\sum_{c=1}^M y \log \hat{y}<br>\end{equation}</p>
 <p>其中，$y$ 是真实的标签，$M$ 是类别数量，$\hat{y}$ 是自己预测的结果。如果是三分类问题，假设 $y=[1,0,0]$，$\hat{y}=[0.4,0.1,0.5]$，那么此时的交叉熵是 $-\log 0.4$。<strong>因为其它标签取值是 0，即不参与运算</strong>，换句话说，交叉熵的损失只取决于被正确分类的概率，具体缺陷可以公式推导一下。带入上述代码，得到一致的结果。</p>
@@ -312,9 +312,9 @@
 <li>缺点：论文要用，等哪天论文尘埃落定，我在回来填坑。<del>你可以手推公式，推着推着就发现了。</del></li>
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html" target="_blank" rel="noopener">交叉熵定义</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/159477597" target="_blank" rel="noopener">torch 交叉熵代码验证</a></li>
-<li><a href="https://byjiang.com/2017/07/16/Cross_Entropy_Cost_Function/" target="_blank" rel="noopener">交叉熵优点及公式推导</a></li>
+<li><a target="_blank" rel="noopener" href="https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html">交叉熵定义</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/159477597">torch 交叉熵代码验证</a></li>
+<li><a target="_blank" rel="noopener" href="https://byjiang.com/2017/07/16/Cross_Entropy_Cost_Function/">交叉熵优点及公式推导</a></li>
 </ol>
 
     </div>
@@ -326,10 +326,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/08/04/LSH-consine/" rel="bookmark">从代码角度理解局部敏感哈希算法</a></div>
+      <div class="popular-posts-title"><a href="/2020/03/30/KDE-cluster/" rel="bookmark">核密度聚类</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/03/30/KDE-cluster/" rel="bookmark">核密度聚类</a></div>
+      <div class="popular-posts-title"><a href="/2021/08/04/LSH-consine/" rel="bookmark">从代码角度理解局部敏感哈希算法</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2020/11/20/Metis/" rel="bookmark">基于Metis的大规模图融合算法实现</a></div>
@@ -464,7 +464,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一个简单实例"><span class="nav-number">1.</span> <span class="nav-text">一个简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#torch-实现"><span class="nav-number">2.</span> <span class="nav-text">torch 实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优缺点分析"><span class="nav-number">3.</span> <span class="nav-text">优缺点分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">一个简单实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#torch-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">torch 实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">优缺点分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -500,7 +500,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -534,14 +534,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -600,9 +600,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -715,7 +723,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

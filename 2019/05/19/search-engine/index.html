@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,21 @@
   </script>
 
   <meta name="description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
-<meta name="keywords" content="Python,Algorithm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="编程与数学的结晶：简易搜索引擎">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/05/19/search-engine/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-03-19T12:00:28.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/1.jpg">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/2.jpg">
+<meta property="article:published_time" content="2019-05-19T03:08:07.000Z">
+<meta property="article:modified_time" content="2021-03-19T12:00:28.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Algorithm">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="编程与数学的结晶：简易搜索引擎">
-<meta name="twitter:description" content="内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/05/19/search-engine/1.jpg">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/05/19/search-engine/">
 
@@ -293,7 +297,7 @@
 
       
         <p>内容简介：在阅读了数据结构的一本教材《大话数据结构》后，学到了新的姿势：用于搜索引擎的数据结构——倒排索引，又想起了曾经在《数学之美》上阅读过的如何在搜索引擎中取得高质量的网页和最相关的内容。涉及到了简单的分词、矩阵相乘、信息熵的简单应用，特来整理，即使我做不出一个搜索引擎。但是在现实世界中的应用多种多样，背后的数学思维却是可以借鉴的。（注明：本文只是将两书的内容融会贯通并整理。如有遗漏使得内容看起来不连贯，可以阅读原书，计算机专业推荐这两本书都读，非计算机专业只推荐阅读《数学之美》）</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>以下内容只是简单的举例，先来看两个简单的句子：</p>
 <ul>
 <li><em>Iron Man</em> is a 2008 American superhero film based on the Marvel Comics character of the same name. </li>
@@ -371,7 +375,7 @@
 </ul>
 <p>很容易得到句子A的词向量是[1, 0]，而句子B的词向量是[0, 1]，这两个向量垂直，相似度为0。</p>
 <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>没有找到合适的数据，就自己创造的没有link的数据，所以本次代码因缺数据而没有加入pagerank算法的代码。</p>
-<p><a href="https://github.com/muyuuuu/Search-Engine" target="_blank" rel="noopener">点我过去</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/muyuuuu/Search-Engine">点我过去</a></p>
 <p>倒排数据结构展示：</p>
 <p><img data-src="/2019/05/19/search-engine/1.jpg" alt></p>
 <p>查询结果输出展示，对输入的内容进行查询。</p>
@@ -399,10 +403,10 @@
       <div class="popular-posts-title"><a href="/2020/07/23/generator-and-iterator/" rel="bookmark">迭代器与生成器</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/10/06/pyqt5-basic/" rel="bookmark">PyQt5的基本控件整理</a></div>
+      <div class="popular-posts-title"><a href="/2019/10/19/pyqt-layout/" rel="bookmark">PyQt5高级布局与美化</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/10/19/pyqt-layout/" rel="bookmark">PyQt5高级布局与美化</a></div>
+      <div class="popular-posts-title"><a href="/2019/10/11/pyqt-pit/" rel="bookmark">PyQt5踩坑</a></div>
     </li>
   </ul>
 
@@ -529,7 +533,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#倒排索引"><span class="nav-number">1.</span> <span class="nav-text">倒排索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">1.2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#筛选最相关"><span class="nav-number">2.</span> <span class="nav-text">筛选最相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#思考"><span class="nav-number">2.1.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推导"><span class="nav-number">2.2.</span> <span class="nav-text">推导</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#计算相似性"><span class="nav-number">3.</span> <span class="nav-text">计算相似性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">4.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">倒排索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AD%9B%E9%80%89%E6%9C%80%E7%9B%B8%E5%85%B3"><span class="nav-number">2.</span> <span class="nav-text">筛选最相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%80%83"><span class="nav-number">2.1.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E5%AF%BC"><span class="nav-number">2.2.</span> <span class="nav-text">推导</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E7%9B%B8%E4%BC%BC%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">计算相似性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -565,7 +569,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -599,14 +603,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -665,9 +669,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -780,7 +792,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

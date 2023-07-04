@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,24 @@
   </script>
 
   <meta name="description" content="在之前 yolox 解析与改进 的文章中，提到了使用 CIoU Loss 改进 SimOTA 分配正样本机制导致的小目标检测精度低的问题，就顺手来整理一些常用定位损失与演化过程。本文所有的图，绿色为 Truth，蓝色为预测结果。">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IoU Loss 系列">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/04/23/iou-loss/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="在之前 yolox 解析与改进 的文章中，提到了使用 CIoU Loss 改进 SimOTA 分配正样本机制导致的小目标检测精度低的问题，就顺手来整理一些常用定位损失与演化过程。本文所有的图，绿色为 Truth，蓝色为预测结果。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-04-23T16:10:34.410Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/24/LhMPDx.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/24/LhME5D.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/24/LhMKKI.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/24/LhMQqP.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/24/LhM8IS.png">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/24/LhMdrq.png">
+<meta property="article:published_time" content="2022-04-23T15:41:49.000Z">
+<meta property="article:modified_time" content="2022-04-23T16:10:34.410Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="IoU Loss 系列">
-<meta name="twitter:description" content="在之前 yolox 解析与改进 的文章中，提到了使用 CIoU Loss 改进 SimOTA 分配正样本机制导致的小目标检测精度低的问题，就顺手来整理一些常用定位损失与演化过程。本文所有的图，绿色为 Truth，蓝色为预测结果。">
+<meta name="twitter:image" content="https://s1.ax1x.com/2022/04/24/LhMPDx.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/04/23/iou-loss/">
 
@@ -293,7 +300,7 @@
 
       
         <p>在之前 <a href="https://muyuuuu.github.io/2022/02/26/yolox/">yolox 解析与改进</a> 的文章中，提到了使用 CIoU Loss 改进 SimOTA 分配正样本机制导致的小目标检测精度低的问题，就顺手来整理一些常用定位损失与演化过程。本文所有的图，绿色为 Truth，蓝色为预测结果。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="IoU-Loss"><a href="#IoU-Loss" class="headerlink" title="IoU Loss"></a>IoU Loss</h1><p>这个是最常见的定位 loss，假设预测框为 $A$，目标框为 $B$，那么 IoU Loss 就是：</p>
 <p>\begin{equation}<br>L = 1 - \frac{A\cap B}{A \cup B}<br>\end{equation}</p>
 <p>同样这个 loss 会带来一些问题：</p>
@@ -311,7 +318,7 @@
 <h1 id="CIoU-Loss"><a href="#CIoU-Loss" class="headerlink" title="CIoU Loss"></a>CIoU Loss</h1><p>在目标检测中，目标常常有着不同的尺寸，如下图所示，在 IoU 取值固定的情况下，右侧的预测结果更符合目标框的尺寸。</p>
 <p><img data-src="https://s1.ax1x.com/2022/04/24/LhME5D.png" alt></p>
 <p>因此做了如下的修改：</p>
-<p>\begin{equation}<br>    \begin{aligned}<br>        L &amp;= 1 - IoU + \frac{\rho^2 (b, b^{gt})}{c^2} + \alpha v \<br>        \alpha &amp;= \frac{v}{(1-IoU) + v} \<br>        v &amp;= \frac{4}{\pi^2} \bigl( arc \tan \frac{w^{gt}}{h^{gt}} - arc \tan \frac{w}{h} \bigr) \<br>    \end{aligned}<br>\end{equation}</p>
+<p>\begin{equation}<br>    \begin{aligned}<br>        L &amp;= 1 - IoU + \frac{\rho^2 (b, b^{gt})}{c^2} + \alpha v \\<br>        \alpha &amp;= \frac{v}{(1-IoU) + v} \\<br>        v &amp;= \frac{4}{\pi^2} \bigl( arc \tan \frac{w^{gt}}{h^{gt}} - arc \tan \frac{w}{h} \bigr) \\<br>    \end{aligned}<br>\end{equation}</p>
 <p>如果 IoU 越大，那么 $\alpha$ 也会越大，公式的最后一项也会越大。由于 $arc \tan$ 的取值范围是 -1 到 1，且当 $x$ 较为接近时，$y$ 也接近，那么就期望两者的长宽比越来越接近。</p>
 <h1 id="alpha-IoU-Loss"><a href="#alpha-IoU-Loss" class="headerlink" title="$\alpha-IoU$ Loss"></a>$\alpha-IoU$ Loss</h1><p>$\alpha-IoU$ Loss 是在之前的一些列 IoU Loss 上进行的修改，增加了 $\alpha$ 这个指数，实验显示 $\alpha=3$ 比较有效。</p>
 <p><img data-src="https://s1.ax1x.com/2022/04/24/LhMKKI.png" alt></p>
@@ -329,7 +336,7 @@
 <li>对于 L2 loss，在 -1 左侧和 1 的右侧呈现爆炸增长，存在梯度爆炸、异常值敏感的缺陷，但是 -1 到 1 之间梯度较为缓和</li>
 </ul>
 <p>而 Smooth Loss 综合了两者的优点，得到新的表达形式：</p>
-<p>\begin{equation}<br>    L(x) =<br>    \begin{cases}<br>        0.5x^2 &amp;, |x| \leq 1 \<br>        |x|-0.5 &amp;, \text{otherwise} \<br>    \end{cases}<br>\end{equation}</p>
+<p>\begin{equation}<br>    L(x) =<br>    \begin{cases}<br>        0.5x^2 &amp;, |x| \leq 1 \\<br>        |x|-0.5 &amp;, \text{otherwise} \\<br>    \end{cases}<br>\end{equation}</p>
 <p><img data-src="https://s1.ax1x.com/2022/04/24/LhMdrq.png" alt></p>
 
     </div>
@@ -344,16 +351,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -515,7 +522,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -549,14 +556,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -615,9 +622,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -730,7 +745,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，大多东西为网上搜刮而来后整理，可能不严谨。今天有空了回来填坑。">
-<meta name="keywords" content="OS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统『一』：进程与线程">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/03/16/multi-process-thread/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，大多东西为网上搜刮而来后整理，可能不严谨。今天有空了回来填坑。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-04-16T21:56:40.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/16/multi-process-thread/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/03/16/multi-process-thread/1.png">
+<meta property="article:published_time" content="2020-03-16T12:53:42.000Z">
+<meta property="article:modified_time" content="2021-04-16T21:56:40.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="操作系统『一』：进程与线程">
-<meta name="twitter:description" content="作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，大多东西为网上搜刮而来后整理，可能不严谨。今天有空了回来填坑。">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/03/16/multi-process-thread/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/03/16/multi-process-thread/">
 
@@ -293,15 +296,15 @@
 
       
         <p>作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，<del>大多东西为网上搜刮而来后整理，可能不严谨。</del>今天有空了回来填坑。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="从物理机开始"><a href="#从物理机开始" class="headerlink" title="从物理机开始"></a>从物理机开始</h1><p>本文以Linux操作为主，Windows操作不太了解。首先先从物理机出发，了解物理CPU、CPU的核、线程是什么概念。物理CPU指实际存在的CPU处理器，安装在PC主板或服务器上。首先查看物理CPU个数，查看电脑有几个CPU：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">'physical id'</span> /proc/CPUinfo | sort -u</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&#x27;physical id&#x27;</span> /proc/CPUinfo | <span class="built_in">sort</span> -u</span><br></pre></td></tr></table></figure>
 <p>执行结果反馈如下：（后期解释为什么是12个id为0的记录）</p>
 <p><img data-src="/2020/03/16/multi-process-thread/1.png" alt></p>
 <p>其id均为0，表示我电脑有一个CPU（从0开始编号）。CPU中包含物理内核，比如多核CPU，单核CPU。这个多核或者单核已经集成在CPU内部了，那么来查看一下核心数量，就是买电脑的时候常听商家常说的4核CPU或者8核CPU：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">'core id'</span> /proc/CPUinfo | sort -u | wc -l</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&#x27;core id&#x27;</span> /proc/CPUinfo | <span class="built_in">sort</span> -u | <span class="built_in">wc</span> -l</span><br></pre></td></tr></table></figure>
 <p>我这里输出的结果为6,表示我的是6核CPU。同时，你在买电脑的时候听说过，6核12线程，4核8线程的CPU，那么，再看一下自己的电脑支持几个线程：（说了半天终于到线程了）。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">'processor'</span> /proc/CPUinfo | sort -u | wc -l</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&#x27;processor&#x27;</span> /proc/CPUinfo | <span class="built_in">sort</span> -u | <span class="built_in">wc</span> -l</span><br></pre></td></tr></table></figure>
 <p>输出的结果是12，表示我的电脑的处理器是一个CPU，且是6核心12线程的。所谓的6核12线程，6核指的是物理核心。用Intel的超线程技术(HT， Hyper-threading)将物理核虚拟而成的逻辑处理单元，现在大部分的主机的CPU都在使用HT技术，用一个物理核模拟两个虚拟核，即每个核两个线程，总数为12线程。所以在操作系统看来是12个核，但实际是一个物理CPU中的6个物理内核虚拟出来的12个线程：</p>
 <p><img data-src="/2020/03/16/multi-process-thread/1.png" alt></p>
 <p>此时我们需要知道：<strong>一个核心只能同时执行一个线程</strong>。</p>
@@ -488,7 +491,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#从物理机开始"><span class="nav-number">1.</span> <span class="nav-text">从物理机开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程与线程的概念"><span class="nav-number">2.</span> <span class="nav-text">进程与线程的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程"><span class="nav-number">2.1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程"><span class="nav-number">2.2.</span> <span class="nav-text">线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#串行、并行、并发"><span class="nav-number">2.3.</span> <span class="nav-text">串行、并行、并发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程"><span class="nav-number">3.</span> <span class="nav-text">多进程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程"><span class="nav-number">4.</span> <span class="nav-text">多线程</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E7%89%A9%E7%90%86%E6%9C%BA%E5%BC%80%E5%A7%8B"><span class="nav-number">1.</span> <span class="nav-text">从物理机开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">进程与线程的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E3%80%81%E5%B9%B6%E8%A1%8C%E3%80%81%E5%B9%B6%E5%8F%91"><span class="nav-number">2.3.</span> <span class="nav-text">串行、并行、并发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">多进程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">多线程</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -524,7 +527,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -558,14 +561,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -624,9 +627,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -739,7 +750,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -26,11 +26,14 @@
 <meta property="og:url" content="https://muyuuuu.github.io/record/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="开设本页面的目的是，做一些计算机相关的简单记录，记录的内容很常用，但又不值得单独成文。另一方面我很多东西都记不住，每次都去查命令，有点浪费时间。 linuxArch安装与配置记录： 换源，添加archlinuxcn源 pacman安装clash, git, nano, code, chromium等，FQ与并登录谷歌账号 设置中配置主题，主题可能缺少ICON，再去安装一份ICON即可 配置中文输入">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2023-03-03T09:40:40.324Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/03/06/6uVqJS.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/03/06/6uV5qI.jpg">
+<meta property="article:published_time" content="2020-11-07T03:31:59.000Z">
+<meta property="article:modified_time" content="2023-03-03T09:40:40.324Z">
+<meta property="article:author" content="兰铃">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="记录">
-<meta name="twitter:description" content="开设本页面的目的是，做一些计算机相关的简单记录，记录的内容很常用，但又不值得单独成文。另一方面我很多东西都记不住，每次都去查命令，有点浪费时间。 linuxArch安装与配置记录： 换源，添加archlinuxcn源 pacman安装clash, git, nano, code, chromium等，FQ与并登录谷歌账号 设置中配置主题，主题可能缺少ICON，再去安装一份ICON即可 配置中文输入">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/03/06/6uVqJS.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/record/">
 
@@ -255,8 +258,8 @@
 <li>工作空间行为取消鼠标单击打开文件</li>
 <li>其他样式看着折腾就行了</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -Scc 清除安装包缓存</span><br><span class="line">sudo pacman -Rns $(pacman -Qtdq) 清除孤立软件包</span><br><span class="line">journalctl --vacuum-size=50M 限制日志的大小</span><br></pre></td></tr></table></figure>
-<h2 id="文件数量统计"><a href="#文件数量统计" class="headerlink" title="文件数量统计"></a>文件数量统计</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 统计当前目录下文件的个数（不包括目录）</span></span><br><span class="line">ls -l | grep <span class="string">"^-"</span> | wc -l</span><br><span class="line"><span class="comment"># 统计当前目录下文件的个数（包括子目录）</span></span><br><span class="line">ls -lR| grep <span class="string">"^-"</span> | wc -l</span><br><span class="line"><span class="comment"># 查看某目录下文件夹(目录)的个数（包括子目录）</span></span><br><span class="line">ls -lR | grep <span class="string">"^d"</span> | wc -l</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -Scc 清除安装包缓存</span><br><span class="line">sudo pacman -Rns $(pacman -Qtdq) 清除孤立软件包</span><br><span class="line">journalctl --vacuum-size=50M 限制日志的大小</span><br></pre></td></tr></table></figure>
+<h2 id="文件数量统计"><a href="#文件数量统计" class="headerlink" title="文件数量统计"></a>文件数量统计</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 统计当前目录下文件的个数（不包括目录）</span></span><br><span class="line"><span class="built_in">ls</span> -l | grep <span class="string">&quot;^-&quot;</span> | <span class="built_in">wc</span> -l</span><br><span class="line"><span class="comment"># 统计当前目录下文件的个数（包括子目录）</span></span><br><span class="line"><span class="built_in">ls</span> -lR| grep <span class="string">&quot;^-&quot;</span> | <span class="built_in">wc</span> -l</span><br><span class="line"><span class="comment"># 查看某目录下文件夹(目录)的个数（包括子目录）</span></span><br><span class="line"><span class="built_in">ls</span> -lR | grep <span class="string">&quot;^d&quot;</span> | <span class="built_in">wc</span> -l</span><br></pre></td></tr></table></figure>
 <ul>
 <li><code>ls -l</code>长列表输出该目录下文件信息(注意这里的文件是指目录、链接、设备文件等)，每一行对应一个文件或目录，<code>ls -lR</code>是列出所有文件，包括子目录。</li>
 <li><p><code>grep &quot;^-&quot;</code> 过滤ls的输出信息，只保留一般文件，只保留目录是grep “^d”。</p>
@@ -264,16 +267,13 @@
 <li><p><code>wc -l</code> 统计输出信息的行数，统计结果就是输出信息的行数，一行信息对应一个文件，所以就是文件的个数。</p>
 </li>
 </ul>
-<p><a href="http://noahsnail.com/2017/02/07/2017-02-07-Linux%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE/" target="_blank" rel="noopener">以上内容为转载</a></p>
+<p><a target="_blank" rel="noopener" href="http://noahsnail.com/2017/02/07/2017-02-07-Linux%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE/">以上内容为转载</a></p>
 <h2 id="wget-配置代理"><a href="#wget-配置代理" class="headerlink" title="wget 配置代理"></a>wget 配置代理</h2><p>同时需要注意，如果配置http_proxy，则http资源才能走代理 ，https资源需要配置https_proxy，必须一一对应。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export https_proxy=http://127.0.0.1:7890</span><br></pre></td></tr></table></figure>
-<h2 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h2><p><code>Arch</code>无法同步任何数据库，删除某数据包：<a href="https://bbs.archlinuxcn.org/viewtopic.php?id=3801" target="_blank" rel="noopener">https://bbs.archlinuxcn.org/viewtopic.php?id=3801</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export https_proxy=http://127.0.0.1:7890 </span><br></pre></td></tr></table></figure>
+<h2 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h2><p><code>Arch</code>无法同步任何数据库，删除某数据包：<a target="_blank" rel="noopener" href="https://bbs.archlinuxcn.org/viewtopic.php?id=3801">https://bbs.archlinuxcn.org/viewtopic.php?id=3801</a></p>
 <h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><ol>
-<li><p><code>linux pip</code>换源：<code>~/.pip/pip.conf</code> (没有就创建一个)， 内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url = http://mirrors.aliyun.com/pypi/simple/</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>Arch</code>安装<code>pip</code>：<code>pacman -S python-pip</code></p>
-</li>
+<li><code>linux pip</code>换源：<code>~/.pip/pip.conf</code> (没有就创建一个)， 内容如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url = http://mirrors.aliyun.com/pypi/simple/ </span><br></pre></td></tr></table></figure></li>
+<li><code>Arch</code>安装<code>pip</code>：<code>pacman -S python-pip</code></li>
 <li>挂起执行：<code>nohup /root/runoob.sh &gt; runoob.log 2&gt;&amp;1 &amp;</code>，将标准错误 2 重定向到标准输出 &amp;1 ，标准输出 &amp;1 再被重定向输入到 runoob.log 文件中。<ol>
 <li>0 – stdin (standard input，标准输入)</li>
 <li>1 – stdout (standard output，标准输出)</li>
@@ -288,7 +288,7 @@
 <li>之前windows上遇到了一个问题，文件在桌面上，删除的时候显示文件夹不在桌面无法删除。因此尝试进入 cmd 将文件夹删除，<code>cd</code>过去在<code>dir</code>，文件夹果然在桌面，此时删除命令是：<code>rmdir /s folder</code>，<code>/s</code>表示删除的文件夹非空。</li>
 </ol>
 <h2 id="Windows-Terminal"><a href="#Windows-Terminal" class="headerlink" title="Windows Terminal"></a>Windows Terminal</h2><ol>
-<li>因为在此系统上禁止运行脚本，此类错误解决：<a href="https://iworld2u.com/2020/02/28/hello-world/" target="_blank" rel="noopener">https://iworld2u.com/2020/02/28/hello-world/</a></li>
+<li>因为在此系统上禁止运行脚本，此类错误解决：<a target="_blank" rel="noopener" href="https://iworld2u.com/2020/02/28/hello-world/">https://iworld2u.com/2020/02/28/hello-world/</a></li>
 </ol>
 <h1 id="Git与Github"><a href="#Git与Github" class="headerlink" title="Git与Github"></a>Git与Github</h1><ol>
 <li><code>git</code>将<code>https</code>协议改成<code>ssh</code>：<br><code>git remote set-url origin git@github.com:username/reponame.git</code></li>
@@ -298,7 +298,7 @@
 <li><code>git rm --f readme1.txt</code>，删除readme1.txt的跟踪，并且删除本地文件</li>
 </ol>
 </li>
-<li><p>代理设置，<a href="https://www.jianshu.com/p/739f139cf13c" target="_blank" rel="noopener">https协议的设置</a>，<a href="https://nswebfrog.com/posts/2021/01/31-github-ssh-proxy/" target="_blank" rel="noopener">ssh协议的设置</a></p>
+<li><p>代理设置，<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/739f139cf13c">https协议的设置</a>，<a target="_blank" rel="noopener" href="https://nswebfrog.com/posts/2021/01/31-github-ssh-proxy/">ssh协议的设置</a></p>
 </li>
 </ol>
 <h1 id="工程优化"><a href="#工程优化" class="headerlink" title="工程优化"></a>工程优化</h1><p>据说是西电开的很好的一门数学课：『工程优化』。建议和王宇平老师的『大数据优化建模与优化算法』一起选。如果准备搞优化的话，基本数学模型、填充函数法、进化算法与多目标优化算法、代理模型和集成学习一路走下来就行了。</p>
@@ -307,7 +307,7 @@
 <h1 id="浏览器"><a href="#浏览器" class="headerlink" title="浏览器"></a>浏览器</h1><ol>
 <li>解决默认标签页被劫持。我个人坚决不用百度，所以在浏览器设置中『默认浏览器，打开新标签页』选项是空白。可今天不知道为啥打开新的标签页一直是百度。我以为是浏览器哪里设置错了，可无论改哪里都还是百度。后来发现了问题所在，原来是浏览器被『流氓软件』劫持了。我以为系统自带的软件关键不太流氓，我大意了，没有闪。直接卸载，再见。<img data-src="https://s3.ax1x.com/2021/03/06/6uV5qI.jpg" alt></li>
 </ol>
-<h1 id="电动牙刷维修"><a href="#电动牙刷维修" class="headerlink" title="电动牙刷维修"></a>电动牙刷维修</h1><p>如果电动牙刷震动弱了，手指按住刷头发现刷头不震动，<a href="https://www.bilibili.com/video/BV1M54y1Y7Hr/?spm_id_from=333.788.recommend_more_video.-1" target="_blank" rel="noopener">参考这里</a>，如果拆不动，大力出奇迹。</p>
+<h1 id="电动牙刷维修"><a href="#电动牙刷维修" class="headerlink" title="电动牙刷维修"></a>电动牙刷维修</h1><p>如果电动牙刷震动弱了，手指按住刷头发现刷头不震动，<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1M54y1Y7Hr/?spm_id_from=333.788.recommend_more_video.-1">参考这里</a>，如果拆不动，大力出奇迹。</p>
 
       </div>
       
@@ -370,7 +370,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#linux"><span class="nav-number">1.</span> <span class="nav-text">linux</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Arch安装与配置记录："><span class="nav-number">1.1.</span> <span class="nav-text">Arch安装与配置记录：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件数量统计"><span class="nav-number">1.2.</span> <span class="nav-text">文件数量统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget-配置代理"><span class="nav-number">1.3.</span> <span class="nav-text">wget 配置代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更新"><span class="nav-number">1.4.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开发"><span class="nav-number">1.5.</span> <span class="nav-text">开发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#matplotlib"><span class="nav-number">2.</span> <span class="nav-text">matplotlib</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows命令行"><span class="nav-number">2.1.</span> <span class="nav-text">Windows命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cmd"><span class="nav-number">2.2.</span> <span class="nav-text">cmd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-Terminal"><span class="nav-number">2.3.</span> <span class="nav-text">Windows Terminal</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git与Github"><span class="nav-number">3.</span> <span class="nav-text">Git与Github</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工程优化"><span class="nav-number">4.</span> <span class="nav-text">工程优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方程求解"><span class="nav-number">5.</span> <span class="nav-text">方程求解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#浏览器"><span class="nav-number">6.</span> <span class="nav-text">浏览器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#电动牙刷维修"><span class="nav-number">7.</span> <span class="nav-text">电动牙刷维修</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#linux"><span class="nav-number">1.</span> <span class="nav-text">linux</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Arch%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE%E8%AE%B0%E5%BD%95%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">Arch安装与配置记录：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%95%B0%E9%87%8F%E7%BB%9F%E8%AE%A1"><span class="nav-number">1.2.</span> <span class="nav-text">文件数量统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget-%E9%85%8D%E7%BD%AE%E4%BB%A3%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">wget 配置代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0"><span class="nav-number">1.4.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91"><span class="nav-number">1.5.</span> <span class="nav-text">开发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#matplotlib"><span class="nav-number">2.</span> <span class="nav-text">matplotlib</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="nav-number">2.1.</span> <span class="nav-text">Windows命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cmd"><span class="nav-number">2.2.</span> <span class="nav-text">cmd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-Terminal"><span class="nav-number">2.3.</span> <span class="nav-text">Windows Terminal</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E4%B8%8EGithub"><span class="nav-number">3.</span> <span class="nav-text">Git与Github</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E4%BC%98%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">工程优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E7%A8%8B%E6%B1%82%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">方程求解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">6.</span> <span class="nav-text">浏览器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%B5%E5%8A%A8%E7%89%99%E5%88%B7%E7%BB%B4%E4%BF%AE"><span class="nav-number">7.</span> <span class="nav-text">电动牙刷维修</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -406,7 +406,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -440,14 +440,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -506,9 +506,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -621,7 +629,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

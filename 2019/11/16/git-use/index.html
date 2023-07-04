@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,26 @@
   </script>
 
   <meta name="description" content="突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会git clone。 今日更新的原因是：居然发现专业的好多人不会使用Git和Github，尽管他们大一就开始写代码，写的很好，但不会使用Git就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的Git和Github方法到此。 要声明的是：本文的目标并非对Git和Github一无所知">
-<meta name="keywords" content="Computer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Git与Github的使用">
 <meta property="og:url" content="https://muyuuuu.github.io/2019/11/16/git-use/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会git clone。 今日更新的原因是：居然发现专业的好多人不会使用Git和Github，尽管他们大一就开始写代码，写的很好，但不会使用Git就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的Git和Github方法到此。 要声明的是：本文的目标并非对Git和Github一无所知">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-01T00:23:04.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/2.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/3.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/4.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/8.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/5.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/6.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2019/11/16/git-use/7.png">
+<meta property="article:published_time" content="2019-11-16T05:54:49.000Z">
+<meta property="article:modified_time" content="2020-05-01T00:23:04.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Computer">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Git与Github的使用">
-<meta name="twitter:description" content="突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会git clone。 今日更新的原因是：居然发现专业的好多人不会使用Git和Github，尽管他们大一就开始写代码，写的很好，但不会使用Git就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的Git和Github方法到此。 要声明的是：本文的目标并非对Git和Github一无所知">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2019/11/16/git-use/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2019/11/16/git-use/">
 
@@ -295,13 +304,13 @@
         <p>突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会<code>git clone</code>。</p>
 <p>今日更新的原因是：居然发现专业的好多人不会使用<code>Git</code>和<code>Github</code>，尽管他们大一就开始写代码，写的很好，但不会使用<code>Git</code>就很离谱，我还在怀疑他们的项目是如何交流and编写的，遂整理常用的<code>Git</code>和<code>Github</code>方法到此。</p>
 <p>要声明的是：本文的目标并非对<code>Git</code>和<code>Github</code>一无所知的小白，纯小白看了本文更加会一头雾水。而是有一定的<code>Git</code>和<code>Github</code>使用经验。适用于：说是小白吧，但有点意思，说是精通吧，但又差点意思。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>前提是自己已经安装了<code>Git</code>并测试可以使用，安装方法略。</p>
 <h1 id="日前"><a href="#日前" class="headerlink" title="日前"></a>日前</h1><h2 id="第一次创建"><a href="#第一次创建" class="headerlink" title="第一次创建"></a>第一次创建</h2><p>首先需要在<code>Github</code>上完成的工作，新建一个仓库，不建议勾选初始化<code>README.md</code>文件和创建<code>LICENSE</code>等选项，因为这会和本地的仓库造成冲突。假设我新建的仓库名称为：A Beautiful PyQt5 Interface.</p>
 <p>首先: 创建某个文件夹，里面放上想要提交上去的文件. <code>git init</code> 完成初始化.<br>其次: <code>git add .</code> 添加所有文件，这个时候可以随意的插入readme文件<br>然后: <code>git commit -m &quot;code by LanLing&quot;</code> 添加代码的描述信息<br>之后: <code>git remote add origin https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface.git</code> 不要忘记 <code>.git</code><br>最后: <code>git push -u origin master</code> 完成提交</p>
 <h2 id="以后的更新"><a href="#以后的更新" class="headerlink" title="以后的更新"></a>以后的更新</h2><p>cd 到对应的文件夹</p>
 <p><code>git add .</code><br><code>git commit -m &#39;include some information&#39;</code> 增加修改信息，一定要修改，否则会失效<br><code>git push</code> 即可完成修改</p>
-<h2 id="最终结果"><a href="#最终结果" class="headerlink" title="最终结果"></a>最终结果</h2><p><a href="https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface" target="_blank" rel="noopener">https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface</a></p>
+<h2 id="最终结果"><a href="#最终结果" class="headerlink" title="最终结果"></a>最终结果</h2><p><a target="_blank" rel="noopener" href="https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface">https://github.com/muyuuuu/A-Beautiful-PyQt5-Interface</a></p>
 <h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>可能这只是暂时的用法，至少目前我还分不清branch还有master的概念，也没有和其他人一起开发大项目的经验，日后可能会作出改变，甚至是一些观念，多走几步看看。就像昨天我还不会用git，但是今天来看，上述的命令我已经记住和熟练使用了。谁知道呢。</p>
 <h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>今日，仔细研读了一番<code>Git</code>的使用方法(<del>人傻就要多学习</del>)，又有了新的收获，遂整理如下(指令的速查手册)。当然，多动手实践才是硬道理。<strong>纸上得来终觉浅，绝知此事要躬行。</strong></p>
 <p><code>Github</code>是<code>Git</code>托管的一种网页端的服务，<code>Git</code>是一种版本管理神器，即使不用<code>Github</code>，也可以考虑使用<code>Git</code>管理自己的代码和文件。管理的好处？太多了：</p>
@@ -387,8 +396,8 @@
 <h3 id="查看区别"><a href="#查看区别" class="headerlink" title="查看区别"></a>查看区别</h3><p>如果差别过大则不会列出所有区别，某种意义上<code>Github</code>是一款优秀的源代码查看器。</p>
 <ul>
 <li>查看两个分支的区别：将分支名加入对应的<code>URL</code>里即可，<code>/compare/4-stable...3-stable</code>；</li>
-<li>查看与几天前的区别：<code>/compare/master@{7.day.ago}...master</code>，<code>day, year, month, week</code>都可以；</li>
-<li>查看与指定日期的区别：<code>/compare/master@{2013-01-01}...master</code>。</li>
+<li>查看与几天前的区别：<code>/compare/master@&#123;7.day.ago&#125;...master</code>，<code>day, year, month, week</code>都可以；</li>
+<li>查看与指定日期的区别：<code>/compare/master@&#123;2013-01-01&#125;...master</code>。</li>
 </ul>
 <h2 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h2><p>跟踪<code>BUG</code>和讨论的专区。用于：</p>
 <ul>
@@ -402,7 +411,7 @@
 <li>添加里程碑(<code>milestones</code>)，距离下一个版本还有几个<code>Issue</code>待解决。</li>
 </ul>
 <p>而在有些专门的仓库中，在提交<code>Issue</code>时会有专门的模板，此时在仓库的根目录下添加<code>CONTRIBUTING.md</code>即可，用于规范问题的提问方法。也支持<code>Tarklist</code>等独有语法生成复选列表：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 任务进度</span><br><span class="line">- [ ] 完成前端</span><br><span class="line">- [x] 完成数据库</span><br><span class="line">- [ ] 发布</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 任务进度</span><br><span class="line">- [ ] 完成前端</span><br><span class="line">- [x] 完成数据库</span><br><span class="line">- [ ] 发布</span><br></pre></td></tr></table></figure>
 <ul>
 <li>且可以选中一句话，然后按击<code>r</code>即可完成引用。</li>
 <li>输入<code>:</code>号，还可以输入表情。</li>
@@ -456,10 +465,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/06/12/Computer-network/" rel="bookmark">计算机网络原理</a></div>
@@ -594,7 +603,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#日前"><span class="nav-number">1.</span> <span class="nav-text">日前</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一次创建"><span class="nav-number">1.1.</span> <span class="nav-text">第一次创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以后的更新"><span class="nav-number">1.2.</span> <span class="nav-text">以后的更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终结果"><span class="nav-number">1.3.</span> <span class="nav-text">最终结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束语"><span class="nav-number">1.4.</span> <span class="nav-text">结束语</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#更新"><span class="nav-number">2.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git-常用指令"><span class="nav-number">3.</span> <span class="nav-text">Git 常用指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本操作"><span class="nav-number">3.1.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分支操作"><span class="nav-number">3.2.</span> <span class="nav-text">分支操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更改提交"><span class="nav-number">3.3.</span> <span class="nav-text">更改提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#远程仓库使用"><span class="nav-number">3.4.</span> <span class="nav-text">远程仓库使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#推送"><span class="nav-number">3.4.1.</span> <span class="nav-text">推送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取"><span class="nav-number">3.4.2.</span> <span class="nav-text">获取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github-使用"><span class="nav-number">4.</span> <span class="nav-text">Github 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#仓库"><span class="nav-number">4.1.</span> <span class="nav-text">仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#上侧"><span class="nav-number">4.1.1.</span> <span class="nav-text">上侧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下侧"><span class="nav-number">4.1.2.</span> <span class="nav-text">下侧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件"><span class="nav-number">4.1.3.</span> <span class="nav-text">文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看区别"><span class="nav-number">4.1.4.</span> <span class="nav-text">查看区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Issue"><span class="nav-number">4.2.</span> <span class="nav-text">Issue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通过commit操作Issue"><span class="nav-number">4.2.1.</span> <span class="nav-text">通过commit操作Issue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pull-request"><span class="nav-number">4.3.</span> <span class="nav-text">pull request</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wiki"><span class="nav-number">4.4.</span> <span class="nav-text">wiki</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#insights"><span class="nav-number">4.5.</span> <span class="nav-text">insights</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#settings"><span class="nav-number">4.6.</span> <span class="nav-text">settings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Others"><span class="nav-number">4.7.</span> <span class="nav-text">Others</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A5%E5%89%8D"><span class="nav-number">1.</span> <span class="nav-text">日前</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.</span> <span class="nav-text">第一次创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E5%90%8E%E7%9A%84%E6%9B%B4%E6%96%B0"><span class="nav-number">1.2.</span> <span class="nav-text">以后的更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.</span> <span class="nav-text">最终结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="nav-number">1.4.</span> <span class="nav-text">结束语</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0"><span class="nav-number">2.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">Git 常用指令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">分支操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E6%8F%90%E4%BA%A4"><span class="nav-number">3.3.</span> <span class="nav-text">更改提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E4%BD%BF%E7%94%A8"><span class="nav-number">3.4.</span> <span class="nav-text">远程仓库使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E9%80%81"><span class="nav-number">3.4.1.</span> <span class="nav-text">推送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96"><span class="nav-number">3.4.2.</span> <span class="nav-text">获取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github-%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">Github 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%93%E5%BA%93"><span class="nav-number">4.1.</span> <span class="nav-text">仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BE%A7"><span class="nav-number">4.1.1.</span> <span class="nav-text">上侧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E4%BE%A7"><span class="nav-number">4.1.2.</span> <span class="nav-text">下侧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.3.</span> <span class="nav-text">文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.4.</span> <span class="nav-text">查看区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Issue"><span class="nav-number">4.2.</span> <span class="nav-text">Issue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87commit%E6%93%8D%E4%BD%9CIssue"><span class="nav-number">4.2.1.</span> <span class="nav-text">通过commit操作Issue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pull-request"><span class="nav-number">4.3.</span> <span class="nav-text">pull request</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wiki"><span class="nav-number">4.4.</span> <span class="nav-text">wiki</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#insights"><span class="nav-number">4.5.</span> <span class="nav-text">insights</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#settings"><span class="nav-number">4.6.</span> <span class="nav-text">settings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Others"><span class="nav-number">4.7.</span> <span class="nav-text">Others</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -630,7 +639,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -664,14 +673,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -730,9 +739,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -845,7 +862,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

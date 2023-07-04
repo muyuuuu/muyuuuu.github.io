@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。 而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="遥感图像分割，类别不平衡损失为何失效了？">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/04/04/deal-unbalance-label/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。 而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-11T14:10:00.372Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2022/04/05/qOwNPH.png">
+<meta property="article:published_time" content="2022-04-04T11:54:49.000Z">
+<meta property="article:modified_time" content="2022-05-11T14:10:00.372Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="遥感图像分割，类别不平衡损失为何失效了？">
-<meta name="twitter:description" content="去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。 而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解">
+<meta name="twitter:image" content="https://s1.ax1x.com/2022/04/05/qOwNPH.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/04/04/deal-unbalance-label/">
 
@@ -273,7 +275,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -294,7 +296,7 @@
       
         <p>去年寒假接到了一个遥感图像语义分割的任务，存在着严重的类别不平衡问题。当时想着使用经典的类别不平衡损失 focal loss 和 dice loss 解决一下，但是效果不升反降，甚至不如传统的交叉熵损失函数。</p>
 <p>而且我在 github 上搜类似的项目，也都不推荐使用这些 loss。但是在 mmseg 的文档中，我们又发现 dice loss 有明显的提升，来冷静分析一下这是为什么。本文默认读者了解 focal loss 和 dice loss，因此不会对损失函数进行讲解。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>其实我也不是第一次遇到这种经典损失函数失效的现象，之前 triplet loss 也频频失效，一度上了我的黑名单。关于 trilet loss 何时失效以及为什么 and 如何解决，可以参考之前的文章，<a href="https://muyuuuu.github.io/2022/03/24/E-commerce-Search-Recall/">如何更好的提取文本表示</a>。但是我们需要知道的是，失效分两种情况，一种是实现错误，一种是不适用于当前场景。</p>
 <h1 id="focal-loss"><a href="#focal-loss" class="headerlink" title="focal loss"></a>focal loss</h1><p>focal loss 是目标检测领域中很经典的存在，focal loss 和 retinanet 发在同一篇论文，我看源程序，<strong>发现在实现上有一些小细节是网上常见博客不曾提及的</strong>。我们知道基于 anchor 生成检测框时，会有大量的无效检测框，这些框和真实目标毫不相交，这就导致了样本不平衡的问题。而 focal loss 的解决方案也是简单粗暴，使用 $\alpha$ 控制正负样本不平衡问题，使用 $\gamma$ 控制难易样本的区分。</p>
 <p>在实现中，作者将与真实目标框 IoU 大于 0.5 的视为正样本，IoU 小于 0.4 的视为负样本，还有介于两者之间模棱两可的模糊样本。将所有的预测结果和真实标签计算损失，我们希望正样本的分类结果接近 1，其余样本接近 0，因此有严重的类别不平衡问题，于是使用了 focal loss 进行缓解。但是在反向传播的时候，<strong>并不是所有预测结果都要反向传播</strong>，而是对损失进行筛选，只回传正样本部分的损失，其余损失不考虑。</p>
@@ -302,9 +304,9 @@
 <p>那么为什么语义分割的时候失效了呢？看完程序我大概给出我的猜测（目前实在没有精力做消融实验），我看了一些语义分割经典仓库中 focal loss 的实现，发现了一个问题。假设分割时的图像大小是 $512\times 512$，那么这就有将近 27 万个预测结果，遗憾的是，这些全部参与了反向传播。尤其是遥感领域的图像分割，目标区域小，背景占据大部分面积，前景目标的面积占比很小时，这就导致了模型坍塌的问题：模型把所有像素点预测为背景，损失不低，但结果无效。</p>
 <p>因此，一个简单的解决方案就是：像 retinanet 一样，并不是所有的预测结果都参与反向传播。只需按照真实标签，只选择前景区域所在位置的损失，而忽略掉大部分背景区域的损失。而我遇到的原因也是这样，smp 的实现是全部反向传播，<del>提交个 PR 吧</del>。而 mmseg 的实现则是取消其他类别的影响。</p>
 <h2 id="focal-程序实现"><a href="#focal-程序实现" class="headerlink" title="focal 程序实现"></a>focal 程序实现</h2><ul>
-<li><a href="https://github.com/yhenon/pytorch-retinanet/blob/master/retinanet/losses.py#L120-L123" target="_blank" rel="noopener">retinanet 实现</a></li>
-<li><a href="https://github.com/qubvel/segmentation_models.pytorch/blob/master/segmentation_models_pytorch/losses/_functional.py#L70-L96" target="_blank" rel="noopener">smp 实现，没有处理</a></li>
-<li><a href="https://github.com/open-mmlab/mmcv/blob/master/mmcv/ops/csrc/common/cuda/sigmoid_focal_loss_cuda_kernel.cuh#L32-L33" target="_blank" rel="noopener">mmseg 实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/yhenon/pytorch-retinanet/blob/master/retinanet/losses.py#L120-L123">retinanet 实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/qubvel/segmentation_models.pytorch/blob/master/segmentation_models_pytorch/losses/_functional.py#L70-L96">smp 实现，没有处理</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/open-mmlab/mmcv/blob/master/mmcv/ops/csrc/common/cuda/sigmoid_focal_loss_cuda_kernel.cuh#L32-L33">mmseg 实现</a></li>
 </ul>
 <h1 id="dice-loss"><a href="#dice-loss" class="headerlink" title="dice loss"></a>dice loss</h1><p>dice loss 很神奇，可以说是为语义分割而诞生的。因为交叉熵定义的是分类损失，评估衡量结果时却用 mIoU，也就是优化目标和期望目标不一致，所以 dice loss 以类似 IoU 损失的想法优化目标。dice loss 的一个形式如下：</p>
 <p>\begin{equation}<br>L=1-\frac{2I+\epsilon}{U+\epsilon}<br>\end{equation}</p>
@@ -320,7 +322,7 @@
 <p>这也就解释了为什么 dice 训练损失不稳定的原因，当 $t=0$ 的时候，虽然损失很大，但更新网络时对应的梯度为 0。损失值不稳定还可以理解，但是如果 $\hat{y}$ 预测结果也很小时，梯度会飞升。那为什么推荐和 CE 一起使用呢？看上图就可以知道，$t=0$ 的部分没有梯度。那为什么还是结果十分不好呢？继续往下看。</p>
 <h2 id="dice-loss-与不平衡问题"><a href="#dice-loss-与不平衡问题" class="headerlink" title="dice loss 与不平衡问题"></a>dice loss 与不平衡问题</h2><p>我们可以观察到 dice loss 不管图片有多大，固定大小的正样本的区域计算的 loss 是一样的，对网络起到的监督贡献不会随着图片的大小而变化。而 ce loss 会公平处理正负样本，当出现正样本占比较小时，就会被更多的负样本淹没。</p>
 <p>而 mmseg 给出这两个损失的比例是 1（CE）：3（dice），我也天真的用了这个比例。通过上面的分析，为了平衡样本，这个比例应该是目标面积和背景面积的比值。但是，我的数据集有多个类，每个类的面积占比跨度很大，也就是正负样本的梯度难以平衡，我十分不建议使用这个 loss，真的。</p>
-<h2 id="dice-loss-画图程序"><a href="#dice-loss-画图程序" class="headerlink" title="dice loss 画图程序"></a>dice loss 画图程序</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line">eps = <span class="number">1e-8</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_y</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-x))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partial</span><span class="params">(y, t=<span class="number">0</span>)</span>:</span></span><br><span class="line">    f1 = <span class="number">-2</span>*t*(t+y+eps) +<span class="number">2</span>*t*y+eps</span><br><span class="line">    f2 = (t+y+eps) **<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> f1 / f2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.style.use(<span class="string">"ggplot"</span>)</span><br><span class="line">fig, (ax1, ax2) = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, figsize=(<span class="number">12</span>, <span class="number">5</span>))</span><br><span class="line"></span><br><span class="line">x = np.linspace(<span class="number">-20</span>, <span class="number">20</span>, <span class="number">1000</span>)</span><br><span class="line">y = get_y(x)</span><br><span class="line">y0 = partial_0(y, t=<span class="number">0</span>)</span><br><span class="line">y1 = partial_1(y, t=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">ax1.plot(y, y0)</span><br><span class="line">ax1.set_title(<span class="string">r"$t=0$"</span>)</span><br><span class="line">ax1.set_xlabel(<span class="string">r"$\hat&#123;y&#125;$"</span>)</span><br><span class="line">ax1.set_ylabel(<span class="string">r"Gradient"</span>)</span><br><span class="line"></span><br><span class="line">ax2.plot(y, y1)</span><br><span class="line">ax2.set_title(<span class="string">r"$t=1$"</span>)</span><br><span class="line">ax2.set_xlabel(<span class="string">r"$\hat&#123;y&#125;$"</span>)</span><br><span class="line">ax2.set_ylabel(<span class="string">r"Gradient"</span>)</span><br><span class="line"></span><br><span class="line">plt.savefig(<span class="string">"1.png"</span>, bbox_inches=<span class="string">"tight"</span>, dpi=<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="dice-loss-画图程序"><a href="#dice-loss-画图程序" class="headerlink" title="dice loss 画图程序"></a>dice loss 画图程序</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line">eps = <span class="number">1e-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_y</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-x))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">partial</span>(<span class="params">y, t=<span class="number">0</span></span>):</span><br><span class="line">    f1 = -<span class="number">2</span>*t*(t+y+eps) +<span class="number">2</span>*t*y+eps</span><br><span class="line">    f2 = (t+y+eps) **<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> f1 / f2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.style.use(<span class="string">&quot;ggplot&quot;</span>)</span><br><span class="line">fig, (ax1, ax2) = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, figsize=(<span class="number">12</span>, <span class="number">5</span>))</span><br><span class="line"></span><br><span class="line">x = np.linspace(-<span class="number">20</span>, <span class="number">20</span>, <span class="number">1000</span>)</span><br><span class="line">y = get_y(x)</span><br><span class="line">y0 = partial_0(y, t=<span class="number">0</span>)</span><br><span class="line">y1 = partial_1(y, t=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">ax1.plot(y, y0)</span><br><span class="line">ax1.set_title(<span class="string">r&quot;$t=0$&quot;</span>)</span><br><span class="line">ax1.set_xlabel(<span class="string">r&quot;$\hat&#123;y&#125;$&quot;</span>)</span><br><span class="line">ax1.set_ylabel(<span class="string">r&quot;Gradient&quot;</span>)</span><br><span class="line"></span><br><span class="line">ax2.plot(y, y1)</span><br><span class="line">ax2.set_title(<span class="string">r&quot;$t=1$&quot;</span>)</span><br><span class="line">ax2.set_xlabel(<span class="string">r&quot;$\hat&#123;y&#125;$&quot;</span>)</span><br><span class="line">ax2.set_ylabel(<span class="string">r&quot;Gradient&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.savefig(<span class="string">&quot;1.png&quot;</span>, bbox_inches=<span class="string">&quot;tight&quot;</span>, dpi=<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>我使用 mmseg 的 focal loss，结果要比 smp 的 focal loss 好很多，验证了我的猜想。此外需要注意的是，focal loss 能处理类别不平衡和正负样本不平衡，而 dice loss 只能处理正负样本不平衡。</p>
 
     </div>
@@ -335,16 +337,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -470,7 +472,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#focal-loss"><span class="nav-number">1.</span> <span class="nav-text">focal loss</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#focal-程序实现"><span class="nav-number">1.1.</span> <span class="nav-text">focal 程序实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dice-loss"><span class="nav-number">2.</span> <span class="nav-text">dice loss</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dice-loss-与不平衡问题"><span class="nav-number">2.1.</span> <span class="nav-text">dice loss 与不平衡问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dice-loss-画图程序"><span class="nav-number">2.2.</span> <span class="nav-text">dice loss 画图程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#focal-loss"><span class="nav-number">1.</span> <span class="nav-text">focal loss</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#focal-%E7%A8%8B%E5%BA%8F%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">focal 程序实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dice-loss"><span class="nav-number">2.</span> <span class="nav-text">dice loss</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dice-loss-%E4%B8%8E%E4%B8%8D%E5%B9%B3%E8%A1%A1%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">dice loss 与不平衡问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dice-loss-%E7%94%BB%E5%9B%BE%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.2.</span> <span class="nav-text">dice loss 画图程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -506,7 +508,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -540,14 +542,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -606,9 +608,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -721,7 +731,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

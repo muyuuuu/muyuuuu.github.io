@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="反正跑数据也要等待，不如来写几篇博客，这也是我第一次参加这样类型的比赛，做一下相关经验的总结。在天池的2021广东工业智造创新大赛，智能算法赛：瓷砖表面瑕疵质检中，提供了基础的 json 数据和文件，这里介绍三种预处理方式：  普通数据制作 COCO 数据集 普通数据制作 mask 数据 因图片尺寸过大显存溢出，所以需要切割图片使得切割图片包含目标区域 自适应切割 类别平衡处理">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="目标检测篇：数据预处理">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/01/21/object-detection-data-preprocess/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="反正跑数据也要等待，不如来写几篇博客，这也是我第一次参加这样类型的比赛，做一下相关经验的总结。在天池的2021广东工业智造创新大赛，智能算法赛：瓷砖表面瑕疵质检中，提供了基础的 json 数据和文件，这里介绍三种预处理方式：  普通数据制作 COCO 数据集 普通数据制作 mask 数据 因图片尺寸过大显存溢出，所以需要切割图片使得切割图片包含目标区域 自适应切割 类别平衡处理">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-01-27T13:59:00.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static01.imgkr.com/temp/23b21b60987c46b199f89c3e66581084.png">
+<meta property="article:published_time" content="2021-01-21T07:27:21.000Z">
+<meta property="article:modified_time" content="2021-01-27T13:59:00.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="目标检测篇：数据预处理">
-<meta name="twitter:description" content="反正跑数据也要等待，不如来写几篇博客，这也是我第一次参加这样类型的比赛，做一下相关经验的总结。在天池的2021广东工业智造创新大赛，智能算法赛：瓷砖表面瑕疵质检中，提供了基础的 json 数据和文件，这里介绍三种预处理方式：  普通数据制作 COCO 数据集 普通数据制作 mask 数据 因图片尺寸过大显存溢出，所以需要切割图片使得切割图片包含目标区域 自适应切割 类别平衡处理">
+<meta name="twitter:image" content="https://static01.imgkr.com/temp/23b21b60987c46b199f89c3e66581084.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/01/21/object-detection-data-preprocess/">
 
@@ -273,14 +275,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.8k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -292,7 +294,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>反正跑数据也要等待，不如来写几篇博客，这也是我第一次参加这样类型的比赛，做一下相关经验的总结。在天池的<a href="https://tianchi.aliyun.com/competition/entrance/531846/introduction?spm=5176.12281949.1003.10.493e2448TpgWkW" target="_blank" rel="noopener">2021广东工业智造创新大赛，智能算法赛：瓷砖表面瑕疵质检</a>中，提供了基础的 <code>json</code> 数据和文件，这里介绍三种预处理方式：</p>
+        <p>反正跑数据也要等待，不如来写几篇博客，这也是我第一次参加这样类型的比赛，做一下相关经验的总结。在天池的<a target="_blank" rel="noopener" href="https://tianchi.aliyun.com/competition/entrance/531846/introduction?spm=5176.12281949.1003.10.493e2448TpgWkW">2021广东工业智造创新大赛，智能算法赛：瓷砖表面瑕疵质检</a>中，提供了基础的 <code>json</code> 数据和文件，这里介绍三种预处理方式：</p>
 <ol>
 <li>普通数据制作 <code>COCO</code> 数据集</li>
 <li>普通数据制作 <code>mask</code> 数据</li>
@@ -300,10 +302,10 @@
 <li>自适应切割</li>
 <li>类别平衡处理</li>
 </ol>
-<a id="more"></a>
+<span id="more"></span>
 <p>题目中，提供的 <code>json</code> 格式文件如下，即使在文件名相同的情况下，也是一个目标对应一条 <code>json</code> 数据。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"235_2_t20201127123021723_CAM2.jpg"</span>,</span><br><span class="line">    <span class="attr">"image_height"</span>: <span class="number">6000</span>,</span><br><span class="line">    <span class="attr">"image_width"</span>: <span class="number">8192</span>,</span><br><span class="line">    <span class="attr">"category"</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="attr">"bbox"</span>: [</span><br><span class="line">        <span class="number">1655.06</span>,</span><br><span class="line">        <span class="number">1094.04</span>,</span><br><span class="line">        <span class="number">1663.06</span>,</span><br><span class="line">        <span class="number">1102.04</span></span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"235_2_t20201127123021723_CAM2.jpg"</span>,</span><br><span class="line">    <span class="attr">"image_height"</span>: <span class="number">6000</span>,</span><br><span class="line">    <span class="attr">"image_width"</span>: <span class="number">8192</span>,</span><br><span class="line">    <span class="attr">"category"</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="attr">"bbox"</span>: [</span><br><span class="line">        <span class="number">1909.06</span>,</span><br><span class="line">        <span class="number">1379.04</span>,</span><br><span class="line">        <span class="number">1920.06</span>,</span><br><span class="line">        <span class="number">1388.04</span></span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<h1 id="制作-COCO-数据集"><a href="#制作-COCO-数据集" class="headerlink" title="制作 COCO 数据集"></a>制作 COCO 数据集</h1><p><code>COCO</code> 数据集格式可以<a href="https://blog.yuxinzhao.top/coco-dataset-format/" target="_blank" rel="noopener">参考这里</a>。在真实训练的过程中，<code>info, version, licenses</code>等信息没啥卵用，可以直接设为 <code>None</code>。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;235_2_t20201127123021723_CAM2.jpg&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;image_height&quot;</span><span class="punctuation">:</span> <span class="number">6000</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;image_width&quot;</span><span class="punctuation">:</span> <span class="number">8192</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;bbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="number">1655.06</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">1094.04</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">1663.06</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">1102.04</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;235_2_t20201127123021723_CAM2.jpg&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;image_height&quot;</span><span class="punctuation">:</span> <span class="number">6000</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;image_width&quot;</span><span class="punctuation">:</span> <span class="number">8192</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;bbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="number">1909.06</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">1379.04</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">1920.06</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">1388.04</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+<h1 id="制作-COCO-数据集"><a href="#制作-COCO-数据集" class="headerlink" title="制作 COCO 数据集"></a>制作 COCO 数据集</h1><p><code>COCO</code> 数据集格式可以<a target="_blank" rel="noopener" href="https://blog.yuxinzhao.top/coco-dataset-format/">参考这里</a>。在真实训练的过程中，<code>info, version, licenses</code>等信息没啥卵用，可以直接设为 <code>None</code>。</p>
 <p>对于 <code>images</code> 字段，由『图片名、图片ID、图片宽高』组成，图片宽高和图片名可以直接获取。所以需要为每一个图片设置 <code>ID</code>，图片名相同，则 <code>ID</code> 名相同且唯一，这个用 python 的字典不难实现。</p>
 <p>对于 <code>annotations</code> 字段，由『segmentation, area, iscrowd, image_id, bbox, category_id, id』组成。其中，这里的 <code>id</code> 是盒子的 <code>id</code>，全局唯一，遍历数据集的时候设置自增变量便可实现。</p>
 <ul>
@@ -314,13 +316,13 @@
 <li><code>bbox</code> 表示盒子区域；</li>
 <li><code>category_id</code> 表示这个目标区域的类别；</li>
 </ul>
-<p>获取起来也不是很难的样子，一次 for 循环就可以搞定。<a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/coco.py" target="_blank" rel="noopener">代码</a>。</p>
+<p>获取起来也不是很难的样子，一次 for 循环就可以搞定。<a target="_blank" rel="noopener" href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/coco.py">代码</a>。</p>
 <h1 id="制作-mask-数据集"><a href="#制作-mask-数据集" class="headerlink" title="制作 mask 数据集"></a>制作 mask 数据集</h1><p><code>mask</code> 数据格式可以参考我的<a href="https://muyuuuu.github.io/2021/01/19/Mask-PIL-jpg-and-png/">上篇文章</a>。这里，因为一张图片里面有好几个目标。所以，先用字典按照 <code>name</code> 排序，再用 <code>groupby</code> 进行分组，使得一张图片下面能包括所有的目标区域。新json文件的格式：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"197_100_t20201119093903298_CAM1.jpg"</span>,</span><br><span class="line">    <span class="attr">"image_height"</span>: <span class="number">6000</span>,</span><br><span class="line">    <span class="attr">"image_width"</span>: <span class="number">8192</span>,</span><br><span class="line">    <span class="attr">"category"</span>: [</span><br><span class="line">        <span class="number">3</span>,</span><br><span class="line">        <span class="number">3</span>,</span><br><span class="line">        <span class="number">3</span>,</span><br><span class="line">        <span class="number">5</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"bbox"</span>: [</span><br><span class="line">        [</span><br><span class="line">            <span class="number">3485.51</span>,</span><br><span class="line">            <span class="number">5037.54</span>,</span><br><span class="line">            <span class="number">3492.51</span>,</span><br><span class="line">            <span class="number">5046.54</span></span><br><span class="line">        ],</span><br><span class="line">        [</span><br><span class="line">            <span class="number">4225.65</span>,</span><br><span class="line">            <span class="number">1587.67</span>,</span><br><span class="line">            <span class="number">4233.65</span>,</span><br><span class="line">            <span class="number">1597.67</span></span><br><span class="line">        ],</span><br><span class="line">        [</span><br><span class="line">            <span class="number">4362.51</span>,</span><br><span class="line">            <span class="number">4815.54</span>,</span><br><span class="line">            <span class="number">4370.51</span>,</span><br><span class="line">            <span class="number">4823.54</span></span><br><span class="line">        ],</span><br><span class="line">        [</span><br><span class="line">            <span class="number">1931.72</span>,</span><br><span class="line">            <span class="number">3621.12</span>,</span><br><span class="line">            <span class="number">1960.72</span>,</span><br><span class="line">            <span class="number">3725.12</span></span><br><span class="line">        ]</span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>遍历得到的新字典(<strong>注意：groupby 后得到的字典只能迭代一次</strong>)。这里为了节省内存，不打开原始图片文件，按照 <code>json</code> 文件提供生成背景为黑色、尺寸为原图像尺寸的图片，在对图片的每个目标区域生成掩码颜色，把掩码颜色贴到背景图片在保存即可。<a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/mask.py" target="_blank" rel="noopener">代码</a>。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;197_100_t20201119093903298_CAM1.jpg&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;image_height&quot;</span><span class="punctuation">:</span> <span class="number">6000</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;image_width&quot;</span><span class="punctuation">:</span> <span class="number">8192</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">        <span class="number">5</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;bbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">[</span></span><br><span class="line">            <span class="number">3485.51</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">5037.54</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">3492.51</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">5046.54</span></span><br><span class="line">        <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">[</span></span><br><span class="line">            <span class="number">4225.65</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">1587.67</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">4233.65</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">1597.67</span></span><br><span class="line">        <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">[</span></span><br><span class="line">            <span class="number">4362.51</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">4815.54</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">4370.51</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">4823.54</span></span><br><span class="line">        <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">[</span></span><br><span class="line">            <span class="number">1931.72</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">3621.12</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">1960.72</span><span class="punctuation">,</span></span><br><span class="line">            <span class="number">3725.12</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+<p>遍历得到的新字典(<strong>注意：groupby 后得到的字典只能迭代一次</strong>)。这里为了节省内存，不打开原始图片文件，按照 <code>json</code> 文件提供生成背景为黑色、尺寸为原图像尺寸的图片，在对图片的每个目标区域生成掩码颜色，把掩码颜色贴到背景图片在保存即可。<a target="_blank" rel="noopener" href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/mask.py">代码</a>。</p>
 <h2 id="mask-颜色注意事项"><a href="#mask-颜色注意事项" class="headerlink" title="mask 颜色注意事项"></a>mask 颜色注意事项</h2><p>这里需要注意的是，如果要用颜色来区分类别（<del>取决于训练数据的代码如何写</del>），一定不能写成这样。因为读取图片后，想要根据目标的数量来设置训练使用的 label，此时用<code>np.unique()</code>统计类别数量时，所有类别的数值都一样，便无法获取准确类别。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#FF0000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#00FF00'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#0000FF'</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以写成这样，总之保证颜色不一致就可以了。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">'1'</span>: <span class="string">'#110000'</span>,</span><br><span class="line">    <span class="string">'2'</span>: <span class="string">'#002200'</span>,</span><br><span class="line">    <span class="string">'3'</span>: <span class="string">'#000033'</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&#x27;1&#x27;</span>: <span class="string">&#x27;#FF0000&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;2&#x27;</span>: <span class="string">&#x27;#00FF00&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;3&#x27;</span>: <span class="string">&#x27;#0000FF&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以写成这样，总之保证颜色不一致就可以了。<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&#x27;1&#x27;</span>: <span class="string">&#x27;#110000&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;2&#x27;</span>: <span class="string">&#x27;#002200&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;3&#x27;</span>: <span class="string">&#x27;#000033&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h1 id="切割图片"><a href="#切割图片" class="headerlink" title="切割图片"></a>切割图片</h1><p>这个是最头疼的一步。假设我们要切割 <code>512 X 512</code> 的图片，使切割图片包含目标区域。<code>FasrerRCNN</code>等主流目标检测工具有负样本的机制，所以不用切割无关区域。初试的裁剪想法是，随机生成一个点的坐标，这个点是左上角的顶点，这个顶点的坐标加上 512 后能覆盖目标区域。点的坐标由两部分组成，分别是 <code>left</code> 和 <code>top</code>。在生成<code>left</code>和<code>top</code>时加入限制，保证裁剪区域会覆盖目标区域的像素点。但切割中仍然会有很多问题存在，溢出、损坏区域大于 512 等，如下图所示：</p>
 <p><img data-src="https://static01.imgkr.com/temp/23b21b60987c46b199f89c3e66581084.png" alt></p>
 <p>所以总结后的裁剪逻辑：</p>
@@ -334,9 +336,9 @@
 <li>如果竖向裁剪溢出下边界，那么缩小纵坐标</li>
 <li>判断裁剪区域和目标区域是否有交集，没有交集的情况下，移动坐标点</li>
 </ol>
-<p>裁剪完毕后，需要对裁剪区域进行检验，防止裁剪失败。这里就是用<code>np.unique(array)</code>来获取裁剪区域中的所有像素点，判断返回值的长度是否大于1来判断是否含有目标区域。因为背景元素肯定占一个元素，所以不能用大于0来判断。<a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/cut.py" target="_blank" rel="noopener">代码</a>。</p>
+<p>裁剪完毕后，需要对裁剪区域进行检验，防止裁剪失败。这里就是用<code>np.unique(array)</code>来获取裁剪区域中的所有像素点，判断返回值的长度是否大于1来判断是否含有目标区域。因为背景元素肯定占一个元素，所以不能用大于0来判断。<a target="_blank" rel="noopener" href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/cut.py">代码</a>。</p>
 <h1 id="自适应切割"><a href="#自适应切割" class="headerlink" title="自适应切割"></a>自适应切割</h1><p>图片的大小大约为 <code>6000X8000</code>，是不小存在了。在处理图片的时候我们发现，有的坏点（目标区域）很小，只有 <code>5X5</code> 的规模，而有的目标区域很大，有 <code>512X512</code>的规模。除了网络要就加入自适应机制外，我们在图像预处理部分也加入了相关处理。</p>
-<p>首先定位到原始的盒子<code>B1</code>，用随机数生成一个更大的<code>B2</code>框，<code>B2</code>框在允许的情况下是 <code>B1</code> 的 10 倍左右(这里用随机数实现)。最后裁剪<code>B2</code>框，裁剪后将裁剪的图片设置为统一大小，<strong>也就是所有的目标区域在512尺寸的图片中大小都会一致</strong>。防止了特别大和特别小的极端对立，也省去了在 <code>FasterRCNN</code> 中 <code>Ancthor</code> 数量和规模的设置，训练和推理更加迅速。在切割的时候，把原始盒子<code>B1</code>的位置重新定位下，保存到新的 <code>json</code>，预处理就做完了。<a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/cut.py" target="_blank" rel="noopener">代码</a>。</p>
+<p>首先定位到原始的盒子<code>B1</code>，用随机数生成一个更大的<code>B2</code>框，<code>B2</code>框在允许的情况下是 <code>B1</code> 的 10 倍左右(这里用随机数实现)。最后裁剪<code>B2</code>框，裁剪后将裁剪的图片设置为统一大小，<strong>也就是所有的目标区域在512尺寸的图片中大小都会一致</strong>。防止了特别大和特别小的极端对立，也省去了在 <code>FasterRCNN</code> 中 <code>Ancthor</code> 数量和规模的设置，训练和推理更加迅速。在切割的时候，把原始盒子<code>B1</code>的位置重新定位下，保存到新的 <code>json</code>，预处理就做完了。<a target="_blank" rel="noopener" href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/blob/main/code/cut.py">代码</a>。</p>
 <h1 id="类别平衡处理"><a href="#类别平衡处理" class="headerlink" title="类别平衡处理"></a>类别平衡处理</h1><p>在训练集中，我们发现5号类有8886个样本，6号类只有331个样本。可能是由于制作工艺的原因，6号类对应的损坏很难出现，但容易出现5号类对应的损坏。为了平衡样本，直接采取了一种简单粗暴的解决方案：</p>
 <ul>
 <li>每个类共需要 2000 张图片；</li>
@@ -344,7 +346,7 @@
 <li>对于样本数量低于 2000 的类来说，就做数据增强，翻转或每个盒子多裁剪几张都是可以的</li>
 </ul>
 <p>最后，每个类都有 2000 张图片，这样样本就均衡了许多。</p>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>完整项目代码：<br><a href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/tree/main/code" target="_blank" rel="noopener">https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/tree/main/code</a></p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p>完整项目代码：<br><a target="_blank" rel="noopener" href="https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/tree/main/code">https://github.com/XDU-Bigbing/Simple-Key-Point-Detection/tree/main/code</a></p>
 <h1 id="经验总结"><a href="#经验总结" class="headerlink" title="经验总结"></a>经验总结</h1><p>参加比赛的时候距离比赛开始过去半个月了，and实验室一直有破事，比赛打的断断续续，没有弃赛胜似弃赛，这次就当积累经验和踩坑了，准确率23%，排名460/4700。生命不息，踩坑无数，记录参赛经验<del>毕竟纯做论文得不到更加贴近实际的经验</del>：</p>
 <ol>
 <li>写完代码后要检查，不要怕麻烦，不要等到最后执行完采取看结果，或者执行小规模的代码，发现错误后可能两个小时已经浪费了，这一点上我的确吃了不少亏；</li>
@@ -353,10 +355,10 @@
 <li>模型大体上都一样，学懂理论后，先找个别人实现好的直接套用观察结果就好<del>实力硬可以自己重头写</del>；其他的印象不是很深刻了，只要python功底强大，还是能应付各种场景需求和读懂他人源代码的。</li>
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li>COCO 数据集格式：<a href="https://blog.yuxinzhao.top/coco-dataset-format/" target="_blank" rel="noopener">https://blog.yuxinzhao.top/coco-dataset-format/</a></li>
-<li>segmentation写法：<a href="http://www.xyu.ink/3612.html" target="_blank" rel="noopener">http://www.xyu.ink/3612.html</a></li>
-<li>iscrowd解释：<a href="https://github.com/cocodataset/cocoapi/issues/184" target="_blank" rel="noopener">https://github.com/cocodataset/cocoapi/issues/184</a></li>
-<li>PIL缩放图像注释事项：<a href="https://jdhao.github.io/2020/11/18/pillow_image_resize_pitfall/" target="_blank" rel="noopener">https://jdhao.github.io/2020/11/18/pillow_image_resize_pitfall/</a></li>
+<li>COCO 数据集格式：<a target="_blank" rel="noopener" href="https://blog.yuxinzhao.top/coco-dataset-format/">https://blog.yuxinzhao.top/coco-dataset-format/</a></li>
+<li>segmentation写法：<a target="_blank" rel="noopener" href="http://www.xyu.ink/3612.html">http://www.xyu.ink/3612.html</a></li>
+<li>iscrowd解释：<a target="_blank" rel="noopener" href="https://github.com/cocodataset/cocoapi/issues/184">https://github.com/cocodataset/cocoapi/issues/184</a></li>
+<li>PIL缩放图像注释事项：<a target="_blank" rel="noopener" href="https://jdhao.github.io/2020/11/18/pillow_image_resize_pitfall/">https://jdhao.github.io/2020/11/18/pillow_image_resize_pitfall/</a></li>
 </ol>
 
     </div>
@@ -371,16 +373,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -506,7 +508,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#制作-COCO-数据集"><span class="nav-number">1.</span> <span class="nav-text">制作 COCO 数据集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#制作-mask-数据集"><span class="nav-number">2.</span> <span class="nav-text">制作 mask 数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mask-颜色注意事项"><span class="nav-number">2.1.</span> <span class="nav-text">mask 颜色注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#切割图片"><span class="nav-number">3.</span> <span class="nav-text">切割图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自适应切割"><span class="nav-number">4.</span> <span class="nav-text">自适应切割</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类别平衡处理"><span class="nav-number">5.</span> <span class="nav-text">类别平衡处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">6.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#经验总结"><span class="nav-number">7.</span> <span class="nav-text">经验总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C-COCO-%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">制作 COCO 数据集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C-mask-%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">制作 mask 数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mask-%E9%A2%9C%E8%89%B2%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">2.1.</span> <span class="nav-text">mask 颜色注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%87%E5%89%B2%E5%9B%BE%E7%89%87"><span class="nav-number">3.</span> <span class="nav-text">切割图片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E5%88%87%E5%89%B2"><span class="nav-number">4.</span> <span class="nav-text">自适应切割</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B1%BB%E5%88%AB%E5%B9%B3%E8%A1%A1%E5%A4%84%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">类别平衡处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">6.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">经验总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -542,7 +544,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -576,14 +578,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -642,9 +644,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -757,7 +767,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

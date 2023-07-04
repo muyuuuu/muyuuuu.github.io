@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,19 @@
   </script>
 
   <meta name="description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
-<meta name="keywords" content="AdversarialExample">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对抗攻击篇：FGSM 与 PGD 攻击算法">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-11T14:09:44.318Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/04/26/gpwOwd.png">
+<meta property="article:published_time" content="2021-04-26T06:42:03.000Z">
+<meta property="article:modified_time" content="2022-05-11T14:09:44.318Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="AdversarialExample">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="对抗攻击篇：FGSM 与 PGD 攻击算法">
-<meta name="twitter:description" content="博客的进阶使用：在指定位置插入脚注1，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/04/26/gpwOwd.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/04/26/DNN-safe-basic/">
 
@@ -293,7 +295,7 @@
 
       
         <p>博客的进阶使用：在指定位置插入脚注<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>，这样就不用在文末列出参考文献，显得对不上号了。回归正题，如果不出什么特别大的意外，就应该去搞网络安全了。注：此网络安全非彼网络安全，指：对抗样本而非网络入侵。所以准备来开个坑，先整理基础知识，基础不劳，地动山摇。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h1><p>所谓对抗样本，即向原始样本中添加一些人眼无法察觉的噪声，这样的噪声不会影响人类的识别，但是却很容易欺骗 DNN <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup>，使其作出与正确答案完全不同的判定。如下图所示，使用基于梯度<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>的攻击方式，很容易欺骗神经网络：</p>
 <p><img data-src="https://z3.ax1x.com/2021/04/26/gpwOwd.png" alt></p>
 <p>将肉眼不可见的细小扰动加入到原图中，网络识别出粗，甚至有 99.3% 的概率认为这是长臂猿。试想，如果犯罪分子将人烟稀少地区的交通信号牌改为立即停车，人眼不会觉得有什么不妥，但是无人驾驶系统却会乖乖停车，那么此时车上人员的安全何以保障？将禁止右转改为右转，造成交通事故就只在弹指一挥间了。究其本质原因，还是因为现有的 DNN 不能完全区分哪些特征是对分类有用的，哪些是可以忽略的。</p>
@@ -303,30 +305,30 @@
 <li>无目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与原标注无关，即只要攻击成功就好，对抗样本的最终属于哪一类不做限制。</li>
 <li>有目标攻击：对于一张图片，生成一个对抗样本，使得标注系统在其上的标注与目标标注完全一致，即不仅要求攻击成功，还要求生成的对抗样本属于特定的类。</li>
 </ul>
-<h1 id="基于梯度的攻击算法"><a href="#基于梯度的攻击算法" class="headerlink" title="基于梯度的攻击算法"></a>基于梯度的攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert<em>\inf &lt; \epsilon$。事实上，常说的 $l</em>\inf-\text{ball}$ 就是这个意思。</p>
+<h1 id="基于梯度的攻击算法"><a href="#基于梯度的攻击算法" class="headerlink" title="基于梯度的攻击算法"></a>基于梯度的攻击算法</h1><h2 id="FGSM-攻击算法"><a href="#FGSM-攻击算法" class="headerlink" title="FGSM 攻击算法"></a>FGSM 攻击算法</h2><p>设 $x$ 是原始样本，$x’$ 是对抗样本，其中：$x’ = x + \eta$，为了让对抗样本不被机器所识别，$\eta$ 应该足够小，这里使用无穷阶范数来表述 $\eta$ 足够小这一限制：$\Vert \eta \Vert_\inf &lt; \epsilon$。事实上，常说的 $l_\inf-\text{ball}$ 就是这个意思。</p>
 <p>考虑输入层对对抗样本的线性变换：</p>
 <p>\begin{equation}<br>w^Tx’=w^Tx+w^T\eta<br>\end{equation}</p>
 <p>如果假设 $\eta = \text{sign} (w)$，$w$ 是一个 $n$ 维的矩阵，每一维的模长是 $m$，那么经过线性映射后，输入将增大 $\epsilon mn$。尽管 $\Vert \eta \Vert_\inf$ 不会变换，但随着维度的升高、矩阵权重的变换和非线性激活，回导致最终结果变化很大。这也就是为什么对抗样本与原始样本相差无几，但却产生了不同的输出。</p>
 <p>因此，FGSM<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> 产生对抗样本的方式为：</p>
 <p>\begin{equation}<br>\eta=\epsilon \text{sign} \big( \nabla_x J(\theta, x, y) \big)<br>\end{equation}</p>
 <p>其中，$J$是分类损失函数，通过梯度上升，最大化损失函数，企图使得原始的 $x$ 不在属于 $y$ 类。<del>好坏啊</del>。torch 官方<sup id="fnref:5"><a href="#fn:5" rel="footnote">5</a></sup>也给出了对抗样本的程序：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># FGSM attack code</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fgsm_attack</span><span class="params">(image, epsilon, data_grad)</span>:</span></span><br><span class="line">    <span class="comment"># Collect the element-wise sign of the data gradient</span></span><br><span class="line">    sign_data_grad = data_grad.sign()</span><br><span class="line">    <span class="comment"># Create the perturbed image by adjusting each pixel of the input image</span></span><br><span class="line">    perturbed_image = image + epsilon*sign_data_grad</span><br><span class="line">    <span class="comment"># Adding clipping to maintain [0,1] range</span></span><br><span class="line">    perturbed_image = torch.clamp(perturbed_image, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># Return the perturbed image</span></span><br><span class="line">    <span class="keyword">return</span> perturbed_image</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    data_grad = data.grad.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Call FGSM Attack</span></span><br><span class="line">    perturbed_data = fgsm_attack(data, epsilon, data_grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Re-classify the perturbed image</span></span><br><span class="line">    output = model(perturbed_data)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># FGSM attack code</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fgsm_attack</span>(<span class="params">image, epsilon, data_grad</span>):</span><br><span class="line">    <span class="comment"># Collect the element-wise sign of the data gradient</span></span><br><span class="line">    sign_data_grad = data_grad.sign()</span><br><span class="line">    <span class="comment"># Create the perturbed image by adjusting each pixel of the input image</span></span><br><span class="line">    perturbed_image = image + epsilon*sign_data_grad</span><br><span class="line">    <span class="comment"># Adding clipping to maintain [0,1] range</span></span><br><span class="line">    perturbed_image = torch.clamp(perturbed_image, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># Return the perturbed image</span></span><br><span class="line">    <span class="keyword">return</span> perturbed_image</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>():</span><br><span class="line">    data_grad = data.grad.data</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Call FGSM Attack</span></span><br><span class="line">    perturbed_data = fgsm_attack(data, epsilon, data_grad)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Re-classify the perturbed image</span></span><br><span class="line">    output = model(perturbed_data)</span><br></pre></td></tr></table></figure>
 <h2 id="PGD-攻击算法"><a href="#PGD-攻击算法" class="headerlink" title="PGD 攻击算法"></a>PGD 攻击算法</h2><p>PGD 攻击算法<sup id="fnref:6"><a href="#fn:6" rel="footnote">6</a></sup>是 FSGM 的变体，它即是产生对抗样本的攻击算法，也是对抗训练的防御算法。</p>
 <p>论文先抛出了两个问题：</p>
 <ol>
 <li>如何产生强有效的对抗样本，只需要一点点扰动就可以欺骗神经网络？</li>
 <li>如何训练模型，使得没有对抗样本轻易能欺骗网络？</li>
 </ol>
-<p>在论文中，为了防止网络只能抵御某一特定类型的攻击，应该保证模型有足够的对抗鲁棒性，接下来，使用一种方法来训练模型，达到这种保证。在传统的网络中，损失函数通常是优化网络参数 $\theta$，使得损失函数达到最小：$\mathbb{E}<em>{x\sim D}[L(x,y,\theta)]$。但是，对于对抗样本而言，就是要误导神经网络的输出。同样，这篇论文中，对抗样本的扰动范围也限制在 $l</em>\inf-\text{ball}$ 内。</p>
+<p>在论文中，为了防止网络只能抵御某一特定类型的攻击，应该保证模型有足够的对抗鲁棒性，接下来，使用一种方法来训练模型，达到这种保证。在传统的网络中，损失函数通常是优化网络参数 $\theta$，使得损失函数达到最小：$\mathbb{E}_{x\sim D}[L(x,y,\theta)]$。但是，对于对抗样本而言，就是要误导神经网络的输出。同样，这篇论文中，对抗样本的扰动范围也限制在 $l_\inf-\text{ball}$ 内。</p>
 <p>但是在训练损失函数$\mathbb{E}_{x\sim D}[L]$之前，先考虑对抗样本的扰动，所以先不把干净样本 $x$ 输入到网络，而是用对抗样本作为网络的输入。所以论文的公式将攻击和防御放入统一框架内，对抗训练就是在一个马鞍面内求鞍点。</p>
-<p>\begin{equation}<br>\min \mathbb{E}<em>{x\sim D} \big[ \max</em>{\sigma\in S} L(\theta, x, y) \big]<br>\end{equation}</p>
+<p>\begin{equation}<br>\min \mathbb{E}_{x\sim D} \big[ \max_{\sigma\in S} L(\theta, x, y) \big]<br>\end{equation}</p>
 <p>其中的 $S$ 表示球面限制，即无穷范数不能超过 $S$。这个统一的框架包括了内部最大化和外部最小化，因此可以视为鞍点问题，也清晰的描述了鲁棒模型应该达到的目标。内部最大化的期望是，寻找最优的对抗样本达到很高的损失；外部最小化的期望是，寻找模型参数，能抵抗对抗样本的攻击。所以，最终训练得到的模型也具有稳定的对抗鲁棒性。</p>
 <p>在攻击部分，对抗样本的制作方法为：</p>
 <p>\begin{equation}<br>x+\epsilon \text{sign} \big( \nabla_x L(\theta, x, y) \big)<br>\end{equation}</p>
 <p>这可以解释为内部期望最大化的单步攻击。但多步攻击会更加有效，因为 DNN 是复杂的非线性映射，不要企图一步到位。在数据点的 $l_\inf$ 球边界的许多点运行PGD，来探索损失函数中的大部分位置，即在这个球的范围内，探索到绝大多数地方，以能够找到最强的对抗样本。虽然在 $x_i+S$ 的范围内有许多局部最大值，但是他们的损失值往往相似，也就是说，解决了最大化内部非凹函数的问题。</p>
 <p>\begin{equation}<br>x^{t+1}=\prod_{x+S}\bigg(x^t+\epsilon \text{sign} \big( \nabla_x L(\theta, x, y) \big)\bigg)<br>\end{equation}</p>
 <p>$\prod_{x+S}$ 符号的意思是，先计算原图像的损失梯度得到对抗样本，对抗样本减去原图像得到扰动值，并通过 <code>torch.clamp</code> 限制在球面范围内，原图像加上扰动值就是最终的对抗样本。还是看代码吧：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pgd_attack</span><span class="params">(model, images, labels, eps=<span class="number">0.3</span>, alpha=<span class="number">2</span>/<span class="number">255</span>, iters=<span class="number">40</span>)</span> :</span></span><br><span class="line">    images = images.to(device)</span><br><span class="line">    labels = labels.to(device)</span><br><span class="line">    loss = nn.CrossEntropyLoss()</span><br><span class="line">    <span class="comment"># 原图像</span></span><br><span class="line">    ori_images = images.data</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(iters) :</span><br><span class="line">        images.requires_grad = <span class="literal">True</span></span><br><span class="line">        outputs = model(images)</span><br><span class="line"></span><br><span class="line">        model.zero_grad()</span><br><span class="line">        cost = loss(outputs, labels).to(device)</span><br><span class="line">        cost.backward()</span><br><span class="line">        <span class="comment"># 图像 + 梯度得到对抗样本</span></span><br><span class="line">        adv_images = images + alpha*images.grad.sign()</span><br><span class="line">        <span class="comment"># 限制扰动范围</span></span><br><span class="line">        eta = torch.clamp(adv_images - ori_images, min=-eps, max=eps)</span><br><span class="line">        <span class="comment"># 进行下一轮对抗样本的生成。破坏之前的计算图</span></span><br><span class="line">        images = torch.clamp(ori_images + eta, min=<span class="number">0</span>, max=<span class="number">1</span>).detach_()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> images</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">pgd_attack</span>(<span class="params">model, images, labels, eps=<span class="number">0.3</span>, alpha=<span class="number">2</span>/<span class="number">255</span>, iters=<span class="number">40</span></span>) :</span><br><span class="line">    images = images.to(device)</span><br><span class="line">    labels = labels.to(device)</span><br><span class="line">    loss = nn.CrossEntropyLoss()</span><br><span class="line">    <span class="comment"># 原图像</span></span><br><span class="line">    ori_images = images.data</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iters) :</span><br><span class="line">        images.requires_grad = <span class="literal">True</span></span><br><span class="line">        outputs = model(images)</span><br><span class="line"></span><br><span class="line">        model.zero_grad()</span><br><span class="line">        cost = loss(outputs, labels).to(device)</span><br><span class="line">        cost.backward()</span><br><span class="line">        <span class="comment"># 图像 + 梯度得到对抗样本</span></span><br><span class="line">        adv_images = images + alpha*images.grad.sign()</span><br><span class="line">        <span class="comment"># 限制扰动范围</span></span><br><span class="line">        eta = torch.clamp(adv_images - ori_images, <span class="built_in">min</span>=-eps, <span class="built_in">max</span>=eps)</span><br><span class="line">        <span class="comment"># 进行下一轮对抗样本的生成。破坏之前的计算图</span></span><br><span class="line">        images = torch.clamp(ori_images + eta, <span class="built_in">min</span>=<span class="number">0</span>, <span class="built_in">max</span>=<span class="number">1</span>).detach_()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> images</span><br></pre></td></tr></table></figure>
 <p>实验发现，通过PGD发现的局部最大值在正常训练的网络和对抗训练的网络中都有着相似的损失值；换句话说，PGD 训练对抗样本，和普通网络训练干净样本的损失是类似的；这也说明，只要能够防御住PGD，就会对所有的一阶攻击手段具有鲁棒性。</p>
 <h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>剩下的这些都是论文中实验部分所提及的了，更多内容，还可以参考这里<sup id="fnref:7"><a href="#fn:7" rel="footnote">7</a></sup>的解读和这里<sup id="fnref:8"><a href="#fn:8" rel="footnote">8</a></sup>的代码。</p>
 <ul>
@@ -374,7 +376,7 @@
 </tbody>
 </table>
 </div>
-<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a href="https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8" target="_blank" rel="noopener">如何加入脚注</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/pdf/1312.6199.pdf" target="_blank" rel="noopener">对抗样本</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/pdf/1412.6572.pdf" target="_blank" rel="noopener">FGSM攻击</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a href="https://aisafety.readthedocs.io/zh_CN/latest/index.html" target="_blank" rel="noopener">网络安全系列算法</a></span><a href="#fnref:4" rev="footnote"> ↩</a></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;"><a href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html" target="_blank" rel="noopener">pytorch实现FSGM</a></span><a href="#fnref:5" rev="footnote"> ↩</a></li><li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">6.</span><span style="display: inline-block; vertical-align: top;"><a href="https://arxiv.org/pdf/1706.06083.pdf" target="_blank" rel="noopener">PGD攻击算法</a></span><a href="#fnref:6" rev="footnote"> ↩</a></li><li id="fn:7"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">7.</span><span style="display: inline-block; vertical-align: top;"><a href="https://baidinghub.github.io/2020/04/03/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89PGD%E5%8F%8A%E9%98%B2%E5%BE%A1/#5-1-Network-Capacity-and-Adversarial-Robustness" target="_blank" rel="noopener">PGD论文笔记</a></span><a href="#fnref:7" rev="footnote"> ↩</a></li><li id="fn:8"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">8.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/Harry24k/PGD-pytorch/blob/master/PGD.ipynb" target="_blank" rel="noopener">PGD攻击程序</a></span><a href="#fnref:8" rev="footnote"> ↩</a></li><li id="fn:9"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">9.</span><span style="display: inline-block; vertical-align: top;"><a href="https://github.com/muyuuuu/Adversarial-Attack" target="_blank" rel="noopener">PGD与FGSM的黑盒攻击</a></span><a href="#fnref:9" rev="footnote"> ↩</a></li></ol></div></div>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style:none; padding-left: 0;"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">1.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://guanqr.com/tech/website/hexo-theme-next-customization/#%E6%8F%92%E5%85%A5%E8%84%9A%E6%B3%A8">如何加入脚注</a></span><a href="#fnref:1" rev="footnote"> ↩</a></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">2.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1312.6199.pdf">对抗样本</a></span><a href="#fnref:2" rev="footnote"> ↩</a></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">3.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1412.6572.pdf">FGSM攻击</a></span><a href="#fnref:3" rev="footnote"> ↩</a></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">4.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://aisafety.readthedocs.io/zh_CN/latest/index.html">网络安全系列算法</a></span><a href="#fnref:4" rev="footnote"> ↩</a></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">5.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://pytorch.org/tutorials/beginner/fgsm_tutorial.html">pytorch实现FSGM</a></span><a href="#fnref:5" rev="footnote"> ↩</a></li><li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">6.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1706.06083.pdf">PGD攻击算法</a></span><a href="#fnref:6" rev="footnote"> ↩</a></li><li id="fn:7"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">7.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://baidinghub.github.io/2020/04/03/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC%EF%BC%88%E5%8D%81%E5%85%AB%EF%BC%89PGD%E5%8F%8A%E9%98%B2%E5%BE%A1/#5-1-Network-Capacity-and-Adversarial-Robustness">PGD论文笔记</a></span><a href="#fnref:7" rev="footnote"> ↩</a></li><li id="fn:8"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">8.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://github.com/Harry24k/PGD-pytorch/blob/master/PGD.ipynb">PGD攻击程序</a></span><a href="#fnref:8" rev="footnote"> ↩</a></li><li id="fn:9"><span style="display: inline-block; vertical-align: top; padding-right: 10px;">9.</span><span style="display: inline-block; vertical-align: top;"><a target="_blank" rel="noopener" href="https://github.com/muyuuuu/Adversarial-Attack">PGD与FGSM的黑盒攻击</a></span><a href="#fnref:9" rev="footnote"> ↩</a></li></ol></div></div>
     </div>
 
     
@@ -522,7 +524,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于梯度的攻击算法"><span class="nav-number">3.</span> <span class="nav-text">基于梯度的攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FGSM-攻击算法"><span class="nav-number">3.1.</span> <span class="nav-text">FGSM 攻击算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PGD-攻击算法"><span class="nav-number">3.2.</span> <span class="nav-text">PGD 攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#补充"><span class="nav-number">3.2.1.</span> <span class="nav-text">补充</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见防御算法"><span class="nav-number">4.</span> <span class="nav-text">常见防御算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序"><span class="nav-number">5.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#References"><span class="nav-number">6.</span> <span class="nav-text">References</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%94%BB%E5%87%BB%E7%AE%97%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">基于梯度的攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FGSM-%E6%94%BB%E5%87%BB%E7%AE%97%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">FGSM 攻击算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PGD-%E6%94%BB%E5%87%BB%E7%AE%97%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">PGD 攻击算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">3.2.1.</span> <span class="nav-text">补充</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%98%B2%E5%BE%A1%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">常见防御算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">5.</span> <span class="nav-text">程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#References"><span class="nav-number">6.</span> <span class="nav-text">References</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -558,7 +560,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -592,14 +594,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -658,9 +660,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -773,7 +783,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

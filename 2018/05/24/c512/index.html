@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,20 @@
   </script>
 
   <meta name="description" content="承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的一">
-<meta name="keywords" content="microcomputer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DIY智能小车——手机蓝牙">
 <meta property="og:url" content="https://muyuuuu.github.io/2018/05/24/c512/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的一">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-23T16:07:58.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2018/05/24/c512/4.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2018/05/24/c512/5.png">
+<meta property="article:published_time" content="2018-05-24T15:53:06.000Z">
+<meta property="article:modified_time" content="2020-04-23T16:07:58.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="microcomputer">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DIY智能小车——手机蓝牙">
-<meta name="twitter:description" content="承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的一">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2018/05/24/c512/4.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2018/05/24/c512/">
 
@@ -293,7 +296,7 @@
 
       
         <p>承接上文，在完成小车的避障、1602显示距离、寻迹功能后，最后一步是对小车的蓝牙控制，用手机完成的小车的控制：前进、停车、倒车、左转、右转，想想还是很帅的。此文还跟之前的文章一样，只谈论代码。<br>  不过笔者最近发现，只会写程序而不懂原理似乎真的不太好，比如，TMOD为什么是这样设置的，波特率是什么，他又是怎么工作的，51单片机的IO口额外的功能是什么样的，中断到底是怎么执行的，之前在学习的时候学的<strong>一知半解</strong>，不过学习终究是自己的事情。因此，在后续的文章中，将会对这些基本概念提出自己的理解，弄清楚这些最基本的概念，毕竟总不能糊弄着去写程序，闲扯结束，进入正题。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><ul>
 <li>蓝牙控制小车的前进、后退等功能。 </li>
 <li>由于本人学渣，不会写手机APP，用的手机软件是“蓝牙串口助手”，应用商店搜索就能下载。</li>
@@ -313,7 +316,7 @@
 <li>TXD：发送数据引脚 </li>
 <li>LED指示灯，指示模块工作状态，模块上电后闪烁，不同的状态闪烁间隔不同。</li>
 </ul>
-<h3 id="蓝牙控制程序"><a href="#蓝牙控制程序" class="headerlink" title="蓝牙控制程序"></a>蓝牙控制程序</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg51.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"></span><br><span class="line">sbit led = P2^<span class="number">0</span>;             <span class="comment">//led灯的IO口</span></span><br><span class="line"></span><br><span class="line">uchar bluetoothdata;   </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Delay</span><span class="params">(uint z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    uint a, b;</span><br><span class="line">    <span class="keyword">for</span>(a = z; a &gt; <span class="number">0</span>; a--)</span><br><span class="line">        <span class="keyword">for</span>(b = <span class="number">115</span>; b &gt; <span class="number">0</span>; b--);</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span>        </span></span><br><span class="line"><span class="function"></span>&#123;                                                                       </span><br><span class="line">    SCON = <span class="number">0x50</span>;                        </span><br><span class="line">    TMOD = <span class="number">0x21</span>;</span><br><span class="line">    PCON = <span class="number">0x00</span>;</span><br><span class="line">    TH1 = <span class="number">0xfd</span>;</span><br><span class="line">    TL1 = <span class="number">0xfd</span>;</span><br><span class="line">    RI = <span class="number">0</span>；</span><br><span class="line">    EA = <span class="number">1</span>;</span><br><span class="line">    ES = <span class="number">1</span>;    </span><br><span class="line">    TR1 = <span class="number">1</span>;                         </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    led = <span class="number">1</span>;</span><br><span class="line">    init();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);                  <span class="comment">//一直执行中断</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ckzd</span><span class="params">()</span> interrupt 4        <span class="comment">//串口中断</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(RI)                     <span class="comment">//RI为收到信息</span></span><br><span class="line">    &#123;</span><br><span class="line">        RI = <span class="number">0</span>;                <span class="comment">//手动清零</span></span><br><span class="line">        bluetoothdata = SBUF;</span><br><span class="line">        bluetoothdata = bluetoothdata &amp; <span class="number">0x0f</span>;</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">switch</span>(bluetoothdata)<span class="comment">//实现流水灯的闪烁</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x00</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>; </span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x01</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x02</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x03</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x04</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>; </span><br><span class="line">        <span class="keyword">default</span>:<span class="keyword">break</span>;                                          </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="蓝牙控制程序"><a href="#蓝牙控制程序" class="headerlink" title="蓝牙控制程序"></a>蓝牙控制程序</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;reg51.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> uchar unsigned char</span></span><br><span class="line"></span><br><span class="line">sbit led = P2^<span class="number">0</span>;             <span class="comment">//led灯的IO口</span></span><br><span class="line"></span><br><span class="line">uchar bluetoothdata;   </span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">Delay</span><span class="params">(uint z)</span></span><br><span class="line">&#123;</span><br><span class="line">    uint a, b;</span><br><span class="line">    <span class="keyword">for</span>(a = z; a &gt; <span class="number">0</span>; a--)</span><br><span class="line">        <span class="keyword">for</span>(b = <span class="number">115</span>; b &gt; <span class="number">0</span>; b--);</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">init</span><span class="params">()</span>        </span><br><span class="line">&#123;                                                                       </span><br><span class="line">    SCON = <span class="number">0x50</span>;                        </span><br><span class="line">    TMOD = <span class="number">0x21</span>;</span><br><span class="line">    PCON = <span class="number">0x00</span>;</span><br><span class="line">    TH1 = <span class="number">0xfd</span>;</span><br><span class="line">    TL1 = <span class="number">0xfd</span>;</span><br><span class="line">    RI = <span class="number">0</span>；</span><br><span class="line">    EA = <span class="number">1</span>;</span><br><span class="line">    ES = <span class="number">1</span>;    </span><br><span class="line">    TR1 = <span class="number">1</span>;                         </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    led = <span class="number">1</span>;</span><br><span class="line">    init();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);                  <span class="comment">//一直执行中断</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">ckzd</span><span class="params">()</span> interrupt 4        <span class="comment">//串口中断</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(RI)                     <span class="comment">//RI为收到信息</span></span><br><span class="line">    &#123;</span><br><span class="line">        RI = <span class="number">0</span>;                <span class="comment">//手动清零</span></span><br><span class="line">        bluetoothdata = SBUF;</span><br><span class="line">        bluetoothdata = bluetoothdata &amp; <span class="number">0x0f</span>;</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">switch</span>(bluetoothdata)<span class="comment">//实现流水灯的闪烁</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x00</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>; </span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x01</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x02</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x03</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">1</span>; <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">0x04</span>: led = <span class="number">0</span>;  Delay(<span class="number">2000</span>); led = <span class="number">0</span>; <span class="keyword">break</span>; </span><br><span class="line">        <span class="keyword">default</span>:<span class="keyword">break</span>;                                          </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>等过几天，一定看懂中断、寄存器、波特率，完善以下代码的注释，起码自己写的代码自己要懂，啊啊啊啊，学艺不精不太好。先去忙考试去了，撤。后序更新会把所有程序整合到一起。哦，对了，还有PWM调速，看书，看书，看书……把东西都搞懂。</p>
 <hr>
 
@@ -338,7 +341,7 @@
       <div class="popular-posts-title"><a href="/2020/04/18/reverse-radar-begin/" rel="bookmark">倒车雷达（一）：介绍</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/05/12/reverse-radar-multi-thread/" rel="bookmark">倒车雷达(四)：PyQt5的多线程</a></div>
+      <div class="popular-posts-title"><a href="/2020/04/23/reverse-radar-hardware/" rel="bookmark">倒车雷达(二)：硬件搭建</a></div>
     </li>
   </ul>
 
@@ -464,7 +467,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实现功能"><span class="nav-number">1.</span> <span class="nav-text">实现功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HC-05"><span class="nav-number">1.1.</span> <span class="nav-text">HC-05</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#蓝牙控制程序"><span class="nav-number">1.2.</span> <span class="nav-text">蓝牙控制程序</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">实现功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HC-05"><span class="nav-number">1.1.</span> <span class="nav-text">HC-05</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%93%9D%E7%89%99%E6%8E%A7%E5%88%B6%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.2.</span> <span class="nav-text">蓝牙控制程序</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -500,7 +503,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -534,14 +537,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -600,9 +603,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -715,7 +726,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

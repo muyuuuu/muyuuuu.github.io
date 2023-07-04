@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 1，而论文的创新点在于损失函数的定义与梯度的截断。">
-<meta name="keywords" content="AdversarialExample">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对抗攻击篇：CW 攻击算法">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/04/CW-attack/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 1，而论文的创新点在于损失函数的定义与梯度的截断。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-11T14:09:57.821Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-04T04:08:04.000Z">
+<meta property="article:modified_time" content="2022-05-11T14:09:57.821Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="AdversarialExample">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="对抗攻击篇：CW 攻击算法">
-<meta name="twitter:description" content="五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 1，而论文的创新点在于损失函数的定义与梯度的截断。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/04/CW-attack/">
 
@@ -293,9 +293,9 @@
 
       
         <p>五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>，而论文的创新点在于损失函数的定义与梯度的截断。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="L-BFGS"><a href="#L-BFGS" class="headerlink" title="L-BFGS"></a>L-BFGS</h1><p>从最开始的 L-BFGS <sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup> 出发，通过 $L_2$ 范数距离寻找和原始样本 $x$ 最接近的对抗样本 $x’$，而寻找对抗样本的过程就是解决以下优化问题：</p>
-<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; c\Vert x-x’ \Vert<em>2 + \text{loss}</em>{F,t}(x’) \<br>\text{s.t.} &amp; \; x’ \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; c\Vert x-x’ \Vert_2 + \text{loss}_{F,t}(x’) \\<br>\text{s.t.} &amp; \; x’ \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
 <p>其中 $c$ 是一个常数，表示损失函数权重为 1 的情况下，对抗样本与原始样本距离的权重应该是多少；$t$ 表示错误分类的标签，$x$ 是已知的可以视为常量，那么唯一的变量就是 $x’$，可以通过一维线搜索的问题求解到 $c$ 的取值。</p>
 <p>论文中给出了 $t$ 的选择方法。假设当前为 10 分类任务，正确类别是 0，那么 $t$ 可以取 $1,2,\cdots,9$，那么取哪一个合适呢？换句话说，手写字体识别中，1 和 7 在字迹潦草的情况下容易被认错，那么正确类别是 1 时，对抗样本向 7 靠近，更容易攻击成功。</p>
 <ul>
@@ -304,15 +304,15 @@
 <li>最差选择，在所有错误类别上进行攻击，选择最难以攻击的</li>
 </ul>
 <h1 id="CW"><a href="#CW" class="headerlink" title="CW"></a>CW</h1><p>从最终输出概率的角度而言，获取最容易攻击的类别和最难以攻击的类别并不难。理解上述公式后，转换到 CW 算法论文中的攻击算法，用公式描述：</p>
-<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ D(x, x+\delta) \<br>\text{s.t.} &amp; \; \ C(x+\delta) = t \<br>{ } &amp; \; \ x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
-<p>$t$ 依然是被错误分类的标签，$C$ 表示分类结果，$D$是距离度量函数，而本文选择的距离是 $L<em>0, L_2, L</em>\inf$ 三种范数距离。论文中指出：没有任何一种距离能衡量人类感知的差异，现有距离的度量方式都有或多或少的缺陷，所以本文选取了三种范数距离，但每一种距离也达到了目前最好的攻击效果。未来的工作中，可以好好研究下如何构造合适的距离度量函数。</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ D(x, x+\delta) \\<br>\text{s.t.} &amp; \; \ C(x+\delta) = t \\<br>{ } &amp; \; \ x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>$t$ 依然是被错误分类的标签，$C$ 表示分类结果，$D$是距离度量函数，而本文选择的距离是 $L_0, L_2, L_\inf$ 三种范数距离。论文中指出：没有任何一种距离能衡量人类感知的差异，现有距离的度量方式都有或多或少的缺陷，所以本文选取了三种范数距离，但每一种距离也达到了目前最好的攻击效果。未来的工作中，可以好好研究下如何构造合适的距离度量函数。</p>
 <h1 id="解非线性优化"><a href="#解非线性优化" class="headerlink" title="解非线性优化"></a>解非线性优化</h1><p>回到主题，将攻击公式化后，尝试借助优化的方法去求解问题。但由于 $C(x+\delta)=t$ 具有高度的非线性，所以选择一种更适合优化的表达方式。定义一个目标函数 $f$，当且仅当 $f(x+\delta) \leq 0$ 时，$C(x+\delta)=t$。论文中给出了 7 种 $f$ 的选择，但我懒，准备少写几个，不影响</p>
-<p>\begin{equation}<br>\begin{aligned}<br>f<em>1(x’) &amp;= -\text{loss}</em>{F,t}(x’) + 1 \<br>f<em>2(x’) &amp;= \Big( \max</em>{i\neq t} \big(Z(x’)_i\big) - Z(x’)_t \Big)^+ \<br>f_3(x’) &amp;= \big( 0.5-F(x’)_t \big)<br>\end{aligned}<br>\end{equation}</p>
+<p>\begin{equation}<br>\begin{aligned}<br>f_1(x’) &amp;= -\text{loss}_{F,t}(x’) + 1 \\<br>f_2(x’) &amp;= \Big( \max_{i\neq t} \big(Z(x’)_i\big) - Z(x’)_t \Big)^+ \\<br>f_3(x’) &amp;= \big( 0.5-F(x’)_t \big)<br>\end{aligned}<br>\end{equation}</p>
 <p>其中，$e^+$ 运算表示 $\max(e,0)$；$-\text{loss}$ 表示交叉熵损失；$F(x’)_i$ 表示神经网络使用 $x’$ 作为输入，产生类别是 $i$ 的概率；$Z(x’)$ 表示 softmax 前的输出，即 $F(x)=\text{softmax}(Z(x))$。其中，效果最好的是第二个。那我们就用第二个公式解释下这些都是什么。</p>
-<p>在论文中，$i$ 表示 $x’$ 对应的正确类别；$t$ 表示 $x’$ 对应的错误类别。而 $C(x+\delta)=t$ 表示希望对抗样本被错误分类，此时按照假设，$f(x+\delta) \leq 0$。我们带入$f<em>2$，$\max</em>{i\neq t} \big(Z(x’)_i\big)$ 表示除了类别 $t$ 以外，网络以最大概率认为这是第 $i$ 个类，但第 $i$ 类的概率仍然低于第 $t$ 类的概率，以此认为攻击成功。$f_3$ 同理，表示分类错误的概率大于 0.5。因此，优化目标修改为：</p>
-<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ D(x, x+\delta) \<br>\text{s.t.} &amp; \; \ f(x+\delta) \leq 0 \<br>{ } &amp; \; \ x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>在论文中，$i$ 表示 $x’$ 对应的正确类别；$t$ 表示 $x’$ 对应的错误类别。而 $C(x+\delta)=t$ 表示希望对抗样本被错误分类，此时按照假设，$f(x+\delta) \leq 0$。我们带入$f_2$，$\max_{i\neq t} \big(Z(x’)_i\big)$ 表示除了类别 $t$ 以外，网络以最大概率认为这是第 $i$ 个类，但第 $i$ 类的概率仍然低于第 $t$ 类的概率，以此认为攻击成功。$f_3$ 同理，表示分类错误的概率大于 0.5。因此，优化目标修改为：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ D(x, x+\delta) \\<br>\text{s.t.} &amp; \; \ f(x+\delta) \leq 0 \\<br>{ } &amp; \; \ x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
 <p>为了便于优化，按着 L-BFGS 的形式就行修改，将约束条件转为目标函数。第一项表示对抗样本要接近原始样本，第二项表示分类越错越好。</p>
-<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ \Vert \delta \Vert_p + c f(x+\delta)\<br>\text{s.t.} &amp; \; \ x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ \Vert \delta \Vert_p + c f(x+\delta)\\<br>\text{s.t.} &amp; \; \ x + \delta \in [0,1]<br>\end{aligned}<br>\end{equation}</p>
 <p>其中，$c$ 的选择是一个坑，如果 $c\to 0$，那么梯度下降时，损失大部分来自图像误差；如果 $c$ 很大，那么分类损失将占主导，两者的损失应该相似。论文中，作者使用实验的方式确定了 $c$ 的最佳取值。</p>
 <h1 id="梯度截断"><a href="#梯度截断" class="headerlink" title="梯度截断"></a>梯度截断</h1><p>因为对抗样本增加、减去梯度后很容易超出 $[0,1]$ 的范围，所以目前有一些截断的方法：</p>
 <ul>
@@ -322,9 +322,9 @@
 <p>因此，本文引入变量 $w$，对抗样本可以表示为：</p>
 <p>\begin{equation}<br>x+\delta=\frac{1}{2}\big( \tanh(w) + 1 \big)<br>\end{equation}</p>
 <p>因为 $\tanh$ 的取值范围是 $[-1,1]$，所以 $x+\delta$ 的取值范围是 $[0,1]$，这样就满足了约束，也是一种光滑的截断，也算是本文比较大的创新点吧。</p>
-<h1 id="开始攻击"><a href="#开始攻击" class="headerlink" title="开始攻击"></a>开始攻击</h1><p>我看论文中，$L<em>0$ 和 $L</em>\inf$ 都有一些缺陷，所以重点写 $L_2$ 攻击了。此时的方程为：</p>
-<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ \Big| \frac{1}{2}\big(\tanh(w) + 1\big) - x \Big|<em>2 + c f\big(\frac{1}{2}(\tanh(w) + 1)\big) \<br>f(x) &amp; = \max\Big( \max\big(Z(x)</em>{i:i\neq t}\big) - Z(x)_t, -k\Big)<br>\end{aligned}<br>\end{equation}</p>
-<p>参数 $k$ 用于控制错误分类的置信度，论文中 $k=0$，即保证被正确分类的概率低于被错误分类的概率。他人实现的程序 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>，但是程序的实现和论文的内容有一些出入。论文中，$Z(x)<em>t$ 表示错误分类。在实现用，用真实标签的概率 $y</em>\text{true}$ 减去被错误识别的概率 $y_\text{false}$ 中最大的一个。</p>
+<h1 id="开始攻击"><a href="#开始攻击" class="headerlink" title="开始攻击"></a>开始攻击</h1><p>我看论文中，$L_0$ 和 $L_\inf$ 都有一些缺陷，所以重点写 $L_2$ 攻击了。此时的方程为：</p>
+<p>\begin{equation}<br>\begin{aligned}<br>\min &amp; \; \ \Big| \frac{1}{2}\big(\tanh(w) + 1\big) - x \Big|_2 + c f\big(\frac{1}{2}(\tanh(w) + 1)\big) \\<br>f(x) &amp; = \max\Big( \max\big(Z(x)_{i:i\neq t}\big) - Z(x)_t, -k\Big)<br>\end{aligned}<br>\end{equation}</p>
+<p>参数 $k$ 用于控制错误分类的置信度，论文中 $k=0$，即保证被正确分类的概率低于被错误分类的概率。他人实现的程序 <sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>，但是程序的实现和论文的内容有一些出入。论文中，$Z(x)_t$ 表示错误分类。在实现用，用真实标签的概率 $y_\text{true}$ 减去被错误识别的概率 $y_\text{false}$ 中最大的一个。</p>
 <ul>
 <li>若这一项大于0，会有损失，表示要降低对真实标签的可信度；</li>
 <li>若这一相小于0，取值为0，表示无法识别正确分类。此时没有损失，满足之前的当且仅当 $f(x+\delta) \leq 0$ 时，$C(x+\delta)=t$，也就是，分类错误后，就不用优化这一项了；换句话说，在不满足 $C(x+\delta)=t$ 约束下，是没有目标函数的损失值的。这里的确需要好好理解。</li>
@@ -355,7 +355,7 @@
 </tbody>
 </table>
 </div>
-<p>预训练模型<a href="https://github.com/laisimiao/classification-cifar10-pytorch" target="_blank" rel="noopener">下载</a>。</p>
+<p>预训练模型<a target="_blank" rel="noopener" href="https://github.com/laisimiao/classification-cifar10-pytorch">下载</a>。</p>
 <h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><ul>
 <li><code>python cw_attack.py</code>，制作对抗样本</li>
 <li><code>python eval.py</code>，验证目标模型在对抗样本攻击下的准确率</li>
@@ -508,7 +508,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#L-BFGS"><span class="nav-number">1.</span> <span class="nav-text">L-BFGS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CW"><span class="nav-number">2.</span> <span class="nav-text">CW</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解非线性优化"><span class="nav-number">3.</span> <span class="nav-text">解非线性优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度截断"><span class="nav-number">4.</span> <span class="nav-text">梯度截断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始攻击"><span class="nav-number">5.</span> <span class="nav-text">开始攻击</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序-4"><span class="nav-number">6.</span> <span class="nav-text">程序 4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行"><span class="nav-number">7.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">references</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#L-BFGS"><span class="nav-number">1.</span> <span class="nav-text">L-BFGS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CW"><span class="nav-number">2.</span> <span class="nav-text">CW</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E9%9D%9E%E7%BA%BF%E6%80%A7%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">解非线性优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E6%88%AA%E6%96%AD"><span class="nav-number">4.</span> <span class="nav-text">梯度截断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E6%94%BB%E5%87%BB"><span class="nav-number">5.</span> <span class="nav-text">开始攻击</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-4"><span class="nav-number">6.</span> <span class="nav-text">程序 4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">7.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">references</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -544,7 +544,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -578,14 +578,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -644,9 +644,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -759,7 +767,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,26 @@
   </script>
 
   <meta name="description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分（我只是感觉这几年算法岗很内卷，泡沫化严重。不管什么专业的，都可以来搞计算机或智能，门槛低但要求高，甚至跨专业来的还认为撕代码没用，这个行业一言难尽。">
-<meta name="keywords" content="DeepLearning">
 <meta property="og:type" content="article">
 <meta property="og:title" content="meta-learning 通俗入门">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/09/20/meta-learning/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分（我只是感觉这几年算法岗很内卷，泡沫化严重。不管什么专业的，都可以来搞计算机或智能，门槛低但要求高，甚至跨专业来的还认为撕代码没用，这个行业一言难尽。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-10-14T20:06:26.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/3.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/4.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/5.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/7.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/8.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/9.png">
+<meta property="og:image" content="https://static01.imgkr.com/temp/f9c142375b0d4a46a32039144825a6e9.png">
+<meta property="article:published_time" content="2020-09-20T01:39:56.000Z">
+<meta property="article:modified_time" content="2020-10-14T20:06:26.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="DeepLearning">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="meta-learning 通俗入门">
-<meta name="twitter:description" content="又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分（我只是感觉这几年算法岗很内卷，泡沫化严重。不管什么专业的，都可以来搞计算机或智能，门槛低但要求高，甚至跨专业来的还认为撕代码没用，这个行业一言难尽。">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/09/20/meta-learning/1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/09/20/meta-learning/">
 
@@ -293,7 +302,7 @@
 
       
         <p>又来做小样本问题了，别问，问就是我也不知道，方向换来换去的。我看过 Life long learning，深度学习的聚类，大规模图划分（我只是感觉这几年算法岗很内卷，泡沫化严重。不管什么专业的，都可以来搞计算机或智能，门槛低但要求高，甚至跨专业来的还认为撕代码没用，这个行业一言难尽。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Machine learning 中，我们的目标是定义一个神经网络，训练数据并获取输出，且希望输出的准确率很高，这可以简化为 $f(\text{data})=\hat{y}$，如下图所示：</p>
 <p><img data-src="/2020/09/20/meta-learning/1.png" alt></p>
 <p>而在 meta learning 中，则是让机器学会如何学习。假设现在有多个任务，第一个任务是猫狗分类，第二个任务是数字识别，以此类推就不一一举例了。meta learning 的目标就是让网络基于过去的任务获取学习技巧，并能快速应用到其他任务中。比如：分类中，知道猫和狗纹理不一样后，能快速学习出数字 1 和数字 3 不一样。（每一个任务都有一个模型，希望未来基于已有经验能学的更快更好）。在通俗一点，你学过 C++，那么再去学 java 就很快，有经验在那。</p>
@@ -317,15 +326,15 @@
 <p>首先列出损失函数：</p>
 <p>\begin{equation}<br>L(\phi)=\sum_{i=1}^N l^n (\theta^n)<br>\end{equation}</p>
 <p>初始化参数 $\phi$ 的更新方式为（全局）：</p>
-<p>\begin{equation}<br>\phi<em>t = \phi</em>{t-1}-\eta \nabla<em>\phi L(\phi), \; \nabla</em>\phi L(\phi)=\sum<em>{i=1}^n\nabla</em>\phi l^n(\theta^n)<br>\end{equation}</p>
+<p>\begin{equation}<br>\phi_t = \phi_{t-1}-\eta \nabla_\phi L(\phi), \; \nabla_\phi L(\phi)=\sum_{i=1}^n\nabla_\phi l^n(\theta^n)<br>\end{equation}</p>
 <p>其中，$\nabla_\phi l^n(\theta^n)$的展开式为：</p>
-<p>\begin{bmatrix}<br>\partial l_1/\partial\phi_1 &amp; \partial l_2/\partial\phi_1 &amp; \ldots &amp; \partial l_n/\partial\phi_1\<br>\partial l_1/\partial\phi_2 &amp; \partial l_2/\partial\phi_2 &amp; \ldots &amp; \partial l_n/\partial\phi_2\<br>\partial l_1/\partial\phi_3 &amp; \partial l_2/\partial\phi_3 &amp; \ddots &amp; \partial l_n/\partial\phi_3\<br>\partial l_1/\partial\phi_n &amp; \partial l_2/\partial\phi_n &amp; \ldots &amp; \partial l_n/\partial\phi_n\<br>\end{bmatrix}</p>
+<p>\begin{bmatrix}<br>\partial l_1/\partial\phi_1 &amp; \partial l_2/\partial\phi_1 &amp; \ldots &amp; \partial l_n/\partial\phi_1\\<br>\partial l_1/\partial\phi_2 &amp; \partial l_2/\partial\phi_2 &amp; \ldots &amp; \partial l_n/\partial\phi_2\\<br>\partial l_1/\partial\phi_3 &amp; \partial l_2/\partial\phi_3 &amp; \ddots &amp; \partial l_n/\partial\phi_3\\<br>\partial l_1/\partial\phi_n &amp; \partial l_2/\partial\phi_n &amp; \ldots &amp; \partial l_n/\partial\phi_n\\<br>\end{bmatrix}</p>
 <p>因为一个 $\phi$ 对应很多 $\theta$，所以由链式求偏导法则我们可以知道下图的关系式（以上面矩阵中单个元素为例，所以 $l$ 就不带任何角标了）：</p>
-<p>\begin{equation}<br>\frac{\partial l}{\partial \phi<em>i} = \sum</em>{j}\frac{\partial l \partial \theta_j}{\partial \theta_j \partial \phi_i}<br>\end{equation}</p>
+<p>\begin{equation}<br>\frac{\partial l}{\partial \phi_i} = \sum_{j}\frac{\partial l \partial \theta_j}{\partial \theta_j \partial \phi_i}<br>\end{equation}</p>
 <p>而在每一个任务中，参数 $\theta$ 的更新方式为（单个任务）：</p>
-<p>\begin{equation}<br>\theta<em>j=\phi_j-\epsilon\nabla</em>\phi l(\phi_j)=\phi_j-\epsilon\frac{\partial l(\phi_j)}{\partial \phi}<br>\end{equation}</p>
+<p>\begin{equation}<br>\theta_j=\phi_j-\epsilon\nabla_\phi l(\phi_j)=\phi_j-\epsilon\frac{\partial l(\phi_j)}{\partial \phi}<br>\end{equation}</p>
 <p>所以：</p>
-<p>\begin{cases}<br>\frac{\partial \theta_j}{\partial \phi_i}=-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 0 &amp; i \neq j \<br>\frac{\partial \theta_j}{\partial \phi_i}=1-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 1 &amp; i = j<br>\end{cases}</p>
+<p>\begin{cases}<br>\frac{\partial \theta_j}{\partial \phi_i}=-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 0 &amp; i \neq j \\<br>\frac{\partial \theta_j}{\partial \phi_i}=1-\epsilon\frac{\partial l(\phi)}{\partial \phi_i \partial \phi_j} \approx 1 &amp; i = j<br>\end{cases}</p>
 <p>取消第二项的二次微分时：</p>
 <p>\begin{equation}<br>\frac{\partial l}{\partial \phi_i} \approx \frac{\partial l}{\partial \theta_i}<br>\end{equation}</p>
 <p>以上公式是我看懂and抄下来，真佩服能手推公式的。这样，参数如何更新的就讲完了。MAML的主要目标也是更新参数。</p>
@@ -353,17 +362,17 @@
 <p>其实就是计算的两个样本是否相似，可以看成一个二分类问题。同一类的样本距离近，不同类的样本远。与 AutoEncoder 的区别是，AutoEncoder 是尽可能的复原信息，而不是提取能作为区分的重要信息。</p>
 <h2 id="Prototypical-Network"><a href="#Prototypical-Network" class="headerlink" title="Prototypical Network"></a>Prototypical Network</h2><p>和 Siamese 极为类似，只是输入的训练数据可以有多个类，而不只是限于一个。最后 softmax 一下，测试样本和训练样本属于同一类时，单元输出的值就打。举例说明：</p>
 <p>输入数据是1，2，3，4，5这么多个类，每个类一个数据。测试数据的类别是 3。那么，第三个单元的输出最大，其他单元的输出较小。以此来计算相似度，拉开不同类样本在空间中的分布。</p>
-<p>当然，这里是可以引入 Triplet loss 的，只需要在训练时加入额外的数据即可。此时训练的数据为：Train data, Untrain data, Test data。其中，Untrain data 就像训练 Word2Vec 时使用的无关词汇一样。这里轻描淡写了，Triplet loss 如何应用到 Siamese 中还请查询具体文章，比如<a href="https://zhuanlan.zhihu.com/p/68200241" target="_blank" rel="noopener">这里</a>。</p>
+<p>当然，这里是可以引入 Triplet loss 的，只需要在训练时加入额外的数据即可。此时训练的数据为：Train data, Untrain data, Test data。其中，Untrain data 就像训练 Word2Vec 时使用的无关词汇一样。这里轻描淡写了，Triplet loss 如何应用到 Siamese 中还请查询具体文章，比如<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/68200241">这里</a>。</p>
 <h2 id="Relation-Network"><a href="#Relation-Network" class="headerlink" title="Relation Network"></a>Relation Network</h2><p>之前的网络在计算相似度时可能都是使用 $\cos$ 等函数，而 Relation Network 中则使用一个网络来计算相似度。将测试数据的嵌入拼接到训练数据后面，一起进入计算相似性的网络，之后的操作就都一样了。</p>
 <p><img data-src="/2020/09/20/meta-learning/9.png" alt></p>
-<h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><h2 id="基于梯度"><a href="#基于梯度" class="headerlink" title="基于梯度"></a>基于梯度</h2><p>代码实现了 <a href="https://github.com/muyuuuu/Algorithm/tree/master/meta-learning/Gradient-based" target="_blank" rel="noopener">Reptileh和MAML</a>。很简单，只是简单的更新参数的方法，通过小样本采样来学习一个 $y=a\sin(x+b)$ 的函数。强烈建议看代码，看完代码后就知道meta learning 的工作原理了。结果如下（我就训练了几次，次数很少）：</p>
+<h1 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h1><h2 id="基于梯度"><a href="#基于梯度" class="headerlink" title="基于梯度"></a>基于梯度</h2><p>代码实现了 <a target="_blank" rel="noopener" href="https://github.com/muyuuuu/Algorithm/tree/master/meta-learning/Gradient-based">Reptileh和MAML</a>。很简单，只是简单的更新参数的方法，通过小样本采样来学习一个 $y=a\sin(x+b)$ 的函数。强烈建议看代码，看完代码后就知道meta learning 的工作原理了。结果如下（我就训练了几次，次数很少）：</p>
 <p><img data-src="https://static01.imgkr.com/temp/f9c142375b0d4a46a32039144825a6e9.png" alt></p>
 <h2 id="基于度量"><a href="#基于度量" class="headerlink" title="基于度量"></a>基于度量</h2><p>还没写好，最近课多。</p>
 <h1 id="参考与推荐课程"><a href="#参考与推荐课程" class="headerlink" title="参考与推荐课程"></a>参考与推荐课程</h1><p>我也不知道我整理的好不好，能不能看懂。不过没关系，我可以推荐一些不错的课程。但恕我直言，看完课程后觉得自己学会了，但自己整理的时候还是发现啥都不会。『一学就会，一练就废』系列。</p>
-<p>不错的讲解博客：<br><a href="https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner" target="_blank" rel="noopener">https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner</a></p>
-<p>有人整理的李宏毅课程的pdf版，MAML后直接讲强化学习调网络结构：<br><a href="http://www.gwylab.com/pdf/note_meta-learning.pdf" target="_blank" rel="noopener">http://www.gwylab.com/pdf/note_meta-learning.pdf</a></p>
-<p>不错的讲解博客：<br><a href="https://www.tensorinfinity.com/paper_191.html" target="_blank" rel="noopener">https://www.tensorinfinity.com/paper_191.html</a></p>
-<p>李宏毅讲解 meta-learning 的课程：<br><a href="https://www.youtube.com/watch?v=EkAqYbpCYAc&amp;list=PLJV_el3uVTsOK_ZK5L0Iv_EQoL1JefRL4&amp;index=32" target="_blank" rel="noopener">https://www.youtube.com/watch?v=EkAqYbpCYAc&amp;list=PLJV_el3uVTsOK_ZK5L0Iv_EQoL1JefRL4&amp;index=32</a></p>
+<p>不错的讲解博客：<br><a target="_blank" rel="noopener" href="https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner">https://wei-tianhao.github.io/blog/2019/09/17/meta-learning.html#lstm-meta-learner</a></p>
+<p>有人整理的李宏毅课程的pdf版，MAML后直接讲强化学习调网络结构：<br><a target="_blank" rel="noopener" href="http://www.gwylab.com/pdf/note_meta-learning.pdf">http://www.gwylab.com/pdf/note_meta-learning.pdf</a></p>
+<p>不错的讲解博客：<br><a target="_blank" rel="noopener" href="https://www.tensorinfinity.com/paper_191.html">https://www.tensorinfinity.com/paper_191.html</a></p>
+<p>李宏毅讲解 meta-learning 的课程：<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=EkAqYbpCYAc&amp;list=PLJV_el3uVTsOK_ZK5L0Iv_EQoL1JefRL4&amp;index=32">https://www.youtube.com/watch?v=EkAqYbpCYAc&amp;list=PLJV_el3uVTsOK_ZK5L0Iv_EQoL1JefRL4&amp;index=32</a></p>
 
     </div>
 
@@ -374,10 +383,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/07/DNN-data-normal/" rel="bookmark">神经网络中的数据问题</a></div>
+      <div class="popular-posts-title"><a href="/2021/09/04/DNN-issue/" rel="bookmark">神经网络常见问题</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/08/11/GAN-basic/" rel="bookmark">花样繁多的GAN</a></div>
@@ -512,7 +521,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型结构"><span class="nav-number">2.</span> <span class="nav-text">模型结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#评价"><span class="nav-number">2.1.</span> <span class="nav-text">评价</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练与测试数据"><span class="nav-number">2.2.</span> <span class="nav-text">训练与测试数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练过程"><span class="nav-number">2.3.</span> <span class="nav-text">训练过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MAML-方法"><span class="nav-number">2.3.1.</span> <span class="nav-text">MAML 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reptile-方法"><span class="nav-number">2.3.2.</span> <span class="nav-text">Reptile 方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于测量的-meta-learning-网络结构"><span class="nav-number">3.</span> <span class="nav-text">基于测量的 meta learning 网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Siamese-Network"><span class="nav-number">3.1.</span> <span class="nav-text">Siamese Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prototypical-Network"><span class="nav-number">3.2.</span> <span class="nav-text">Prototypical Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relation-Network"><span class="nav-number">3.3.</span> <span class="nav-text">Relation Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码实例"><span class="nav-number">4.</span> <span class="nav-text">代码实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于梯度"><span class="nav-number">4.1.</span> <span class="nav-text">基于梯度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于度量"><span class="nav-number">4.2.</span> <span class="nav-text">基于度量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考与推荐课程"><span class="nav-number">5.</span> <span class="nav-text">参考与推荐课程</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">模型结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7"><span class="nav-number">2.1.</span> <span class="nav-text">评价</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E4%B8%8E%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE"><span class="nav-number">2.2.</span> <span class="nav-text">训练与测试数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">训练过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MAML-%E6%96%B9%E6%B3%95"><span class="nav-number">2.3.1.</span> <span class="nav-text">MAML 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reptile-%E6%96%B9%E6%B3%95"><span class="nav-number">2.3.2.</span> <span class="nav-text">Reptile 方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%B5%8B%E9%87%8F%E7%9A%84-meta-learning-%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">基于测量的 meta learning 网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Siamese-Network"><span class="nav-number">3.1.</span> <span class="nav-text">Siamese Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prototypical-Network"><span class="nav-number">3.2.</span> <span class="nav-text">Prototypical Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relation-Network"><span class="nav-number">3.3.</span> <span class="nav-text">Relation Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">代码实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%A2%AF%E5%BA%A6"><span class="nav-number">4.1.</span> <span class="nav-text">基于梯度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%BA%A6%E9%87%8F"><span class="nav-number">4.2.</span> <span class="nav-text">基于度量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%B8%8E%E6%8E%A8%E8%8D%90%E8%AF%BE%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">参考与推荐课程</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -548,7 +557,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -582,14 +591,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -648,9 +657,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -763,7 +780,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

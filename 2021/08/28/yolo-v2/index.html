@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,21 @@
   </script>
 
   <meta name="description" content="还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="YOLO V2，细读代码">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/08/28/yolo-v2/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-01-03T08:45:57.091Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/08/26/hncDq1.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/08/26/huFwqg.jpg">
+<meta property="og:image" content="https://z3.ax1x.com/2021/08/26/hnHwtJ.png">
+<meta property="article:published_time" content="2021-08-28T14:16:45.000Z">
+<meta property="article:modified_time" content="2022-01-03T08:45:57.091Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="YOLO V2，细读代码">
-<meta name="twitter:description" content="还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/08/26/hncDq1.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/08/28/yolo-v2/">
 
@@ -273,7 +277,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.9k</span>
+              <span>4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -293,11 +297,11 @@
 
       
         <p>还是老样子，不看代码永远不能称为学会了。况且 YOLO V2 有一些优化还是很常见的，如 Anchor Box 和多尺度训练。我之前也只是听说过这些名词，并不知道如何在程序中使用，索性直接读了程序了解一下，程序写的还是比较精彩的。另外：这是第一篇用 vim 写的博客。</p>
-<a id="more"></a>
-<h1 id="YOLO-v2"><a href="#YOLO-v2" class="headerlink" title="YOLO v2"></a>YOLO v2</h1><p>论文地址：<a href="https://arxiv.org/abs/1612.08242" target="_blank" rel="noopener">https://arxiv.org/abs/1612.08242</a><br>提供两个代码地址：第一个适合看模型、损失和多尺度训练，第二个适合看 anchor box 如何用到模型中，但是需要注意的是有 bug，但写的比第一个容易理解。</p>
+<span id="more"></span>
+<h1 id="YOLO-v2"><a href="#YOLO-v2" class="headerlink" title="YOLO v2"></a>YOLO v2</h1><p>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1612.08242">https://arxiv.org/abs/1612.08242</a><br>提供两个代码地址：第一个适合看模型、损失和多尺度训练，第二个适合看 anchor box 如何用到模型中，但是需要注意的是有 bug，但写的比第一个容易理解。</p>
 <ol>
-<li><a href="https://github.com/longcw/yolo2-pytorch" target="_blank" rel="noopener">https://github.com/longcw/yolo2-pytorch</a></li>
-<li><a href="https://github.com/uvipen/Yolo-v2-pytorch/tree/master" target="_blank" rel="noopener">https://github.com/uvipen/Yolo-v2-pytorch/tree/master</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/longcw/yolo2-pytorch">https://github.com/longcw/yolo2-pytorch</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/uvipen/Yolo-v2-pytorch/tree/master">https://github.com/uvipen/Yolo-v2-pytorch/tree/master</a></li>
 </ol>
 <p>作者基于之前的 YOLO v1，提出了一些改进的策略，快速的同时准确率也大幅度提升。训练检测网络的同时，在 ImageNet 数据集上进行训练，提升了网络的分类能力。文章的一开始，作者指出了检测存在的几个问题：</p>
 <ol>
@@ -313,7 +317,7 @@
 </ul>
 <p>以上都是微小的改进，下面的三点改进是比较大的。</p>
 <h3 id="Direct-location-prediction"><a href="#Direct-location-prediction" class="headerlink" title="Direct location prediction"></a>Direct location prediction</h3><p>作者使用 Anchor Box 的时候发现早期的网络不稳定，原因来自 $(x,y)$ 的预测。在 RPN 网络中，预测出 $t_x$ 和 $t_y$，$(x,y)$ 的计算为：</p>
-<p>\begin{aligned}<br>x &amp;= (t_x * w_a) + x_a \<br>y &amp;= (t_y * h_a) + y_a \<br>\end{aligned}</p>
+<p>\begin{aligned}<br>x &amp;= (t_x * w_a) + x_a \\<br>y &amp;= (t_y * h_a) + y_a \\<br>\end{aligned}</p>
 <p>由于 $t_x,t_y$ 的输出值不受限制，$(x,y)$ 能忽略 Anchor Box 的存在而而满天飞。所以网络增加了 sigmoid 函数限制 $t_x,t_y$ 的取值在 0 到 1 之间。具体一点，就是更改网络的输出为 $(t_x, t_y, t_w, t_h, t_o)$。由于 YOLO 的预测的尺寸、中心点的坐标都是相对图片的占比，比如一个目标位于图片的正中心，那么 $(x,y)=(0.5,0.5)$ 。如果当前格子相对图片的偏移是 $(c_x,c_y)$，Anchor Box 之前的宽和高是 $(p_w,p_h)$，那么预测的 bounding box 输出为：</p>
 <p><img data-src="https://z3.ax1x.com/2021/08/26/hncDq1.png" alt></p>
 <p>此外，置信度的输出替换为 $\sigma (t_o)$。</p>
@@ -331,16 +335,16 @@
 <p>与 Faster 训练方式不同的是，将分类数据集和检测数据集进行联合训练。此时存在的问题是，分类数据集和检测数据集不是同一个数据集，如果检测数据集的标签是「狗」，那么分类数据集的标签很可能是「泰迪、田园犬」等，所以要合并这些标签。论文采用树的结构融合这些标签，得到具有 1396 个节点的树。针对每一个 anchor，预测出长度为 1396 的矢量，对该矢量按照层级关系进行同层级的 softmax 得到条件概率，根据全概率公式连乘即可得到所属类别的条件概率。</p>
 <p><img data-src="https://z3.ax1x.com/2021/08/26/hnHwtJ.png" alt></p>
 <p>经过这种弱监督式的融合数据集训练后，YOLO v2得以检测超过9000种类别，因此得名为YOLO 9000。</p>
-<h1 id="code"><a href="#code" class="headerlink" title="code"></a>code</h1><h2 id="模型部分"><a href="#模型部分" class="headerlink" title="模型部分"></a>模型部分</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 anchor 个 [类别，x, y, w, h] 这样的数据</span></span><br><span class="line">out_channels = cfg.num_anchors * (cfg.num_classes + <span class="number">5</span>)</span><br><span class="line">self.conv5 = net_utils.Conv2d(c4, out_channels, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对 x 和 y 激活处理，学习偏移量</span></span><br><span class="line">xy_pred = F.sigmoid(global_average_pool_reshaped[:, :, :, <span class="number">0</span>:<span class="number">2</span>])</span><br><span class="line"><span class="comment"># 对 w 和 h 进行映射，用来乘以之前 anchor 的宽和高，得到预测的宽和高</span></span><br><span class="line">wh_pred = torch.exp(global_average_pool_reshaped[:, :, :, <span class="number">2</span>:<span class="number">4</span>])</span><br><span class="line">bbox_pred = torch.cat([xy_pred, wh_pred], <span class="number">3</span>)</span><br><span class="line"><span class="comment"># IOU 预测，YOLO V1 中是置信度</span></span><br><span class="line">iou_pred = F.sigmoid(global_average_pool_reshaped[:, :, :, <span class="number">4</span>:<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 类别预测，共 anchor 个类别</span></span><br><span class="line">score_pred = global_average_pool_reshaped[:, :, :, <span class="number">5</span>:].contiguous()</span><br><span class="line">prob_pred = F.softmax(score_pred.view(<span class="number">-1</span>, score_pred.size()[<span class="number">-1</span>])).view_as(score_pred)</span><br></pre></td></tr></table></figure>
+<h1 id="code"><a href="#code" class="headerlink" title="code"></a>code</h1><h2 id="模型部分"><a href="#模型部分" class="headerlink" title="模型部分"></a>模型部分</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 anchor 个 [类别，x, y, w, h] 这样的数据</span></span><br><span class="line">out_channels = cfg.num_anchors * (cfg.num_classes + <span class="number">5</span>)</span><br><span class="line">self.conv5 = net_utils.Conv2d(c4, out_channels, <span class="number">1</span>, <span class="number">1</span>, relu=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对 x 和 y 激活处理，学习偏移量</span></span><br><span class="line">xy_pred = F.sigmoid(global_average_pool_reshaped[:, :, :, <span class="number">0</span>:<span class="number">2</span>])</span><br><span class="line"><span class="comment"># 对 w 和 h 进行映射，用来乘以之前 anchor 的宽和高，得到预测的宽和高</span></span><br><span class="line">wh_pred = torch.exp(global_average_pool_reshaped[:, :, :, <span class="number">2</span>:<span class="number">4</span>])</span><br><span class="line">bbox_pred = torch.cat([xy_pred, wh_pred], <span class="number">3</span>)</span><br><span class="line"><span class="comment"># IOU 预测，YOLO V1 中是置信度</span></span><br><span class="line">iou_pred = F.sigmoid(global_average_pool_reshaped[:, :, :, <span class="number">4</span>:<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 类别预测，共 anchor 个类别</span></span><br><span class="line">score_pred = global_average_pool_reshaped[:, :, :, <span class="number">5</span>:].contiguous()</span><br><span class="line">prob_pred = F.softmax(score_pred.view(-<span class="number">1</span>, score_pred.size()[-<span class="number">1</span>])).view_as(score_pred)</span><br></pre></td></tr></table></figure>
 <h2 id="数据与损失"><a href="#数据与损失" class="headerlink" title="数据与损失"></a>数据与损失</h2><p>对于加载数据部分，由于是多尺度训练，所以先要把图像 <code>resize</code> 到指定的输入尺寸，而后对标签中的宽度、中心点进行放缩，而后返回盒子、类别标签即可。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">batch[<span class="string">'images'</span>].append(images)</span><br><span class="line">batch[<span class="string">'gt_boxes'</span>].append(gt_boxes)</span><br><span class="line">batch[<span class="string">'gt_classes'</span>].append(classes)</span><br><span class="line">batch[<span class="string">'dontcare'</span>].append(dontcare)</span><br><span class="line">batch[<span class="string">'origin_im'</span>].append(origin_im)</span><br></pre></td></tr></table></figure>
-<p>众所周知，对于卷积神经网络而言，输入图像的尺寸大小不同，输出的图像尺寸也不会一样。而网络超参数始终是固定的，适应多尺度训练是在损失函数中进行的，将标签数据的尺寸适配到网络输出的尺寸，这样就实现了多尺度训练。而后开始计算损失和反向传播，也就是<a href="https://github.com/longcw/yolo2-pytorch/blob/17056ca69f097a07884135d9031c53d4ef217a6a/darknet.py#L40" target="_blank" rel="noopener">这个函数</a>所做的。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">batch[<span class="string">&#x27;images&#x27;</span>].append(images)</span><br><span class="line">batch[<span class="string">&#x27;gt_boxes&#x27;</span>].append(gt_boxes)</span><br><span class="line">batch[<span class="string">&#x27;gt_classes&#x27;</span>].append(classes)</span><br><span class="line">batch[<span class="string">&#x27;dontcare&#x27;</span>].append(dontcare)</span><br><span class="line">batch[<span class="string">&#x27;origin_im&#x27;</span>].append(origin_im)</span><br></pre></td></tr></table></figure>
+<p>众所周知，对于卷积神经网络而言，输入图像的尺寸大小不同，输出的图像尺寸也不会一样。而网络超参数始终是固定的，适应多尺度训练是在损失函数中进行的，将标签数据的尺寸适配到网络输出的尺寸，这样就实现了多尺度训练。而后开始计算损失和反向传播，也就是<a target="_blank" rel="noopener" href="https://github.com/longcw/yolo2-pytorch/blob/17056ca69f097a07884135d9031c53d4ef217a6a/darknet.py#L40">这个函数</a>所做的。</p>
 <p>之后就是损失函数部分了，重点是来看看是如何基于 <code>anchor box</code> 进行预测的，不过仍然可以确定的是，不管是分类损失，还是 IOU 损失或 bounding box 损失，使用的都是 MSE 损失函数。</p>
-<p>对于标签数据而言，重要的是看懂<a href="https://github.com/uvipen/Yolo-v2-pytorch/blob/9589413b5dce0476eb9cccc41945cf30cf131b34/src/loss.py#L89-L145" target="_blank" rel="noopener">这里</a>的流程：</p>
+<p>对于标签数据而言，重要的是看懂<a target="_blank" rel="noopener" href="https://github.com/uvipen/Yolo-v2-pytorch/blob/9589413b5dce0476eb9cccc41945cf30cf131b34/src/loss.py#L89-L145">这里</a>的流程：</p>
 <ol>
 <li>遍历当前的 batch size，处理每一个 batch；</li>
 <li>对预测输出和真实标签进行 IOU 计算，筛选出大于阈值的 bounding box 作为正样本，其余样本忽略；</li>
-<li>筛选出与真实标签大小最为接近的 anchor box，基于 anchor box 计算和真实框的偏移量。anchor box 是预先设置的，anchor box 没有位置的概念，不是基于某个框生成的，anchor box 在整个训练期间是不变的。假设是第 2 个 anchor box 最接近。由于标签数据的维度和网络输出的维度相同，将标签数据的第 2 维填充为对应标签。这样，其余数据回被忽略。这一部分<a href="https://github.com/uvipen/Yolo-v2-pytorch/blob/9589413b5dce0476eb9cccc41945cf30cf131b34/src/loss.py#L89-L145" target="_blank" rel="noopener">代码</a>。</li>
+<li>筛选出与真实标签大小最为接近的 anchor box，基于 anchor box 计算和真实框的偏移量。anchor box 是预先设置的，anchor box 没有位置的概念，不是基于某个框生成的，anchor box 在整个训练期间是不变的。假设是第 2 个 anchor box 最接近。由于标签数据的维度和网络输出的维度相同，将标签数据的第 2 维填充为对应标签。这样，其余数据回被忽略。这一部分<a target="_blank" rel="noopener" href="https://github.com/uvipen/Yolo-v2-pytorch/blob/9589413b5dce0476eb9cccc41945cf30cf131b34/src/loss.py#L89-L145">代码</a>。</li>
 </ol>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>这一部分代码还是耐心读吧……我也读了一晚上。也确实没发现网上有哪篇博客写的比代码还要详细清晰。读完了代码，我也知道了代码中如何实现多尺度训练和使用 anchor box。据说 YOLO v3/v4/v5 都是一些工程上的 trick 了。应该只会读那些具有创新点的代码，其他代码会选择性了略过了。</p>
 
@@ -356,16 +360,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -491,7 +495,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v2"><span class="nav-number">1.</span> <span class="nav-text">YOLO v2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Better"><span class="nav-number">1.1.</span> <span class="nav-text">Better</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Direct-location-prediction"><span class="nav-number">1.1.1.</span> <span class="nav-text">Direct location prediction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fine-Grained-Features"><span class="nav-number">1.1.2.</span> <span class="nav-text">Fine-Grained Features</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Scale-Training"><span class="nav-number">1.1.3.</span> <span class="nav-text">Multi-Scale Training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster"><span class="nav-number">1.2.</span> <span class="nav-text">Faster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stronger"><span class="nav-number">1.3.</span> <span class="nav-text">Stronger</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#code"><span class="nav-number">2.</span> <span class="nav-text">code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型部分"><span class="nav-number">2.1.</span> <span class="nav-text">模型部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据与损失"><span class="nav-number">2.2.</span> <span class="nav-text">数据与损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v2"><span class="nav-number">1.</span> <span class="nav-text">YOLO v2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Better"><span class="nav-number">1.1.</span> <span class="nav-text">Better</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Direct-location-prediction"><span class="nav-number">1.1.1.</span> <span class="nav-text">Direct location prediction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fine-Grained-Features"><span class="nav-number">1.1.2.</span> <span class="nav-text">Fine-Grained Features</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Scale-Training"><span class="nav-number">1.1.3.</span> <span class="nav-text">Multi-Scale Training</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Faster"><span class="nav-number">1.2.</span> <span class="nav-text">Faster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stronger"><span class="nav-number">1.3.</span> <span class="nav-text">Stronger</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#code"><span class="nav-number">2.</span> <span class="nav-text">code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%83%A8%E5%88%86"><span class="nav-number">2.1.</span> <span class="nav-text">模型部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E6%8D%9F%E5%A4%B1"><span class="nav-number">2.2.</span> <span class="nav-text">数据与损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -527,7 +531,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -561,14 +565,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -627,9 +631,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -742,7 +754,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

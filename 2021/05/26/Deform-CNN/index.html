@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,23 @@
   </script>
 
   <meta name="description" content="之前了解到，可变形卷积 DCN（Deformable Convolutional Networks）是上分常用小技巧，所以把论文找来读了一下，V1 和 V2 两个版本都读了一下，个人感觉以及他人复现的结果显示 1 ，V1写的很好且够用，V2 写的实在是晕头转向。感觉还挺有创意，后期准备复现后，以后可能会用到。">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="可变形卷积 DCN，从 V1 到 V2">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/05/26/Deform-CNN/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="之前了解到，可变形卷积 DCN（Deformable Convolutional Networks）是上分常用小技巧，所以把论文找来读了一下，V1 和 V2 两个版本都读了一下，个人感觉以及他人复现的结果显示 1 ，V1写的很好且够用，V2 写的实在是晕头转向。感觉还挺有创意，后期准备复现后，以后可能会用到。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-27T17:17:54.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/27/2P4Q1J.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/27/2Py8mD.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/27/2Pg4jP.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/27/2PhOOI.png">
+<meta property="og:image" content="https://z3.ax1x.com/2021/05/27/2PTMUx.png">
+<meta property="article:published_time" content="2021-05-26T12:42:34.000Z">
+<meta property="article:modified_time" content="2021-05-27T17:17:54.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="可变形卷积 DCN，从 V1 到 V2">
-<meta name="twitter:description" content="之前了解到，可变形卷积 DCN（Deformable Convolutional Networks）是上分常用小技巧，所以把论文找来读了一下，V1 和 V2 两个版本都读了一下，个人感觉以及他人复现的结果显示 1 ，V1写的很好且够用，V2 写的实在是晕头转向。感觉还挺有创意，后期准备复现后，以后可能会用到。">
+<meta name="twitter:image" content="https://z3.ax1x.com/2021/05/27/2P4Q1J.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/05/26/Deform-CNN/">
 
@@ -293,7 +299,7 @@
 
       
         <p>之前了解到，可变形卷积 DCN（Deformable Convolutional Networks）是上分常用小技巧，所以把论文找来读了一下，V1 和 V2 两个版本都读了一下，个人感觉以及他人复现的结果显示 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> ，V1写的很好且够用，V2 写的实在是晕头转向。感觉还挺有创意，后期准备复现后，以后可能会用到。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>传统的 CNN 在建模时，几何变化能力受限，感受野都是规则的相邻矩形。于是，提出了可变形卷积，通过无监督的形式学习额外的偏移参数，加强模型的几何变换能力。也就是说，有了偏移参数，此时的卷积核读取的输入不再是规则的矩阵。且像传统 CNN 一样，支持端到端训练和反向传播，可以通过插拔的形式替换传统模型中的 CNN 。</p>
 <ul>
 <li>偏移参数是在输入的特征图上增加额外的网络分支，自己学出来的，所以这是一种自适应的方式</li>
@@ -305,9 +311,9 @@
 <h1 id="变形卷积算法"><a href="#变形卷积算法" class="headerlink" title="变形卷积算法"></a>变形卷积算法</h1><p>首先定义区域 $R$ 是输入特征图 $x$ 中的规则矩形，卷积核的权重是 $w$，区域 $R$ 中的元素的含义为横坐标的偏移与纵坐标的偏移量，所以可以通过 $R$ 了解到卷积核的大小和扩张大小。</p>
 <p>\begin{equation}<br>R = \bigl( (-1, 1), (-1, 0), \cdots, (0,1), (1,1) \bigr)<br>\end{equation}</p>
 <p>上面公式中，卷积核的大小就是 3，元素数量是 9，扩张大小为 1。以 $y$ 表示输出特征图，那么 $y$ 在 $p_0$ 位置的取值为 ：</p>
-<p>\begin{equation}<br>y(p<em>0) = \sum</em>{p_n \in R} w(p_n) x (p_0 + p_n)<br>\label{traditional}<br>\end{equation}</p>
+<p>\begin{equation}<br>y(p_0) = \sum_{p_n \in R} w(p_n) x (p_0 + p_n)<br>\label{traditional}<br>\end{equation}</p>
 <p>$(p_0 + p_n)$ 的意思是偏移到目标像素 $p_n$，原文没有解释，我看了半天才看懂。这也就是传统的卷积。如果我们对 $R$ 中的每一个位置的元素都有一个通过神经网络学习得来的偏移量 $(\Delta p_n | n=1,\cdots,N)$，那么公式 $\eqref{traditional}$ 可以改写为：</p>
-<p>\begin{equation}<br>y(p<em>0) = \sum</em>{p_n \in R} w(p_n) x (p_0 + p_n + \Delta p_n)<br>\end{equation}</p>
+<p>\begin{equation}<br>y(p_0) = \sum_{p_n \in R} w(p_n) x (p_0 + p_n + \Delta p_n)<br>\end{equation}</p>
 <p>此时的卷积可视化如下图中的 b c d 部分，a 是标准的卷积。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/27/2Py8mD.png" alt></p>
 <p>因为 $p_n + \Delta p_n$ 可能是一个小数，所以需要使用双线性插值来对坐标取整，用 $p$ 来表示 $p_0 + p_n + \Delta p_n$，公式如下：</p>
@@ -318,19 +324,19 @@
 <h1 id="变形卷积训练流程"><a href="#变形卷积训练流程" class="headerlink" title="变形卷积训练流程"></a>变形卷积训练流程</h1><p><img data-src="https://z3.ax1x.com/2021/05/27/2Pg4jP.png" alt></p>
 <p>如上图所示，假设 $R$ 中卷积核的元素数量是 $N$，比如 $3\times 3$ 卷积核的元素数量就是 9。那么就增加一个旁路卷积，这个卷积的通道数就是 $2N$，且卷积前后尺寸不变。这样做的原因是，计算 $x$ 方向和 $y$ 方向共两个方向的偏移量。取前两个通道，就是当前卷积核处理像素点的横坐标偏移和纵坐标偏移。</p>
 <h1 id="变形-ROI-Pooling"><a href="#变形-ROI-Pooling" class="headerlink" title="变形 ROI Pooling"></a>变形 ROI Pooling</h1><p>其实道理也和上面一样了，假设此时在目标检测中将特征图 ROI pool 到 $k\times k$ 的矩阵中，以平均池化为例，输出 $y$ 中第 $(i,j)$ 个元素的取值就是</p>
-<p>\begin{equation}<br>y(i,j)=\sum<em>{p\in bin(i,j)} x(p + p_0) / n</em>{ij}<br>\end{equation}</p>
-<p>$bin$ 表示要被池化的区域，$n<em>{ij}$ 是对应区域中的像素点的数量。而此时，可以学习一个偏移量参数 $\Delta p</em>{ij}$，新的 ROI Pooling 公式就是</p>
-<p>\begin{equation}<br>y(i,j)=\sum<em>{p\in bin(i,j)} x(p + p_0 + \Delta p</em>{ij}) / n_{ij}<br>\end{equation}</p>
+<p>\begin{equation}<br>y(i,j)=\sum_{p\in bin(i,j)} x(p + p_0) / n_{ij}<br>\end{equation}</p>
+<p>$bin$ 表示要被池化的区域，$n_{ij}$ 是对应区域中的像素点的数量。而此时，可以学习一个偏移量参数 $\Delta p_{ij}$，新的 ROI Pooling 公式就是</p>
+<p>\begin{equation}<br>y(i,j)=\sum_{p\in bin(i,j)} x(p + p_0 + \Delta p_{ij}) / n_{ij}<br>\end{equation}</p>
 <p>双线性取整部分就和之前的一样了。不过论文中注明了一点，网络学习到的是 $\Delta \hat{p}_{ij}$，如下图所示，使用全连接计算每个像素点的偏移量。</p>
 <p><img data-src="https://z3.ax1x.com/2021/05/27/2PhOOI.png" alt></p>
-<p>而 $\Delta p<em>{ij} = \gamma \cdot \Delta \hat{p}</em>{ij} \circ (w,h)$，$\gamma$ 的取值是 0.1，$(w,h)$ 是 ROI Pooling 之前的特征图的宽度和高度，$\circ$ 运算是什么，文中没有声明。</p>
+<p>而 $\Delta p_{ij} = \gamma \cdot \Delta \hat{p}_{ij} \circ (w,h)$，$\gamma$ 的取值是 0.1，$(w,h)$ 是 ROI Pooling 之前的特征图的宽度和高度，$\circ$ 运算是什么，文中没有声明。</p>
 <h1 id="V2"><a href="#V2" class="headerlink" title="V2"></a>V2</h1><p>DCN V2 看的我属实头晕，不过大体贡献还是能看清的，集中改进了两点：</p>
 <ul>
 <li>采样时，如果采到了背景区域，会对目标分类与检测造成影响，所以要抑制背景区域的贡献</li>
 <li>训练一个教师网络，类似判别器，用于指导检测网络的检测，文中称为特征模仿（feature mimicking），没读懂这个和前文改进的联系，唯一的相似点是摘要中指出的：提高模型捕获特征的能力，但我感觉这里是重点</li>
 </ul>
 <p>以可变形卷积为例，原有 DCN 的输出通道是 $2N$，那么作者将输出通道改为 $2N+1$，最后一个维度用 sigmoid 激活到 (0, 1) ，表示为符号 $\Delta m_k$ ，含义为当前像素点的贡献程度，如果是背景噪音，那么贡献会趋于 0。所以此时可变形卷积的公式为：</p>
-<p>\begin{equation}<br>y(p<em>0) = \sum</em>{p_n \in R} w(p_n) x (p_0 + p_n + \Delta p_n) \cdot \Delta m_k<br>\end{equation}</p>
+<p>\begin{equation}<br>y(p_0) = \sum_{p_n \in R} w(p_n) x (p_0 + p_n + \Delta p_n) \cdot \Delta m_k<br>\end{equation}</p>
 <p>至于 ROI Pooling 也是一个道理了。</p>
 <h2 id="特征模仿"><a href="#特征模仿" class="headerlink" title="特征模仿"></a>特征模仿</h2><p>而另一个创新点是特征模仿，在主干网络 RPN 后，将得到的题夷旷送到另一个 RCNN 分支，两个分支的输出的相似性做对比作为损失，相似度越高，损失越小，相似度越低，损失越大。相似度是用 $\cos$ 函数计算的。</p>
 <ul>
@@ -349,19 +355,19 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
+      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
     </li>
   </ul>
 
@@ -487,7 +493,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#变形卷积算法"><span class="nav-number">2.</span> <span class="nav-text">变形卷积算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#变形卷积训练流程"><span class="nav-number">3.</span> <span class="nav-text">变形卷积训练流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#变形-ROI-Pooling"><span class="nav-number">4.</span> <span class="nav-text">变形 ROI Pooling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#V2"><span class="nav-number">5.</span> <span class="nav-text">V2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#特征模仿"><span class="nav-number">5.1.</span> <span class="nav-text">特征模仿</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">6.</span> <span class="nav-text">reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%98%E5%BD%A2%E5%8D%B7%E7%A7%AF%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">变形卷积算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%98%E5%BD%A2%E5%8D%B7%E7%A7%AF%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">变形卷积训练流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%98%E5%BD%A2-ROI-Pooling"><span class="nav-number">4.</span> <span class="nav-text">变形 ROI Pooling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#V2"><span class="nav-number">5.</span> <span class="nav-text">V2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E6%A8%A1%E4%BB%BF"><span class="nav-number">5.1.</span> <span class="nav-text">特征模仿</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">6.</span> <span class="nav-text">reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -523,7 +529,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -557,14 +563,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -623,9 +629,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -738,7 +752,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

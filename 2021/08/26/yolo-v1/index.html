@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
-<meta name="keywords" content="CV">
 <meta property="og:type" content="article">
 <meta property="og:title" content="YOLO目标检测从 V1 开始，细读代码">
 <meta property="og:url" content="https://muyuuuu.github.io/2021/08/26/yolo-v1/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-01-03T08:46:01.738Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-26T11:06:48.000Z">
+<meta property="article:modified_time" content="2022-01-03T08:46:01.738Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="YOLO目标检测从 V1 开始，细读代码">
-<meta name="twitter:description" content="忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2021/08/26/yolo-v1/">
 
@@ -293,24 +293,24 @@
 
       
         <p>忙里偷闲，写几篇长文，从 YOLO 的 v1 到 v5。没想到时隔多年会回来重新看 YOLO 系列的东西，相比两阶段检测，YOLO 真的太快了，加上一些训练的 trick，mAP 也不会很低。网上看了好多教程不明所以，索性还是直接去读原论文了，读了原论文有些东西还是不理解，索性又去读了源程序。不过为了便于理解，有的地方不会按照论文顺序进行整理。少问问题，读论文产生的疑问在代码里都有解答，不看代码永远不能被称为学会了。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>如果对本文有疑问或者想找男朋友，可以联系我，<a href="https://muyuuuu.github.io/about/">点击此处有我联系方式</a>。</p>
 <h1 id="YOLO-v1"><a href="#YOLO-v1" class="headerlink" title="YOLO v1"></a>YOLO v1</h1><ul>
-<li>论文地址：<a href="https://arxiv.org/abs/1506.02640" target="_blank" rel="noopener">https://arxiv.org/abs/1506.02640</a></li>
-<li>pytorch 程序地址：<a href="https://github.com/motokimura/yolo_v1_pytorch" target="_blank" rel="noopener">https://github.com/motokimura/yolo_v1_pytorch</a></li>
+<li>论文地址：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.02640">https://arxiv.org/abs/1506.02640</a></li>
+<li>pytorch 程序地址：<a target="_blank" rel="noopener" href="https://github.com/motokimura/yolo_v1_pytorch">https://github.com/motokimura/yolo_v1_pytorch</a></li>
 </ul>
 <p>YOLO v1 将目标检测定义为回归问题，直接读入全部图像，回归出边界框和分类概率。与同时期的 Faster RCNN 对比，算法快了不少，也没有 RPN 以及后处理，也避免里滑动窗口这样的暴力检测。所以能用到一些实时系统中，也是我花精力看这一些列论文的原因。</p>
 <p>但是对于 v1 的 YOLO 存在一些缺陷，作者在论文中也进行了阐述：准确率低、定位不准尤其是小目标的定位。</p>
 <h2 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h2><p>首先将图片分为 $S\times S$ 个网格，论文中 $S=7$，如果一个物体的中心落入这个格子中，那么这个格子负责预测这个目标。设每个格子负责预测 $B$ 个物体的盒子参数和置信度得分，盒子参数指明物体的位置，置信度表示盒子含有目标且预测准确的可信程度。即对于图片的每个格子，会输出 $B$ 个 $(x,y,w,h,c)$，论文中 $B=2$。</p>
 <p>既然有了输出，那么就需要 label 进行损失计算。$(x,y,w,h,c)$ 是人工标注的数据，$c$ 初始化为 1。论文定义网络输出的置信度标签是一个分段函数，如果格子没有目标，置信度是 0；如果有目标，置信度是预测框和真实框的 IOU 值，公式描述为 $\text{Pr(Object)} * \text{IOU}_{\text{pred}}^\text{truth}$。</p>
-<p>目标检测和分类是分不开的，为了达到分类的目的，每个格子也会输出 $C$ 个类别的概率，公式表述为 $\text{Pr(Class}_i|\text{Object})$，即格子里面得是个目标，才能计算分类的概率和损失。而每个格子输出一组<a href="https://github.com/motokimura/yolo_v1_pytorch/blob/master/detect.py#L203-L206" target="_blank" rel="noopener">预测</a>，即使输出了 $B$ 组数据，这就限制了网络的表达。</p>
+<p>目标检测和分类是分不开的，为了达到分类的目的，每个格子也会输出 $C$ 个类别的概率，公式表述为 $\text{Pr(Class}_i|\text{Object})$，即格子里面得是个目标，才能计算分类的概率和损失。而每个格子输出一组<a target="_blank" rel="noopener" href="https://github.com/motokimura/yolo_v1_pytorch/blob/master/detect.py#L203-L206">预测</a>，即使输出了 $B$ 组数据，这就限制了网络的表达。</p>
 <p>在测试阶段，类别置信度的分数就是分类概率和置信度相乘，即盒子中「有这个类别的概率」和「网络预测这个类别的概率」的乘积：</p>
-<p>\begin{equation}<br>\text{Pr(Class}<em>i|\text{Object})*\text{Pr(Object)}*\text{IOU}</em>{\text{pred}}^\text{truth}=\text{Pr(Class}<em>i) * \text{IOU}</em>{\text{pred}}^\text{truth}<br>\end{equation}</p>
+<p>\begin{equation}<br>\text{Pr(Class}_i|\text{Object})*\text{Pr(Object)}*\text{IOU}_{\text{pred}}^\text{truth}=\text{Pr(Class}_i) * \text{IOU}_{\text{pred}}^\text{truth}<br>\end{equation}</p>
 <h2 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h2><p>这种东西还是代码清楚，只放了最关键的检测输出：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nn.Linear(<span class="number">4096</span>, S * S * (<span class="number">5</span> * B + C))</span><br><span class="line">nn.Sigmoid()</span><br><span class="line">x.view(<span class="number">-1</span>, S, S, <span class="number">5</span> * B + C)</span><br></pre></td></tr></table></figure>
-<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>\begin{aligned}<br>{ } &amp; \lambda<em>{coord} \sum</em>{i=0}^{S^2} \sum<em>{j=0}^{B} \mathbb{I}</em>{ij}^{\text{obj}} [(x<em>i-\hat{x}_i)^2 + (y_i-\hat{y}_i)^2] \<br>{ } &amp;+ \lambda</em>{coord} \sum<em>{i=0}^{S^2} \sum</em>{j=0}^{B} \mathbb{I}<em>{ij}^{\text{obj}} [(\sqrt{w_i}-\sqrt{\hat{w}_i})^2+(\sqrt{h_i}-\sqrt{\hat{h}_i})^2] \<br>{ } &amp;+ \sum</em>{i=0}^{S^2} \sum<em>{j=0}^{B} \mathbb{I}</em>{ij}^{\text{obj}} (C<em>i - \hat{C}_i)^2 \<br>{ } &amp;+ \lambda</em>{noobj} \sum<em>{i=0}^{S^2} \sum</em>{j=0}^{B} \mathbb{I}<em>{ij}^{\text{noobj}} (C_i - \hat{C}_i)^2 \<br>{ } &amp;+ \sum</em>{i=0}^{S^2} \mathbb{I}<em>{ij}^{\text{obj}} \sum</em>{c\in classes} (p_i(c)-\hat{p}_i(c))^2<br>\end{aligned}</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nn.Linear(<span class="number">4096</span>, S * S * (<span class="number">5</span> * B + C))</span><br><span class="line">nn.Sigmoid()</span><br><span class="line">x.view(-<span class="number">1</span>, S, S, <span class="number">5</span> * B + C)</span><br></pre></td></tr></table></figure>
+<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>\begin{aligned}<br>{ } &amp; \lambda_{coord} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{obj}} [(x_i-\hat{x}_i)^2 + (y_i-\hat{y}_i)^2] \\<br>{ } &amp;+ \lambda_{coord} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{obj}} [(\sqrt{w_i}-\sqrt{\hat{w}_i})^2+(\sqrt{h_i}-\sqrt{\hat{h}_i})^2] \\<br>{ } &amp;+ \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{obj}} (C_i - \hat{C}_i)^2 \\<br>{ } &amp;+ \lambda_{noobj} \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{I}_{ij}^{\text{noobj}} (C_i - \hat{C}_i)^2 \\<br>{ } &amp;+ \sum_{i=0}^{S^2} \mathbb{I}_{ij}^{\text{obj}} \sum_{c\in classes} (p_i(c)-\hat{p}_i(c))^2<br>\end{aligned}</p>
 <ul>
-<li>$\lambda<em>{coord}$ 是前景的权重，$\mathbb{I}</em>{ij}^{\text{obj}}$ 是指示函数，取值只有 0 和 1</li>
+<li>$\lambda_{coord}$ 是前景的权重，$\mathbb{I}_{ij}^{\text{obj}}$ 是指示函数，取值只有 0 和 1</li>
 <li>前两行表示 bound box 的损失</li>
 <li>第三行是前景置信度的损失</li>
 <li>第四行是背景置信度的损失</li>
@@ -329,7 +329,7 @@
 <li>方便图像的标准化处理。网络常常使用多个 batch 进行训练，每个 batch 的数据要求大小统一，对于不同尺寸的图像应选择 <code>resize</code>。如果直接用坐标，<code>resize</code> 后会导致坐标错位，而如果用占比，位于之前图像 (0.5, 0.5) 处的点在 <code>resize</code> 后的坐标仍然是 (0.5, 0.5)。</li>
 </ol>
 <p>由于 YOLO 最初设计的方案是：物体中心落到哪个格子，就由这个格子预测这个目标，这一观点需要仔细阅读代码才能理解。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 和网络输出同等大小的标签</span></span><br><span class="line">target = torch.zeros(S, S, N)</span><br><span class="line"><span class="comment"># S=7，表示每个格子的占比</span></span><br><span class="line">cell_size = <span class="number">1.0</span> / float(S)</span><br><span class="line"><span class="comment"># 计算宽度和高度</span></span><br><span class="line">boxes_wh = boxes[:, <span class="number">2</span>:] - boxes[:, :<span class="number">2</span>]</span><br><span class="line"><span class="comment"># x,y 的中心点坐标，此时已经除以图像大小</span></span><br><span class="line">boxes_xy = (boxes[:, <span class="number">2</span>:] + boxes[:, :<span class="number">2</span>]) / <span class="number">2.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对于 b 和 batch 的盒子进行处理</span></span><br><span class="line"><span class="keyword">for</span> b <span class="keyword">in</span> range(boxes.size(<span class="number">0</span>)):</span><br><span class="line">    xy, wh, label = boxes_xy[b], boxes_wh[b], int(labels[b])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算中心点位于哪个格子</span></span><br><span class="line">    ij = (xy / cell_size).ceil() - <span class="number">1.0</span></span><br><span class="line">    <span class="comment"># 取出 i j，用于 SXS 的填充</span></span><br><span class="line">    i, j = int(ij[<span class="number">0</span>]), int(ij[<span class="number">1</span>])</span><br><span class="line">    <span class="comment"># 格子左上角的坐标</span></span><br><span class="line">    x0y0 = ij * cell_size</span><br><span class="line">    <span class="comment"># 相对格子左上角的坐标</span></span><br><span class="line">    <span class="comment"># 除以 cell_size 没啥用，这人代码写的有问题，后面损失计算的时候又乘了回来</span></span><br><span class="line">    xy_normalized = (xy - x0y0) / cell_size</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 开始填充</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> range(B):</span><br><span class="line">        s = <span class="number">5</span> * k</span><br><span class="line">        target[j, i, s  :s+<span class="number">2</span>] = xy_normalized <span class="comment"># 坐标</span></span><br><span class="line">        target[j, i, s+<span class="number">2</span>:s+<span class="number">4</span>] = wh            <span class="comment"># 大小</span></span><br><span class="line">        target[j, i, s+<span class="number">4</span>    ] = <span class="number">1.0</span>           <span class="comment"># 置信度</span></span><br><span class="line">    target[j, i, <span class="number">5</span>*B + label] = <span class="number">1.0</span>           <span class="comment"># 类别标签</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> target</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 和网络输出同等大小的标签</span></span><br><span class="line">target = torch.zeros(S, S, N)</span><br><span class="line"><span class="comment"># S=7，表示每个格子的占比</span></span><br><span class="line">cell_size = <span class="number">1.0</span> / <span class="built_in">float</span>(S)</span><br><span class="line"><span class="comment"># 计算宽度和高度</span></span><br><span class="line">boxes_wh = boxes[:, <span class="number">2</span>:] - boxes[:, :<span class="number">2</span>]</span><br><span class="line"><span class="comment"># x,y 的中心点坐标，此时已经除以图像大小</span></span><br><span class="line">boxes_xy = (boxes[:, <span class="number">2</span>:] + boxes[:, :<span class="number">2</span>]) / <span class="number">2.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对于 b 和 batch 的盒子进行处理</span></span><br><span class="line"><span class="keyword">for</span> b <span class="keyword">in</span> <span class="built_in">range</span>(boxes.size(<span class="number">0</span>)):</span><br><span class="line">    xy, wh, label = boxes_xy[b], boxes_wh[b], <span class="built_in">int</span>(labels[b])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算中心点位于哪个格子</span></span><br><span class="line">    ij = (xy / cell_size).ceil() - <span class="number">1.0</span></span><br><span class="line">    <span class="comment"># 取出 i j，用于 SXS 的填充</span></span><br><span class="line">    i, j = <span class="built_in">int</span>(ij[<span class="number">0</span>]), <span class="built_in">int</span>(ij[<span class="number">1</span>])</span><br><span class="line">    <span class="comment"># 格子左上角的坐标</span></span><br><span class="line">    x0y0 = ij * cell_size</span><br><span class="line">    <span class="comment"># 相对格子左上角的坐标</span></span><br><span class="line">    <span class="comment"># 除以 cell_size 没啥用，这人代码写的有问题，后面损失计算的时候又乘了回来</span></span><br><span class="line">    xy_normalized = (xy - x0y0) / cell_size</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 开始填充</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(B):</span><br><span class="line">        s = <span class="number">5</span> * k</span><br><span class="line">        target[j, i, s  :s+<span class="number">2</span>] = xy_normalized <span class="comment"># 坐标</span></span><br><span class="line">        target[j, i, s+<span class="number">2</span>:s+<span class="number">4</span>] = wh            <span class="comment"># 大小</span></span><br><span class="line">        target[j, i, s+<span class="number">4</span>    ] = <span class="number">1.0</span>           <span class="comment"># 置信度</span></span><br><span class="line">    target[j, i, <span class="number">5</span>*B + label] = <span class="number">1.0</span>           <span class="comment"># 类别标签</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> target</span><br></pre></td></tr></table></figure>
 <p>在损失计算阶段，代码真的太长了不便展示，这里只记录核心要素：</p>
 <ol>
 <li>对于有目标计算损失，无目标忽略这一点，是通过对真实标签进行掩码处理实现的，只取出真实标签中置信度为 1 的标签记录维度，并在 predict 中取出同维度的数据就算损失，其余数据忽略。假设这一步保留了 $X$ 个盒子。</li>
@@ -337,8 +337,8 @@
 </ol>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>我已经正负样本划分、格子、bounding box、anchor box 的概念已经搞混了，论文里不会写这太细节的东西，不然我也不会来读代码。毕竟整理理论知识太简单了，也容易自欺欺人，并不清楚网络的流程。所以 YOLO v2, v3, v4, v5 和 x 的内容等下几篇博客了。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a href="https://zhuanlan.zhihu.com/p/183261974" target="_blank" rel="noopener">你一定从未看过如此通俗易懂的YOLO系列(从v1到v5)模型解读</a></li>
-<li><a href="https://fengweiustc.github.io/paper-reading/2020/06/17/yolo/" target="_blank" rel="noopener">YOLO v1/v2/v3/v4</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/183261974">你一定从未看过如此通俗易懂的YOLO系列(从v1到v5)模型解读</a></li>
+<li><a target="_blank" rel="noopener" href="https://fengweiustc.github.io/paper-reading/2020/06/17/yolo/">YOLO v1/v2/v3/v4</a></li>
 </ol>
 
     </div>
@@ -353,16 +353,16 @@
       <div class="popular-posts-title"><a href="/2021/05/26/Deform-CNN/" rel="bookmark">可变形卷积 DCN，从 V1 到 V2</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/05/24/FCN/" rel="bookmark">分割篇系列：FCN，DeepLab，UNet，PAN 和 UperNet</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/01/FPN/" rel="bookmark">目标检测篇：FPN</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2021/05/11/MMDetection-use/" rel="bookmark">目标检测篇：MMDetection 推理使用与详细踩坑记录</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/01/19/Mask-PIL-jpg-and-png/" rel="bookmark">目标检测篇：Python使用PIL库制作mask数据时，JPG与PNG的异同</a></div>
+      <div class="popular-posts-title"><a href="/2021/05/20/MMdetection-pipeline/" rel="bookmark">目标检测篇：自定义 MMDetection 的 Pipeline</a></div>
     </li>
   </ul>
 
@@ -488,7 +488,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v1"><span class="nav-number">1.</span> <span class="nav-text">YOLO v1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法流程"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络结构"><span class="nav-number">1.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数"><span class="nav-number">1.3.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺陷"><span class="nav-number">1.4.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序解析"><span class="nav-number">2.</span> <span class="nav-text">程序解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络模型"><span class="nav-number">2.1.</span> <span class="nav-text">网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据与损失"><span class="nav-number">2.2.</span> <span class="nav-text">数据与损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YOLO-v1"><span class="nav-number">1.</span> <span class="nav-text">YOLO v1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7"><span class="nav-number">1.4.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">程序解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E6%8D%9F%E5%A4%B1"><span class="nav-number">2.2.</span> <span class="nav-text">数据与损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -524,7 +524,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -558,14 +558,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -624,9 +624,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -739,7 +747,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

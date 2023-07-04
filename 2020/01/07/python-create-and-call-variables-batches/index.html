@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,17 @@
   </script>
 
   <meta name="description" content="这几天写代码中遇到的一个常见问题，在Python中如何批量的生成一些变量，如生成变量X1, X2, X3，并在后续的方法中调用，完成赋值、取值等操作。这个问题也算是常见的吧，之前遇到过，也不了了之了。而这次遇到了同样的问题，虽然是创建三个变量数量较少，但从代码维护和易读性的角度考虑，需要使用一些恰当的手段，来避免重复写三次同样代码带来的弊端。一百次，一万次？总不能复制这么多次吧。（为何不复制？详情">
-<meta name="keywords" content="Python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python批量生成和调用变量">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/01/07/python-create-and-call-variables-batches/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="这几天写代码中遇到的一个常见问题，在Python中如何批量的生成一些变量，如生成变量X1, X2, X3，并在后续的方法中调用，完成赋值、取值等操作。这个问题也算是常见的吧，之前遇到过，也不了了之了。而这次遇到了同样的问题，虽然是创建三个变量数量较少，但从代码维护和易读性的角度考虑，需要使用一些恰当的手段，来避免重复写三次同样代码带来的弊端。一百次，一万次？总不能复制这么多次吧。（为何不复制？详情">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-07T22:09:22.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-07T13:43:08.000Z">
+<meta property="article:modified_time" content="2020-01-07T22:09:22.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Python批量生成和调用变量">
-<meta name="twitter:description" content="这几天写代码中遇到的一个常见问题，在Python中如何批量的生成一些变量，如生成变量X1, X2, X3，并在后续的方法中调用，完成赋值、取值等操作。这个问题也算是常见的吧，之前遇到过，也不了了之了。而这次遇到了同样的问题，虽然是创建三个变量数量较少，但从代码维护和易读性的角度考虑，需要使用一些恰当的手段，来避免重复写三次同样代码带来的弊端。一百次，一万次？总不能复制这么多次吧。（为何不复制？详情">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/01/07/python-create-and-call-variables-batches/">
 
@@ -273,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -294,22 +294,22 @@
       
         <p>这几天写代码中遇到的一个常见问题，在<code>Python</code>中如何批量的生成一些变量，如生成变量<code>X1, X2, X3</code>，并在后续的方法中调用，完成赋值、取值等操作。这个问题也算是常见的吧，之前遇到过，也不了了之了。而这次遇到了同样的问题，虽然是创建三个变量数量较少，但从代码维护和易读性的角度考虑，需要使用一些恰当的手段，来避免重复写三次同样代码带来的弊端。一百次，一万次？总不能复制这么多次吧。（为何不复制？详情参考软件工程中的软件维护）。</p>
 <p>因此有必要养成良好的习惯，而不是复制三次同样的代码。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h1 id="使用Locals-方法"><a href="#使用Locals-方法" class="headerlink" title="使用Locals()方法"></a>使用Locals()方法</h1><p>在普通函数内的确可以使用，但在类中不行。这个问题也困扰了我很久，所以，建议在编写类时需要批量创建和调用变量时，不建议使用。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    locals() [<span class="string">'x'</span> + str(i)] = i</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    a = locals() [<span class="string">'x'</span> + str(j)]</span><br><span class="line">    print(a)</span><br><span class="line">print(x0)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="built_in">locals</span>() [<span class="string">&#x27;x&#x27;</span> + <span class="built_in">str</span>(i)] = i</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    a = <span class="built_in">locals</span>() [<span class="string">&#x27;x&#x27;</span> + <span class="built_in">str</span>(j)]</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line"><span class="built_in">print</span>(x0)</span><br></pre></td></tr></table></figure>
 <p>执行结果如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
 <p>此时在普通函数中一切正常，但在编写的类中无法运行：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            locals() [<span class="string">'self.x'</span> + str(i)] = i</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            a = locals() [<span class="string">'self.x'</span> + str(i)]</span><br><span class="line">            print(a)</span><br><span class="line"></span><br><span class="line">a = test()</span><br><span class="line">a.run()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">test</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">            <span class="built_in">locals</span>() [<span class="string">&#x27;self.x&#x27;</span> + <span class="built_in">str</span>(i)] = i</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">            a = <span class="built_in">locals</span>() [<span class="string">&#x27;self.x&#x27;</span> + <span class="built_in">str</span>(i)]</span><br><span class="line">            <span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">a = test()</span><br><span class="line">a.run()</span><br></pre></td></tr></table></figure>
 <p>报错信息如下，并没有找到这个变量。而我在编写<code>GUI</code>时，类是常用的工具，所以在类中调用这个方法时，导致了错误。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyError: <span class="string">'self.x0'</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KeyError: <span class="string">&#x27;self.x0&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>所以我找到了一种更加优雅的方式，使用字典。</p>
 <h1 id="使用字典"><a href="#使用字典" class="headerlink" title="使用字典"></a>使用字典</h1><p>字典键值对的形式，尤其是键可设置为字符串，对此类问题可以提供良好的解决方案。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">test</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.d = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            self.d[<span class="string">'x'</span> + str(i)] = i</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            a = self.d[<span class="string">'x'</span> + str(i)]</span><br><span class="line">            print(a)</span><br><span class="line"></span><br><span class="line">asd = test()</span><br><span class="line">asd.run()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">test</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.d = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">            self.d[<span class="string">&#x27;x&#x27;</span> + <span class="built_in">str</span>(i)] = i</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">            a = self.d[<span class="string">&#x27;x&#x27;</span> + <span class="built_in">str</span>(i)]</span><br><span class="line">            <span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">asd = test()</span><br><span class="line">asd.run()</span><br></pre></td></tr></table></figure>
 <p>此时便可以愉快的在类中批量的生成与调用变量。而在普通函数中也是可以的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    d[<span class="string">'x'</span> + str(i)] = i</span><br><span class="line">    </span><br><span class="line">print(d.keys())</span><br><span class="line">print(d[<span class="string">'x0'</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    print(d[<span class="string">'x'</span> + str(i)])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    d[<span class="string">&#x27;x&#x27;</span> + <span class="built_in">str</span>(i)] = i</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(d.keys())</span><br><span class="line"><span class="built_in">print</span>(d[<span class="string">&#x27;x0&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="built_in">print</span>(d[<span class="string">&#x27;x&#x27;</span> + <span class="built_in">str</span>(i)])</span><br></pre></td></tr></table></figure>
 <p>输出结果如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dict_keys([<span class="string">'x0'</span>, <span class="string">'x1'</span>, <span class="string">'x2'</span>])</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dict_keys([<span class="string">&#x27;x0&#x27;</span>, <span class="string">&#x27;x1&#x27;</span>, <span class="string">&#x27;x2&#x27;</span>])</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -328,10 +328,10 @@
       <div class="popular-posts-title"><a href="/2020/07/23/generator-and-iterator/" rel="bookmark">迭代器与生成器</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/10/06/pyqt5-basic/" rel="bookmark">PyQt5的基本控件整理</a></div>
+      <div class="popular-posts-title"><a href="/2019/10/19/pyqt-layout/" rel="bookmark">PyQt5高级布局与美化</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2019/10/19/pyqt-layout/" rel="bookmark">PyQt5高级布局与美化</a></div>
+      <div class="popular-posts-title"><a href="/2019/10/11/pyqt-pit/" rel="bookmark">PyQt5踩坑</a></div>
     </li>
   </ul>
 
@@ -457,7 +457,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用Locals-方法"><span class="nav-number">1.</span> <span class="nav-text">使用Locals()方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用字典"><span class="nav-number">2.</span> <span class="nav-text">使用字典</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Locals-%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">使用Locals()方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%97%E5%85%B8"><span class="nav-number">2.</span> <span class="nav-text">使用字典</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -493,7 +493,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -527,14 +527,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -593,9 +593,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -708,7 +716,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

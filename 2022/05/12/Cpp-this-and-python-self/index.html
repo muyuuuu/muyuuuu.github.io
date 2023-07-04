@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,18 @@
   </script>
 
   <meta name="description" content="之前一直好奇 C++ 中的 this 和 python 中的 self 到底是什么关系，为什么 C++ 要显式的写出来，python 则不需要。顺便深入了解一下 this。">
-<meta name="keywords" content="C++,Python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ 中的 this 和 Python 中的 self">
 <meta property="og:url" content="https://muyuuuu.github.io/2022/05/12/Cpp-this-and-python-self/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="之前一直好奇 C++ 中的 this 和 python 中的 self 到底是什么关系，为什么 C++ 要显式的写出来，python 则不需要。顺便深入了解一下 this。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-05-16T15:30:41.823Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-12T15:10:54.000Z">
+<meta property="article:modified_time" content="2022-05-16T15:30:41.823Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ 中的 this 和 Python 中的 self">
-<meta name="twitter:description" content="之前一直好奇 C++ 中的 this 和 python 中的 self 到底是什么关系，为什么 C++ 要显式的写出来，python 则不需要。顺便深入了解一下 this。">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2022/05/12/Cpp-this-and-python-self/">
 
@@ -293,10 +294,10 @@
 
       
         <p>之前一直好奇 <code>C++</code> 中的 <code>this</code> 和 <code>python</code> 中的 <code>self</code> 到底是什么关系，为什么 <code>C++</code> 要显式的写出来，<code>python</code> 则不需要。顺便深入了解一下 <code>this</code>。</p>
-<a id="more"></a>
+<span id="more"></span>
 <h2 id="self"><a href="#self" class="headerlink" title="self"></a>self</h2><p><code>python</code> 当对象调用类中的函数的时候，系统会自动把当前对象传入函数，且参数就是第一个 <code>self</code>，不过可以用其他 <code>token</code> 代替 <code>self</code>。因此在定义的时候，需要声明 <code>self</code> 这个参数，调用时，却不需要手动传入对象。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(x)</span>:</span></span><br><span class="line">        print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># x 接收 12 这个参数</span></span><br><span class="line">A.test(<span class="number">12</span>)</span><br><span class="line">a = A()</span><br><span class="line"><span class="comment"># x 接收 a 这个对象</span></span><br><span class="line">a.test()</span><br></pre></td></tr></table></figure>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(mine, x)</span>:</span></span><br><span class="line">        print(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># mine 接收 1，x 接收 12</span></span><br><span class="line">A.test(<span class="number">1</span>, <span class="number">12</span>)</span><br><span class="line">a = A()</span><br><span class="line"><span class="comment"># mine 接收 a，x 接收 12</span></span><br><span class="line">a.test(<span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">x</span>):</span><br><span class="line">        <span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># x 接收 12 这个参数</span></span><br><span class="line">A.test(<span class="number">12</span>)</span><br><span class="line">a = A()</span><br><span class="line"><span class="comment"># x 接收 a 这个对象</span></span><br><span class="line">a.test()</span><br></pre></td></tr></table></figure>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">mine, x</span>):</span><br><span class="line">        <span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"><span class="comment"># mine 接收 1，x 接收 12</span></span><br><span class="line">A.test(<span class="number">1</span>, <span class="number">12</span>)</span><br><span class="line">a = A()</span><br><span class="line"><span class="comment"># mine 接收 a，x 接收 12</span></span><br><span class="line">a.test(<span class="number">12</span>)</span><br></pre></td></tr></table></figure>
 <h2 id="this"><a href="#this" class="headerlink" title="this"></a>this</h2><p>对于 <code>C++</code> 而言，每个对象都要操作自己内部的数据，如何知道哪里的数据是自己的内部数据，而不会发生调用对象 <code>A</code>，而修改了对象 <code>B</code> 的数据呢？答案是 <code>this</code> 指针。</p>
 <p><code>this</code> 指针是一个隐含于每一个非静态成员函数中的特殊指针，被隐含地声明为: <code>ClassName \*const this</code>，也就是地址不能改变，这意味着不能给 <code>this</code> 指针赋值；在类的 <code>const</code> 成员函数中，<code>this</code> 指针的类型为：<code>const ClassName* const</code>，这说明不能对 <code>this</code> 指针所指向的这种对象是不可修改的（即不能对这种对象的数据成员进行赋值操作）。对象被创建以后才会给 <code>this</code> 赋值，并且这个赋值的过程是编译器自动完成的，不需要用户干预，且 <code>this</code> 并不是一个常规变量，而是个右值，所以不能取得 <code>this</code> 的地址。</p>
 <p>当对象调用类中的非静态函数时，自动向它传递一个隐含的 <code>this</code> 指针参数，该参数是一个指向这个成员函数所在的对象的指针，在函数体内作为局部变量，且每次成员函数存取数据成员时，都隐式使用 <code>this</code> 指针。</p>
@@ -493,7 +494,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -527,14 +528,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -593,9 +594,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -708,7 +717,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 

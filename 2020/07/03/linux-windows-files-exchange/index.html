@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 6.3.0">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
@@ -21,17 +21,22 @@
   </script>
 
   <meta name="description" content="其实之前想整理一下 Linux 系统的使用技巧的，但想想还是算了，第一工程量大；第二，很多命令打多了也就记住了，这玩意还得靠熟练；第三，个人使用期间也时常维修各种驱动问题，时常换源，每次解决步骤也没有保留下来，电脑出错因人而异，修理方式也不尽相同，所以考虑再三就没有记录。随着使用时间的累计，相信各位会有一定的排查经验的。">
-<meta name="keywords" content="Computer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="双系统之间快速访问对方文件">
 <meta property="og:url" content="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/index.html">
 <meta property="og:site_name" content="Just for Life.">
 <meta property="og:description" content="其实之前想整理一下 Linux 系统的使用技巧的，但想想还是算了，第一工程量大；第二，很多命令打多了也就记住了，这玩意还得靠熟练；第三，个人使用期间也时常维修各种驱动问题，时常换源，每次解决步骤也没有保留下来，电脑出错因人而异，修理方式也不尽相同，所以考虑再三就没有记录。随着使用时间的累计，相信各位会有一定的排查经验的。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-02-23T18:52:26.000Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/2.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/3.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/1.png">
+<meta property="og:image" content="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/4.png">
+<meta property="article:published_time" content="2020-07-03T09:46:49.000Z">
+<meta property="article:modified_time" content="2021-02-23T18:52:26.000Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Computer">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="双系统之间快速访问对方文件">
-<meta name="twitter:description" content="其实之前想整理一下 Linux 系统的使用技巧的，但想想还是算了，第一工程量大；第二，很多命令打多了也就记住了，这玩意还得靠熟练；第三，个人使用期间也时常维修各种驱动问题，时常换源，每次解决步骤也没有保留下来，电脑出错因人而异，修理方式也不尽相同，所以考虑再三就没有记录。随着使用时间的累计，相信各位会有一定的排查经验的。">
+<meta name="twitter:image" content="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/2.png">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2020/07/03/linux-windows-files-exchange/">
 
@@ -293,7 +298,7 @@
 
       
         <p>其实之前想整理一下 <code>Linux</code> 系统的使用技巧的，但想想还是算了，第一工程量大；第二，很多命令打多了也就记住了，这玩意还得靠熟练；第三，个人使用期间也时常维修各种驱动问题，时常换源，每次解决步骤也没有保留下来，电脑出错因人而异，修理方式也不尽相同，所以考虑再三就没有记录。随着使用时间的累计，相信各位会有一定的排查经验的。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>目前在一块硬盘上装有<code>linux</code>系统和<code>windows</code>系统。双系统目前的分工是：<code>linux</code> 负责程序的开发，如 <code>Python， LaTeX，C++，Arduino</code>等，<code>windows</code>负责 <code>office</code> 等操作，如<code>word，excel，QQ</code>和腾讯会议等。</p>
 <p>但在这期间遇到了一些麻烦，如写毕业论文的时候，在<code>linux</code>下写好的程序，需要在<code>windows</code>中使用<code>word</code>将程序添加到附录中。我一般的方法是将代码传到 <code>github</code>，利用 <code>github</code> 作为双系统之间文件交互的桥梁。退出<code>linux</code>，进入<code>windows</code>，打开<code>github</code>，粘贴代码到<code>word</code>中。如果需要修改代码，就要退出<code>windows</code>，进入<code>linux</code>，再来一个循环。</p>
 <p>每次退出系统都需要重启电脑，实在是麻烦。今天无法忍受，决定研究下双系统如何快速访问对方的文件，即<code>linux</code>如何快速访问<code>windows</code>中的文件，<code>windows</code>如何快速访问<code>linux</code>中的文件。</p>
@@ -309,9 +314,9 @@
 <li>然后 <code>cd /mnt/windows</code>，此时我们发现文件已经过来了，然后<code>cd Users/lanling/Desktop</code>就能查看<code>windows</code>桌面中的文件，需要拷贝仅需<code>cp</code>命令拷贝到某个路径即可，再也不用来回重启了。也印证了我所使用的计算机文件系统能访问<code>windows</code>中的文件。<img data-src="/2020/07/03/linux-windows-files-exchange/3.png" alt></li>
 <li>需要注意的是，在使用完毕后需要解除挂载，命令为：<code>umount /mnt/windows</code>，另外不要在<code>/mnt/windows</code>文件夹下进行解除挂载，会提示错误，在其他位置解除挂载就可以了。<img data-src="/2020/07/03/linux-windows-files-exchange/1.png" alt></li>
 </ol>
-<h1 id="windows访问linux文件"><a href="#windows访问linux文件" class="headerlink" title="windows访问linux文件"></a>windows访问linux文件</h1><p>众所周知<code>windows</code>的命令行比较弱（本人不想安装<code>wsl</code>之类），所以决定下载个软件，搜寻了一番，还真有：名字叫做<a href="https://www.paragon-software.com/home/linuxfs-windows/" target="_blank" rel="noopener">Linux File Systems for Windows by Paragon Software</a>，软件使用就很简单了，打开，挂载，这里提示挂载到<code>E</code>盘。<img data-src="/2020/07/03/linux-windows-files-exchange/4.png" alt></p>
+<h1 id="windows访问linux文件"><a href="#windows访问linux文件" class="headerlink" title="windows访问linux文件"></a>windows访问linux文件</h1><p>众所周知<code>windows</code>的命令行比较弱（本人不想安装<code>wsl</code>之类），所以决定下载个软件，搜寻了一番，还真有：名字叫做<a target="_blank" rel="noopener" href="https://www.paragon-software.com/home/linuxfs-windows/">Linux File Systems for Windows by Paragon Software</a>，软件使用就很简单了，打开，挂载，这里提示挂载到<code>E</code>盘。<img data-src="/2020/07/03/linux-windows-files-exchange/4.png" alt></p>
 <p>然后去资源管理器中打开<code>E</code>盘，会看到<code>linux</code>中的各种文件，之后的操作就很轻松了。但是这个软件收费，且，会开机自己启动，还找不到设置的地方，感觉很流氓。</p>
-<p>在相同易用程度下，我找到了个免费、不流氓的软件，叫<a href="https://www.diskinternals.com/linux-reader/" target="_blank" rel="noopener">Diskinternals Linux Reader</a>。操作极度简单，就不截图演示了。选择盘符，双击进去，找到自己想访问的文件，右键，保存到桌面即可。</p>
+<p>在相同易用程度下，我找到了个免费、不流氓的软件，叫<a target="_blank" rel="noopener" href="https://www.diskinternals.com/linux-reader/">Diskinternals Linux Reader</a>。操作极度简单，就不截图演示了。选择盘符，双击进去，找到自己想访问的文件，右键，保存到桌面即可。</p>
 
     </div>
 
@@ -322,10 +327,10 @@
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
+      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="/2021/07/31/Arch-config/" rel="bookmark">Arch 折腾全记录，彻底告别 Windows</a></div>
+      <div class="popular-posts-title"><a href="/2020/11/15/Arch/" rel="bookmark">我和我的操作系统们</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2019/06/12/Computer-network/" rel="bookmark">计算机网络原理</a></div>
@@ -460,7 +465,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#挂载"><span class="nav-number">1.</span> <span class="nav-text">挂载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#linux访问windows文件"><span class="nav-number">2.</span> <span class="nav-text">linux访问windows文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#windows访问linux文件"><span class="nav-number">3.</span> <span class="nav-text">windows访问linux文件</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">挂载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#linux%E8%AE%BF%E9%97%AEwindows%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">linux访问windows文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#windows%E8%AE%BF%E9%97%AElinux%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">windows访问linux文件</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -496,7 +501,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/muyuuuu" title="GitHub → https://github.com/muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -530,14 +535,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">900k</span>
+    <span title="站点总字数">920k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">13:38</span>
+    <span title="站点阅读时长">13:56</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
 <script>
 function show_date_time(){
@@ -596,9 +601,17 @@ show_date_time();
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/schemes/pisces.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
   <script>
 var pjax = new Pjax({
   selectors: [
@@ -711,7 +724,9 @@ window.addEventListener('pjax:success', () => {
   }
   </script>
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
