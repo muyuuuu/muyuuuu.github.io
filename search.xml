@@ -8221,6 +8221,27 @@ f_1(t)=\frac{1}{\theta_1}e^{-t/\theta_1} +
       </tags>
   </entry>
   <entry>
+    <title>git 踩坑记录</title>
+    <url>/2023/09/13/git-use-1/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>2023.7.10 入职距今已经两个月零 3 天了，培训课程十分紧张也没来得及做一些技术的思考和整理。<del>主要是下班回家后只想躺着玩手机，周末持续性出去撒欢。</del> 但只学习不思考和整理是程序员的忌讳。培训课程结束后，会对这两个月的培训时间进行思考，同时对未来该怎么更好的工作也进行一个思考，甚至包括如何更好的休息锻炼来保持充沛的精力。</p>
+<p>回到正文，<code>git</code> 是程序员写框架和交流代码时的必要工具，而恰好过于贫瘠的实操经验导致我真的不会这玩意。尤其是多人协作 <code>pull, merge</code> 或者 <code>reset</code> 时，时常把代码搞的乱七八糟。所以在这里记录 <code>git</code> 的踩坑记录。</p>
+<span id="more"></span>
+<h1 id="git-开发时，A-分支的代码泄漏到了-B-分支-？"><a href="#git-开发时，A-分支的代码泄漏到了-B-分支-？" class="headerlink" title="git 开发时，A 分支的代码泄漏到了 B 分支 ？"></a><code>git</code> 开发时，A 分支的代码泄漏到了 B 分支 ？</h1><h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>当时想实现 <code>master</code> 分支只有 <code>README.md, .gitignore, 3rdparty</code> 等公共文件。</p>
+<ul>
+<li>对于任务一，新建 <code>dev1</code> 分支，并在 <code>dev1</code> 文件夹里面写代码</li>
+<li>对于任务二，新建 <code>dev2</code> 分支，并在 <code>dev2</code> 文件夹里面写代码</li>
+</ul>
+<p>这样 <code>dev1</code> 和 <code>dev2</code> 分支的代码位于不同文件夹，互不干扰。最后全部合并到 <code>master</code> 分支的时候，也不会产生冲突。</p>
+<h2 id="错误操作"><a href="#错误操作" class="headerlink" title="错误操作"></a>错误操作</h2><p>在实现期间出现了一个漏洞，当完成 <code>dev1</code> 任务的代码后，直接在 <code>dev1</code> 分支下 <code>git checkout -b dev2</code>，这样就会发生：<code>dev2</code> 分支下有 <code>dev1</code> 的代码，不是很优雅。</p>
+<p>当时培训课程的进度比较紧张，也没有刻意去关注这个问题。只是在 <code>dev2</code> 分支下手动删除了 <code>dev1</code> 文件夹的代码，这样在 <code>git status</code> 的时候会看到很多 <code>delete</code> 信息，且会随着 <code>dev2</code> 分支的提交而提交到 <code>gitlab</code> 中，<code>merge</code> 时会看到很多无用的删除文件信息。</p>
+<h2 id="正确做法"><a href="#正确做法" class="headerlink" title="正确做法"></a>正确做法</h2><p>随着课程的陆续学习，框架规模越来越大，代码文件也越来越复杂。由于自己的 <code>git</code> 实操很少，担心 <code>git</code> 误操作后导致分支或文件过于混乱。又回过头来重新看这一问题，在本地进行一些简单的实验后发现了正确做法。</p>
+<p>在完成 <code>dev1</code> 分支的代码并提交后，应该 <code>git checkout master</code>，在 <code>master</code> 分支下新建 <code>dev2</code> 分支，这样才能实现 <code>dev2</code> 分支不含 <code>dev1</code> 的代码，保证提交代码时的信息足够干净。</p>
+]]></content>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git与Github的使用</title>
     <url>/2019/11/16/git-use/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>突如其来的兴趣，想把自己写的一些看着不错的代码放到github上，供大家一起交流与分享。毕竟自己之前只会<code>git clone</code>。</p>
