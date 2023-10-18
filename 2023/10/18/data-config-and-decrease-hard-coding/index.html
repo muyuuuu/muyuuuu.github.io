@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="职场新人兼新手程序员斗胆开了新坑「如何写出更好的程序」，所见所得都是来自实际写代码时自己的思考，且已脱敏。这一系列不包含任何复杂的技术，也不包含任何难懂的代码。只是将核心问题暴露出来，针对这些场景，如何写出可维护性更高、更简洁优雅的代码。 以 python 为例，本文的主要内容包括：如何使用配置文件，以及如何减少代码中的硬编码，引申到了代码的组织架构和可维护性上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何写出更好的程序一：由配置文件引发的思考">
+<meta property="og:url" content="https://muyuuuu.github.io/2023/10/18/data-config-and-decrease-hard-coding/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="职场新人兼新手程序员斗胆开了新坑「如何写出更好的程序」，所见所得都是来自实际写代码时自己的思考，且已脱敏。这一系列不包含任何复杂的技术，也不包含任何难懂的代码。只是将核心问题暴露出来，针对这些场景，如何写出可维护性更高、更简洁优雅的代码。 以 python 为例，本文的主要内容包括：如何使用配置文件，以及如何减少代码中的硬编码，引申到了代码的组织架构和可维护性上。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-18T15:15:26.000Z">
+<meta property="article:modified_time" content="2023-10-18T15:42:06.319Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Design">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2023/10/18/data-config-and-decrease-hard-coding/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>如何写出更好的程序一：由配置文件引发的思考 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2023/10/18/data-config-and-decrease-hard-coding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          如何写出更好的程序一：由配置文件引发的思考
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-18 23:15:26 / 修改时间：23:42:06" itemprop="dateCreated datePublished" datetime="2023-10-18T23:15:26+08:00">2023-10-18</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>职场新人兼新手程序员斗胆开了新坑「如何写出更好的程序」，所见所得都是来自实际写代码时自己的思考，且已脱敏。这一系列不包含任何复杂的技术，也不包含任何难懂的代码。只是将核心问题暴露出来，针对这些场景，如何写出可维护性更高、更简洁优雅的代码。</p>
+<p>以 <code>python</code> 为例，本文的主要内容包括：如何使用配置文件，以及如何减少代码中的硬编码，引申到了代码的组织架构和可维护性上。</p>
+<span id="more"></span>
+<h1 id="如何使用好配置文件"><a href="#如何使用好配置文件" class="headerlink" title="如何使用好配置文件"></a>如何使用好配置文件</h1><h2 id="针对一个代码文件使用配置文件的情况"><a href="#针对一个代码文件使用配置文件的情况" class="headerlink" title="针对一个代码文件使用配置文件的情况"></a>针对一个代码文件使用配置文件的情况</h2><p>假设只有在 <code>main.py</code> 中需要读取配置文件，将配置文件的部分变量以传参的形式交给其他函数使用，这是最简单的场景。举个简单的例子，如果是生产环境，那么 <code>env=debug</code>；如果是开发环境，那么 <code>env=release</code>，当然这是从配置文件里读取得到的。考虑复杂一些的情况，如果是用户 DIY 使用，可能需要的变量并不在配置文件中。</p>
+<p>对于这一场景，建议将配置文件写到 <code>config.py</code> 中，并且用一个类进行封装，变量就是类的成员。当需要根据生产或开发环境执行不同的代码时，只需要在类内进行判断即可。当用户需要增加其他变量时，由用户继承这一个类并添加自己的变量和方法就好。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Data</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.env1 = ...</span><br><span class="line">        self.env2 = ...</span><br><span class="line">        self.__setup()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__setup</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> self.env1 == <span class="string">&quot;1&quot;</span>:</span><br><span class="line">            func1()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            func3()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.env2 == <span class="string">&quot;2&quot;</span>:</span><br><span class="line">            func2()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            func4()</span><br></pre></td></tr></table></figure>
+<h2 id="针对多个文件使用配置文件的情况"><a href="#针对多个文件使用配置文件的情况" class="headerlink" title="针对多个文件使用配置文件的情况"></a>针对多个文件使用配置文件的情况</h2><p>如果此时有几十个代码文件都需要读取配置文件，获取其中的变量并执行对应的代码，总不能每个文件都创建一个类对象并初始化吧。你说参数传递？如果函数的传参很困难又该怎么办呢？具体而言，当开发后端的时候，<code>main.py</code> 读取配置文件并得到了 <code>env=debug</code>，此时打开了网页，点击一些按钮完成一些交互，则 <code>web</code> 端会通过 <code>js</code> 发起了一个 <code>post</code> 请求，告诉你需要执行某些代码，这个请求被 <code>handler.py</code> 拦截到。</p>
+<p>此时存在一个问题：<code>handler.py</code> 中的 <code>get</code> 方法拦截到 <code>web</code> 端请求，并不是 <code>main.py</code> 直接将请求发送到 <code>handler.py</code>。所以此时不能直接传递参数，<code>handler.py</code> 也并不知道 <code>env=debug</code>，所以可能不知道执行哪些代码。再去重新实例化一个类？几十个代码文件都去实例化同一个类，未免浪费空间。</p>
+<p>简单的参数可以加到 <code>post</code> 请求的 <code>url</code> 里，但是当参数高达十几个时，传参和接收参数这会很麻烦。何况配置文件就在那里，<code>handler.py</code> 直接获取会方便很多。这个时候建议将配置文件写到 <code>config.py</code> 中，但不是以类的形式，而是直接写入变量并赋值，如 <code>ENV=&quot;DEBUG&quot;</code>。当任何文件需要读取这一变量时，直接 <code>import config; config.ENV</code> 便可获取。有点类似 <code>C</code> 语言中的 <code>#define</code>。</p>
+<h2 id="yaml-或者-json？"><a href="#yaml-或者-json？" class="headerlink" title="yaml 或者 json？"></a>yaml 或者 json？</h2><p>还有一些通过读取 <code>yaml</code>，<code>json</code> 等配置文件来生成变量的，但是这会不可避免的增加代码中的硬编码，而且只能获取变量。根据变量去判断执行哪些方法需要单独实现，所以没有考虑使用。具体而言：</p>
+<ul>
+<li><p>对于情景一中的代码，用类实现配置文件的话可以直接调用类内的 <code>__setup()</code> 方法。如果是 <code>yaml</code> 文件，从文件加载到 <code>env1, env2</code> 后，需要单独去写情景一例子中的 <code>__setup()</code> 方法，不如封装到类内方便。</p>
+</li>
+<li><p>对于情景二，如果几十个代码文件都去执行 <code>import yaml; yaml.load()</code> 来获取配置文件中的变量，这又会造成大量的文件 <code>IO</code>，没有意义。这也是我不考虑使用 <code>yaml,json</code> 作为配置文件的原因。</p>
+</li>
+</ul>
+<h1 id="减少代码的硬编码"><a href="#减少代码的硬编码" class="headerlink" title="减少代码的硬编码"></a>减少代码的硬编码</h1><p>在有了配置文件后，可以有效减少代码中的硬编码，增强代码的可维护性。比如创建了一个字典：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data[<span class="string">&quot;name&quot;</span>]     = ...</span><br><span class="line">data[<span class="string">&quot;value&quot;</span>]    = ...</span><br><span class="line">data[<span class="string">&quot;children&quot;</span>] = ...</span><br></pre></td></tr></table></figure>
+<p>但是此时后台的接口忽然发生了变化，<code>children</code> 这个名字忽然改成了 <code>subfunc</code>，后台解析只认 <code>data[&quot;subfunc&quot;]</code> 这个字段，上面的写法需要去所有代码文件里一个个的搜索 <code>&quot;children&quot;</code> 并替换为 <code>&quot;subfunc&quot;</code>，显然是很累又不得不干的活。这个时候可以使用配置文件：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config.py</span><br><span class="line">CHILDREN = <span class="string">&quot;children&quot;</span></span><br><span class="line"></span><br><span class="line">main.py</span><br><span class="line"><span class="keyword">import</span> config</span><br><span class="line">data[config.CHILDREN] = ...</span><br></pre></td></tr></table></figure>
+<p>如果再遇到 <code>children</code> 名字改成了 <code>subfunc</code>，只需要在 <code>config.py</code> 里修改 <code>CHILDREN</code> 的取值就可以了，只需要修改一次，比上面的实现优雅一些。</p>
+<h2 id="重灾区：函数返回值"><a href="#重灾区：函数返回值" class="headerlink" title="重灾区：函数返回值"></a>重灾区：函数返回值</h2><p>另一个硬编码重灾区是函数的返回值，众所周知 <code>python</code> 函数是可以有多个返回值的，对于暂时不需要的返回值可以用下划线忽略掉。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">return</span> name, info, value, key, address, flag, context</span><br><span class="line"></span><br><span class="line">name, info, value, key, address, _, context = func()</span><br></pre></td></tr></table></figure>
+<p>其实上面获取函数返回值的形式更像列表的切片：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">return</span> name, info, value, key, address, flag, context</span><br><span class="line"></span><br><span class="line">return_val = func()</span><br><span class="line">name = return_val[<span class="number">0</span>]</span><br><span class="line">info = return_val[<span class="number">1</span>]</span><br><span class="line">value = return_val[<span class="number">2</span>]</span><br><span class="line">key = return_val[<span class="number">3</span>]</span><br><span class="line">address = return_val[<span class="number">4</span>]</span><br><span class="line">context = return_val[<span class="number">6</span>]</span><br></pre></td></tr></table></figure>
+<p>可以看到，如果要调用 <code>func</code> 函数，就必须牢记返回值的顺序，当代码文件很多时并不友好，也不优雅。当需要增加或减少返回值的数量时，切片访问函数返回值的形式也很难处理。比如当不需要返回 <code>name</code> 字段时，或者需要增加一个 <code>param</code> 参数，下标都需要修改。增加返回值时， 别说把这个返回值放到所有函数返回值的最后，这只是为了代码能运行起来做的妥协，没意思。以上情况对于调用 <code>func</code> 的函数而言都需要一个个手动修改，简直是一场灾难。</p>
+<p>这个时候建议使用类对象或者字典，道理是一样的：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;name&quot;</span>: name,</span><br><span class="line">        <span class="string">&quot;info&quot;</span>: info</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这样，就在也不需要记住返回值的顺序，也不必担心函数增加或减少返回值，甚至不用关注返回值的顺序。都可以直接通过字典的 <code>key</code> 访问。你说 <code>&quot;name&quot;, &quot;info&quot;</code> 这样的硬编码不好？可以用前面讲述的配置文件避免掉它呀。</p>
+<p><code>C</code> 这种语言并不支持函数返回多个变量，需要返回多个变量时都是使用结构体来完成，这种想法值得借鉴。对于 <code>python</code> 语言，字典也好，类对象也罢（对象的话就是通过成员访问），取决于具体的适用场景，但是都可以避免通过切片这样的硬编码方式去获取函数的返回值。</p>
+<h1 id="关于代码的组织架构"><a href="#关于代码的组织架构" class="headerlink" title="关于代码的组织架构"></a>关于代码的组织架构</h1><p>文件、文件夹都要做好各司其职，不要怕麻烦，写好 <code>__init__.py</code>，不要把很多文件胡乱的扔到单个文件夹里随意的调用，甚至没有文件夹。时间长了或者当别人用的时候，真的很乱。这次任务我实现了经典的 <code>MVC</code> 模式。</p>
+<ul>
+<li><code>model</code> 就是数据解析，存储和维护一些数据结构，如果想要的数据不能直接获取，也可以在 <code>model</code> 里增加一些获取数据的接口。建议将 <code>model</code> 封装为一个类，在一个方法里读取文件，解析得到数据结构，并放到类成员中，方便接口调用获取数据，也避免重复读文件和数据传来传去带来的拷贝开销。交由一个对象去维护数据，由对象的接口去操作数据。而不是将数据读取放到全局变量，任由各个代码、各个函数随意操作。</li>
+<li><code>view</code> 是数据的展示，以什么形式和结构展示给用户，显示界面、写出文件或命令行输出等形式；</li>
+<li><code>control</code> 是交互的控制，用于捕捉用户请求，按照请求访问 <code>model</code> 的接口并获得想要的数据，再调用 <code>view</code> 接口反馈给用户。</li>
+</ul>
+<p>当需要获取很多种类型的数据时，开发重点在 <code>model</code> 部分，因为 <code>control</code> 只是调用获取数据的接口，<code>view</code> 只是展示数据。当需要 <code>A</code> 类型的数据时，<code>control</code> 调用 <code>model</code> 的 <code>getA()</code> 方法即可，当需要 <code>B</code> 类型的数据时，调用 <code>model</code> 的 <code>getB()</code> 方法。</p>
+<p>重点就是这两个方法去如何实现，如何设计高效的数据结构去维护数据，来减少数据的拷贝和优化获取数据的效率。总不能 <code>getA()</code> 的时候重新读文件，<code>getB()</code> 的时候再去读文件，对吧。这就需要在 <code>model</code> 部分下工夫，比如这次就用到了数据结构中经典的 <code>dfs</code>+树的后根法快速解析了数据。<del>leetcode 没白刷了属于是</del></p>
+<h1 id="关于代码维护"><a href="#关于代码维护" class="headerlink" title="关于代码维护"></a>关于代码维护</h1><p>额外的，在开发 <code>model</code> 时也有其他的收获：写代码尽可能将各个模块独立封装，写出高内聚，低耦合的传说级代码。虽然当函数很多时会很看着有些乱，怎么到处是函数？但是也有重要的优点：代码和数据重用方便。比如要增加一个新功能，只需要写一点函数，其他函数也许已经实现了，我们直接调用就好，而且不易出错。</p>
+<p>如果写一个大函数完成一个功能 <code>A</code>，在写另外一个大函数完成功能 <code>B</code>，这两个大函数操作的变量会有重叠，也会有一些重复的逻辑。当其中的逻辑过于复杂时，难免出错。十分建议将功能剥离开来。</p>
+<p>这种低耦合+配置文件的形式也可以灵活的解决一些暂时不确定的场景。领导告诉你说：暂时有 <code>A，B，C，D，E</code> 这五种类型，需要分类处理，后面可能会有改动。你兴冲冲的把这些类型作为字典的 <code>key</code> 完成了分类处理。</p>
+<p>某天领导又说，把 <code>A，B，C</code> 归类为类型 1，把 <code>D，E</code> 归类为类型 2，根据不同的类型创建不同的文件夹，但是后面可能还会变动。不到半小时，又收到通知说把 <code>D</code> 归为类型 1，<code>A</code> 的名字改为 <code>Afunc</code>，删除类型 2，并增加 <code>F，G，H</code> 为类型 3。既要修改类型，又要映射关系，去大段的代码函数里修改这些内容真的很累的，也很容易出错。这个时候可以在配置文件里写一个映射函数，每次修改这个小函数并调用就可以了。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">map</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="keyword">if</span> name <span class="keyword">in</span> [<span class="string">&quot;Afunc&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>]:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> name <span class="keyword">in</span> [<span class="string">&quot;F&quot;</span>, <span class="string">&quot;G&quot;</span>， <span class="string">&quot;H&quot;</span>]:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">3</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>总结，<strong>不要假设需求是不变的，这样写出来的代码很烂；需求发生改变时，代码修改难度也很大。</strong></p>
+<ul>
+<li>它就应该是这样，不存在其他情况；</li>
+<li>这种情况不会出现，就先不考虑了；</li>
+</ul>
+<p>程序员最好杜绝以上想法，不然写代码一时爽，改代码火葬场。场景会发生变化，需求永远是在变化。异常情况做好处理，减少代码的硬编码，降低代码功能的耦合度，针对接口编程，学过的设计模式也都可以用起来。避免需求发生变化时大量的修改代码，尽可能通过增加新接口和新函数来适应新的需求。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/03/26/cluster-monitor-and-taskAssignment/" rel="bookmark">集群资源监控与任务调度</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/12/03/project-experience-1/" rel="bookmark">工程开发经验总结一，如何参与开发？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/12/09/project-experience-2/" rel="bookmark">工程开发经验总结二，如果我是甲方，该如何外包？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2021/12/27/project-experience-3/" rel="bookmark">工程开发经验总结三，以 sspaddmm 为例，再来谈一谈并行加速</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>明人不说暗话，如果感觉这篇文章还不错，您的打赏是对我读书路上莫大的支持，当然一切全凭自愿。 实在不行，我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Design/" rel="tag"># Design</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/13/git-use-1/" rel="prev" title="git 踩坑记录">
+      <i class="fa fa-chevron-left"></i> git 踩坑记录
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%A5%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">如何使用好配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E4%B8%80%E4%B8%AA%E4%BB%A3%E7%A0%81%E6%96%87%E4%BB%B6%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.1.</span> <span class="nav-text">针对一个代码文件使用配置文件的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E5%A4%9A%E4%B8%AA%E6%96%87%E4%BB%B6%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.2.</span> <span class="nav-text">针对多个文件使用配置文件的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yaml-%E6%88%96%E8%80%85-json%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">yaml 或者 json？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E4%BB%A3%E7%A0%81%E7%9A%84%E7%A1%AC%E7%BC%96%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">减少代码的硬编码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E7%81%BE%E5%8C%BA%EF%BC%9A%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">2.1.</span> <span class="nav-text">重灾区：函数返回值</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E4%BB%A3%E7%A0%81%E7%9A%84%E7%BB%84%E7%BB%87%E6%9E%B6%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">关于代码的组织架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E4%BB%A3%E7%A0%81%E7%BB%B4%E6%8A%A4"><span class="nav-number">4.</span> <span class="nav-text">关于代码维护</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">221</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">928k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">14:03</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'efeb5edf7110b1c9f62c60bf4590cf59',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
