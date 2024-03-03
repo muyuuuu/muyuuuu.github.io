@@ -28,9 +28,9 @@
 <meta property="og:description" content="2023.7.10 入职距今已经两个月零 3 天了，培训课程十分紧张也没来得及做一些技术的思考和整理。主要是下班回家后只想躺着玩手机，周末持续性出去撒欢。 但只学习不思考和整理是程序员的忌讳。培训课程结束后，会对这两个月的培训时间进行思考，同时对未来该怎么更好的工作也进行一个思考，甚至包括如何更好的休息锻炼来保持充沛的精力。 回到正文，git 是程序员写框架和交流代码时的必要工具，而过于贫瘠的实操">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-09-13T15:16:44.000Z">
-<meta property="article:modified_time" content="2023-11-13T15:51:09.774Z">
+<meta property="article:modified_time" content="2024-03-03T08:24:11.032Z">
 <meta property="article:author" content="兰铃">
-<meta property="article:tag" content="Git">
+<meta property="article:tag" content="git">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://muyuuuu.github.io/2023/09/13/git-use-1/">
@@ -257,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-13 23:51:09" itemprop="dateModified" datetime="2023-11-13T23:51:09+08:00">2023-11-13</time>
+                <time title="修改时间：2024-03-03 16:24:11" itemprop="dateModified" datetime="2024-03-03T16:24:11+08:00">2024-03-03</time>
               </span>
 
           
@@ -273,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>5.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -294,19 +294,9 @@
       
         <p>2023.7.10 入职距今已经两个月零 3 天了，培训课程十分紧张也没来得及做一些技术的思考和整理。<del>主要是下班回家后只想躺着玩手机，周末持续性出去撒欢。</del> 但只学习不思考和整理是程序员的忌讳。培训课程结束后，会对这两个月的培训时间进行思考，同时对未来该怎么更好的工作也进行一个思考，甚至包括如何更好的休息锻炼来保持充沛的精力。</p>
 <p>回到正文，<code>git</code> 是程序员写框架和交流代码时的必要工具，而<strong>过于贫瘠的实操经验导致我真的不会这玩意</strong>。尤其是多人协作 <code>pull, merge</code> 或者 <code>reset</code> 时，时常把代码搞的乱七八糟。所以在这里记录 <code>git</code> 的踩坑记录。</p>
+<p><code>git</code> 操作时很大程度受限于实际的情景，本地基于什么分支进行了什么修改，是否暂存，是否提交，是否有冲突等等等等。出问题后去网上搜索时，网上的例子和本地的例子不一定很符合，或者说只有一半符合。往往不知道该执行哪些命令，是否会把文件弄的很乱无法撤回。</p>
+<p>这个时候建议把实际情景描述一下，去问问 <code>GPT</code>，以我的使用经验，得到的回答 99.9% 都是可用的。</p>
 <span id="more"></span>
-<h1 id="git-开发流程"><a href="#git-开发流程" class="headerlink" title="git 开发流程"></a>git 开发流程</h1><p>首先克隆仓库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@xxx.git</span><br></pre></td></tr></table></figure>
-<p>创建本地分支，并对应远程分支</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git branch -a         // 查看分支</span><br><span class="line">git checkout -b local_branch remote_branch // 切换分支并对应远程分支</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="获取新分支"><a href="#获取新分支" class="headerlink" title="获取新分支"></a>获取新分支</h2><p><code>clone</code> 仓库的 1 天后，有新分支提交到了远程仓库，所以本地没有这个分支。为了查看新分支的代码，需要更新分支：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote update origin -p</span><br></pre></td></tr></table></figure>
-<h1 id="暂存修改"><a href="#暂存修改" class="headerlink" title="暂存修改"></a>暂存修改</h1><p>在新分支开发代码时，遇到紧急任务需要切换到其他分支修复漏洞。但是新分支的代码才写了一点点还没有 <code>commit</code>，如果直接 <code>git checkout</code> 会报错，因为新分支的修改没有被存下来或提交。此时可以暂存修改：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git stash                  // 暂存当前未提交的更改</span><br><span class="line">git checkout &lt;branch_name&gt; // 切换到另一个分支</span><br></pre></td></tr></table></figure>
-<p>当你完成其他工作并切换回原分支时，可以使用以下命令还原暂存的更改：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash pop</span><br></pre></td></tr></table></figure>
-<p>不建议以下的操作，因为这会直接放弃当前分支的修改：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -f &lt;branch_name&gt; // 切换到另一个分支并丢弃未提交的更改</span><br></pre></td></tr></table></figure>
 <h1 id="git-开发时，A-分支的代码泄漏到了-B-分支-？"><a href="#git-开发时，A-分支的代码泄漏到了-B-分支-？" class="headerlink" title="git 开发时，A 分支的代码泄漏到了 B 分支 ？"></a><code>git</code> 开发时，A 分支的代码泄漏到了 B 分支 ？</h1><h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>当时想实现 <code>master</code> 分支只有 <code>README.md, .gitignore, 3rdparty</code> 等公共文件。</p>
 <ul>
 <li>对于任务一，新建 <code>dev1</code> 分支，并在 <code>dev1</code> 文件夹里面写代码</li>
@@ -317,15 +307,83 @@
 <p>当时培训课程的进度比较紧张，也没有刻意去关注这个问题。只是在 <code>dev2</code> 分支下手动删除了 <code>dev1</code> 文件夹的代码，这样在 <code>git status</code> 的时候会看到很多 <code>delete</code> 信息，且会随着 <code>dev2</code> 分支的提交而提交到 <code>gitlab</code> 中，<code>merge</code> 时会看到很多无用的删除文件信息。</p>
 <h2 id="正确做法"><a href="#正确做法" class="headerlink" title="正确做法"></a>正确做法</h2><p>随着课程的陆续学习，框架规模越来越大，代码文件也越来越复杂。由于自己的 <code>git</code> 实操很少，担心 <code>git</code> 误操作后导致分支或文件过于混乱。又回过头来重新看这一问题，在本地进行一些简单的实验后发现了正确做法。</p>
 <p>在完成 <code>dev1</code> 分支的代码并提交后，应该 <code>git checkout master</code>，在 <code>master</code> 分支下新建 <code>dev2</code> 分支，这样才能实现 <code>dev2</code> 分支不含 <code>dev1</code> 的代码，保证提交代码时的信息足够干净。</p>
-<h1 id="临时代码推送"><a href="#临时代码推送" class="headerlink" title="临时代码推送"></a>临时代码推送</h1><p>临时创建了一个文件夹复现了某个问题，需要把这份代码提交到某个仓库。在 <code>git init</code> 之后增加远程仓库：</p>
+<h1 id="记一次代码污染"><a href="#记一次代码污染" class="headerlink" title="记一次代码污染"></a>记一次代码污染</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>起因：需求是将本地 <code>local</code> 分支提交到 <code>develop</code> 分支。我理解成了将本地的 <code>local</code> 分支提交到 <code>develop</code> 分支，并向 <code>master</code> 提交 <code>PR</code>。于是执行了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin local:develop</span><br></pre></td></tr></table></figure>
+<p>这样就导致了代码污染。因为可能有其他人基于 <code>develop</code> 分支开发代码，而我的 <code>local</code> 代码直接覆盖了远程的 <code>develop</code> 代码。</p>
+<ul>
+<li>其他人提交代码的时候，会导致代码冲突；</li>
+<li>其他人获取 <code>develop</code> 代码时，会获取到我的 <code>local</code> 代码，但是我的 <code>local</code> 代码没有经过检查和测试，负责模块整合的人也没有处理我这个模块可能存在的异常。所以很可能在运行期间存在错误。</li>
+</ul>
+<h2 id="正确做法-1"><a href="#正确做法-1" class="headerlink" title="正确做法"></a>正确做法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin local</span><br></pre></td></tr></table></figure>
+<p>这样远程仓库中就会有一个 <code>local</code> 分支，提交 <code>PR</code> 时将 <code>local</code> 分支提交到 <code>develop</code> 分支即可。为什么要添加 <code>-u</code> 参数？</p>
+<p>如果你在本地仓库中使用 <code>git clone</code> 命令克隆了一个远程仓库，并在本地仓库中使用 <code>git checkout -b A</code> 命令创建了一个名为 <code>A</code> 的新分支，并使用 <code>git push A</code> 命令将该分支推送到远程仓库，那么远程仓库将会有一个名为 <code>A</code> 的分支。</p>
+<p>但是在使用 <code>git push</code> 命令时，你需要指定要推送的分支和远程仓库的名称。如果你使用 <code>git push A</code> 命令，<code>git</code> 将会尝试将本地仓库中名为 <code>A</code> 的分支推送到远程仓库中名为 <code>A</code> 的分支，但是如果远程仓库中不存在名为 <code>A</code> 的分支，<code>git</code> 将会报错。</p>
+<p>因此，如果你想要将本地仓库中的 <code>A</code> 分支推送到远程仓库，并且希望在远程仓库中创建一个名为 <code>A</code> 的分支，应该使用以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin A</span><br></pre></td></tr></table></figure>
+<p>这将会将本地仓库中的 <code>A</code> 分支推送到名为 <code>origin</code> 的远程仓库，并在远程仓库中创建一个名为 <code>A</code> 的分支。</p>
+<h2 id="使用代码回撤来解决代码污染"><a href="#使用代码回撤来解决代码污染" class="headerlink" title="使用代码回撤来解决代码污染"></a>使用代码回撤来解决代码污染</h2><p>但是现在已经做错了，需要使用代码回撤来修复污染。可以使用 <code>git reflog</code> 命令查看本地仓库的提交历史，找到 <code>develop</code> 分支的提交记录。使用<code>git reset</code> 命令将代码重置到 <code>develop</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ git reflog</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">HEAD@&#123;1&#125;: commit: &lt;commit message&gt;</span><br><span class="line">HEAD@&#123;2&#125;: commit: &lt;commit message&gt;</span><br><span class="line">HEAD@&#123;3&#125;: commit: &lt;commit message&gt;</span><br><span class="line">HEAD@&#123;4&#125;: commit: &lt;commit message&gt;</span><br><span class="line">HEAD@&#123;5&#125;: commit: &lt;commit message&gt;</span><br><span class="line">HEAD@&#123;6&#125;: commit: &lt;commit message&gt;</span><br><span class="line">HEAD@&#123;7&#125;: commit: &lt;commit message&gt;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>找到最后一个 <code>develop</code> 分支的提交记录，记下该提交的哈希值。运行 <code>git reset</code> 命令将本地仓库的 <code>develop</code> 分支重置到该提交记录。例如，如果最后一个 <code>develop</code> 分支的提交记录的哈希值为 <code>abc123</code>，则可以运行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git reset --hard abc123</span><br></pre></td></tr></table></figure>
+<p>运行 <code>git push --force</code> 命令将本地仓库的 <code>develop</code> 分支强制推送到远程仓库。请注意，这将覆盖远程仓库中的 <code>develop</code> 分支，因此请确保已经找到了正确的提交记录。这样就能恢复 <code>develop</code> 分支之前的代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git push --force origin develop</span><br></pre></td></tr></table></figure>
+<h1 id="git-实用命令"><a href="#git-实用命令" class="headerlink" title="git 实用命令"></a>git 实用命令</h1><h2 id="一般的开发流程"><a href="#一般的开发流程" class="headerlink" title="一般的开发流程"></a>一般的开发流程</h2><p>首先克隆仓库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@xxx.git</span><br></pre></td></tr></table></figure>
+<p>创建本地分支，并对应远程分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git branch -a         // 查看分支</span><br><span class="line">git checkout -b local_branch remote_branch // 切换分支并对应远程分支</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="获取新分支"><a href="#获取新分支" class="headerlink" title="获取新分支"></a>获取新分支</h2><p><code>clone</code> 仓库的 1 天后，有新分支提交到了远程仓库，所以本地没有这个分支。为了查看新分支的代码，需要更新分支：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote update origin -p</span><br></pre></td></tr></table></figure>
+<h2 id="暂存修改"><a href="#暂存修改" class="headerlink" title="暂存修改"></a>暂存修改</h2><p>在新分支开发代码时，遇到紧急任务需要切换到其他分支修复漏洞。但是新分支的代码才写了一点点还没有 <code>commit</code>，如果直接 <code>git checkout</code> 会报错，因为新分支的修改没有被存下来或提交。此时可以暂存修改：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git stash                  // 暂存当前未提交的更改</span><br><span class="line">git checkout &lt;branch_name&gt; // 切换到另一个分支</span><br></pre></td></tr></table></figure>
+<p>当你完成其他工作并切换回原分支时，可以使用以下命令还原暂存的更改：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git stash pop</span><br></pre></td></tr></table></figure>
+<p>不建议以下的操作，因为这会直接放弃当前分支的修改：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -f &lt;branch_name&gt; // 切换到另一个分支并丢弃未提交的更改</span><br></pre></td></tr></table></figure>
+<h2 id="git-丢弃本地的修改"><a href="#git-丢弃本地的修改" class="headerlink" title="git 丢弃本地的修改"></a>git 丢弃本地的修改</h2><p>代码改的乱七八糟不想要了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard HEAD</span><br></pre></td></tr></table></figure>
+<h2 id="临时代码推送"><a href="#临时代码推送" class="headerlink" title="临时代码推送"></a>临时代码推送</h2><p>临时创建了一个文件夹复现了某个问题，需要把这份代码提交到某个仓库。在 <code>git init</code> 之后增加远程仓库：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@xxx:xxx.git</span><br></pre></td></tr></table></figure>
 <p>因为是临时新建的仓库，所以目前处于 <code>master</code> 分支。执行下面命令，将本地的 <code>master</code> 分支推送到远程的 <code>test</code> 分支（远程没有的话会自动创建）：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin master:test     // 不加 master: 会报错，因为本地没有 test 分支</span><br></pre></td></tr></table></figure>
-<h1 id="修改错别字，不值得重新-commit"><a href="#修改错别字，不值得重新-commit" class="headerlink" title="修改错别字，不值得重新 commit"></a>修改错别字，不值得重新 commit</h1><p>首先修改小错误，然后：</p>
+<h2 id="修改错别字，不值得重新-commit"><a href="#修改错别字，不值得重新-commit" class="headerlink" title="修改错别字，不值得重新 commit"></a>修改错别字，不值得重新 commit</h2><p>首先修改小错误，然后：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commmit --amend</span><br></pre></td></tr></table></figure>
 <p>如果此时直接 <code>push</code> 会报错，因为 <code>git status</code> 显示并没有新的内容。如果是提交到自己的分支，在不影响他人的开发的情况下可以直接：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin master:test -f</span><br></pre></td></tr></table></figure>
-<p>这样仓库上只显示一次 <code>commit</code> 记录。</p>
+<p>这样仓库上只显示一次 <code>commit</code> 记录。如果不是强制推送，那么会遇到下面的问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">To git@github.xxxx.git</span><br><span class="line"> ! [rejected]        master -&gt; main (non-fast-forward)</span><br><span class="line">error: failed to push some refs to &#x27;git@github.xxxx.git&#x27;</span><br><span class="line">hint: Updates were rejected because a pushed branch tip is behind its remote</span><br><span class="line">hint: counterpart. Check out this branch and integrate the remote changes</span><br><span class="line">hint: (e.g. &#x27;git pull ...&#x27;) before pushing again.</span><br><span class="line">hint: See the &#x27;Note about fast-forwards&#x27; in &#x27;git push --help&#x27; for details.</span><br></pre></td></tr></table></figure>
+<p>起因是在这次 <code>push</code> 之前有一次 <code>git commit --amend</code> 修改错别字的操作，当时这个修改是没有提交的。所以再次修改代码并提交时，就遇到了冲突。因为同一文件同样的位置有不同的内容，无法自动合并，所以 <code>push</code> 的时候报错。</p>
+<p>此时需要手动 <code>git pull</code> 一下，由用户自己手动 <code>merge</code> 处理冲突。如果是 <code>vscode</code> 的话，看一下哪里修改，如果保留当前版本，点击 <code>accept current change</code> 即可。再次 <code>git add commit push</code> 就没问题了。</p>
+<h2 id="代码写到一半，需要同步同事的代码"><a href="#代码写到一半，需要同步同事的代码" class="headerlink" title="代码写到一半，需要同步同事的代码"></a>代码写到一半，需要同步同事的代码</h2><p>此时只需要在当前分支下 <code>pull</code> 代码。把自己的代码完成后，再次提交到分支。假设远程分支叫 <code>B</code>，基于 <code>B</code> 分支 <code>checkout -b</code> 出 <code>A</code> 分支，在 <code>A</code> 分支写代码。远程分支有更新， <code>merge</code> 了一些修改，让 <code>A</code> 获取到 <code>B</code> 的更新：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin B</span><br></pre></td></tr></table></figure>
+<h2 id="git-查看本地分支对应的远程分支名"><a href="#git-查看本地分支对应的远程分支名" class="headerlink" title="git 查看本地分支对应的远程分支名"></a>git 查看本地分支对应的远程分支名</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -vv</span><br></pre></td></tr></table></figure>
+<h2 id="git-查看分支差异"><a href="#git-查看分支差异" class="headerlink" title="git 查看分支差异"></a>git 查看分支差异</h2><p><code>git</code> 基于 <code>B</code> 分支创建了分支 <code>A</code>，并在 <code>A</code> 分支进行了修改和提交，提交后，<code>vscode</code> 等编辑器内无法看到修改内容。可以通过下述命令查看 <code>A</code> 分支和 <code>B</code> 分支的差异，也就是看 <code>A</code> 分支都改动了哪里。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git diff A B file_path</span><br></pre></td></tr></table></figure>
+<h2 id="多次-commit-记录合并"><a href="#多次-commit-记录合并" class="headerlink" title="多次 commit 记录合并"></a>多次 <code>commit</code> 记录合并</h2><p>为了保证提交信息的整洁，可以使用 <code>git rebase</code> 命令来将多个 <code>commit</code> 合并成一个，并保留代码的修改。以下是具体步骤：</p>
+<ol>
+<li><p>使用 <code>git log</code> 命令查看你想要合并的 <code>commit</code> 记录的哈希值，例如将以下 3 个 <code>commit</code> 记录合并成一个：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git log --oneline</span><br><span class="line">3a2b1c3 Add feature A</span><br><span class="line">2b3c4d5 Fix bug B</span><br><span class="line">1c2d3e4 Implement feature C</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>git rebase -i HEAD~3</code> 命令来打开交互式 <code>rebase</code> 编辑器，其中 <code>HEAD~3</code> 表示要合并的 <code>commit</code> 记录数量。在编辑器中，将第二个和第三个 <code>commit</code> 记录的操作改为 <code>squash</code>，表示将它们合并到第一个 <code>commit</code> 记录中。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pick 3a2b1c3 Add feature A</span><br><span class="line">squash 2b3c4d5 Fix bug B</span><br><span class="line">squash 1c2d3e4 Implement feature C</span><br></pre></td></tr></table></figure>
+<p>保存并关闭编辑器。</p>
+</li>
+</ol>
+<p><code>pick</code> 操作会将一个提交应用到当前分支，而 <code>squash</code> 操作会将一个提交合并到前一个提交中，从而将多个提交合并成一个。</p>
+<ol>
+<li><p><code>git</code> 会自动打开另一个编辑器，让你编辑合并后的 <code>commit</code> 信息。你可以保留第一个 <code>commit</code> 记录的信息，或者修改为新的 <code>commit</code> 信息。保存并关闭编辑器。</p>
+</li>
+<li><p>使用 <code>git push --force</code> 命令将修改后的 <code>commit</code> 记录推送到远程仓库。注意，由于使用了 <code>--force</code> 参数，这会覆盖远程仓库中的历史记录，因此请确保你的操作不会影响其他人的工作。</p>
+</li>
+</ol>
+<h2 id="git-reset-用法"><a href="#git-reset-用法" class="headerlink" title="git reset 用法"></a>git reset 用法</h2><p><code>git reset</code> 命令用于将当前分支的 <code>HEAD</code> 指针移动到指定的提交，同时可以选择是否修改暂存区和工作目录。<code>--hard</code> 和 <code>--soft</code> 是 <code>git reset</code> 命令的两个选项，它们的区别在于是否修改暂存区和工作目录。</p>
+<ul>
+<li><p><code>--hard</code> 选项会将 <code>HEAD</code> 指针、暂存区和工作目录都重置为指定的提交。这意味着所有未提交的更改都会被丢弃，工作目录中的文件会被覆盖为指定提交中的文件。</p>
+</li>
+<li><p><code>--soft</code> 选项只会将 <code>HEAD</code> 指针移动到指定的提交，而不会修改暂存区和工作目录。这意味着所有未提交的更改都会保留在工作目录中，可以通过 <code>git status</code> 命令查看它们的状态。</p>
+</li>
+</ul>
+<p>一般来说，如果你想完全撤销所有未提交的更改并回到指定的提交，可以使用 <code>--hard</code> 选项。如果你只是想将 <code>HEAD</code> 指针移动到指定的提交，但保留未提交的更改，可以使用 <code>--soft</code> 选项。</p>
+<p>这个命令我用的不多，实际场景用到时在补充。</p>
 
     </div>
 
@@ -335,7 +393,7 @@
       
 
         <div class="reward-container">
-  <div>感谢上学期间打赏我的朋友们。上班后不太缺钱，所以明人不说暗话，我，秦始皇，打钱。</div>
+  <div>感谢上学期间打赏我的朋友们。赛博乞讨：我，秦始皇，打钱。</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
     打赏
   </button>
@@ -376,7 +434,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Git/" rel="tag"># Git</a>
+              <a href="/tags/git/" rel="tag"># git</a>
           </div>
 
         
@@ -456,7 +514,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#git-%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">git 开发流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%B0%E5%88%86%E6%94%AF"><span class="nav-number">1.1.</span> <span class="nav-text">获取新分支</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9A%82%E5%AD%98%E4%BF%AE%E6%94%B9"><span class="nav-number">2.</span> <span class="nav-text">暂存修改</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#git-%E5%BC%80%E5%8F%91%E6%97%B6%EF%BC%8CA-%E5%88%86%E6%94%AF%E7%9A%84%E4%BB%A3%E7%A0%81%E6%B3%84%E6%BC%8F%E5%88%B0%E4%BA%86-B-%E5%88%86%E6%94%AF-%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">git 开发时，A 分支的代码泄漏到了 B 分支 ？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">3.1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">错误操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E5%81%9A%E6%B3%95"><span class="nav-number">3.3.</span> <span class="nav-text">正确做法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E4%BB%A3%E7%A0%81%E6%8E%A8%E9%80%81"><span class="nav-number">4.</span> <span class="nav-text">临时代码推送</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%94%99%E5%88%AB%E5%AD%97%EF%BC%8C%E4%B8%8D%E5%80%BC%E5%BE%97%E9%87%8D%E6%96%B0-commit"><span class="nav-number">5.</span> <span class="nav-text">修改错别字，不值得重新 commit</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#git-%E5%BC%80%E5%8F%91%E6%97%B6%EF%BC%8CA-%E5%88%86%E6%94%AF%E7%9A%84%E4%BB%A3%E7%A0%81%E6%B3%84%E6%BC%8F%E5%88%B0%E4%BA%86-B-%E5%88%86%E6%94%AF-%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">git 开发时，A 分支的代码泄漏到了 B 分支 ？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">错误操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E5%81%9A%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">正确做法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E6%B1%A1%E6%9F%93"><span class="nav-number">2.</span> <span class="nav-text">记一次代码污染</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">2.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%E5%81%9A%E6%B3%95-1"><span class="nav-number">2.2.</span> <span class="nav-text">正确做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%A0%81%E5%9B%9E%E6%92%A4%E6%9D%A5%E8%A7%A3%E5%86%B3%E4%BB%A3%E7%A0%81%E6%B1%A1%E6%9F%93"><span class="nav-number">2.3.</span> <span class="nav-text">使用代码回撤来解决代码污染</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#git-%E5%AE%9E%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">git 实用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">一般的开发流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%B0%E5%88%86%E6%94%AF"><span class="nav-number">3.2.</span> <span class="nav-text">获取新分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9A%82%E5%AD%98%E4%BF%AE%E6%94%B9"><span class="nav-number">3.3.</span> <span class="nav-text">暂存修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-%E4%B8%A2%E5%BC%83%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">3.4.</span> <span class="nav-text">git 丢弃本地的修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E4%BB%A3%E7%A0%81%E6%8E%A8%E9%80%81"><span class="nav-number">3.5.</span> <span class="nav-text">临时代码推送</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%94%99%E5%88%AB%E5%AD%97%EF%BC%8C%E4%B8%8D%E5%80%BC%E5%BE%97%E9%87%8D%E6%96%B0-commit"><span class="nav-number">3.6.</span> <span class="nav-text">修改错别字，不值得重新 commit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%86%99%E5%88%B0%E4%B8%80%E5%8D%8A%EF%BC%8C%E9%9C%80%E8%A6%81%E5%90%8C%E6%AD%A5%E5%90%8C%E4%BA%8B%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-number">3.7.</span> <span class="nav-text">代码写到一半，需要同步同事的代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-%E6%9F%A5%E7%9C%8B%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF%E5%AF%B9%E5%BA%94%E7%9A%84%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF%E5%90%8D"><span class="nav-number">3.8.</span> <span class="nav-text">git 查看本地分支对应的远程分支名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-%E6%9F%A5%E7%9C%8B%E5%88%86%E6%94%AF%E5%B7%AE%E5%BC%82"><span class="nav-number">3.9.</span> <span class="nav-text">git 查看分支差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%AC%A1-commit-%E8%AE%B0%E5%BD%95%E5%90%88%E5%B9%B6"><span class="nav-number">3.10.</span> <span class="nav-text">多次 commit 记录合并</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-reset-%E7%94%A8%E6%B3%95"><span class="nav-number">3.11.</span> <span class="nav-text">git reset 用法</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -472,7 +530,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">225</span>
+          <span class="site-state-item-count">226</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -526,12 +584,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">940k</span>
+    <span title="站点总字数">952k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">14:14</span>
+    <span title="站点阅读时长">14:25</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
