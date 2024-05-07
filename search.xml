@@ -9907,6 +9907,15 @@ C = A * B + \text{bias}</script><p>简单起见，$A$ 的维度为 $512\times 12
       </tags>
   </entry>
   <entry>
+    <title>多级流水：隐藏算法的执行时间</title>
+    <url>/2024/05/07/multi-pipeline/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>代码写完了，早晚会回来填坑的。</p>
+<span id="more"></span>]]></content>
+      <tags>
+        <tag>Design</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>操作系统『一』：进程与线程</title>
     <url>/2020/03/16/multi-process-thread/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>作为一个程序员，我发现我不会写多进程和多线程的程序，实在羞愧，在赶完毕业设计后准备开一个多线程编程的坑。本文是我这种小白从无到有的学习收获，内容较多，还请耐心观看。因疫情原因没在学校，手头没有一本靠谱的《操作系统》的书籍，<del>大多东西为网上搜刮而来后整理，可能不严谨。</del>今天有空了回来填坑。</p>
@@ -12618,6 +12627,22 @@ C = A * B + \text{bias}</script><p>简单起见，$A$ 的维度为 $512\times 12
       </tags>
   </entry>
   <entry>
+    <title>一些攻击算法</title>
+    <url>/2021/09/22/some-attack-methods/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，<del>早日毕业吧</del>。</p>
+<span id="more"></span>
+<h1 id="Natural-ADV"><a href="#Natural-ADV" class="headerlink" title="Natural ADV"></a>Natural ADV</h1><p>GENERATING NATURAL ADVERSARIAL EXAMPLES，发表在 ICLR 2018。众所周知，神经网络的输入层含有的信息和和隐层含有的信息是不同的，且常见攻击算法生成的对抗样本并不具有语义特征。所以这篇论文尝试生成 natural 的对抗样本。</p>
+<p>与传统算法不同的是：传统算法在输入空间搜索对抗样本，而本文的算法尝试在隐空间进行搜索。即输入的为干净样本的分布 $P(x)$，搜索一个 $z^\star$，并通过生成器将其映射回 $x^\star$，并期望对抗样本是合法且和原始输入较为接近。</p>
+<p>为了达到这个目标，作者选用 WGAN 作为生成器。首先训练一个 $G$，可以由 $z$ 生成 $x$；同时训练一个与 $G$ 相反的 $I$，由 $x$ 生成 $z$。通过最小化重构 $x$ 和 $z$ 与 $I(G(z))$ 的误差作为损失函数训练模型。</p>
+<p><img data-src="https://z3.ax1x.com/2021/09/22/4US1kF.png" alt></p>
+<p>之后便是对抗样本的生成方法，使用生成器来判断当前的噪音是否能欺骗分类器，即在 $f(G(z’)) \neq f(x)$ 的情况下，选择一个 $z’$，这个 $z’$ 和 $I(x)$ 最为接近，那么对抗样本就是 $x^\star=G(z’)$。那么问题来了，如何搜索 $z’$ 呢？论文提出了两种搜索算法，都是直接在干净样本对应的隐向量 $z$ 上增加扰动，如果扰动可以成功的攻击分类器，那么就认为搜索到了 $z’$。</p>
+<p><img data-src="https://z3.ax1x.com/2021/09/22/4U9gdf.png" alt></p>
+]]></content>
+      <tags>
+        <tag>AdversarialExample</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>一些对抗样本去噪算法</title>
     <url>/2021/08/05/some-adversarial-sample-denoise/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>忙完了其它的，还是要回归科研做好整理，相当于论文笔记吧。对抗样本去噪算法算是告以段落，或者说叫对抗样本提纯。本文总结了一些近几年的、思路还行结果也还好的对抗样本去噪算法，就相当于写个类似的综述了，注意，并非详解。优缺点仅是个人分析，<del>其实论文读多了或者看了代码，总会有一些想法</del>。包含以下论文：</p>
@@ -12690,22 +12715,6 @@ C = A * B + \text{bias}</script><p>简单起见，$A$ 的维度为 $512\times 12
 <figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(max_iter):</span><br><span class="line">    labels = torch.ones(x_pur.shape[<span class="number">0</span>], device=x_pur.device)</span><br><span class="line">    labels = labels.long().to(config.device.ebm_device)</span><br><span class="line">    grad = network_ebm(x_pur, labels) <span class="comment"># Get gradients</span></span><br><span class="line">    <span class="comment"># Get adaptive step size</span></span><br><span class="line">    x_eps = x_pur + lr_min*grad</span><br><span class="line">    <span class="comment">#print(torch.mean(torch.norm(grad.view(grad.shape[0],-1), p=2,dim=1)).item(), flush=True)</span></span><br><span class="line">    grad_eps = network_ebm(x_eps, labels)</span><br><span class="line">    z1 = torch.bmm(grad.view(grad.shape[<span class="number">0</span>], <span class="number">1</span>, -<span class="number">1</span>), grad_eps.view(grad_eps.shape[<span class="number">0</span>], -<span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">    z2 = torch.bmm(grad.view(grad.shape[<span class="number">0</span>], <span class="number">1</span>, -<span class="number">1</span>), grad.view(grad.shape[<span class="number">0</span>], -<span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">    z = torch.div(z1, z2)</span><br><span class="line">    <span class="keyword">if</span> mode==<span class="string">&quot;attack&quot;</span>:</span><br><span class="line">        step_lambda = config.attack.attack_lambda</span><br><span class="line">    <span class="keyword">elif</span> mode==<span class="string">&quot;purification&quot;</span>:</span><br><span class="line">        step_lambda = config.purification.purification_lambda</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line">    step_size = torch.clamp(step_lambda*lr_min/(<span class="number">1.</span>-z), <span class="built_in">min</span>=min_step_lr, <span class="built_in">max</span>=min_step_lr*<span class="number">10000.</span>).view(-<span class="number">1</span>)</span><br><span class="line">    cont_purification = torch.logical_and(cont_purification, (step_size&gt;config.purification.stopping_alpha))</span><br><span class="line">    <span class="keyword">if</span> torch.<span class="built_in">sum</span>(cont_purification)==<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    step_size *= cont_purification</span><br><span class="line">    x_pur_t = x_pur.clone().detach()</span><br><span class="line">    x_pur = torch.clamp(transform_ebm_to_raw(x_pur_t+grad*step_size[:, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>]), <span class="number">0.0</span>, <span class="number">1.0</span>)</span><br><span class="line">    step_sizes.append(step_size)</span><br><span class="line">    images.append(x_pur)</span><br></pre></td></tr></table></figure>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>当然，还有一系列的其他算法，如 Feature squeezing, JPEG Compressionm，TVM 等算法，我感觉不如之前的论文有意思，所以没有详细的写，读者有兴趣的话可以自己去看一看。</p>
 <p>接下来，会看一些攻击方向的经典论文而后复现，大概一周吧，之后会转入全新的领域：对抗训练，偏数据分布的处理，如果有兴趣欢迎联系（是妹子就更好了（误。</p>
-]]></content>
-      <tags>
-        <tag>AdversarialExample</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一些攻击算法</title>
-    <url>/2021/09/22/some-attack-methods/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>又又又摸了几天，写了个爬虫，还是回来看论文了。整理一些常见的基于生成的攻击算法，之后再看一些较新的论文，就开始写自己的论文了，<del>早日毕业吧</del>。</p>
-<span id="more"></span>
-<h1 id="Natural-ADV"><a href="#Natural-ADV" class="headerlink" title="Natural ADV"></a>Natural ADV</h1><p>GENERATING NATURAL ADVERSARIAL EXAMPLES，发表在 ICLR 2018。众所周知，神经网络的输入层含有的信息和和隐层含有的信息是不同的，且常见攻击算法生成的对抗样本并不具有语义特征。所以这篇论文尝试生成 natural 的对抗样本。</p>
-<p>与传统算法不同的是：传统算法在输入空间搜索对抗样本，而本文的算法尝试在隐空间进行搜索。即输入的为干净样本的分布 $P(x)$，搜索一个 $z^\star$，并通过生成器将其映射回 $x^\star$，并期望对抗样本是合法且和原始输入较为接近。</p>
-<p>为了达到这个目标，作者选用 WGAN 作为生成器。首先训练一个 $G$，可以由 $z$ 生成 $x$；同时训练一个与 $G$ 相反的 $I$，由 $x$ 生成 $z$。通过最小化重构 $x$ 和 $z$ 与 $I(G(z))$ 的误差作为损失函数训练模型。</p>
-<p><img data-src="https://z3.ax1x.com/2021/09/22/4US1kF.png" alt></p>
-<p>之后便是对抗样本的生成方法，使用生成器来判断当前的噪音是否能欺骗分类器，即在 $f(G(z’)) \neq f(x)$ 的情况下，选择一个 $z’$，这个 $z’$ 和 $I(x)$ 最为接近，那么对抗样本就是 $x^\star=G(z’)$。那么问题来了，如何搜索 $z’$ 呢？论文提出了两种搜索算法，都是直接在干净样本对应的隐向量 $z$ 上增加扰动，如果扰动可以成功的攻击分类器，那么就认为搜索到了 $z’$。</p>
-<p><img data-src="https://z3.ax1x.com/2021/09/22/4U9gdf.png" alt></p>
 ]]></content>
       <tags>
         <tag>AdversarialExample</tag>

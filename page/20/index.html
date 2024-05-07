@@ -223,6 +223,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/05/09/back-propagation-and-gradient-descent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/09/back-propagation-and-gradient-descent/" class="post-title-link" itemprop="url">图解反向传播与梯度下降</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-09 23:31:33" itemprop="dateCreated datePublished" datetime="2020-05-09T23:31:33+08:00">2020-05-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-11 01:29:24" itemprop="dateModified" datetime="2020-05-11T01:29:24+08:00">2020-05-11</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在之前的学习深度学习的过程中，以MLP为例，仅仅是知道了梯度下降和反向传播能很好的降低预测误差(本文暂且不谈论梯度消失和爆炸的问题)，使得训练出来的模型能够对未知的数据进行预测或者分类，以此来达到智能的目的。</p>
+<p>时至今日，意识到不求甚解释不好的行为，于是下决心搞懂梯度下降和反向传播的原理。结果上网一搜，呵，大部分tm的是各处偷来的截图，截图里还有三四个水印，最后胡乱的堆一些数学公式，讲解的并不够彻底，也不通俗易懂。于是本文决定图解反向传播和梯度下降，并配备必要的数学计算，使读者一目了然。</p>
+          <!--noindex-->
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/05/09/entropy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -727,95 +811,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2020/03/30/KDE-cluster/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Just for Life.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/30/KDE-cluster/" class="post-title-link" itemprop="url">核密度聚类</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-30 18:11:13" itemprop="dateCreated datePublished" datetime="2020-03-30T18:11:13+08:00">2020-03-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-31 06:15:10" itemprop="dateModified" datetime="2020-03-31T06:15:10+08:00">2020-03-31</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>当问题需要自动地确定聚类数目时，传统的KMeans等聚类方法不在适用。因此，使用“核概率密度估计”的思路自行设计了两种聚类方法。本文收录：</p>
-<ul>
-<li>核是什么</li>
-<li>核密度估计</li>
-<li>基于核密度估计的两种聚类方法</li>
-<li>代码实现</li>
-</ul>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -887,7 +882,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">226</span>
+          <span class="site-state-item-count">227</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
