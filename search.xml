@@ -574,6 +574,34 @@
       </tags>
   </entry>
   <entry>
+    <title>CUFX(CUDA Framework eXtended)： CUDA 计算框架</title>
+    <url>/2024/08/04/CUFX/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>利用下班时间学完了 CUDA，Anyway 忙起来真的很大程度能缓解焦虑，能忘记和忽略很多烦恼。所以寻思着结合这一年来所学，写了一个简单的 CUDA 计算框架：<a href="https://github.com/muyuuuu/CUFX/tree/main/CUFX">CUFX</a>。</p>
+<span id="more"></span>
+<h1 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">├── CMakeLists.txt                                      <span class="comment"># 根目录 CMakeLists.txt</span></span><br><span class="line">├── README.md</span><br><span class="line">├── build_run.sh                                        <span class="comment"># 编译运行脚本</span></span><br><span class="line">├── inc                                    <span class="comment"># 外部接口，外部可见</span></span><br><span class="line">│   ├── data_type                                       <span class="comment"># 数据类型</span></span><br><span class="line">│   │   └── data_type.cuh</span><br><span class="line">│   ├── <span class="built_in">log</span>                                             <span class="comment"># 日志声明</span></span><br><span class="line">│   │   └── log.cuh                                     </span><br><span class="line">│   ├── matrix                                          <span class="comment"># 矩阵声明</span></span><br><span class="line">│   │   └── matrix.cuh </span><br><span class="line">│   └── operator                                        <span class="comment"># cuda 算子</span></span><br><span class="line">│       └── external.cuh</span><br><span class="line">├── priv                                   <span class="comment"># 内部接口，不对外提供</span></span><br><span class="line">│   ├── runtime                                         <span class="comment"># 运行时信息</span></span><br><span class="line">│   │   ├── inc</span><br><span class="line">│   │   │   └── runtime_info.cuh</span><br><span class="line">│   │   └── src</span><br><span class="line">│   │       └── runtime_info.cu</span><br><span class="line">│   └── time                                            <span class="comment"># 计时函数</span></span><br><span class="line">│       └── inc</span><br><span class="line">│           └── clock.cuh</span><br><span class="line">├── src                                     <span class="comment"># 实现代码目录</span></span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── <span class="built_in">log</span>                                             <span class="comment"># 日志函数实现</span></span><br><span class="line">│   │   └── log.cu</span><br><span class="line">│   ├── matrix                                          <span class="comment"># 矩阵函数实现</span></span><br><span class="line">│   │   └── matrix.cu</span><br><span class="line">│   ├── reductsum                                       <span class="comment"># 归约求和算子</span></span><br><span class="line">│   │   ├── inc</span><br><span class="line">│   │   └── src</span><br><span class="line">│   │       └── reduct_sum.cu</span><br><span class="line">│   └── transpose</span><br><span class="line">└── <span class="built_in">test</span>                                    <span class="comment"># 测试目录</span></span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    ├── inc                                             <span class="comment"># 测试模块代码</span></span><br><span class="line">    │   ├── compare.cuh</span><br><span class="line">    │   └── testcase.cuh</span><br><span class="line">    ├── main.cu                                         <span class="comment"># 程序入口，执行测试样例</span></span><br><span class="line">    └── testcase                                        <span class="comment"># 测试用例</span></span><br><span class="line">        └── reduct_sum_testcase.cu</span><br></pre></td></tr></table></figure>
+<p>从上面的目录结构可以看出来这个计算框架分几大模块：</p>
+<ul>
+<li>inc 是声明的头文件，包括数据类型、矩阵、日志、算子等</li>
+<li>priv 是对内的头文件，运行时信息，计时函数等</li>
+<li>src 是所有的实现代码</li>
+<li>test 是测试代码，GPU 的执行结果和 CPU 进行比对</li>
+</ul>
+<p>可以开发一些算子，比如高斯滤波，图像翻转等。那么这个框架就可以用于高性能计算的落地和部署了，比如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">1.</span> 读取图片</span><br><span class="line"><span class="number">2.</span> 颜色变换</span><br><span class="line"><span class="number">3.</span> 图像翻转</span><br><span class="line"><span class="number">4.</span> 模型推理</span><br><span class="line"><span class="number">5.</span> 后处理</span><br><span class="line"><span class="number">5.</span> 结果输出</span><br></pre></td></tr></table></figure>
+<p>除了模型推理这一步，其余颜色变换、后处理都可以写一些 cuda 算子来进行加速和优化。或者，你可以把 CUFX 理解为一个 OpenCV，不过目前还没那么多功能和接口。</p>
+<h1 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h1><ol>
+<li>线程池，这个网上很多，可以实现后添加进去</li>
+<li>内存池，对 CUFX 内部的内存进行管理，避免碎片化，打印内存使用详情等信息</li>
+<li>可以添加一些优雅的 C++ 实现，比如最近在学模板的特化和偏特化，也许哪天就加进去了</li>
+<li>一些高性能 cuda 算子，核心也是灵魂，写好需要花很多时间</li>
+</ol>
+<p><del>如果我上学的时候会这些多好啊，我就慢慢的每天学习一些新知识，然后添加代码，面试还能吹牛逼。</del></p>
+]]></content>
+      <tags>
+        <tag>CUDA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>对抗攻击篇：CW 攻击算法</title>
     <url>/2021/05/04/CW-attack/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>五一闲的没事继续开坑，差不多也该做论文了。等看完一些经典的攻击算法后，做一些复现和对比实验，然后去看经典的防御算法。CW 算法是一种基于优化的攻击算法 <sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup>，而论文的创新点在于损失函数的定义与梯度的截断。</p>
