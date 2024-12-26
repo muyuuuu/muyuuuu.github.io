@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近这半年实在是闲，秉承着下班少玩手机的目的，7 月开始学 cuda，8 9 月学了 C++，10 月懈怠了一个月，11 月学了 cuda 进阶，12 月我来祸害 nndeploy 了。 一来是学完 C++ 后看下我能看懂的优秀的开源项目，一方面在之前学校训练模型感觉没意思，是看看 AI 的工程化。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何看懂 nndeploy">
+<meta property="og:url" content="https://muyuuuu.github.io/2024/12/26/nndeploy-1/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="最近这半年实在是闲，秉承着下班少玩手机的目的，7 月开始学 cuda，8 9 月学了 C++，10 月懈怠了一个月，11 月学了 cuda 进阶，12 月我来祸害 nndeploy 了。 一来是学完 C++ 后看下我能看懂的优秀的开源项目，一方面在之前学校训练模型感觉没意思，是看看 AI 的工程化。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s21.ax1x.com/2024/12/26/pAvD454.png">
+<meta property="og:image" content="https://s21.ax1x.com/2024/12/26/pAvDIPJ.png">
+<meta property="og:image" content="https://s21.ax1x.com/2024/12/26/pAvDoG9.png">
+<meta property="og:image" content="https://s21.ax1x.com/2024/12/26/pAvDT2R.png">
+<meta property="article:published_time" content="2024-12-26T15:48:50.000Z">
+<meta property="article:modified_time" content="2024-12-26T15:58:27.037Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="AISystem">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s21.ax1x.com/2024/12/26/pAvD454.png">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2024/12/26/nndeploy-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>如何看懂 nndeploy | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2024/12/26/nndeploy-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          如何看懂 nndeploy
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-26 23:48:50 / 修改时间：23:58:27" itemprop="dateCreated datePublished" datetime="2024-12-26T23:48:50+08:00">2024-12-26</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>37k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>34 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近这半年实在是闲，秉承着下班少玩手机的目的，7 月开始学 <code>cuda</code>，8 9 月学了 <code>C++</code>，10 月懈怠了一个月，11 月学了 <code>cuda</code> 进阶，12 月我来祸害 <a target="_blank" rel="noopener" href="https://github.com/nndeploy/nndeploy"><code>nndeploy</code></a> 了。</p>
+<p>一来是学完 <code>C++</code> 后看下我能看懂的优秀的开源项目，一方面在之前学校训练模型感觉没意思，是看看 <code>AI</code> 的工程化。</p>
+<span id="more"></span>
+<blockquote>
+<p>个人背景</p>
+</blockquote>
+<ol>
+<li><code>C</code> 和 <code>C++</code> 薄弱，上班才开始学，<code>cmake</code> 也是上班后学的，项目经验少，只能看懂简单一些的</li>
+<li>上学那会儿会用 <code>pytorch</code> 训练模型，用过常见的 CV、NLP 模型。对大模型完全未知</li>
+<li>计算机出身，对线程池、内存池、有向无环、多级流水不陌生</li>
+<li>工作一年，会用 <code>neon</code>、<code>OpenCL</code> 写算子。下班时间自学了 <code>CUDA</code></li>
+<li>对部署、推理框架完全未知，全凭兴趣，代码一点点看吧</li>
+<li>由于涉及相当多的知识，会以超链接的形式给出，语法知识点不在解释</li>
+<li>以我看完代码的体验而言，<code>C++</code>，多线程，数据结构，AI 算法都得了解，不然代码会看的很难受</li>
+<li>模型推理是模型部署中的重点，所以会重点看一下，所以即使标题中有推理引擎的部分，但它也只是计算图中的一个节点。由于下班时间自学了 <code>CUDA</code>，所以推理引擎部分选用的是 <code>tensorrt</code>。</li>
+</ol>
+<h1 id="从-main-函数开始"><a href="#从-main-函数开始" class="headerlink" title="从 main 函数开始"></a>从 main 函数开始</h1><h2 id="获取参数"><a href="#获取参数" class="headerlink" title="获取参数"></a>获取参数</h2><p>说实话打开项目的时候，这么多文件夹我都没找到入口在哪。<code>cmake</code> 中生成可执行文件的命令为：<code>add_executable</code>，搜索这个关键字，定位到了是 <code>demo</code> 文件夹。以检测为例，打开 <code>demo/detect/demo.cc</code> 开始阅读。</p>
+<p>看到 <code>main()</code> 函数的时候发现了未知的 <code>gflags</code>，<code>vscode</code> 中甚至无法跳转。一般而言是第三方库，打开网页搜索，果然……如果想使用这个库，可以看<a target="_blank" rel="noopener" href="https://github.com/AngryHacker/articles/blob/master/src/open_source_components/google_gflags.md">这里</a>。</p>
+<p>那么 <code>main()</code> 函数里的这段代码，都是获取用户的输入，并创建对应的数据类型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">gflags::<span class="built_in">ParseCommandLineNonHelpFlags</span>(&amp;argc, &amp;argv, <span class="literal">true</span>);</span><br><span class="line"><span class="keyword">if</span> (demo::FLAGS_usage) &#123;</span><br><span class="line">  demo::<span class="built_in">showUsage</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检测模型的有向无环图graph名称，例如</span></span><br><span class="line"><span class="comment">// NNDEPLOY_YOLOV5/NNDEPLOY_YOLOV6/NNDEPLOY_YOLOV8</span></span><br><span class="line">std::string name = demo::<span class="built_in">getName</span>();</span><br><span class="line"><span class="comment">// 推理后端类型，例如:</span></span><br><span class="line"><span class="comment">// kInferenceTypeOpenVino / kInferenceTypeTensorRt / kInferenceTypeOnnxRuntime</span></span><br><span class="line">base::InferenceType inference_type = demo::<span class="built_in">getInferenceType</span>();</span><br><span class="line"><span class="comment">// 推理设备类型，例如:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// kDeviceTypeCodeX86:0/kDeviceTypeCodeCuda:0/...</span></span><br><span class="line">base::DeviceType device_type = demo::<span class="built_in">getDeviceType</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模型类型，例如:</span></span><br><span class="line"><span class="comment">// kModelTypeOnnx/kModelTypeMnn/...</span></span><br><span class="line">base::ModelType model_type = demo::<span class="built_in">getModelType</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模型是否是路径</span></span><br><span class="line"><span class="type">bool</span> is_path = demo::<span class="built_in">isPath</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模型路径或者模型字符串</span></span><br><span class="line">std::vector&lt;std::string&gt; model_value = demo::<span class="built_in">getModelValue</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// input path</span></span><br><span class="line">std::string input_path = demo::<span class="built_in">getInputPath</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// input path</span></span><br><span class="line">base::CodecFlag codec_flag = demo::<span class="built_in">getCodecFlag</span>();</span><br><span class="line"><span class="comment">// output path</span></span><br><span class="line">std::string ouput_path = demo::<span class="built_in">getOutputPath</span>();</span><br><span class="line"><span class="comment">// base::kParallelTypePipeline / base::kParallelTypeSequential</span></span><br><span class="line">base::ParallelType pt = demo::<span class="built_in">getParallelType</span>();</span><br></pre></td></tr></table></figure>
+<p>以下面的代码为例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">base::ParallelType pt = demo::<span class="built_in">getParallelType</span>();</span><br></pre></td></tr></table></figure>
+<p><code>ParallelType</code> 的定义为 ：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">ParallelType</span> : <span class="type">int</span> &#123;</span><br><span class="line">  kParallelTypeNone = <span class="number">0x0001</span>,</span><br><span class="line">  kParallelTypeSequential = <span class="number">0x0001</span> &lt;&lt; <span class="number">1</span>,</span><br><span class="line">  kParallelTypeTask = <span class="number">0x0001</span> &lt;&lt; <span class="number">2</span>,</span><br><span class="line">  kParallelTypePipeline = <span class="number">0x0001</span> &lt;&lt; <span class="number">3</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>只能从单词的意思上看出，这个参数表示部署的任务是并行还是串行。</p>
+<h1 id="计算图"><a href="#计算图" class="headerlink" title="计算图"></a>计算图</h1><h2 id="计算图创建"><a href="#计算图创建" class="headerlink" title="计算图创建"></a>计算图创建</h2><p>学过数据结构的话，对图都不陌生，用边把节点连接起来。</p>
+<h3 id="Edge-定义"><a href="#Edge-定义" class="headerlink" title="Edge 定义"></a>Edge 定义</h3><p>之后就是定义图的边：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 有向无环图graph的输入边packert</span></span><br><span class="line"><span class="function">dag::Edge <span class="title">input</span><span class="params">(<span class="string">&quot;detect_in&quot;</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 有向无环图graph的输出边packert</span></span><br><span class="line"><span class="function">dag::Edge <span class="title">output</span><span class="params">(<span class="string">&quot;detect_out&quot;</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>打开 <code>Edge</code> 这个类简单阅读一下，发现它继承自 <code>NonCopyable</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NNDEPLOY_CC_API</span> Edge : <span class="keyword">public</span> base::NonCopyable</span><br></pre></td></tr></table></figure>
+<p>简而言之这个类被禁用了拷贝构造赋值，移动构造和赋值，我们给他留下一个数据不可被拷贝的印象就可以了。额外的，<code>NNDEPLOY_CC_API</code> 是项目中常见的宏定义，一般生成动态链接库会选择 <code>release</code> 模式。<code>NNDEPLOY_CC_API</code> 则会控制符号表是否对外可见，运行时出错时可以根据出错地址找到对应的符号，也就是哪个函数报错了。</p>
+<p>对 <code>Edge</code> 的方法进行大致浏览，可以分为内存和节点位置索引相关：</p>
+<ul>
+<li>内存：可以操作 <code>buffer、tensor</code> 和 <code>param</code></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">device::Buffer *<span class="title">create</span><span class="params">(device::Device *device, <span class="type">const</span> device::BufferDesc &amp;desc,</span></span></span><br><span class="line"><span class="params"><span class="function">                        <span class="type">int</span> index)</span></span>;</span><br><span class="line"><span class="function">base::Status <span class="title">set</span><span class="params">(device::Buffer &amp;buffer, <span class="type">int</span> index)</span></span>;</span><br><span class="line"><span class="function">device::Buffer *<span class="title">getBuffer</span><span class="params">(<span class="type">const</span> Node *node)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">base::Status <span class="title">set</span><span class="params">(device::Tensor *tensor, <span class="type">int</span> index, <span class="type">bool</span> is_external = <span class="literal">true</span>)</span></span>;</span><br><span class="line"><span class="function">base::Status <span class="title">set</span><span class="params">(device::Tensor &amp;tensor, <span class="type">int</span> index)</span></span>;</span><br><span class="line"><span class="function">device::Tensor *<span class="title">create</span><span class="params">(device::Device *device, <span class="type">const</span> device::TensorDesc &amp;desc,</span></span></span><br><span class="line"><span class="params"><span class="function">                        <span class="type">int</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">base::Status <span class="title">set</span><span class="params">(base::Param *param, <span class="type">int</span> index, <span class="type">bool</span> is_external = <span class="literal">true</span>)</span></span>;</span><br><span class="line"><span class="function">base::Status <span class="title">set</span><span class="params">(base::Param &amp;param, <span class="type">int</span> index)</span></span>;</span><br><span class="line"><span class="function">base::Param *<span class="title">getParam</span><span class="params">(<span class="type">const</span> Node *node)</span></span>;</span><br><span class="line"><span class="function">base::Param *<span class="title">getGraphOutputParam</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>节点位置相关，目测是获取索引或者位置</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">getIndex</span><span class="params">(<span class="type">const</span> Node *node)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">getGraphOutputIndex</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">getPosition</span><span class="params">(<span class="type">const</span> Node *node)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">getGraphOutputPosition</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>至于更多内容，需要的时候再看。</p>
+<h3 id="Graph-定义"><a href="#Graph-定义" class="headerlink" title="Graph 定义"></a>Graph 定义</h3><p><code>graph</code> 类继承自 <code>Node</code> 类：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NNDEPLOY_CC_API</span> Graph : <span class="keyword">public</span> Node</span><br></pre></td></tr></table></figure>
+<p>初步推测一个 <code>graph</code> 可以视为一个节点，被添加到其他 <code>graph</code> 中。简单浏览 <code>Node</code> 类的方法，发现它可以获取 <code>Edge</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::vector&lt;Edge *&gt; <span class="title">getAllInput</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function">std::vector&lt;Edge *&gt; <span class="title">getAllOutput</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>以及设置和获取一些运行时信息：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">setDebugFlag</span><span class="params">(<span class="type">bool</span> flag)</span></span>;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">getDebugFlag</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">setRunningFlag</span><span class="params">(<span class="type">bool</span> flag)</span></span>;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isRunning</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>以 <code>setRunningFlag</code> 为例，发现当打开 <code>is_time_profile_</code> 选项后，当 <code>ENABLE_NNDEPLOY_TIME_PROFILER</code> 宏开启时，会通过 <code>NNDEPLOY_TIME_POINT_START</code> <a href="https://muyuuuu.github.io/2024/02/03/define-macro/">宏定义</a>去记录 <code>node</code> 的执行时间。额外的，<code>NNDEPLOY_LOGE</code> 日志函数，<code>NNDEPLOY_RETURN_ON_NEQ</code> 返回状态检查也是通过<a href="https://muyuuuu.github.io/2024/02/03/define-macro/">宏定义</a>和 <code>do-while(0)</code> 的技巧实现的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Node::setRunningFlag</span><span class="params">(<span class="type">bool</span> flag)</span> </span>&#123;</span><br><span class="line">  is_running_ = flag;</span><br><span class="line">  <span class="keyword">if</span> (is_time_profile_) &#123;</span><br><span class="line">    <span class="keyword">if</span> (is_running_) &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_TIME_POINT_START</span>(name_ + <span class="string">&quot; run()&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_TIME_POINT_END</span>(name_ + <span class="string">&quot; run()&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (is_debug_) &#123;</span><br><span class="line">    <span class="keyword">if</span> (is_running_) &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;%s run start.\n&quot;</span>, name_.<span class="built_in">c_str</span>());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;%s run end.\n&quot;</span>, name_.<span class="built_in">c_str</span>());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么简单的推测：<code>Edge</code> 负责资源申请等管理，<code>Node</code> 负责调度资源运行。因为之前完全没接触过部署相关的项目，所以一边看代码一边猜测了。</p>
+<p>至于 <code>Graph</code> 这个类，作者的注释很详细了，创建 <code>Node</code> 和 <code>Edge</code>，具体如何使用，继续往下看。</p>
+<h3 id="Graph-注册"><a href="#Graph-注册" class="headerlink" title="Graph 注册"></a>Graph 注册</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dag::Graph *graph = <span class="keyword">new</span> dag::<span class="built_in">Graph</span>(<span class="string">&quot;demo&quot;</span>, <span class="literal">nullptr</span>, &amp;output);</span><br></pre></td></tr></table></figure>
+<p>这里就是创建了一个图，并且把之前创建的 <code>Edge</code> 添加了进去。不过迷惑一些的在后面：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建检测模型有向无环图graph</span></span><br><span class="line">dag::Graph *detect_graph =</span><br><span class="line">    dag::<span class="built_in">createGraph</span>(name, inference_type, device_type, &amp;input, &amp;output,</span><br><span class="line">                      model_type, is_path, model_value);</span><br><span class="line"><span class="keyword">if</span> (detect_graph == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">  <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;detect_graph is nullptr&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>createGraph</code> 函数跳转进去，我看了十分钟寻思没看错呀，会直接返回空指针，报错退出。后面发现在 <code>getGlobalGraphCreatorMap</code> 中有两个变量是 <a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/cpp-static-usage.html"><code>static</code></a> 的，莫非在其他地方这个函数被调用过了？</p>
+<p>又浏览了下目标检测相关头文件 <code>yolo.h</code>，以及这个文件夹下 <code>config.cmake</code> 的写法：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">file</span>(GLOB_RECURSE SOURCE</span><br><span class="line">  <span class="string">&quot;$&#123;ROOT_PATH&#125;/demo/detect/*.h&quot;</span></span><br><span class="line">  <span class="string">&quot;$&#123;ROOT_PATH&#125;/demo/detect/*.cc&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">file</span>(GLOB DEMO_SOURCE</span><br><span class="line">  <span class="string">&quot;$&#123;ROOT_PATH&#125;/demo/*.h&quot;</span></span><br><span class="line">  <span class="string">&quot;$&#123;ROOT_PATH&#125;/demo/*.cc&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">set</span>(SOURCE <span class="variable">$&#123;SOURCE&#125;</span> <span class="variable">$&#123;DEMO_SOURCE&#125;</span>)</span><br><span class="line"><span class="comment"># OBJECT</span></span><br><span class="line"><span class="comment"># BINARY</span></span><br><span class="line"><span class="keyword">add_executable</span>(<span class="variable">$&#123;BINARY&#125;</span> <span class="variable">$&#123;SOURCE&#125;</span> <span class="variable">$&#123;OBJECT&#125;</span>)</span><br></pre></td></tr></table></figure>
+<p>发现在 <code>using namespace nndeploy</code> 时，在 <code>yolo.cc</code> 中已经注册过了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 编程规范：g_ 开头的变量是全局变量</span></span><br><span class="line"><span class="function">dag::TypeGraphRegister <span class="title">g_register_yolov5_graph</span><span class="params">(NNDEPLOY_YOLOV5,</span></span></span><br><span class="line"><span class="params"><span class="function">                                               createYoloV5Graph)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">dag::TypeGraphRegister <span class="title">g_register_yolov6_graph</span><span class="params">(NNDEPLOY_YOLOV6,</span></span></span><br><span class="line"><span class="params"><span class="function">                                               createYoloV6Graph)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">dag::TypeGraphRegister <span class="title">g_register_yolov8_graph</span><span class="params">(NNDEPLOY_YOLOV8,</span></span></span><br><span class="line"><span class="params"><span class="function">                                               createYoloV8Graph)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>我也第一次见这种形式的代码，是通过注册全局变量的形式调用图创建函数。简化一下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;map&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">map</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="type">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TypeGraphRegister</span> &#123;</span></span><br><span class="line"> public:</span><br><span class="line">  <span class="comment">// explicit 不允许隐式类型转换</span></span><br><span class="line">  explicit <span class="title function_">TypeGraphRegister</span><span class="params">(<span class="type">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;name, <span class="type">int</span> v)</span> &#123;</span><br><span class="line">    <span class="built_in">map</span>[name] = v;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">namespace A&#123;</span><br><span class="line">  TypeGraphRegister a&#123;<span class="string">&quot;a&quot;</span>, <span class="number">1</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    using namespace A;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="built_in">map</span>[<span class="string">&quot;a&quot;</span>] &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用全局变量是因为，无法在名称空间中进行变量赋值，也就是下面的代码是错误的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line">namespace A &#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    a += <span class="number">4</span>;  <span class="comment">// 错误</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    using namespace A;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; A::a &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建目标检测图"><a href="#创建目标检测图" class="headerlink" title="创建目标检测图"></a>创建目标检测图</h3><p>以 <code>yolov5</code> 为例，会调用 <code>createYoloV5Graph</code> 函数，根据用户指定的 <code>inference_type</code> 推理类型，<code>device_type</code> 设备类型等信息创建目标检测的计算图。</p>
+<p>先创建一个图：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dag::Graph *graph = <span class="keyword">new</span> dag::<span class="built_in">Graph</span>(name, input, output);</span><br></pre></td></tr></table></figure>
+<p>之后在输入边 <code>input</code> 边和推理边 <code>infer_input</code> 边直接增加节点 <code>pre</code>，完成颜色空间转换和 <code>resize</code>，印象中目标检测模型是要把输入的图像 <code>resize</code> 到固定的尺寸来。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dag::Node *pre = graph-&gt;<span class="built_in">createNode</span>&lt;preprocess::CvtColorResize&gt;(</span><br><span class="line">    <span class="string">&quot;preprocess&quot;</span>, input, infer_input);</span><br><span class="line">preprocess::CvtclorResizeParam *pre_param =</span><br><span class="line">    <span class="built_in">dynamic_cast</span>&lt;preprocess::CvtclorResizeParam *&gt;(pre-&gt;<span class="built_in">getParam</span>());</span><br><span class="line">pre_param-&gt;src_pixel_type_ = base::kPixelTypeBGR;</span><br><span class="line">pre_param-&gt;dst_pixel_type_ = base::kPixelTypeRGB;</span><br><span class="line">pre_param-&gt;interp_type_ = base::kInterpTypeLinear;</span><br><span class="line">pre_param-&gt;h_ = <span class="number">640</span>;</span><br><span class="line">pre_param-&gt;w_ = <span class="number">640</span>;</span><br></pre></td></tr></table></figure>
+<p>推理输入边 <code>infer_input</code> 和推理输出边 <code>infer_output</code> 之间增加推理节点 <code>infer</code> 完成模型推理。同理，推理结束后增加 <code>post</code> 节点，完成目标检测中的 <a target="_blank" rel="noopener" href="https://github.com/luanshiyinyang/NMS"><code>nms</code> 抑制</a>，置信度筛选等：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dag::Node *infer = graph-&gt;<span class="built_in">createInfer</span>&lt;infer::Infer&gt;(</span><br><span class="line">    <span class="string">&quot;infer&quot;</span>, inference_type, infer_input, infer_output);</span><br><span class="line">dag::Node *post =</span><br><span class="line">    graph-&gt;<span class="built_in">createNode</span>&lt;YoloPostProcess&gt;(<span class="string">&quot;postprocess&quot;</span>, infer_output, output);</span><br></pre></td></tr></table></figure>
+<p>对于 <code>createNode&lt;YoloPostProcess&gt;</code> 形式的调用，看一下 <code>createNode</code> 方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args,</span><br><span class="line">          <span class="keyword">typename</span> std::enable_if&lt;std::is_base_of&lt;Node, T&gt;&#123;&#125;, <span class="type">int</span>&gt;::type&gt;</span><br><span class="line"><span class="function">Node *<span class="title">Graph::createNode</span><span class="params">(<span class="type">const</span> std::string &amp;name, Edge *input, Edge *output,</span></span></span><br><span class="line"><span class="params"><span class="function">                        Args &amp;...args)</span></span></span><br></pre></td></tr></table></figure>
+<p>模板那里的写法是 <a target="_blank" rel="noopener" href="https://github.com/wuye9036/CppTemplateTutorial"><code>SFINAE</code></a>，有兴趣可以看下。</p>
+<p>额外的，增加的 <code>pre, infer, post</code> 这些节点都继承自 <code>Node</code> 类，并实现了 <code>run</code> 方法。启动计算图时，通过 <code>Node</code> 基类去调用 <code>node</code> 的 <code>run</code> 方法，这样就可以执行计算图中的所有 <code>node</code> 节点。</p>
+<h4 id="目标检测图中的推理引擎"><a href="#目标检测图中的推理引擎" class="headerlink" title="目标检测图中的推理引擎"></a>目标检测图中的推理引擎</h4><p>创建推理节点：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dag::Node *infer = graph-&gt;<span class="built_in">createInfer</span>&lt;model::Infer&gt;(</span><br><span class="line">    <span class="string">&quot;infer&quot;</span>, inference_type, infer_input, infer_output);</span><br></pre></td></tr></table></figure>
+<p>首先是构造 <code>Infer</code> 这个类：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Infer</span>(<span class="type">const</span> std::string &amp;name, base::InferenceType type,</span><br><span class="line">      std::initializer_list&lt;dag::Edge *&gt; inputs,</span><br><span class="line">      std::initializer_list&lt;dag::Edge *&gt; outputs);</span><br></pre></td></tr></table></figure>
+<p>在这个构造函数中，调用 <code>Node</code> 构造函数传入输入输出边外，还有创建推理引擎：<code>inference::createInference(type);</code>。推理引擎的创建和之前的全局注册一样，以 <code>tensorrt</code> 为例，会创建一个全局变量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TypeInferenceRegister&lt;TypeInferenceCreator&lt;TensorRtInference&gt;&gt;</span><br><span class="line">    <span class="built_in">g_tensorrt_inference_register</span>(base::kInferenceTypeTensorRt);</span><br></pre></td></tr></table></figure>
+<p>在创建 <code>TensorRtInference</code> 的时候，会调用 <code>Inference</code> 的构造函数创建参数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Inference::<span class="built_in">Inference</span>(base::InferenceType type) &#123;</span><br><span class="line">  type_ = type;</span><br><span class="line">  inference_param_ = <span class="built_in">createInferenceParam</span>(type);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参数创建对应的代码是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TensorRtInferenceParam::<span class="built_in">TensorRtInferenceParam</span>() : <span class="built_in">InferenceParam</span>() &#123;</span><br><span class="line">  model_type_ = base::kModelTypeOnnx;</span><br><span class="line">  device_type_.code_ = base::kDeviceTypeCodeCuda;</span><br><span class="line">  device_type_.device_id_ = <span class="number">0</span>;</span><br><span class="line">  gpu_tune_kernel_ = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 <code>tensorrt</code> 运行在 <code>cuda</code> 的单卡上面。</p>
+<p>之后将检测模型视为 <code>node</code> 添加到 <code>graph</code> 中：<code>graph-&gt;addNode(detect_graph);</code>。</p>
+<p>后面是创建解码节点和编码节点，<code>createDecodeNode</code> 和 <code>createGraph</code> 在实现逻辑上是类似的，大概猜测是对输入的图像或者视频进行编码解码。两者均位于 <code>codec</code> 名称空间下，中间还有一个 <code>drawbox</code> 节点，会调用 <code>opencv</code> 画出图片中的检测框。</p>
+<p>图这部分的流程如下图所示：</p>
+<p><img data-src="https://s21.ax1x.com/2024/12/26/pAvD454.png" alt></p>
+<h3 id="wrapper-相关"><a href="#wrapper-相关" class="headerlink" title="wrapper 相关"></a>wrapper 相关</h3><h4 id="EdgeWrapper"><a href="#EdgeWrapper" class="headerlink" title="EdgeWrapper"></a>EdgeWrapper</h4><p>在调用 <code>createEdge</code> 的时候，将每个 <code>edge</code> 封装成 <code>edge_warpper</code>，放到当前图的 <code>edge_repository_</code> 里面。这里使用 <code>new</code> 申请 <code>edge_wrapper</code> ，不恰当的释放、程序异常退出没调用析构函数时，会有内存泄漏。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Edge *<span class="title">Graph::createEdge</span><span class="params">(<span class="type">const</span> std::string &amp;name)</span> </span>&#123;</span><br><span class="line">  Edge *edge = <span class="keyword">new</span> <span class="built_in">Edge</span>(name);</span><br><span class="line">  EdgeWrapper *edge_wrapper = <span class="keyword">new</span> <span class="built_in">EdgeWrapper</span>();</span><br><span class="line">  edge_wrapper-&gt;is_external_ = <span class="literal">false</span>;</span><br><span class="line">  edge_wrapper-&gt;edge_ = edge;</span><br><span class="line">  edge_wrapper-&gt;name_ = name;</span><br><span class="line">  edge_repository_.<span class="built_in">emplace_back</span>(edge_wrapper);</span><br><span class="line">  <span class="keyword">return</span> edge;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而 <code>EdgeWrapper</code> 类的代码如下，<code>producers_</code> 和 <code>consumers_</code> 推测用于管理边的输入节点和输出节点。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NNDEPLOY_CC_API</span> EdgeWrapper &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="type">bool</span> is_external_;</span><br><span class="line">  Edge *edge_;</span><br><span class="line">  std::string name_;</span><br><span class="line">  std::vector&lt;NodeWrapper *&gt; producers_;</span><br><span class="line">  std::vector&lt;NodeWrapper *&gt; consumers_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="NodeWrapper"><a href="#NodeWrapper" class="headerlink" title="NodeWrapper"></a>NodeWrapper</h4><p><code>addNode</code> 和 <code>createNode</code> 代码类似，需要有输入边和输出边这两个参数，因此相比 <code>createEdge</code> 麻烦一些，多了下面的内容：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">EdgeWrapper *input_wrapper = <span class="built_in">findEdgeWrapper</span>(edge_repository_, input);</span><br><span class="line"><span class="keyword">if</span> (input_wrapper == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">  input_wrapper = <span class="keyword">this</span>-&gt;<span class="built_in">addEdge</span>(input);</span><br><span class="line">&#125;</span><br><span class="line">input_wrapper-&gt;consumers_.<span class="built_in">emplace_back</span>(node_wrapper);</span><br><span class="line">EdgeWrapper *output_wrapper = <span class="built_in">findEdgeWrapper</span>(edge_repository_, output);</span><br><span class="line"><span class="keyword">if</span> (output_wrapper == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">  output_wrapper = <span class="keyword">this</span>-&gt;<span class="built_in">addEdge</span>(output);</span><br><span class="line">&#125;</span><br><span class="line">output_wrapper-&gt;producers_.<span class="built_in">emplace_back</span>(node_wrapper);</span><br><span class="line"></span><br><span class="line">node_repository_.<span class="built_in">emplace_back</span>(node_wrapper);</span><br></pre></td></tr></table></figure>
+<p>首先调用 <code>findEdgeWrapper</code> 找到输入边的 <code>wrapper</code>，如果边不在 <code>graph</code> 就添加进来。输入边的 <code>consumers_</code> 需要添加这个 <code>node</code>；同理，对于输出边的 <code>produces_</code> 也需要添加这个 <code>node</code>。不过需要注意的是，允许有多条边的 <code>consumers_</code> 是同一个节点，允许一个节点是多条边的 <code>produces_</code>。</p>
+<p><img data-src="https://s21.ax1x.com/2024/12/26/pAvDIPJ.png" alt></p>
+<p><code>NodeWrapper</code> 代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NNDEPLOY_CC_API</span> NodeWrapper &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="type">bool</span> is_external_;</span><br><span class="line">  Node *node_;</span><br><span class="line">  std::string name_;</span><br><span class="line">  std::vector&lt;NodeWrapper *&gt; predecessors_;</span><br><span class="line">  std::vector&lt;NodeWrapper *&gt; successors_;</span><br><span class="line">  base::NodeColorType color_ = base::kNodeColorWhite;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>推测其中的 <code>predecessors_</code> 和 <code>successors_</code> 对应 <code>EdgeWrapper</code> 的 <code>consumers_</code> 和 <code>produces_</code>。</p>
+<p>在看 <code>createNode</code> 代码的时候发现了未知代码 <code>std::initializer_list</code>，<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/std-initializer_list-in-cpp-11/">学习</a>了一下，粗浅理解为轻量的迭代同类型对象的类模板。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Node *<span class="title">Graph::createNode</span><span class="params">(<span class="type">const</span> std::string &amp;name,</span></span></span><br><span class="line"><span class="params"><span class="function">                        std::initializer_list&lt;Edge *&gt; inputs,</span></span></span><br><span class="line"><span class="params"><span class="function">                        std::initializer_list&lt;Edge *&gt; outputs, Args &amp;...args)</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="计算图初始化"><a href="#计算图初始化" class="headerlink" title="计算图初始化"></a>计算图初始化</h2><p>之后就是计算图的初始化、执行和释放。之前的代码难度还 <code>OK</code>，到了这里感觉代码难度飞升。调用 <code>status = graph-&gt;init();</code> 时完成计算图的初始化，看一下初始化了哪些内容。</p>
+<p>首先是 <code>this-&gt;construct();</code> 函数检查 <code>graph</code> 的 <code>node, edge</code> 是否为空，并检查 <code>edge_wrapper</code> 的生产者和消费者是否为空。如果这些都是空的话，说明创建的计算图有问题。</p>
+<h3 id="Node-处理"><a href="#Node-处理" class="headerlink" title="Node 处理"></a>Node 处理</h3><p>而后是 <code>Node</code> 节点的处理，首先为 <code>Node</code> 设置基础的信息：运行方式，是否计时等。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node-&gt;<span class="built_in">setDebugFlag</span>(is_debug_);</span><br><span class="line">node-&gt;<span class="built_in">setTimeProfileFlag</span>(is_time_profile_);</span><br><span class="line">node-&gt;<span class="built_in">setParallelType</span>(parallel_type_);</span><br><span class="line">node-&gt;<span class="built_in">setInnerFlag</span>(<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+<p>而后来看下面的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;Edge *&gt; inputs = node-&gt;<span class="built_in">getAllInput</span>();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> input : inputs) &#123;</span><br><span class="line">  EdgeWrapper *input_wrapper = <span class="built_in">findEdgeWrapper</span>(edge_repository_, input);</span><br><span class="line">  <span class="built_in">NNDEPLOY_CHECK_PARAM_NULL_RET_STATUS</span>(input_wrapper,</span><br><span class="line">                                        <span class="string">&quot;input_wrapper is null!&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> producer : input_wrapper-&gt;producers_) &#123;</span><br><span class="line">    <span class="built_in">insertUnique</span>(node_wrapper-&gt;predecessors_, producer);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">std::vector&lt;Edge *&gt; outputs = node-&gt;<span class="built_in">getAllOutput</span>();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> output : outputs) &#123;</span><br><span class="line">  EdgeWrapper *output_wrapper = <span class="built_in">findEdgeWrapper</span>(edge_repository_, output);</span><br><span class="line">  <span class="built_in">NNDEPLOY_CHECK_PARAM_NULL_RET_STATUS</span>(output_wrapper,</span><br><span class="line">                                        <span class="string">&quot;output_wrapper is null!&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> consumer : output_wrapper-&gt;consumers_) &#123;</span><br><span class="line">    <span class="built_in">insertUnique</span>(node_wrapper-&gt;successors_, consumer);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先调用 <code>getAllInput</code> 方法获取 <code>Node</code> 节点的输入，以 <code>Infer</code> 节点为例，对于 <code>graph-&gt;createInfer&lt;model::Infer&gt;</code> 这个 <code>Infer</code> 节点，调用 <code>getAllInput</code> 会调用 <code>Node</code> 类的方法得到输入 <code>inputs_</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::vector&lt;Edge *&gt; <span class="title">Node::getAllInput</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> inputs_; &#125;</span><br></pre></td></tr></table></figure>
+<p>而 <code>inputs_</code> 是在创建子类时由子类的构造函数的参数决定的，看下 <code>infer</code> 类的构造函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Infer::<span class="built_in">Infer</span>(<span class="type">const</span> std::string &amp;name, base::InferenceType type,</span><br><span class="line">             std::initializer_list&lt;dag::Edge *&gt; inputs,</span><br><span class="line">             std::initializer_list&lt;dag::Edge *&gt; outputs)</span><br><span class="line">    : dag::<span class="built_in">Node</span>(name, inputs, outputs)</span><br></pre></td></tr></table></figure>
+<p>调用了父类 <code>dag::Node</code> 的构造函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Node::<span class="built_in">Node</span>(<span class="type">const</span> std::string &amp;name, std::vector&lt;Edge *&gt; inputs,</span><br><span class="line">           std::vector&lt;Edge *&gt; outputs)</span><br><span class="line">    : <span class="built_in">name_</span>(name) &#123;</span><br><span class="line">  device_type_ = device::<span class="built_in">getDefaultHostDeviceType</span>();</span><br><span class="line">  inputs_ = inputs;</span><br><span class="line">  outputs_ = outputs;</span><br><span class="line">  constructed_ = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是在父类的构造函数中，指定了 <code>inputs_</code> 是输入边。获取节点的输入边后，获取边的 <code>producers_</code>。也就是在当前节点的 <code>predecessors</code> 中添加指向当前节点的节点。之后的处理同理，在当前节点的 <code>successors</code> 中添加当前节点指向的节点。说起来有点乱，看图吧：</p>
+<p><img data-src="https://s21.ax1x.com/2024/12/26/pAvDoG9.png" alt></p>
+<p>对于黄色节点而言，蓝色节点是 <code>predecessors</code>，绿色节点是 <code>successors</code>。</p>
+<h3 id="Edge-处理"><a href="#Edge-处理" class="headerlink" title="Edge 处理"></a>Edge 处理</h3><p>处理节点之后开始处理边：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> edge_wrapper : edge_repository_) &#123;</span><br><span class="line">  std::vector&lt;Node *&gt; producers;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> producer : edge_wrapper-&gt;producers_) &#123;</span><br><span class="line">    producers.<span class="built_in">emplace_back</span>(producer-&gt;node_);</span><br><span class="line">  &#125;</span><br><span class="line">  std::vector&lt;Node *&gt; consumers;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> consumer : edge_wrapper-&gt;consumers_) &#123;</span><br><span class="line">    consumers.<span class="built_in">emplace_back</span>(consumer-&gt;node_);</span><br><span class="line">  &#125;</span><br><span class="line">  base::Status status = edge_wrapper-&gt;edge_-&gt;<span class="built_in">setParallelType</span>(parallel_type);</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                          <span class="string">&quot;setParallelType failed!&quot;</span>);</span><br><span class="line">  <span class="comment">// 必须在abstract_edge管理该字段</span></span><br><span class="line">  status = edge_wrapper-&gt;edge_-&gt;<span class="built_in">increaseProducers</span>(producers);</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                          <span class="string">&quot;increaseProducers failed!&quot;</span>);</span><br><span class="line">  status = edge_wrapper-&gt;edge_-&gt;<span class="built_in">increaseConsumers</span>(consumers);</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                          <span class="string">&quot;increaseConsumers failed!&quot;</span>);</span><br><span class="line">  status = edge_wrapper-&gt;edge_-&gt;<span class="built_in">construct</span>();</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                          <span class="string">&quot;construct edge failed!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有个疑问，<code>std::vector&lt;Node *&gt; consumers</code> 使用了指针，那么如果 <code>abstract_edge</code> 修改了 <code>Node</code> 的内容，<code>edge_wrapper</code> 跟踪的 <code>Node</code> 的内容也会被修改。会不会有影响？</p>
+<p>在 <code>setParallelType</code> 时，创建了 <code>abstract_edge</code>。这里感觉不太合适，函数的用途是创建 <code>abstract_edge</code>，而函数名确实设置并行方式。我还以为和 <code>node_wrapper</code> 的处理方式一样只是设置并行方式，找了半天才找到 <code>abstract_edge</code> 的创建藏在 <code>setParallelType</code> 方法中。而后由 <code>abstract_edge</code> 管理边的生产者和消费者，并调用 <code>abstract_edge</code> 的 <code>construct</code> 方法。</p>
+<p>来看一下 <code>abstract_edge</code>，这个边的创建形式和前面讲过的 <code>createYoloV5Graph</code> 一样，由 <code>TypeEdgeRegister</code> 注册，支持 <code>FixedEdge</code>（串行、任务并行）和 <code>PipelineEdge</code>（流水并行）。</p>
+<p>在 <code>PipelineEdge</code> 的 <code>construct</code> 方法中，会将消费者添加到数据包中，用于任务并行，当数据一到位，立马执行。来看一下这个方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">std::list&lt;PipelineDataPacket *&gt; data_packets_;</span><br><span class="line"><span class="comment">// 每个消费者 消费 的数据包最新索引  与下面当前数据包的关系为该索引为其+1</span></span><br><span class="line">std::map&lt;Node *, <span class="type">int</span>&gt; to_consume_index_;</span><br><span class="line"><span class="comment">// 每个消费者 消费 的当前数据包</span></span><br><span class="line">std::map&lt;Node *, PipelineDataPacket *&gt; consuming_dp_;</span><br><span class="line"></span><br><span class="line"><span class="function">base::Status <span class="title">PipelineEdge::construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  consumers_size_ = consumers_.<span class="built_in">size</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : consumers_) &#123;</span><br><span class="line">    <span class="keyword">if</span> (to_consume_index_.<span class="built_in">find</span>(iter) == to_consume_index_.<span class="built_in">end</span>()) &#123;</span><br><span class="line">      to_consume_index_.<span class="built_in">insert</span>(&#123;iter, <span class="number">0</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (consuming_dp_.<span class="built_in">find</span>(iter) == consuming_dp_.<span class="built_in">end</span>()) &#123;</span><br><span class="line">      consuming_dp_.<span class="built_in">insert</span>(&#123;iter, <span class="literal">nullptr</span>&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> base::kStatusCodeOk;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="执行器初始化"><a href="#执行器初始化" class="headerlink" title="执行器初始化"></a>执行器初始化</h3><p>之后就是调用 <code>status = this-&gt;executor();</code>，根据用户传入的执行类型创建执行器 <code>executor_</code>，选择串行执行还是并行执行，并行执行又分为任务并行和流水线并行。这三个概念可以看项目的 <code>README</code>，里面有详细的解释：</p>
+<ol>
+<li><p>串行：按照模型部署的有向无环图的拓扑排序，依次执行每个节点。</p>
+</li>
+<li><p>流水线并行：在处理多帧的场景下，基于有向无环图的模型部署方式，可将前处理 <code>Node</code>、推理 <code>Node</code>、后处理 <code>Node</code> 绑定三个不同的线程，每个线程又可绑定不同的硬件设备下，从而三个 <code>Node</code> 可流水线并行处理。在多模型以及多硬件设备的的复杂场景下，更加可以发挥流水线并行的优势，从而可显著提高整体吞吐量。</p>
+</li>
+<li><p>任务并行：在多模型以及多硬件设备的的复杂场景下，基于有向无环图的模型部署方式，可充分挖掘模型部署中的并行性，缩短单次算法全流程运行耗时</p>
+</li>
+</ol>
+<p>之后对执行器 <code>executor_</code> 进行初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">status = executor_-&gt;<span class="built_in">init</span>(edge_repository_, node_repository_);</span><br></pre></td></tr></table></figure>
+<p>接下来仔细看看这 3 个执行器吧。到目前为止，由 <code>graph-&gt;init()</code> 引发的代码还没看完。</p>
+<h4 id="SequentialExecutor-初始化"><a href="#SequentialExecutor-初始化" class="headerlink" title="SequentialExecutor 初始化"></a>SequentialExecutor 初始化</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">SequentialExecutor::init</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    std::vector&lt;EdgeWrapper *&gt; &amp;edge_repository,</span></span></span><br><span class="line"><span class="params"><span class="function">    std::vector&lt;NodeWrapper *&gt; &amp;node_repository)</span> </span>&#123;</span><br><span class="line">  base::Status status = <span class="built_in">topoSortDFS</span>(node_repository, topo_sort_node_);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : topo_sort_node_) &#123;</span><br><span class="line">    iter-&gt;node_-&gt;<span class="built_in">setInitializedFlag</span>(<span class="literal">false</span>);</span><br><span class="line">    status = iter-&gt;node_-&gt;<span class="built_in">init</span>();</span><br><span class="line">    <span class="keyword">if</span> (status != base::kStatusCodeOk) &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;Node %s init failed\n&quot;</span>, iter-&gt;node_-&gt;<span class="built_in">getName</span>().<span class="built_in">c_str</span>());</span><br><span class="line">      <span class="keyword">return</span> status;</span><br><span class="line">    &#125;</span><br><span class="line">    iter-&gt;node_-&gt;<span class="built_in">setInitializedFlag</span>(<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  edge_repository_ = edge_repository;</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用 <code>topoSortDFS</code> 函数进行了拓扑排序，而后对所有拓扑后的 <code>Node</code> 进行初始化 <code>status = iter-&gt;node_-&gt;init();</code>。比如 <code>Node</code> 是 <code>Infer</code> 节点，就调用 <code>Infer</code> 节点的初始化，完成推理引擎的初始化。如果推理引擎是 <code>tensorrt</code>，就会调用 <code>base::Status TensorRtInference::init()</code>。</p>
+<p>仔细看下 <code>topoSortDFS</code> 函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">topoSortDFS</span><span class="params">(std::vector&lt;NodeWrapper *&gt; &amp;node_repository,</span></span></span><br><span class="line"><span class="params"><span class="function">                         std::vector&lt;NodeWrapper *&gt; &amp;topo_sort_node)</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  std::vector&lt;NodeWrapper *&gt; start_nodes = <span class="built_in">findStartNodes</span>(node_repository);</span><br><span class="line">  <span class="keyword">if</span> (start_nodes.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;No start node found in graph&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> base::kStatusCodeErrorInvalidValue;</span><br><span class="line">  &#125;</span><br><span class="line">  std::stack&lt;NodeWrapper *&gt; dst;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> node_wrapper : start_nodes) &#123;</span><br><span class="line">    <span class="keyword">if</span> (node_wrapper-&gt;color_ == base::kNodeColorWhite) &#123;</span><br><span class="line">      status = <span class="built_in">TopoSortDFSRecursive</span>(node_wrapper, dst);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (node_wrapper-&gt;color_ == base::kNodeColorGray) &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;Cycle detected in graph&quot;</span>);</span><br><span class="line">      status = base::kStatusCodeErrorInvalidValue;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> (!dst.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    topo_sort_node.<span class="built_in">emplace_back</span>(dst.<span class="built_in">top</span>());</span><br><span class="line">    dst.<span class="built_in">pop</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">checkUnuseNode</span>(node_repository);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> base::kStatusCodeOk;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看到了熟悉的数据结构和 <code>leetcode</code> 的味道，首先寻找根节点，没有 <code>predecessors_</code> 的就是根节点。其中的 <code>TopoSortDFSRecursive</code> 递归方法是<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/vEAB3K/solutions/1412180/er-fen-tu-by-leetcode-solution-dryu/">图染色算法</a>，也是经典数据结构和 <code>leetcode</code> 题，将白色的节点染成黑色，如果染色器件重复对灰色点染色，就说明计算图存在环路，报错退出。将拓扑排序后的节点放到 <code>topo_sort_node</code> 中。</p>
+<h4 id="ParallelTaskExecutor-初始化"><a href="#ParallelTaskExecutor-初始化" class="headerlink" title="ParallelTaskExecutor 初始化"></a>ParallelTaskExecutor 初始化</h4><p>和 <code>kParallelTypeSequential</code> 相比，<code>DFS</code> 算法换成了 <code>BFS</code> 算法，这是因为 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3332947/what-are-the-practical-factors-to-consider-when-choosing-between-depth-first-sea"><code>DFS</code> 和 <code>BFS</code></a> 算法得到的拓扑排序不同，后者适用于并行的情况，也就是由两个节点可以并行执行。将节点全部置回了白色，因为后面 <code>run</code> 的时候用来判断节点是否执行过，如果执行过，设置为黑色。</p>
+<p>而且多了线程池的初始化，至于线程池，这个东西感觉没啥好讲的。网上很多线程池的代码，如果有兴趣，看看条件变量、互斥锁的用法，最多一天差不多能看完，我之前写过 C 版本的线程池，所以这里不在展开讲了。把他理解为一个任务执行器，可以同时执行很多任务并返回就可以了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">ParallelTaskExecutor::init</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    std::vector&lt;EdgeWrapper*&gt;&amp; edge_repository,</span></span></span><br><span class="line"><span class="params"><span class="function">    std::vector&lt;NodeWrapper*&gt;&amp; node_repository)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// <span class="doctag">TODO:</span></span></span><br><span class="line">  <span class="comment">// 计算图的最大并行度，决定线程的数量</span></span><br><span class="line">  thread_pool_ = <span class="keyword">new</span> thread_pool::<span class="built_in">ThreadPool</span>();</span><br><span class="line">  thread_pool_-&gt;<span class="built_in">init</span>();</span><br><span class="line">  start_nodes_ = <span class="built_in">findStartNodes</span>(node_repository);</span><br><span class="line">  base::Status status = <span class="built_in">topoSortBFS</span>(node_repository, topo_sort_node_);</span><br><span class="line">  all_task_count_ = topo_sort_node_.<span class="built_in">size</span>();</span><br><span class="line">  <span class="keyword">if</span> (start_nodes_.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;No start node found in graph&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> base::kStatusCodeErrorInvalidValue;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : topo_sort_node_) &#123;</span><br><span class="line">    iter-&gt;color_ = base::kNodeColorWhite;</span><br><span class="line">    iter-&gt;node_-&gt;<span class="built_in">setInitializedFlag</span>(<span class="literal">false</span>);</span><br><span class="line">    status = iter-&gt;node_-&gt;<span class="built_in">init</span>();</span><br><span class="line">    <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk, <span class="string">&quot;node init failure&quot;</span>);</span><br><span class="line">    iter-&gt;node_-&gt;<span class="built_in">setInitializedFlag</span>(<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  edge_repository_ = edge_repository;</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ParallelPipelineExecutor-初始化"><a href="#ParallelPipelineExecutor-初始化" class="headerlink" title="ParallelPipelineExecutor 初始化"></a>ParallelPipelineExecutor 初始化</h4><p>除了初始化线程池外，还执行了 <code>this-&gt;commitThreadPool();</code>，直接提交任务开始执行。和串行、任务并行执行器最大的不同是：这个执行器在 <code>init()</code> 里运行，并没有 <code>run</code> 方法，所以准备放到后面执行器执行的时候在看了。</p>
+<p><code>commitThreadPool</code> 方法里最重要的是 <code>updataInput</code>，会调用绝对边的 <code>update</code> 方法，由于流水线并行的执行器只能用 <code>PipelineEdge</code>，看一下这个类的 <code>update</code> 方法：</p>
+<h3 id="推理引擎初始化"><a href="#推理引擎初始化" class="headerlink" title="推理引擎初始化"></a>推理引擎初始化</h3><p>推理引擎也是一种 <code>Node</code>，会在执行器初始化 <code>Node</code> 的时候初始化推理引擎。不过这个 <code>Node</code> 的初始化相比之下比较重要，所以重点看一下。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">Infer::init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  status = inference_-&gt;<span class="built_in">init</span>();</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                         <span class="string">&quot;abstract_inference init failed&quot;</span>);</span><br><span class="line">  is_input_dynamic_ = inference_-&gt;<span class="built_in">isInputDynamic</span>();</span><br><span class="line">  is_output_dynamic_ = inference_-&gt;<span class="built_in">isOutputDynamic</span>();</span><br><span class="line">  can_op_input_ = inference_-&gt;<span class="built_in">canOpInput</span>();</span><br><span class="line">  can_op_output_ = inference_-&gt;<span class="built_in">canOpOutput</span>();</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先是调用 <code>inference_</code> 的初始化，也就是调用 <code>TensorRtInference::init()</code> 方法。前面这一坨代码仿佛在初始化模型（我没用过任何推理引擎，智能猜代码啥意思了）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">TensorRtInferenceParam *tensorrt_inference_param =</span><br><span class="line">    <span class="built_in">dynamic_cast</span>&lt;TensorRtInferenceParam *&gt;(inference_param_);</span><br><span class="line"><span class="keyword">if</span> (tensorrt_inference_param-&gt;is_path_) &#123;</span><br><span class="line">  model_buffer = base::<span class="built_in">openFile</span>(tensorrt_inference_param-&gt;model_value_[<span class="number">0</span>]);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  model_buffer = tensorrt_inference_param-&gt;model_value_[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (tensorrt_inference_param-&gt;model_type_ == base::kModelTypeOnnx) &#123;</span><br><span class="line">  status = <span class="built_in">initWithOnnxModel</span>(model_buffer, tensorrt_inference_param);</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                         <span class="string">&quot;initWithOnnxModel failed&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (tensorrt_inference_param-&gt;model_type_ ==</span><br><span class="line">           base::kModelTypeTensorRt) &#123;</span><br><span class="line">  status = <span class="built_in">initWithTensorRtModel</span>(model_buffer, tensorrt_inference_param);</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                         <span class="string">&quot;initWithTensorRtModel failed&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;not support this model type(%d)!\n&quot;</span>,</span><br><span class="line">                tensorrt_inference_param-&gt;model_type_);</span><br><span class="line">  <span class="keyword">return</span> base::kStatusCodeErrorInferenceTensorRt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后是通过绑定，来获取模型输入、输出、中间缓存的绑定数，来准确的分配内存。这里可以通过名字找索引，也可以通过索引找名字。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt; <span class="built_in">getNbBindings</span>(); ++i) &#123;</span><br><span class="line">  std::string name = std::<span class="built_in">string</span>(<span class="built_in">getBindingName</span>(i));</span><br><span class="line">  io_name_index_[name] = i;</span><br><span class="line">  io_index_name_[i] = name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取模型输入的名字和 <code>shape</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt; <span class="built_in">getNbBindings</span>(); ++i) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">bindingIsInput</span>(i)) &#123;</span><br><span class="line">    std::string name = std::<span class="built_in">string</span>(<span class="built_in">getBindingName</span>(i));</span><br><span class="line">    <span class="keyword">auto</span> shape = TensorRtConvert::<span class="built_in">convertToShape</span>(<span class="built_in">getBindingDimensions</span>(i));</span><br><span class="line">    current_shape.<span class="built_in">insert</span>(&#123;name, shape&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面的代码我觉得 <code>max_shape_</code> 为空，因为没看到在哪创建的，所以不会进入循环：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> iter : tensorrt_inference_param-&gt;max_shape_) &#123;</span><br><span class="line">  <span class="keyword">auto</span> tmp = current_shape.<span class="built_in">find</span>(iter.first);</span><br><span class="line">  <span class="keyword">if</span> (tmp != current_shape.<span class="built_in">end</span>()) &#123;</span><br><span class="line">    <span class="keyword">auto</span> &amp;shape = current_shape[iter.first];</span><br><span class="line">    <span class="keyword">if</span> (base::<span class="built_in">shapeEqual</span>(iter.second, shape)) &#123;</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="type">int</span> idx = io_name_index_[iter.first];</span><br><span class="line">      nvinfer1::Dims dims = TensorRtConvert::<span class="built_in">convertFromShape</span>(iter.second);</span><br><span class="line">      <span class="built_in">setBindingDimensions</span>(idx, dims);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;reshape failed, not found input tensor(%s)!\n&quot;</span>,</span><br><span class="line">                  iter.first.<span class="built_in">c_str</span>());</span><br><span class="line">    <span class="keyword">return</span> base::kStatusCodeErrorInferenceTensorRt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后是获取设备：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">device::Device *device = device::<span class="built_in">getDevice</span>(inference_param_-&gt;device_type_);</span><br></pre></td></tr></table></figure>
+<p>获取设备的时候会注册一个 <code>CudaArchitecture</code>，也就是一个管理 <code>cuda</code> 设备的类。后续的代码是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt; num_binds; ++i) &#123;</span><br><span class="line">  std::string name = std::<span class="built_in">string</span>(<span class="built_in">getBindingName</span>(i));</span><br><span class="line">  base::IntVector shape =</span><br><span class="line">      TensorRtConvert::<span class="built_in">convertToShape</span>(<span class="built_in">getBindingDimensions</span>(i));</span><br><span class="line">  base::DataType data_type =</span><br><span class="line">      TensorRtConvert::<span class="built_in">convertToDataType</span>(<span class="built_in">getBindingDataType</span>(i));</span><br><span class="line">  base::DataFormat data_format =</span><br><span class="line">      TensorRtConvert::<span class="built_in">convertToDataFormat</span>(<span class="built_in">getBindingFormat</span>(i));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">bindingIsInput</span>(i)) &#123;</span><br><span class="line">    device::TensorDesc desc;</span><br><span class="line">    desc.data_type_ = data_type;</span><br><span class="line">    desc.data_format_ = data_format;</span><br><span class="line">    desc.shape_ = shape;</span><br><span class="line">    device::Tensor *max_input_tensor = <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(device, desc, name);</span><br><span class="line">    max_input_tensors_.<span class="built_in">insert</span>(&#123;name, max_input_tensor&#125;);</span><br><span class="line"></span><br><span class="line">    device::Buffer *max_input_buffer = max_input_tensor-&gt;<span class="built_in">getBuffer</span>();</span><br><span class="line">    device::Tensor *current_input_tensor =</span><br><span class="line">        <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(desc, max_input_buffer, name);</span><br><span class="line">    input_tensors_.<span class="built_in">insert</span>(&#123;name, current_input_tensor&#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// bindings_[i] = max_input_buffer-&gt;getData();</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    device::TensorDesc desc;</span><br><span class="line">    desc.data_type_ = data_type;</span><br><span class="line">    desc.data_format_ = data_format;</span><br><span class="line">    desc.shape_ = shape;</span><br><span class="line">    device::Tensor *max_output_tensor =</span><br><span class="line">        <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(device, desc, name);</span><br><span class="line">    max_output_tensors_.<span class="built_in">insert</span>(&#123;name, max_output_tensor&#125;);</span><br><span class="line"></span><br><span class="line">    device::Buffer *max_output_buffer = max_output_tensor-&gt;<span class="built_in">getBuffer</span>();</span><br><span class="line">    device::Tensor *current_output_tensor =</span><br><span class="line">        <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(desc, max_output_buffer, name);</span><br><span class="line">    output_tensors_.<span class="built_in">insert</span>(&#123;name, current_output_tensor&#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// bindings_[i] = max_output_buffer-&gt;getData();</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>获取绑定的 <code>shape</code>，类型和格式</li>
+<li>如果是输入，创建对应的 <code>tensor</code>，存入 <code>input_tensors_</code> 和 <code>max_input_tensors_</code>，为什么存两次存疑</li>
+<li>如果不是输入，就存到 <code>max_output_tensors_</code> 和 <code>output_tensors_</code></li>
+</ol>
+<p>额外的，<code>TensorDesc</code> 用于描述内存中的数据，而 <code>tensor</code> 用 <code>buffer_</code> 管理申请的 <code>Buffer</code>，具体看一下内存的申请，<code>new device::Tensor(device, desc, name)</code> 会调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Tensor::<span class="built_in">Tensor</span>(Device *device, <span class="type">const</span> TensorDesc &amp;desc, <span class="type">const</span> std::string &amp;name,</span><br><span class="line">               <span class="type">const</span> base::IntVector &amp;config)</span><br><span class="line">    : <span class="built_in">name_</span>(name), <span class="built_in">desc_</span>(desc), <span class="built_in">is_external_</span>(<span class="literal">false</span>) &#123;</span><br><span class="line">  BufferDesc buffer_desc = device-&gt;<span class="built_in">toBufferDesc</span>(desc, config);</span><br><span class="line">  <span class="type">void</span> *ptr = device-&gt;<span class="built_in">allocate</span>(buffer_desc);</span><br><span class="line">  buffer_ = <span class="keyword">new</span> <span class="built_in">Buffer</span>(device, buffer_desc, ptr, base::kMemoryTypeAllocate);</span><br><span class="line">  ref_count_ = <span class="keyword">new</span> <span class="built_in">int</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>device-&gt;toBufferDesc(desc, config)</code> 用于获取内存的大小，<code>device-&gt;allocate(buffer_desc);</code> 会根据大小调用 <code>cudaMalloc</code> 申请内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> *<span class="title">CudaDevice::allocate</span><span class="params">(<span class="type">const</span> BufferDesc &amp;desc)</span> </span>&#123;</span><br><span class="line">  <span class="type">void</span> *data = <span class="literal">nullptr</span>;</span><br><span class="line">  cudaError_t status = <span class="built_in">cudaMalloc</span>(&amp;data, desc.size_[<span class="number">0</span>]);</span><br><span class="line">  <span class="keyword">if</span> (cudaSuccess != status) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;cuda alloc failed with size %lu for %p, status:%d\n&quot;</span>,</span><br><span class="line">                  desc.size_[<span class="number">0</span>], data, status);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (data == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;cuda alloc got nullptr\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后调用 <code>new Buffer</code> 使用 <code>Buffer</code> 这个类管理申请到的内存。</p>
+<p>总结：获取输入输出的名字、尺寸、数据类型，并创建对应的内存 <code>buffer</code>。</p>
+<h2 id="计算图执行"><a href="#计算图执行" class="headerlink" title="计算图执行"></a>计算图执行</h2><p>对应代码中的 <code>graph-&gt;run()</code>，具体也就是调用执行器的 <code>run</code> 方法：<code>status = executor_-&gt;run();</code>。</p>
+<h3 id="kParallelTypeSequential-执行"><a href="#kParallelTypeSequential-执行" class="headerlink" title="kParallelTypeSequential 执行"></a>kParallelTypeSequential 执行</h3><p>暗自庆幸一下这是最简单的一个：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">SequentialExecutor::run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : topo_sort_node_) &#123;</span><br><span class="line">    base::EdgeUpdateFlag edge_update_flag = iter-&gt;node_-&gt;<span class="built_in">updataInput</span>();</span><br><span class="line">    <span class="keyword">if</span> (edge_update_flag == base::kEdgeUpdateFlagComplete) &#123;</span><br><span class="line">      iter-&gt;node_-&gt;<span class="built_in">setRunningFlag</span>(<span class="literal">true</span>);</span><br><span class="line">      status = iter-&gt;node_-&gt;<span class="built_in">run</span>();</span><br><span class="line">      <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                             <span class="string">&quot;node execute failed!\n&quot;</span>);</span><br><span class="line">      iter-&gt;node_-&gt;<span class="built_in">setRunningFlag</span>(<span class="literal">false</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (edge_update_flag == base::kEdgeUpdateFlagTerminate) &#123;</span><br><span class="line">      ;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;Failed to node[%s] updataInput();\n&quot;</span>,</span><br><span class="line">                    iter-&gt;node_-&gt;<span class="built_in">getName</span>().<span class="built_in">c_str</span>());</span><br><span class="line">      <span class="keyword">return</span> base::kStatusCodeErrorDag;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>iter-&gt;node_-&gt;updataInput();</code> 会调用 <code>abstact_edge_-&gt;update(node);</code>，由于此时计算图还没有执行完毕，<code>FixedEdge</code> 会将节点设置为 <code>kEdgeUpdateFlagComplete</code>。之后就是调用 <code>node</code> 的 <code>run</code> 方法。对于 <code>infer</code> 节点，如果推理引擎是 <code>tensorrt</code>，就会调用 <code>TensorRtInference::run()</code> 方法。</p>
+<h4 id="实例说明，目标检测的节点运行与数据"><a href="#实例说明，目标检测的节点运行与数据" class="headerlink" title="实例说明，目标检测的节点运行与数据"></a>实例说明，目标检测的节点运行与数据</h4><h5 id="解码节点运行"><a href="#解码节点运行" class="headerlink" title="解码节点运行"></a>解码节点运行</h5><p>以目标检测的计算图为例，一共有 3 个节点：<code>CvtColorResize</code>，<code>Infer</code> 和 <code>YoloPostProcess</code>。还记得在 <code>CvtColorResize</code> 节点前面还有一个解码节点吗？以单张图像的目标检测为例，会读取图像并创建 <code>mat</code>，并将 <code>mat</code> 放到输出边中，完成数据的传递：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">OpenCvImageDecodeNode::run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  cv::Mat *mat = <span class="keyword">new</span> cv::<span class="built_in">Mat</span>(cv::<span class="built_in">imread</span>(path_));</span><br><span class="line">  width_ = mat-&gt;cols;</span><br><span class="line">  height_ = mat-&gt;rows;</span><br><span class="line">  outputs_[<span class="number">0</span>]-&gt;<span class="built_in">set</span>(mat, index_, <span class="literal">false</span>);</span><br><span class="line">  index_++;</span><br><span class="line">  <span class="keyword">return</span> base::kStatusCodeOk;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不知道为啥一定要用 <code>outputs_[0]</code>，如果有多天输出边呢？其中的 <code>set</code> 方法对应：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">DataPacket::set</span><span class="params">(<span class="type">void</span> *anything, <span class="type">int</span> index, <span class="type">bool</span> is_external)</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  <span class="keyword">if</span> (anything != anything_) &#123;</span><br><span class="line">    <span class="built_in">destory</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  is_external_ = is_external;</span><br><span class="line">  index_ = index;</span><br><span class="line">  flag_ = kFlagVoid;</span><br><span class="line">  written_ = <span class="literal">true</span>;</span><br><span class="line">  anything_ = anything;</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="CvtColorResize-运行"><a href="#CvtColorResize-运行" class="headerlink" title="CvtColorResize 运行"></a>CvtColorResize 运行</h5><p>由于 <code>CvtColorResize</code> 的输入是解码节点的输出，所以可以直接在 <code>CvtColorResize</code> 的 <code>run</code> 方法中拿到解码节点的输出：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv::Mat *src = inputs_[<span class="number">0</span>]-&gt;<span class="built_in">getCvMat</span>(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<p>而后获取 <code>host</code> 端的设备：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">device::Device *device = device::<span class="built_in">getDefaultHostDevice</span>();</span><br></pre></td></tr></table></figure>
+<p>根据输入的参数创建描述 <code>tensor</code> 的描述符 <code>desc</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">device::TensorDesc desc;</span><br><span class="line">desc.data_type_ = tmp_param-&gt;data_type_;</span><br><span class="line">desc.data_format_ = tmp_param-&gt;data_format_;</span><br><span class="line"><span class="keyword">if</span> (desc.data_format_ == base::kDataFormatNCHW) &#123;</span><br><span class="line">  desc.shape_ = &#123;<span class="number">1</span>, <span class="built_in">getChannelByPixelType</span>(tmp_param-&gt;dst_pixel_type_),</span><br><span class="line">                 tmp_param-&gt;h_, tmp_param-&gt;w_&#125;;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  desc.shape_ = &#123;<span class="number">1</span>, tmp_param-&gt;h_, tmp_param-&gt;w_,</span><br><span class="line">                 <span class="built_in">getChannelByPixelType</span>(tmp_param-&gt;dst_pixel_type_)&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据内存信息创建 <code>dst</code>，也就是这条边的输出：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">device::Tensor *dst =</span><br><span class="line">    outputs_[<span class="number">0</span>]-&gt;<span class="built_in">create</span>(device, desc, inputs_[<span class="number">0</span>]-&gt;<span class="built_in">getIndex</span>(<span class="keyword">this</span>));</span><br></pre></td></tr></table></figure>
+<p>其中 <code>getIndex</code> 是获取当前节点的索引，由于解码节点在添加数据后进行了 <code>index++</code>，所以这里拿到的 <code>index</code> 实际为 1。至于其中的 <code>create</code> 方法就是创建这个节点的 <code>tensor</code> 输出，来看一下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">device::Tensor *<span class="title">DataPacket::create</span><span class="params">(device::Device *device,</span></span></span><br><span class="line"><span class="params"><span class="function">                                   <span class="type">const</span> device::TensorDesc &amp;desc, <span class="type">int</span> index,</span></span></span><br><span class="line"><span class="params"><span class="function">                                   <span class="type">const</span> std::string &amp;name)</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  device::Tensor *tensor = <span class="literal">nullptr</span>;</span><br><span class="line">  <span class="keyword">if</span> (anything_ == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    tensor = <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(device, desc, name);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (flag_ != kFlagTensor) &#123;</span><br><span class="line">      <span class="built_in">destory</span>();</span><br><span class="line">      tensor = <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(device, desc, name);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      tensor = (device::Tensor *)(anything_);</span><br><span class="line">      <span class="keyword">if</span> (tensor-&gt;<span class="built_in">getDesc</span>() != desc) &#123;</span><br><span class="line">        <span class="built_in">destory</span>();</span><br><span class="line">        tensor = <span class="keyword">new</span> device::<span class="built_in">Tensor</span>(device, desc, name);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  is_external_ = <span class="literal">false</span>;</span><br><span class="line">  index_ = index;</span><br><span class="line">  flag_ = kFlagTensor;</span><br><span class="line">  written_ = <span class="literal">false</span>;</span><br><span class="line">  anything_ = (<span class="type">void</span> *)(tensor);</span><br><span class="line">  <span class="keyword">return</span> tensor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>anything</code> 指向了实际的数据。而后对输入进行颜色空间转换和 <code>resize</code> 操作，这个好像是数字图像处理的部分，比如将 <code>BGR</code> 的图转换为 <code>RGB</code> 的图，并 <code>resize</code> 到固定尺寸。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">cv::Mat tmp_cvt;</span><br><span class="line"><span class="keyword">if</span> (tmp_param-&gt;src_pixel_type_ != tmp_param-&gt;dst_pixel_type_) &#123;</span><br><span class="line">  base::CvtColorType cvt_type = base::<span class="built_in">calCvtColorType</span>(</span><br><span class="line">      tmp_param-&gt;src_pixel_type_, tmp_param-&gt;dst_pixel_type_);</span><br><span class="line">  <span class="keyword">if</span> (cvt_type == base::kCvtColorTypeNotSupport) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;cvtColor type not support&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> base::kStatusCodeErrorNotSupport;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">int</span> cv_cvt_type = OpenCvConvert::<span class="built_in">convertFromCvtColorType</span>(cvt_type);</span><br><span class="line">  cv::<span class="built_in">cvtColor</span>(*src, tmp_cvt, cv_cvt_type);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  tmp_cvt = *src;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cv::Mat tmp_resize;</span><br><span class="line"><span class="keyword">if</span> (tmp_param-&gt;interp_type_ != base::kInterpTypeNotSupport) &#123;</span><br><span class="line">  <span class="type">int</span> interp_type =</span><br><span class="line">      OpenCvConvert::<span class="built_in">convertFromInterpType</span>(tmp_param-&gt;interp_type_);</span><br><span class="line">  cv::<span class="built_in">resize</span>(tmp_cvt, tmp_resize, cv::<span class="built_in">Size</span>(w, h), <span class="number">0.0</span>, <span class="number">0.0</span>, interp_type);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  tmp_resize = tmp_cvt;</span><br><span class="line">&#125;</span><br><span class="line">OpenCvConvert::<span class="built_in">convertToTensor</span>(tmp_resize, dst, tmp_param-&gt;normalize_,</span><br><span class="line">                               tmp_param-&gt;scale_, tmp_param-&gt;mean_,</span><br><span class="line">                               tmp_param-&gt;std_);</span><br></pre></td></tr></table></figure>
+<p>然后是 <code>outputs_[0]-&gt;notifyWritten(dst);</code>，通知 <code>dst</code> 数据准备好了。</p>
+<h5 id="infer-节点运行"><a href="#infer-节点运行" class="headerlink" title="infer 节点运行"></a>infer 节点运行</h5><p>获取所有输入的 <code>tensor</code> 和 <code>index</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> input : inputs_) &#123;</span><br><span class="line">  device::Tensor *tensor = input-&gt;<span class="built_in">getTensor</span>(<span class="keyword">this</span>);</span><br><span class="line">  tensors.<span class="built_in">emplace_back</span>(tensor);</span><br><span class="line">  <span class="type">int</span> index = input-&gt;<span class="built_in">getIndex</span>(<span class="keyword">this</span>);</span><br><span class="line">  indexs.<span class="built_in">emplace_back</span>(index);</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> index = indexs[<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; indexs.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">  <span class="keyword">if</span> (index != indexs[i]) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;index not equal&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> base::kStatusCodeErrorInvalidValue;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>getTensor</code> 对应的就是获取 <code>data_packet</code> 的 <code>anything</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">device::Tensor *<span class="title">DataPacket::getTensor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (flag_ != kFlagTensor) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">return</span> (device::Tensor *)(anything_);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取 <code>index</code> 也是数据包的 <code>index</code>，如果输入边的 <code>index</code> 不同，说明这个节点收到了错误的输入，需要报错退出。而后是为推理引擎设置输入：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> tensor : tensors) &#123;</span><br><span class="line">  inference_-&gt;<span class="built_in">setInputTensor</span>(tensor-&gt;<span class="built_in">getName</span>(), tensor);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">base::Status <span class="title">Inference::setInputTensor</span><span class="params">(<span class="type">const</span> std::string &amp;name,</span></span></span><br><span class="line"><span class="params"><span class="function">                                      device::Tensor *input_tensor)</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line"></span><br><span class="line">  std::string new_name = <span class="string">&quot;&quot;</span>;</span><br><span class="line">  <span class="keyword">if</span> (!name.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    new_name = name;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!input_tensor-&gt;<span class="built_in">getName</span>().<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    new_name = input_tensor-&gt;<span class="built_in">getName</span>();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    new_name = <span class="built_in">getInputName</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (input_tensors_.<span class="built_in">count</span>(new_name) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (input_tensor != input_tensors_[new_name]) &#123;</span><br><span class="line">      external_input_tensors_[new_name] = input_tensor;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGI</span>(<span class="string">&quot;input_tensor name: %s not exist!\n&quot;</span>, new_name.<span class="built_in">c_str</span>());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到如果这个 <code>tensor</code> 没有在最初的 <code>input_tensors_</code> 中（初始化指定）时，视为外部的输入。在数据准备好后，推理引擎开始执行：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">status = inference_-&gt;<span class="built_in">run</span>();</span><br></pre></td></tr></table></figure>
+<p>最后就是将推理引擎的输出设置到边上：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> output : outputs_) &#123;</span><br><span class="line">  std::string name = output-&gt;<span class="built_in">getName</span>();</span><br><span class="line">  base::ParallelType parallel_type = output-&gt;<span class="built_in">getParallelType</span>();</span><br><span class="line">  <span class="type">bool</span> flag = parallel_type == base::kParallelTypePipeline;</span><br><span class="line">  device::Tensor *tensor =</span><br><span class="line">      inference_-&gt;<span class="built_in">getOutputTensorAfterRun</span>(name, device_type_, flag);</span><br><span class="line">  <span class="keyword">if</span> (tensor == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;can&#x27;t getOutputTensorAfterRun[%s].\n&quot;</span>, name.<span class="built_in">c_str</span>());</span><br><span class="line">    status = base::kStatusCodeErrorInvalidParam;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  output-&gt;<span class="built_in">set</span>(tensor, index, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="post-节点运行"><a href="#post-节点运行" class="headerlink" title="post 节点运行"></a>post 节点运行</h5><p><code>YoloPostProcess</code> 这个节点的 <code>run</code> 方法比较简单，就是对输出的 <code>tensor</code> 进行 <code>nms</code> 和阈值筛选处理，不在过多解释。</p>
+<h3 id="ParallelTaskExecutor-执行"><a href="#ParallelTaskExecutor-执行" class="headerlink" title="ParallelTaskExecutor 执行"></a>ParallelTaskExecutor 执行</h3><p>以所有的根节点 <code>start_nodes_</code> 为起点，并行的形式执行这个计算图。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> iter : start_nodes_) &#123;</span><br><span class="line">  <span class="built_in">process</span>(iter);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">wait</span>();</span><br></pre></td></tr></table></figure>
+<p>这个 <code>wait</code> 方法是以条件变量的形式等待完成任务的节点数大于等于总任务数，所以等待完成任务的节点数是<a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/atomic/atomic">原子类型</a>的模板类：<code>std::atomic&lt;int&gt;</code>。</p>
+<p>至于 <code>process(iter)</code> 方法，除了执行节点外，还有 <code>afterNodeRun(node_wrapper)</code> 方法，重点来看一下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">completed_task_count_++;</span><br><span class="line">node_wrapper-&gt;color_ = base::kNodeColorBlack;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> successor : node_wrapper-&gt;successors_) &#123;</span><br><span class="line">  <span class="type">bool</span> all_pre_done = <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : successor-&gt;predecessors_) &#123;</span><br><span class="line">    all_pre_done &amp;= (iter-&gt;color_ == base::kNodeColorBlack);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (all_pre_done &amp;&amp; successor-&gt;color_ == base::kNodeColorWhite) &#123;</span><br><span class="line">    <span class="keyword">if</span> (successor-&gt;predecessors_.<span class="built_in">size</span>() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">process</span>(successor);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">submitTaskSynchronized</span>(successor);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先是已完成的任务数 +1，而后将已完成节点的颜色设置为黑色。遍历这个节点的后继节点 <code>successors_</code>，对于后继节点而言，如果全部的前任节点都执行完毕，那么 <code>all_pre_done</code> 会为 <code>true</code>。此时进行判断：</p>
+<ul>
+<li>如果这个后继节点只有一个前任节点，那么调用 <code>process</code> 处理这个后继节点</li>
+<li>如果这个后继节点有多个前任节点，那么已加锁的形式调用 <code>process</code> 处理这个后继节点，防止多线程环境下 <code>process</code> 函数操作 <code>node_wrapper</code> 这个临界资源。</li>
+</ul>
+<p>最后提交任务后，以</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(main_lock_)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (completed_task_count_ &gt;= all_task_count_) &#123;</span><br><span class="line">  cv_.<span class="built_in">notify_one</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>的形式唤醒等待的主线程，也就是 <code>cv_.notify_one()</code> 那里。最终将节点的颜色改为白色。额外的一点点<a href="https://muyuuuu.github.io/2021/02/19/process-synchronization/">小知识</a>：</p>
+<blockquote>
+<p>使用条件变量时，在检查条件之前加锁，并在等待之前释放锁。因为唤醒的线程需要重新检查条件是否成立（因为可能会发生虚假唤醒）。如果不加锁，唤醒的线程可能会在其他线程修改条件之前就继续执行，导致逻辑错误。</p>
+<p>虚假唤醒。这是一种能保证执行效率的方法。假设此时有10个线程处于等待中，在收到一个唤醒信号后，操作系统尝试去唤醒所有的线程，这会打破发送信号与唤醒之间一对一的关系。所以此时只能唤醒一个线程，而其余九个线程处于等待阶段。为了更灵活的处理这种情况，所以无论条件是否满足，操作系统允许等待中的线程自己醒来，称为虚假唤醒。</p>
+</blockquote>
+<h3 id="ParallelPipelineExecutor-执行"><a href="#ParallelPipelineExecutor-执行" class="headerlink" title="ParallelPipelineExecutor 执行"></a>ParallelPipelineExecutor 执行</h3><p>为了更好的读懂流水线并行的代码，简单写了份模拟的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span>           <span class="comment">// std::cout</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;thread&gt;</span>             <span class="comment">// std::thread</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span>              <span class="comment">// std::mutex, std::unique_lock</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;condition_variable&gt;</span> <span class="comment">// std::condition_variable</span></span></span><br><span class="line"></span><br><span class="line">std::mutex mtx;</span><br><span class="line">std::condition_variable cv;</span><br><span class="line"><span class="type">bool</span> ready = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lck</span><span class="params">(mtx)</span></span>;</span><br><span class="line">  ready = <span class="literal">true</span>;</span><br><span class="line">  cv.<span class="built_in">notify_all</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func1</span><span class="params">(<span class="type">int</span> id)</span> </span>&#123;</span><br><span class="line">    <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(mtx)</span></span>;</span><br><span class="line">    <span class="keyword">while</span> (!ready) &#123;</span><br><span class="line">        cv.<span class="built_in">wait</span>(lock);</span><br><span class="line">    &#125;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;Node Run : thread id = &quot;</span> &lt;&lt; id &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">commit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::thread threads[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        threads[i] = std::<span class="built_in">thread</span>(func1, i);                          <span class="comment">// 模拟 update 方法</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">run</span>();                                                           <span class="comment">// node.run() 方法</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; th : threads) &#123;</span><br><span class="line">        th.<span class="built_in">join</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">commit</span>();                                                        <span class="comment">// 模拟线程池提交任务</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一个线程等待『条件变量的条件成立』而挂起；另一个线程使『条件成立』。为了防止竞争，条件的检测是在互斥锁的保护下进行的，线程在改变条件状态前先要锁住互斥量。如果一个条件为假，则一个线程自动阻塞，该线程处于等待状态，并释放相关变量的互斥锁。如果另一个线程改变了条件，它将信号发送给关联的条件变量，唤醒一个或多个处于等待中的线程，使其重新获得互斥锁，重新评价条件。</p>
+</blockquote>
+<p>如果能看懂上面代码的话，再来看流水线并行的代码。和前两个执行器不同的是，<code>ParallelPipelineExecutor</code> 执行器在 <code>init</code> 的时候直接将所有节点提交到线程池开始执行：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">ParallelPipelineExecutor::commitThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// NNDEPLOY_LOGE(&quot;ppe run Thread ID: %d.\n&quot;, std::this_thread::get_id());</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : topo_sort_node_) &#123;</span><br><span class="line">    <span class="keyword">auto</span> func = [iter]() -&gt; base::Status &#123;</span><br><span class="line">      base::Status status = base::kStatusCodeOk;</span><br><span class="line">      <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        base::EdgeUpdateFlag edge_update_flag = iter-&gt;node_-&gt;<span class="built_in">updataInput</span>();</span><br><span class="line">        <span class="keyword">if</span> (edge_update_flag == base::kEdgeUpdateFlagComplete) &#123;</span><br><span class="line">          iter-&gt;node_-&gt;<span class="built_in">setRunningFlag</span>(<span class="literal">true</span>);</span><br><span class="line">          status = iter-&gt;node_-&gt;<span class="built_in">run</span>();</span><br><span class="line">          <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                                 <span class="string">&quot;node execute failed!\n&quot;</span>);</span><br><span class="line">          iter-&gt;node_-&gt;<span class="built_in">setRunningFlag</span>(<span class="literal">false</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (edge_update_flag == base::kEdgeUpdateFlagTerminate) &#123;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;Failed to node[%s] updataInput();\n&quot;</span>,</span><br><span class="line">                        iter-&gt;node_-&gt;<span class="built_in">getName</span>().<span class="built_in">c_str</span>());</span><br><span class="line">          status = base::kStatusCodeErrorDag;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> status;</span><br><span class="line">    &#125;;</span><br><span class="line">    thread_pool_-&gt;<span class="built_in">commit</span>(std::<span class="built_in">bind</span>(func));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面最重要的是 <code>updataInput</code> 方法，会调用所有输入边的 <code>update</code> 方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span> input : inputs_) &#123;</span><br><span class="line">  flag = input-&gt;<span class="built_in">update</span>(<span class="keyword">this</span>);</span><br><span class="line">  <span class="keyword">if</span> (flag != base::kEdgeUpdateFlagComplete) &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于 <code>decode</code> 节点没有输入边，所以会直接跳过这一环节执行 <code>run</code> 方法，会调用 <code>PipeEdeLine</code> 的 <code>set</code> 方法写入数据：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">PipelineEdge::set</span><span class="params">(<span class="type">void</span> *anything, <span class="type">int</span> index, <span class="type">bool</span> is_external)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 上锁</span></span><br><span class="line">  <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(mutex_)</span></span>;</span><br><span class="line">  PipelineDataPacket *dp = <span class="keyword">new</span> <span class="built_in">PipelineDataPacket</span>(consumers_size_);</span><br><span class="line">  <span class="built_in">NNDEPLOY_CHECK_PARAM_NULL_RET_STATUS</span>(dp, <span class="string">&quot;PipelineDataPacket is null.\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  data_packets_.<span class="built_in">push_back</span>(dp);</span><br><span class="line">  cv_.<span class="built_in">notify_all</span>();</span><br><span class="line">  <span class="comment">// set</span></span><br><span class="line">  base::Status status = dp-&gt;<span class="built_in">set</span>(anything, index, is_external);</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                         <span class="string">&quot;PipelineDataPacket set error.\n&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总感觉这里先放数据，在唤醒比较合适。</p>
+<p>解码节点执行完毕后，继续循环执行 <code>updataInput</code> 节点，也就是调用在 <code>PipeEdgeLine</code> 的 <code>update</code> 方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cv_.<span class="built_in">wait</span>(lock, [<span class="keyword">this</span>, tmp_node] &#123;</span><br><span class="line">  <span class="keyword">return</span> to_consume_index_[tmp_node] &lt; data_packets_.<span class="built_in">size</span>() ||</span><br><span class="line">         terminate_flag_;  <span class="comment">// 消费者需求的数据已存在，否则等待最新数据  ||</span></span><br><span class="line">                           <span class="comment">// 数据被消耗结束</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>由于 <code>data_packets_</code> 中插入了数据，所以这个条件会满足继续向下执行。后续的代码我颅内 <code>debug</code> 了很长时间。</p>
+<p>大概意思是：节点在一次执行后，将节点对应的索引自增。在第二次执行这个节点时，由于边管理的 <code>data_packet</code> 会有两条数据（前面的节点放进来的），所以这个节点需要找到对应的数据，删除不用的数据。</p>
+<p>这个流水线并行实现了下图的效果：</p>
+<p><img data-src="https://s21.ax1x.com/2024/12/26/pAvDT2R.png" alt></p>
+<p>如果是 <code>yolo</code> 对视频进行目标检测，就会有多帧的输入图像。每帧是一个 <code>node</code> 节点，也就是有多个输入节点，一个推理节点，多个输出节点。</p>
+<ul>
+<li>第一帧前处理，第一帧推理，第一帧后处理</li>
+<li>第二帧前处理，第二帧推理，第二帧后处理</li>
+<li>…</li>
+<li>第 N 帧前处理，第 N 帧推理，第 N 帧后处理</li>
+</ul>
+<p>这样就流水处理了起来。</p>
+<h2 id="计算图释放"><a href="#计算图释放" class="headerlink" title="计算图释放"></a>计算图释放</h2><p>也就是最后的 <code>graph-&gt;deinit()</code>，还是对应执行器的释放。</p>
+<h3 id="SequentialExecutor-释放"><a href="#SequentialExecutor-释放" class="headerlink" title="SequentialExecutor 释放"></a>SequentialExecutor 释放</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">SequentialExecutor::deinit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : edge_repository_) &#123;</span><br><span class="line">    <span class="type">bool</span> flag = iter-&gt;edge_-&gt;<span class="built_in">requestTerminate</span>();</span><br><span class="line">    <span class="keyword">if</span> (!flag) &#123;</span><br><span class="line">      <span class="built_in">NNDEPLOY_LOGE</span>(<span class="string">&quot;failed iter-&gt;edge_-&gt;requestTerminate()!\n&quot;</span>);</span><br><span class="line">      <span class="keyword">return</span> base::kStatusCodeErrorDag;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : topo_sort_node_) &#123;</span><br><span class="line">    status = iter-&gt;node_-&gt;<span class="built_in">deinit</span>();</span><br><span class="line">    <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk,</span><br><span class="line">                           <span class="string">&quot;failed iter-&gt;node_-&gt;deinit()&quot;</span>);</span><br><span class="line">    iter-&gt;node_-&gt;<span class="built_in">setInitializedFlag</span>(<span class="literal">false</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码很容易看懂，通过 <code>requestTerminate</code> 将边设置为计算完毕，执行所有的节点的释放操作。如果是 <code>tensorrt</code> 的推理节点，将执行推理引擎的释放。</p>
+<h3 id="ParallelTaskExecutor-释放"><a href="#ParallelTaskExecutor-释放" class="headerlink" title="ParallelTaskExecutor 释放"></a>ParallelTaskExecutor 释放</h3><p>相比 <code>SequentialExecutor</code>，多了一步释放线程池。</p>
+<h3 id="ParallelPipelineExecutor-释放"><a href="#ParallelPipelineExecutor-释放" class="headerlink" title="ParallelPipelineExecutor 释放"></a>ParallelPipelineExecutor 释放</h3><p>同 <code>ParallelTaskExecutor</code> 释放。</p>
+<p>在最后退出的时候，手动删除了图资源 <code>delete graph</code>，会调用图的析构函数，删除之前由 <code>new</code> 申请的 <code>node wrapper</code> 和 <code>edge wrapper</code>。</p>
+<h3 id="推理引擎释放"><a href="#推理引擎释放" class="headerlink" title="推理引擎释放"></a>推理引擎释放</h3><p><code>SequentialExecutor</code>，<code>ParallelTaskExecutor</code>，<code>ParallelPipelineExecutor</code> 在释放的时候会释放节点，重点看下 <code>infer</code> 这个节点的释放，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">Infer::deinit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  status = inference_-&gt;<span class="built_in">deinit</span>();</span><br><span class="line">  <span class="built_in">NNDEPLOY_RETURN_ON_NEQ</span>(status, base::kStatusCodeOk, <span class="string">&quot;deinit failed&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是反初始化推理引擎，注意就是内存释放：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base::Status <span class="title">TensorRtInference::deinit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  base::Status status = base::kStatusCodeOk;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : input_tensors_) &#123;</span><br><span class="line">    <span class="keyword">delete</span> iter.second;</span><br><span class="line">  &#125;</span><br><span class="line">  input_tensors_.<span class="built_in">clear</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : max_input_tensors_) &#123;</span><br><span class="line">    <span class="keyword">delete</span> iter.second;</span><br><span class="line">  &#125;</span><br><span class="line">  max_input_tensors_.<span class="built_in">clear</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : output_tensors_) &#123;</span><br><span class="line">    <span class="keyword">delete</span> iter.second;</span><br><span class="line">  &#125;</span><br><span class="line">  output_tensors_.<span class="built_in">clear</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> iter : max_output_tensors_) &#123;</span><br><span class="line">    <span class="keyword">delete</span> iter.second;</span><br><span class="line">  &#125;</span><br><span class="line">  max_output_tensors_.<span class="built_in">clear</span>();</span><br><span class="line">  device::Device *device = device::<span class="built_in">getDevice</span>(inference_param_-&gt;device_type_);</span><br><span class="line">  <span class="keyword">if</span> (inner_forward_buffer_ != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    device-&gt;<span class="built_in">deallocate</span>(inner_forward_buffer_);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>delete iter.second</code> 会手动删除 <code>tensor</code>，也就是调用 <code>tensor</code> 类的析构函数，删除数据的 <code>buffer</code> 并清除引用计数。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>整个计算图的代码就梳理完了，对于 <code>README</code> 中提到的：上述模式的组合并行，我好像还不知道怎么组合。</p>
+<p>目前对推理引擎完全未知，怎么写自己的高性能 <code>op</code> 还没了解到。</p>
+<p>我想部署一个大模型！好像还差的很远。</p>
+<ul>
+<li><code>DAG</code> 的组织有点乱，而且有内存泄漏，内存这块并没有很好的管理</li>
+<li><code>CvtColorResize</code> 的 <code>run</code> 为什么两次 notify ?</li>
+<li><code>CvtColorResize</code> 用的是 <code>inputs_[0]</code>，<code>Infer</code> 需要遍历所有的 <code>inputs</code>，很迷惑</li>
+</ul>
+<p>需要实际编译运行一下看看了。</p>
+
+    </div>
+
+    
+    
+    
+      
+
+        <div class="reward-container">
+  <div>感谢上学期间打赏我的朋友们。赛博乞讨：我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AISystem/" rel="tag"># AISystem</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/08/04/CUFX/" rel="prev" title="CUFX(CUDA Framework eXtended)： CUDA 计算框架">
+      <i class="fa fa-chevron-left"></i> CUFX(CUDA Framework eXtended)： CUDA 计算框架
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E-main-%E5%87%BD%E6%95%B0%E5%BC%80%E5%A7%8B"><span class="nav-number">1.</span> <span class="nav-text">从 main 函数开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">获取参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">计算图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE%E5%88%9B%E5%BB%BA"><span class="nav-number">2.1.</span> <span class="nav-text">计算图创建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Edge-%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.1.</span> <span class="nav-text">Edge 定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Graph-%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.2.</span> <span class="nav-text">Graph 定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Graph-%E6%B3%A8%E5%86%8C"><span class="nav-number">2.1.3.</span> <span class="nav-text">Graph 注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E5%9B%BE"><span class="nav-number">2.1.4.</span> <span class="nav-text">创建目标检测图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E5%9B%BE%E4%B8%AD%E7%9A%84%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E"><span class="nav-number">2.1.4.1.</span> <span class="nav-text">目标检测图中的推理引擎</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wrapper-%E7%9B%B8%E5%85%B3"><span class="nav-number">2.1.5.</span> <span class="nav-text">wrapper 相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#EdgeWrapper"><span class="nav-number">2.1.5.1.</span> <span class="nav-text">EdgeWrapper</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NodeWrapper"><span class="nav-number">2.1.5.2.</span> <span class="nav-text">NodeWrapper</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">计算图初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Node-%E5%A4%84%E7%90%86"><span class="nav-number">2.2.1.</span> <span class="nav-text">Node 处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Edge-%E5%A4%84%E7%90%86"><span class="nav-number">2.2.2.</span> <span class="nav-text">Edge 处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.3.</span> <span class="nav-text">执行器初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SequentialExecutor-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">SequentialExecutor 初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ParallelTaskExecutor-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">ParallelTaskExecutor 初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ParallelPipelineExecutor-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">ParallelPipelineExecutor 初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.4.</span> <span class="nav-text">推理引擎初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE%E6%89%A7%E8%A1%8C"><span class="nav-number">2.3.</span> <span class="nav-text">计算图执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kParallelTypeSequential-%E6%89%A7%E8%A1%8C"><span class="nav-number">2.3.1.</span> <span class="nav-text">kParallelTypeSequential 执行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E8%AF%B4%E6%98%8E%EF%BC%8C%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%9A%84%E8%8A%82%E7%82%B9%E8%BF%90%E8%A1%8C%E4%B8%8E%E6%95%B0%E6%8D%AE"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">实例说明，目标检测的节点运行与数据</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E7%A0%81%E8%8A%82%E7%82%B9%E8%BF%90%E8%A1%8C"><span class="nav-number">2.3.1.1.1.</span> <span class="nav-text">解码节点运行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CvtColorResize-%E8%BF%90%E8%A1%8C"><span class="nav-number">2.3.1.1.2.</span> <span class="nav-text">CvtColorResize 运行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#infer-%E8%8A%82%E7%82%B9%E8%BF%90%E8%A1%8C"><span class="nav-number">2.3.1.1.3.</span> <span class="nav-text">infer 节点运行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#post-%E8%8A%82%E7%82%B9%E8%BF%90%E8%A1%8C"><span class="nav-number">2.3.1.1.4.</span> <span class="nav-text">post 节点运行</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ParallelTaskExecutor-%E6%89%A7%E8%A1%8C"><span class="nav-number">2.3.2.</span> <span class="nav-text">ParallelTaskExecutor 执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ParallelPipelineExecutor-%E6%89%A7%E8%A1%8C"><span class="nav-number">2.3.3.</span> <span class="nav-text">ParallelPipelineExecutor 执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE%E9%87%8A%E6%94%BE"><span class="nav-number">2.4.</span> <span class="nav-text">计算图释放</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SequentialExecutor-%E9%87%8A%E6%94%BE"><span class="nav-number">2.4.1.</span> <span class="nav-text">SequentialExecutor 释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ParallelTaskExecutor-%E9%87%8A%E6%94%BE"><span class="nav-number">2.4.2.</span> <span class="nav-text">ParallelTaskExecutor 释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ParallelPipelineExecutor-%E9%87%8A%E6%94%BE"><span class="nav-number">2.4.3.</span> <span class="nav-text">ParallelPipelineExecutor 释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E7%90%86%E5%BC%95%E6%93%8E%E9%87%8A%E6%94%BE"><span class="nav-number">2.4.4.</span> <span class="nav-text">推理引擎释放</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">228</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">15:12</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'fc73e5be41ca46593a3c93baf4695115',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
