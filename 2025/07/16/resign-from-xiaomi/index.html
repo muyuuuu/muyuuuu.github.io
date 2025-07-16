@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="就用 C++ 代码告别吧： 123auto others.todo &#x3D; std::move(my.work);phone.give_back() &amp;&amp; permission.is_denied();return 0; 离职不是失败，而是换了一种选择。 其实我一直在等，等 leader 说一句：jw 你最近经常不在工位，是不是有什么想法；等 leader 说一句我给你机会，你好好工作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="辞职：允许一切发生，记得要勇敢">
+<meta property="og:url" content="https://muyuuuu.github.io/2025/07/16/resign-from-xiaomi/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="就用 C++ 代码告别吧： 123auto others.todo &#x3D; std::move(my.work);phone.give_back() &amp;&amp; permission.is_denied();return 0; 离职不是失败，而是换了一种选择。 其实我一直在等，等 leader 说一句：jw 你最近经常不在工位，是不是有什么想法；等 leader 说一句我给你机会，你好好工作">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-16T14:07:40.000Z">
+<meta property="article:modified_time" content="2025-07-16T15:53:29.286Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="Life">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2025/07/16/resign-from-xiaomi/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>辞职：允许一切发生，记得要勇敢 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2025/07/16/resign-from-xiaomi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          辞职：允许一切发生，记得要勇敢
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-16 22:07:40 / 修改时间：23:53:29" itemprop="dateCreated datePublished" datetime="2025-07-16T22:07:40+08:00">2025-07-16</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>就用 <code>C++</code> 代码告别吧：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> others.todo = std::<span class="built_in">move</span>(my.work);</span><br><span class="line">phone.<span class="built_in">give_back</span>() &amp;&amp; permission.<span class="built_in">is_denied</span>();</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>离职不是失败，而是换了一种选择。</strong> 其实我一直在等，等 leader 说一句：jw 你最近经常不在工位，是不是有什么想法；等 leader 说一句我给你机会，你好好工作今年给你晋升。我想了很多回答，也许是顺从也许是争论，但直到离职那天也没等到。</p>
+<span id="more"></span>
+<h1 id="为何辞职"><a href="#为何辞职" class="headerlink" title="为何辞职"></a>为何辞职</h1><p>22 年疫情还没解封，秋招简直地狱难度，投递的 80 家公司只有 XM 给了我 offer。出于感激的心里，我的确想着拼命干。临近交付，我能一个月的周六日都来加班，即使 leader 并不做要求。那一刻，我只想把事情做好，累不累的无所谓。</p>
+<p>可事情逐步向着抽象发展，很多尖锐的矛头莫名其妙指向了我。这个组有个极其恶劣的行为：为了晋升嫡系 A，会把 B、C、D 等多个人的产出强行送给 A，并且组内组外吹嘘 A 有多厉害。我寻思就这待遇，放条狗都能升上去。很不幸的是，我在 B、C、D 这些人中。随之而来的是，从我转正到离职的一年半时间里，一直有人在背后举报我。</p>
+<p>这就引出这个组另一个极度恶劣的行为：经常有人去给 leader 打小报告，比如 E、F、G 这些人在吃饭时吐槽工作，leader 会记恨 E、F、G 这些人，给他们穿小鞋。很不幸，我又在 E、F、G 这些人中。我被举报麻了后，干脆一路摆烂，我能力不行，你找别人干吧。提离职后，不知道举报我的人有没有那种终于把我赶走的快乐。</p>
+<p>无数次精神离职和无数个辗转难眠的深夜，加班的劳累可以克服，但精神的折磨难以忍受。重复的工作越来越多，疲于测试交付而毫无成长，工作中又被恶心了几次，踢不动的皮球，干不完的烂活。再也没有一滴精力写代码，即使这是我很喜欢的事。辞职的想法一旦产生便很难消失，牺牲了清明和五一两个假期去改简历、背八股和准备项目。五一节后强度直接拉满，正常工作的同时一天三场面试，周六日也排上了面试，虽然很累，但每天笑的和花一样。</p>
+<h2 id="被-leader-记恨的两年"><a href="#被-leader-记恨的两年" class="headerlink" title="被 leader 记恨的两年"></a>被 leader 记恨的两年</h2><blockquote>
+<p>我们组可以分为 AI 项目和传统项目两大部分，AI 项目全是嫡系，预研为主，舒舒服服，拿着最好的绩效；传统项目催得很紧且毫无成长，人厌狗嫌，和外面的大模型等新技术脱节，但是对 XM 相机而言至关重要。</p>
+</blockquote>
+<p>我是算法工程师，但我刚入职的时候被分配去写前端，写了三个月后说了一句不想写了，被 leader 记恨在心。开始处处针对我：分配去我干维护的杂活、给别人代码写子模块擦屁股、不允许我参与 AI 项目、除我以外的所有人都晋升等等等等。</p>
+<p>但我还没放弃希望。25 年 1 月谈绩效的时候，我说只要给机会，我肯定继续干，那时候的我依然加班，依然努力工作。可 leader 说没那么多 AI 相关的项目给我，只能让我继续做传统项目。但是新招的人进来后立马参与 AI 项目，那一刻我明白了：虽然过去了两年，但 leader 依然记恨我，绝对不能让我参与 AI 项目。那一刻我也死心了，我该早点看清形势，放弃希望的。</p>
+<p>组里的同事的能力并没有很差，做的项目也没有翻车。可是 25 年 2 月开始，我和同事们再次被举报。或许是这种氛围过于压抑，或许是烂活太多毫无技术成长，一些同事忍无可忍提了离职。leader 不得不开始重新招人，而我也在面试别的公司。电话间前擦肩而过的那一刻，我们都没有选择那条成本最低的路。</p>
+<p>我想参与 AI 项目，对 leader 来说不可能；而我也不想继续做传统项目。事情发展到这一步，辞职几乎是这个死循环的唯一解。传统项目那边辞了大约 10 个人左右，之前 2 到 3 个人维护一个传统项目，现在 1 个人做 4 个传统项目，导致传统项目疯狂延期无法准时交付。leader 不得不重新招人，电话间擦肩而过的那一刻，他去面试候选人，我去面试别的公司，多么抽象。</p>
+<blockquote>
+<p>题外话：我们组辞职人过多，去了北京的各个大厂小厂车企初创等，也会把我们组发生的事情传播到其他公司，所以我们组在北京很难招到人。</p>
+</blockquote>
+<p>之前也发生过很多事情：</p>
+<ul>
+<li>完全不给某个同事安排任务，以冷暴力的形式让他主动走</li>
+<li>某个应届生被 leader 记恨，在这里干了 3 年没有一次晋升和加薪</li>
+</ul>
+<p>即使传统项目没人做，也要赶走记恨的人；我也担心下一个干 3 年没晋升的应届生就是我。综合考虑后就赶紧辞职了。但是外面行情一片大好，XM 相机没机会没钱没成长，我为什么一定要赖在这里呢？</p>
+<ul>
+<li>4 月初有了想辞职的想法，开始改简历和准备项目，工作的态度锐减 30%</li>
+<li>4 月底拿了两个小厂的 offer，工作态度在减 20%</li>
+<li>五一节日后直接冲大厂，两周拿下了几个大厂，工作态度在减 30%</li>
+<li>剩下的日子只剩煎熬，完全不想工作，只是在等一个良辰吉日去提离职</li>
+<li>端午节后的第一天，上午来了后紧张的喝了很多水，和 leader 说了声要辞职，没有预想中的狂喜，只有尘埃落定的解脱和对未知的忐忑</li>
+</ul>
+<h1 id="一些感谢"><a href="#一些感谢" class="headerlink" title="一些感谢"></a>一些感谢</h1><p>2017 年，下定决心转专业学计算机的一个初衷是希望我写的代码能走进千家万户的生活。我很幸运在 22 年地域难度的秋招中这个组捞了我一把<del>毕竟面试官是我学姐哈哈哈</del>，XM相机提供了这样的舞台，也是我职业生涯的荣幸，可是在这个路口真的要说再见啦。</p>
+<p>我真的怀念与同事们共事的时光，你们真的很棒。由于 leader 对我们十分的坏，注意是坏，不是差。如果 leader 差，那是他能力不行，我们可以体谅；坏就是 leader 纯粹故意恶心人，这没办法忍。这就导致了我们同事之间很团结：</p>
+<ul>
+<li>leader 过于 PUA 和压榨，两周的项目经常让我们用一周完成，潜台词是周六日来加班。而我和同事一起做项目时，我经常用 1 天完成 3 天的任务，并且告诉同事后两天我要摸鱼。我同事也很默契的让我摸鱼，去学别的东西。总之干什么都行，别在传统项目里浪费时间。</li>
+<li>如果我同事很忙，我也会主动去帮忙，某天帮一个同事极限解决了多线程、内存越界等多个 bug。</li>
+<li>同事有过一些辞职经验，从如何投简历，什么时间约面试，去哪里面试，高频面试题等多个角度对我进行了详细的辅导，让我少走了很多弯路。</li>
+<li>我简历的内容不够时，去找同事要一些项目来充门面，不懂的地方同事会详细的给我讲述。</li>
+<li>总之同事为了我的辞职大业操碎了心；所以我辞职后整理好面经，立刻反馈给他们。</li>
+</ul>
+<p>XM 校招入职培训的时候有句经典的话：唯一不变的是一切都在变。<strong>可有过一些瞬间之后，我却总幻想能奢求永远</strong>。人生总在别离中，期待我们再次相见:) 相逢已是上上签。</p>
+<h1 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h1><p><strong>趁我还鲜活，不允许任何人熄灭我。</strong></p>
+<p>XM 相机的项目有些传统，而我想参与最近很火的大模型。所以投递的所有岗位和当前的工作内容完全无关，0 基础参加了各个大厂的社招。面试官说每个年轻人都会迷茫，但看我身上还有激情，leetcode 或者 cuda 代码写的还行，决定在给我一次机会，就这样 2 周拿了 8 个 offer。</p>
+<p>技术和 leader 需求之间的平衡，脏活和成长之间的平衡，这两个平衡我处理的很差，直接导致了我和 leader 关系很僵。这是我工作两年的反思，在下家公司，我的确要注意这些东西。</p>
+<p>我不知道应届生新人身上的真诚，勇气，激情这些品质在职场是否重要。但我看见了会尽力守护这些很难得的东西，也不忍心看着它随着时间消失。last week 的时候，应届生突然走过来和我说：相处一年，你很勇敢，希望你以后更加自由。</p>
+<p>写在最后。24年1月谈绩效的时候，leader 说我让你干什么就干什么，也不要期望在工作中能有成长。诸如此类的话，狠狠批斗了我一小时。我职场生涯很短，也不知道 leader 说的是对是错，春天在想，夏天还在想，可我依然没有想通。想不通的事情实在是太多了，但我身上高低还有些执行力。</p>
+<p>24年7月，也像现在一样的炎热。下班回家和周六日的时间火速学习了 C++，CUDA，大模型，推理加速，模型量化，核心算子优化，AI部署，计算图，前后端全栈开发也略懂一二，敲代码到凌晨两点的日子又累又困。<strong>生活关上了门，就在打开，这就是门，门就是这么用的。</strong></p>
+<p>这个组的高压、PUA、只有绩效没有人情味或许可以忍受，但唯独不该忽略对人的培养，也不该忽略大家对成长的诉求。10年职业生涯后也许想法会变，那时候我也35岁啦，谁知道呢：）</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>如果你有幸看到了这个文章，且拿到了 XM 相机部-&gt;算法部的 offer，一定记得面试官的名字，发邮件问问我，也许帮你少走两年弯路。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2022/02/04/2021/" rel="bookmark">算是一个陈述句流水帐的年终总结吧</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2022/12/02/2022/" rel="bookmark">2022, 随便写点</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/06/08/DuanWu/" rel="bookmark">端午&高考乱弹</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2018/10/13/MMA-Party-2018/" rel="bookmark">聚会的说～</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2019/03/28/Prime-minister-music/" rel="bookmark">迟暮的丞相：遂许先帝以驱驰，尔来二十又一年</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>感谢上学期间打赏我的朋友们。赛博乞讨：我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Life/" rel="tag"># Life</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/12/26/nndeploy-1/" rel="prev" title="如何看懂 nndeploy">
+      <i class="fa fa-chevron-left"></i> 如何看懂 nndeploy
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BD%95%E8%BE%9E%E8%81%8C"><span class="nav-number">1.</span> <span class="nav-text">为何辞职</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A2%AB-leader-%E8%AE%B0%E6%81%A8%E7%9A%84%E4%B8%A4%E5%B9%B4"><span class="nav-number">1.1.</span> <span class="nav-text">被 leader 记恨的两年</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%84%9F%E8%B0%A2"><span class="nav-number">2.</span> <span class="nav-text">一些感谢</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">一些思考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">229</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">15:15</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : 'e2fc1e365d332287f3e082fe1172eacb',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
