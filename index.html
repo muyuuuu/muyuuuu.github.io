@@ -223,6 +223,91 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2026/01/11/sra-huge-data/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/01/11/sra-huge-data/" class="post-title-link" itemprop="url">搜推广的工程化——有限内存下的大数据处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-01-11 23:18:52" itemprop="dateCreated datePublished" datetime="2026-01-11T23:18:52+08:00">2026-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-01-12 00:22:21" itemprop="dateModified" datetime="2026-01-12T00:22:21+08:00">2026-01-12</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>22 年校招面字节的时候，面试官随口问了个问题：有几亿条数据存储在文件中，我该怎么排序？虽然在很多高频面经上看过这个问题，但完全没有在意，心想：正常排序呗还能怎么做，加载不进内存就分块处理。可具体怎么分块并没有仔细思考过。<strong>看似是一个算法题，但这完全是一个工程题。</strong></p>
+<p>今年遇到了类似的问题，有两组文件，第一组叫 bench，有 32 个文件，这些文件大约 1T 左右。每个文件里存储着搜推广的稀疏数据，id 和 embedding，每一个 id 对应一个 embedding 数据。第二组文件叫 test，有 8 个文件，这些文件同样约 1T 左右，同样存储了 id 和 embedding。这些 id 和对应的 embedding 完全乱序分布在文件中，毫无规律。</p>
+<p>目标：遍历 bench 中的每个 id 和对应的 embedding，在 test 中查找对应的 id 和 embedding，判断是否相等。如果 id 不存在或者 embedding 不相等，打印出错的 id。</p>
+          <!--noindex-->
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2025/10/18/condition-variable/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -708,89 +793,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2024/05/07/multi-pipeline/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="兰铃">
-      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Just for Life.">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/05/07/multi-pipeline/" class="post-title-link" itemprop="url">任务流水：加快程序运行和减少内存占用我全都要</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-05-07 23:54:38" itemprop="dateCreated datePublished" datetime="2024-05-07T23:54:38+08:00">2024-05-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-05-18 15:18:59" itemprop="dateModified" datetime="2024-05-18T15:18:59+08:00">2024-05-18</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>2018 年计算机组成原理的大作业，五级流水不会写，三级流水写不出来。竟然没想不到多年后还会用到多级流水的思路去设计代码。</p>
-          <!--noindex-->
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -862,7 +864,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">230</span>
+          <span class="site-state-item-count">231</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -875,7 +877,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -907,7 +909,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2025</span>
+  <span itemprop="copyrightYear">2026</span>
   <span class="with-love">
     <i class="user"></i>
   </span>
@@ -921,7 +923,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">15:23</span>
+    <span title="站点阅读时长">15:25</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>
