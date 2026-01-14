@@ -13355,7 +13355,35 @@ C = A * B + \text{bias}</script><p>简单起见，$A$ 的维度为 $512\times 12
       </tags>
   </entry>
   <entry>
-    <title>搜推广的工程化——有限内存下的大数据处理</title>
+    <title>阿里 RecIS：搜推广训练的背景与难点</title>
+    <url>/2026/01/14/sra-background/</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>离开米子后，从相机转行到了搜推广方向，所以需要了解一下搜推广的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西。搜推广算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最接近钱的算法。</p>
+<span id="more"></span>
+<p>而为了在计算机中描述用户的喜好，需要对用户的特征进行建模，诸如性别、地区、城市、年龄、上网时间、消费金额等等等等。这些特征都有对应的数值，那么对数值进行清洗、处理后便可以输入 XGBoost 等传统算法完成分类或者是回归等功能。</p>
+<p>而早期的 AI 时代，由于神经网络的线性层只接受固定尺寸的输入，所以会将性别、年龄这些特征进行 padding 处理得到一个统一的尺寸。如性别填充为 [1, 0, 0, 0, …]，年龄填充为 [0, 18, 0, 0, 0, …]，这些输入含有较多的 0，因此可以视为稀疏的信息。这种类似 one-hot 的填充会导致维度太大且过于稀疏。而在神经网络的前向计算中，0 乘以任何数都是 0，所以稀疏输入含有过多的 0 会让模型的参数无效。</p>
+<p>为了避免稀疏导致的问题，为每个稀疏的 id 生成一个稠密的 Embedding，将 Embedding 输入 AI 模型进行分类或是预测，最终利用 AI 强大的学习能力来完成搜推广模型的训练。如常见的 deepctr, deepfm 和 DIN 模型等等。id → Embedding 这个映射可以用 <code>torch.nn.Embedding</code> 来实现，本质就是按行查表，写一个简单的模型：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Model</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.user_emb = nn.Embedding(num_Embeddings=user_fea_num, Embedding_dim=<span class="number">128</span>)</span><br><span class="line">        self.item_emb = nn.Embedding(num_Embeddings=item_fea_num, Embedding_dim=<span class="number">128</span>)</span><br><span class="line"></span><br><span class="line">        self.mlp = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">128</span> * <span class="number">2</span>, <span class="number">128</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">128</span>, <span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, user_ids, item_ids</span>):</span><br><span class="line">        u = self.user_emb(user_ids)   <span class="comment"># [batch, 128]</span></span><br><span class="line">        v = self.item_emb(item_ids)   <span class="comment"># [batch, 128]</span></span><br><span class="line">        x = torch.cat([u, v], dim=-<span class="number">1</span>) <span class="comment"># [batch, 2 * 128]</span></span><br><span class="line">        out = self.mlp(x)             <span class="comment"># [batch, 1]</span></span><br></pre></td></tr></table></figure>
+<p>user_emb、item_emb 都是 nn.Embedding，本质上是两个大矩阵（num_Embeddings, Embedding_dim），而 id → Embedding 的本质就是在一个大矩阵里按行索引。在前向计算阶段，如果 user_ids 是 23，那么只取 user_emb 表的第 23 行得到 [1, 128] 大小的 Embedding 进行计算；在反向阶段，也只更新第 23 行，其余内容则不更新。举一个更详细的例子：</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"></span><br><span class="line">emb = nn.Embedding(num_Embeddings=<span class="number">10</span>, Embedding_dim=<span class="number">4</span>)</span><br><span class="line">optimizer = optim.SGD(emb.parameters(), lr=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这一步只用到了 id: 2, 5, 7</span></span><br><span class="line">ids = torch.tensor([<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>], dtype=torch.long)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 前向：取出对应 Embedding，随便构造个 loss</span></span><br><span class="line">vecs = emb(ids)            <span class="comment"># shape [3, 4]</span></span><br><span class="line">loss = (vecs ** <span class="number">2</span>).<span class="built_in">sum</span>()   <span class="comment"># 只是示例：L = sum(e_i^2)</span></span><br><span class="line"></span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">loss.backward()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(emb.weight.grad)     <span class="comment"># 看梯度</span></span><br><span class="line">optimizer.step()</span><br></pre></td></tr></table></figure>
+<p>在海量数据的时代，用户的特征会越来越多，如用户/物料/广告/商品/词组/组合特征等等，甚至还会根据时序特征动态更新模型，如最近 100 次点击/曝光里的 Item ID 序列。这会产生大量的 ID。假设 ID 为 10 亿规模，Embedding 是 64 维的 float32 数据，大约是 256 GB 的数据，加上 dense 部分的模型参数，无法装到一张 GPU 中。传统 ML 在小数据、小特征下已经够用，但在 TB 级曝光日志、亿级 ID 空间、每天要迭代模型参数的环境里，就必须走分布式训练这条路，用多卡的能力来解决显存的问题。</p>
+<p>此时需要把 Embedding 进行切片（shard），分片装到不同的 GPU 中。假设切片长度为 65536，共 32 张卡，那么每张卡持有切片的长度就是 65536 / 32 = 2048。第一张卡持有 Embedding 表的 id 范围是 0 到 2048，第二张卡持有 Embedding 表的 id 范围是 2048 到 4096，以此类推。假设输入的 id 是 1180210，1180210 % 65536 = 562，562 位于第一张卡的 id 范围。</p>
+<p>如果使用 <code>torch.nn.Embedding</code> 作为 id → Embedding 的实现，那么从第一张卡的 Embedding 表中取出 id 为 562 的 Embedding。可是 721458 % 65535 也等于 562，难道 721458 和 1180210 不同的 id 要共用同一个 Embedding 吗？这显然是不行的。</p>
+<p>额外的，虽然 <code>torch.nn.Embedding</code> 查表速度快，但有内存浪费的现象。假如本次训练只有 5000 个 id，但 id 的取值范围是 0 到 1 亿。这会创建 1 亿的表，但只用其中的 5000 行，绝大部分存储空间并没有被使用。综上，简单的 <code>torch.nn.Embedding</code> 不能满足海量数据的场景。我们面临的是：</p>
+<ul>
+<li>ID 空间规模可达 10^9 级以上，Embedding 表动辄数百 GB；</li>
+<li>单机 GPU 无法容纳全部参数；</li>
+<li>模型需要在数小时级别完成 TB 级日志训练，并且迭代上线。</li>
+</ul>
+<p>此时的问题变成：如何在分布式环境下，如何用更少的内存，以更快的速度，让用户完成一次 TB 级的数据全量训练。前面提到的 Embedding 也只是训练的一个难点。</p>
+<p>事实上，一个完整的搜推广实现有召回、粗排、精排、检索等多个步骤，这需要一个强大的基建去完成数据存储、特征处理、模型训练、向量检索、实时计算、模型推理、策略容错和监控运维等多个步骤，每个步骤都有很多坑要踩，有很多技术瓶颈需要突破。果然算法是大公司用来锦上添花的东西。业界普遍会在通用 DL 框架 + 推荐/广告特化组件这条路径上演进，而阿里的 <a href="https://github.com/alibaba/RecIS">RecIS</a> 框架也是路线中的一员，更贴合阿里内部的搜推广场景。</p>
+<p>本系列也将阅读 RecIS 的源码，探索 RecIS 如何解决的这些难题，并详细分析实现原理，持续介绍模型训练这个环节的工程化落地。<del>为什么选择这个框架呢？因为我是这里的员工。</del>免责声明：刚入行半年，如果哪里写的不好可能是本人理解不到位，和 RecIS 无关，标题上带阿里二字也有引流成分。</p>
+]]></content>
+      <tags>
+        <tag>SAR</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>搜推广的工程化——有限内存下的单机大数据处理</title>
     <url>/2026/01/11/sra-huge-data/</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>22 年校招面字节的时候，面试官随口问了个问题：有几亿条数据存储在文件中，我该怎么排序？虽然在很多高频面经上看过这个问题，但完全没有在意，心想：正常排序呗还能怎么做，加载不进内存就分块处理。可具体怎么分块并没有仔细思考过。<strong>看似是一个算法题，但这完全是一个工程题。</strong></p>
 <p>今年遇到了类似的问题，有两组文件，第一组叫 bench，有 32 个文件，这些文件大约 1T 左右。每个文件里存储着搜推广的稀疏数据，id 和 embedding，每一个 id 对应一个 embedding 数据。第二组文件叫 test，有 8 个文件，这些文件同样约 1T 左右，同样存储了 id 和 embedding。这些 id 和对应的 embedding 完全乱序分布在文件中，毫无规律。</p>
