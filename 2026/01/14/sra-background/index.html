@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="离开米子后，从相机转行到了搜推广方向，所以需要了解一下搜推广的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西。搜推广算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最接近钱的算法。">
+  <meta name="description" content="离开米子后，从相机转行到了搜广推方向，所以需要了解一下搜广推的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西，这个东西可能是视频，可能是商品，可能是网页等等。搜广推算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阿里 RecIS：搜推广训练的背景与难点">
+<meta property="og:title" content="阿里 RecIS：搜广推训练的背景与难点">
 <meta property="og:url" content="https://muyuuuu.github.io/2026/01/14/sra-background/index.html">
 <meta property="og:site_name" content="Just for Life.">
-<meta property="og:description" content="离开米子后，从相机转行到了搜推广方向，所以需要了解一下搜推广的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西。搜推广算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最接近钱的算法。">
+<meta property="og:description" content="离开米子后，从相机转行到了搜广推方向，所以需要了解一下搜广推的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西，这个东西可能是视频，可能是商品，可能是网页等等。搜广推算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-01-14T14:55:47.000Z">
-<meta property="article:modified_time" content="2026-01-14T15:00:43.275Z">
+<meta property="article:modified_time" content="2026-01-17T13:47:14.585Z">
 <meta property="article:author" content="兰铃">
 <meta property="article:tag" content="SAR">
 <meta name="twitter:card" content="summary">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>阿里 RecIS：搜推广训练的背景与难点 | Just for Life.</title>
+  <title>阿里 RecIS：搜广推训练的背景与难点 | Just for Life.</title>
   
 
 
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          阿里 RecIS：搜推广训练的背景与难点
+          阿里 RecIS：搜广推训练的背景与难点
         </h1>
 
         <div class="post-meta">
@@ -249,10 +249,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2026-01-14 22:55:47 / 修改时间：23:00:43" itemprop="dateCreated datePublished" datetime="2026-01-14T22:55:47+08:00">2026-01-14</time>
+              <time title="创建时间：2026-01-14 22:55:47" itemprop="dateCreated datePublished" datetime="2026-01-14T22:55:47+08:00">2026-01-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-01-17 21:47:14" itemprop="dateModified" datetime="2026-01-17T21:47:14+08:00">2026-01-17</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -267,7 +273,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -286,11 +292,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>离开米子后，从相机转行到了搜推广方向，所以需要了解一下搜推广的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西。搜推广算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最接近钱的算法。</p>
+        <p>离开米子后，从相机转行到了搜广推方向，所以需要了解一下搜广推的算法背景。搜索、广告、推荐这三个算法由于背景相似，所以会经常被放到一起。打开 app 时的搜索，刷 app 时的推荐，以及投放用户可能有兴趣的广告。三者的本质几乎是一样的：根据用户喜好，尽可能的在数据库中检索出用户想要的东西，这个东西可能是视频，可能是商品，可能是网页等等。搜广推算法直接和用户点击率挂钩，相当于和收益挂钩，也是互联网中最接近钱的算法。</p>
 <span id="more"></span>
 <p>而为了在计算机中描述用户的喜好，需要对用户的特征进行建模，诸如性别、地区、城市、年龄、上网时间、消费金额等等等等。这些特征都有对应的数值，那么对数值进行清洗、处理后便可以输入 XGBoost 等传统算法完成分类或者是回归等功能。</p>
 <p>而早期的 AI 时代，由于神经网络的线性层只接受固定尺寸的输入，所以会将性别、年龄这些特征进行 padding 处理得到一个统一的尺寸。如性别填充为 [1, 0, 0, 0, …]，年龄填充为 [0, 18, 0, 0, 0, …]，这些输入含有较多的 0，因此可以视为稀疏的信息。这种类似 one-hot 的填充会导致维度太大且过于稀疏。而在神经网络的前向计算中，0 乘以任何数都是 0，所以稀疏输入含有过多的 0 会让模型的参数无效。</p>
-<p>为了避免稀疏导致的问题，为每个稀疏的 id 生成一个稠密的 Embedding，将 Embedding 输入 AI 模型进行分类或是预测，最终利用 AI 强大的学习能力来完成搜推广模型的训练。如常见的 deepctr, deepfm 和 DIN 模型等等。id → Embedding 这个映射可以用 <code>torch.nn.Embedding</code> 来实现，本质就是按行查表，写一个简单的模型：</p>
+<p>为了避免稀疏导致的问题，为每个稀疏的 id 生成一个稠密的 Embedding，将 Embedding 输入 AI 模型进行分类或是预测，最终利用 AI 强大的学习能力来完成搜广推模型的训练。如常见的 deepctr, deepfm 和 DIN 模型等等。id → Embedding 这个映射可以用 <code>torch.nn.Embedding</code> 来实现，本质就是按行查表，写一个简单的模型：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Model</span>():</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.user_emb = nn.Embedding(num_Embeddings=user_fea_num, Embedding_dim=<span class="number">128</span>)</span><br><span class="line">        self.item_emb = nn.Embedding(num_Embeddings=item_fea_num, Embedding_dim=<span class="number">128</span>)</span><br><span class="line"></span><br><span class="line">        self.mlp = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">128</span> * <span class="number">2</span>, <span class="number">128</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">128</span>, <span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, user_ids, item_ids</span>):</span><br><span class="line">        u = self.user_emb(user_ids)   <span class="comment"># [batch, 128]</span></span><br><span class="line">        v = self.item_emb(item_ids)   <span class="comment"># [batch, 128]</span></span><br><span class="line">        x = torch.cat([u, v], dim=-<span class="number">1</span>) <span class="comment"># [batch, 2 * 128]</span></span><br><span class="line">        out = self.mlp(x)             <span class="comment"># [batch, 1]</span></span><br></pre></td></tr></table></figure>
 <p>user_emb、item_emb 都是 nn.Embedding，本质上是两个大矩阵（num_Embeddings, Embedding_dim），而 id → Embedding 的本质就是在一个大矩阵里按行索引。在前向计算阶段，如果 user_ids 是 23，那么只取 user_emb 表的第 23 行得到 [1, 128] 大小的 Embedding 进行计算；在反向阶段，也只更新第 23 行，其余内容则不更新。举一个更详细的例子：</p>
 <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"></span><br><span class="line">emb = nn.Embedding(num_Embeddings=<span class="number">10</span>, Embedding_dim=<span class="number">4</span>)</span><br><span class="line">optimizer = optim.SGD(emb.parameters(), lr=<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这一步只用到了 id: 2, 5, 7</span></span><br><span class="line">ids = torch.tensor([<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>], dtype=torch.long)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 前向：取出对应 Embedding，随便构造个 loss</span></span><br><span class="line">vecs = emb(ids)            <span class="comment"># shape [3, 4]</span></span><br><span class="line">loss = (vecs ** <span class="number">2</span>).<span class="built_in">sum</span>()   <span class="comment"># 只是示例：L = sum(e_i^2)</span></span><br><span class="line"></span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">loss.backward()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(emb.weight.grad)     <span class="comment"># 看梯度</span></span><br><span class="line">optimizer.step()</span><br></pre></td></tr></table></figure>
@@ -304,8 +310,14 @@
 <li>模型需要在数小时级别完成 TB 级日志训练，并且迭代上线。</li>
 </ul>
 <p>此时的问题变成：如何在分布式环境下，如何用更少的内存，以更快的速度，让用户完成一次 TB 级的数据全量训练。前面提到的 Embedding 也只是训练的一个难点。</p>
-<p>事实上，一个完整的搜推广实现有召回、粗排、精排、检索等多个步骤，这需要一个强大的基建去完成数据存储、特征处理、模型训练、向量检索、实时计算、模型推理、策略容错和监控运维等多个步骤，每个步骤都有很多坑要踩，有很多技术瓶颈需要突破。果然算法是大公司用来锦上添花的东西。业界普遍会在通用 DL 框架 + 推荐/广告特化组件这条路径上演进，而阿里的 <a target="_blank" rel="noopener" href="https://github.com/alibaba/RecIS">RecIS</a> 框架也是路线中的一员，更贴合阿里内部的搜推广场景。</p>
-<p>本系列也将阅读 RecIS 的源码，探索 RecIS 如何解决的这些难题，并详细分析实现原理，持续介绍模型训练这个环节的工程化落地。<del>为什么选择这个框架呢？因为我是这里的员工。</del>免责声明：刚入行半年，如果哪里写的不好可能是本人理解不到位，和 RecIS 无关，标题上带阿里二字也有引流成分。</p>
+<p>事实上，一个完整的搜广推实现有召回、粗排、精排等多个步骤：</p>
+<ul>
+<li>召回：使用倒排索引检索出 query 相关的一些物品；或者将 query 经过 AI 得到 embedding，使用向量检索技术检索出和 embedding 相关的物品</li>
+<li>排序：使用模型对召回结果进行打分</li>
+</ul>
+<p>这需要一个强大的基建去完成数据存储（在线、离线、分布式读取）、特征工程、模型训练量化推理、向量检索、实时计算、策略容错和监控运维等多个步骤，每个步骤都有很多坑要踩，有很多技术瓶颈需要突破。果然算法是大公司用来锦上添花的东西，离开大厂的流水线算法寸步难行。业界普遍会在通用 DL 框架 + 推荐/广告特化组件这条路径上演进，而阿里的 <a target="_blank" rel="noopener" href="https://github.com/alibaba/RecIS">RecIS</a> 框架也是路线中的一员，更贴合阿里内部的搜广推场景。</p>
+<p>本系列也将阅读 RecIS 的源码，探索 RecIS 如何解决的这些难题，并详细分析实现原理。更多的从框架设计角度持续介绍模型训练这个环节的工程化落地，性能分析就略过了。<del>为什么选择这个框架呢？因为我是这里的员工。</del>免责声明：刚入行半年，如果哪里写的不好可能是本人理解不到位，和 RecIS 无关，标题上带阿里二字也有引流成分。</p>
+<p>我个人是看好搜广推算法的，毕竟把锅做大才能吃到更多饭。最近也有一些基于大模型的搜广推算法，如快手的 onerec；在稀疏领域，deepseek 在 26 年发表了 Engram 大模型，这些论文也会以番外篇的形式加入到这个系列。想不到毕业多年我又要开始看论文了哈哈哈。</p>
 
     </div>
 
@@ -315,6 +327,9 @@
       
   <div class="popular-posts-header">本文相关</div>
   <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2026/01/17/recis-hashtable/" rel="bookmark">阿里 RecIS：分布式高性能哈希表</a></div>
+    </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="/2026/01/11/sra-huge-data/" rel="bookmark">搜推广的工程化——有限内存下的单机大数据处理</a></div>
     </li>
@@ -379,7 +394,10 @@
     <a href="/2026/01/11/sra-huge-data/" rel="prev" title="搜推广的工程化——有限内存下的单机大数据处理">
       <i class="fa fa-chevron-left"></i> 搜推广的工程化——有限内存下的单机大数据处理
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2026/01/17/recis-hashtable/" rel="next" title="阿里 RecIS：分布式高性能哈希表">
+      阿里 RecIS：分布式高性能哈希表 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -454,7 +472,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">232</span>
+          <span class="site-state-item-count">233</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -513,7 +531,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">15:28</span>
+    <span title="站点阅读时长">15:34</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div><div id="days"></div>

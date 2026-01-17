@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="RecIS 开发了一个低内存开销、高效查表、动态扩展、强大稳定的哈希表，规避了 torch.nn.Embedding 的问题。RecIS 内部叫 HashTable，也就是广义上的 Embedding。在本文中，会对 HashTable 的底层实现一探究竟，看看它如何达到的：  降低 Embedding 表的内存、通信开销 快速查表 当 id 增加时，需要动态扩表，且无明显消耗 整个系统需要稳定、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里 RecIS：分布式高性能哈希表">
+<meta property="og:url" content="https://muyuuuu.github.io/2026/01/17/recis-hashtable/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="RecIS 开发了一个低内存开销、高效查表、动态扩展、强大稳定的哈希表，规避了 torch.nn.Embedding 的问题。RecIS 内部叫 HashTable，也就是广义上的 Embedding。在本文中，会对 HashTable 的底层实现一探究竟，看看它如何达到的：  降低 Embedding 表的内存、通信开销 快速查表 当 id 增加时，需要动态扩表，且无明显消耗 整个系统需要稳定、">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s41.ax1x.com/2026/01/17/pZySUl8.png">
+<meta property="article:published_time" content="2026-01-17T13:47:33.000Z">
+<meta property="article:modified_time" content="2026-01-17T14:21:16.548Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="SAR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s41.ax1x.com/2026/01/17/pZySUl8.png">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2026/01/17/recis-hashtable/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>阿里 RecIS：分布式高性能哈希表 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2026/01/17/recis-hashtable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿里 RecIS：分布式高性能哈希表
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-01-17 21:47:33 / 修改时间：22:21:16" itemprop="dateCreated datePublished" datetime="2026-01-17T21:47:33+08:00">2026-01-17</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>RecIS 开发了一个低内存开销、高效查表、动态扩展、强大稳定的哈希表，规避了 <code>torch.nn.Embedding</code> 的问题。RecIS 内部叫 HashTable，也就是广义上的 Embedding。在本文中，会对 HashTable 的底层实现一探究竟，看看它如何达到的：</p>
+<ul>
+<li>降低 Embedding 表的内存、通信开销</li>
+<li>快速查表</li>
+<li>当 id 增加时，需要动态扩表，且无明显消耗</li>
+<li>整个系统需要稳定、简洁</li>
+</ul>
+<span id="more"></span>
+<h1 id="表名的唯一性"><a href="#表名的唯一性" class="headerlink" title="表名的唯一性"></a>表名的唯一性</h1><p>通常一个搜广推模型拥有很多 <code>Embedding</code> 表，如用户特征（含年龄、性别和身高这些 id）位于 user 表，app 使用习惯（含购物时间、消费区间这些 id）位于 behave 表。这些表囊括了各式各样的 id。且表之间不能重复，也就是不需要两张 user 表。为了实现这个目的，RecIS 实现了 <code>HashTableRegister</code> 单例类，这部分代码位于 <code>recis/nn/modules/hashtable.py</code>。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SingletonMeta</span>(<span class="title class_ inherited__">type</span>):</span><br><span class="line">    _instances = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__call__</span>(<span class="params">cls, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> cls._instances:</span><br><span class="line">            cls._instances[cls] = <span class="built_in">super</span>().__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> cls._instances[cls]</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HashTableRegister</span>(metaclass=SingletonMeta):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        self._HashTables = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register</span>(<span class="params">self, name: <span class="built_in">str</span>, info: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="keyword">if</span> name <span class="keyword">in</span> self._HashTables:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(</span><br><span class="line">                <span class="string">f&quot;Duplicate HashTable shard name: <span class="subst">&#123;name&#125;</span>, before: <span class="subst">&#123;self._HashTables[name]&#125;</span>, now: <span class="subst">&#123;info&#125;</span>&quot;</span></span><br><span class="line">            )</span><br><span class="line">        self._HashTables[name] = info</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HashTable</span>(torch.nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        HashTableRegister().register(table_name)</span><br></pre></td></tr></table></figure>
+<p>正常创建类对象时，会调用元类的 <code>__call__</code> 方法，使用 <code>__new__</code> 创建实例，并调用类对象的 <code>__init__</code> 方法初始化对象。但 <code>HashTableRegister</code> 声明了元类 <code>SingletonMeta</code>，并重新声明了 <code>__call__</code> 方法，所以改写了类对象的创建方式。通过 <code>cls</code> 捕获类对象 <code>HashTableRegister</code>，使这个类只有一个实例，所以在任何地方声明的 <code>HashTableRegister()</code> 都是同一个实例，即：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = HashTableRegister()</span><br><span class="line">b = HashTableRegister()</span><br><span class="line"><span class="built_in">print</span>(a <span class="keyword">is</span> b)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+<p>所以无论创建多少 HashTable，每个表名都只会被创建一次，否则会报错退出。</p>
+<h1 id="底层设计"><a href="#底层设计" class="headerlink" title="底层设计"></a>底层设计</h1><p>在注册完 HashTable 后会创建一个 HashTable 的对象，这部分代码位于 <code>csrc/Embedding/HashTable.cc</code> 文件。HashTable 的创建和底层部分都由 C++ 实现，并把接口暴露给 torch。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">self._HashTable_impl = torch.ops.recis.make_HashTable(...)</span><br><span class="line">...</span><br><span class="line">m.<span class="keyword">def</span>(<span class="string">&quot;make_HashTable&quot;</span>, HashTable::Make);</span><br></pre></td></tr></table></figure>
+<p><code>HashTable::Make</code> 会返回一个指向 HashTable 的侵入式智能指针，这个指针管理着实际的 HashTable 对象。在 HashTable 的构造过程中，除了存储切片大小、长度、设备、数据类型、数据生成器等基本信息外，还会创建两个核心组件：slotgroup 和 idmap。</p>
+<h2 id="IDMap-设计"><a href="#IDMap-设计" class="headerlink" title="IDMap 设计"></a>IDMap 设计</h2><p>这部分代码位于 <code>/csrc/embedding/cpu_id_map.h</code>。idmap 负责 id 的插入，其核心数据结构是 <code>ska::flat_hash_map</code>，将原始特征 ID 映射到内部索引 index。使用内部索引 index 去访问对应的 Embedding。所以 idmap 可以理解为 std::map，key 是原始ID，value 是内部索引。</p>
+<ul>
+<li>在插入 ids 时实际会调用 Lookup 查表函数去遍历 idmap，这部分的代码实现在 <code>IndexLookupFunctor</code> 函数中。<ul>
+<li>如果 ids 在 idmap 中，返回对应的 index</li>
+<li>如果 ids 不在 idmap 中，标记为缺失的 ids。之后为缺失的 ids 生成 index，插入到 idmap 中。在插入时，这里的 index 是连续的，即 0, 1, 2, …, ids_num 连续分布</li>
+</ul>
+</li>
+<li>在删除 ids 时，像 std::map 一样 erase 掉不需要的 ids，并存储对应的 index，用于下次插入时的内存复用</li>
+</ul>
+<h3 id="id-allocator"><a href="#id-allocator" class="headerlink" title="id_allocator"></a>id_allocator</h3><p>当再次插入 ids 时，为了保持 index 的连续性需要知道上次的 index 到哪里了；删除 ids 时需要知道哪些 index 被空了出来可以复用。在这个过程中，index 的生成和删除由 id_allocator 管理。这部分代码位于 <code>csrc/embedding/id_allocator.cc</code>，使用 <code>cur_size_</code> 表示分配了多少 index，使用 <code>free_size_</code> 表示删除了多少 ids，使用 <code>free_blocks_</code> 存储可以被复用的 index，说起来有些抽象，可以看个例子。</p>
+<ul>
+<li>生成 index：由 generate_ids_op 函数实现。假如第一次插入 5 个 id，由于没有 index，所以 index 从 0 开始一直递增到 4。如下所示，左侧是 id，右侧是 index。</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ids_map = &#123;</span><br><span class="line">    <span class="number">1180210</span>: <span class="number">0</span>,  <span class="comment"># 原始 ID → 内部索引</span></span><br><span class="line">    <span class="number">721458</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="number">655922</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="number">1000000</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="number">2000000</span>: <span class="number">4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>删除 index：由 free_ids_op 函数实现。假如现在删除 655922 这个 id，它对应的 index 是 2，那么把 2 存储到 free_blocks_ 中</li>
+<li>当再次插入一个取值为 328637 的 id 时，检测到 free_blocks_ 中的 2 可以被复用，此时的 ids_map 取值为：</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ids_map = &#123;</span><br><span class="line">    <span class="number">1180210</span>: <span class="number">0</span>,  <span class="comment"># 原始 ID → 内部索引</span></span><br><span class="line">    <span class="number">721458</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="number">1000000</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="number">2000000</span>: <span class="number">4</span></span><br><span class="line">    <span class="number">328637</span>: <span class="number">2</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="高效查表"><a href="#高效查表" class="headerlink" title="高效查表"></a>高效查表</h3><p>假设 ids = [1180210, 721458, 655922, 1000000, 2000000]，实际上 ids 并不连续。如果直接用 ID 作为数组索引：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Embedding[1180210]  <span class="comment"># ❌ 需要分配 1180210 个元素，浪费大量内存！</span></span><br><span class="line">Embedding[721458]   <span class="comment"># ❌ 大部分位置都是空的</span></span><br></pre></td></tr></table></figure>
+<p>但是可以借助 ids_map 将 ids 映射为连续的 index，此时只需要分配 5 个 Embedding 的位置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Embedding[0]  <span class="comment"># ✅ 对应 ID 1180210</span></span><br><span class="line">Embedding[1]  <span class="comment"># ✅ 对应 ID 721458</span></span><br><span class="line">Embedding[2]  <span class="comment"># ✅ 对应 ID 655922</span></span><br><span class="line">Embedding[3]  <span class="comment"># ✅ 对应 ID 1000000</span></span><br><span class="line">Embedding[4]  <span class="comment"># ✅ 对应 ID 2000000</span></span><br></pre></td></tr></table></figure>
+<p>ids_map 的优势不言而喻：</p>
+<ul>
+<li>内存效率：只分配实际需要的空间</li>
+<li>访问效率：连续内存，缓存友好</li>
+<li>索引复用：删除 ID 后可以复用索引</li>
+</ul>
+<h2 id="Slot-设计"><a href="#Slot-设计" class="headerlink" title="Slot 设计"></a>Slot 设计</h2><p>slot 一般翻译为槽，如信号槽，数据槽等，在 RecIS 中的作用是数据槽，用于存储 Embedding、优化器状态等，这部分代码位于 <code>csrc/Embedding/slot_group.cc</code>。</p>
+<p>slotgroup 以 vector 的形式管理多个类型的 slot，如 Embedding、优化器状态就是两个类型的 slot。在每个 slot 中，以 vector 的形式管理 torch::Tensor，而 torch::Tensor 负责存储实际的数据。</p>
+<p>以 Embedding 为例，在查询 index 对应的 Embedding 时，会调用 <code>HashTable::EmbeddingLookup</code> 函数，最终调用到：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">HashTable::IncrementBlocknum</span><span class="params">(<span class="type">int64_t</span> ids_num)</span> </span>&#123;</span><br><span class="line">  <span class="type">size_t</span> block_num =</span><br><span class="line">      (ids_num + slot_group_-&gt;<span class="built_in">BlockSize</span>()) / slot_group_-&gt;<span class="built_in">BlockSize</span>();</span><br><span class="line">  <span class="keyword">while</span> (slot_group_-&gt;<span class="built_in">BlockNum</span>() &lt; block_num) &#123;</span><br><span class="line">    slot_group_-&gt;<span class="built_in">IncrementBlock</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>BlockSize 初始化为 5，所以当插入的 ids_num 为 100 时，需要创建 20 个 slot，即执行 20 次：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Slot::IncrementBlock</span><span class="params">()</span> </span>&#123; values_-&gt;<span class="built_in">push_back</span>(generator_-&gt;<span class="built_in">Generate</span>()); &#125;</span><br></pre></td></tr></table></figure>
+<p>生成器 generator_ 一开始就传递给了 HashTable，假设 Embedding shape 是 128，数据类型是 float32，那么一次 <code>IncrementBlock</code> 就会生成一个 [5, 128] 的 float32 的 Embedding，并按照指定的初始化方式进行初始化。初始化方式可以参考 <code>csrc/Embedding/initializer.h</code>。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 每个 Tensor 是一个 block，大小为 [block_size, Embedding_dim]</span><br><span class="line">// 默认 block_size = <span class="number">5</span>, Embedding_dim = <span class="number">128</span></span><br><span class="line">// block_0: shape [<span class="number">5</span>, <span class="number">128</span>]，存储 index <span class="number">0</span>-<span class="number">5</span> 的 Embedding</span><br><span class="line">// block_1: shape [<span class="number">5</span>, <span class="number">128</span>]，存储 index <span class="number">5</span>-<span class="number">10</span> 的 Embedding</span><br><span class="line">// block_2: shape [<span class="number">5</span>, <span class="number">128</span>]，存储 index <span class="number">10</span>-<span class="number">15</span> 的 Embedding</span><br><span class="line">// ...</span><br></pre></td></tr></table></figure>
+<p>在查表时，会调用 <code>block_gather</code> 函数，计算 index 数据哪个 block ，进而访问最终的 Embedding 数据。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> src_block_index = src_index / block_size_;  <span class="comment">// 哪个 block</span></span><br><span class="line"><span class="keyword">auto</span> src_row_index = src_index % block_size_;    <span class="comment">// block 内的行</span></span><br><span class="line">...</span><br><span class="line">Embedding = emb_blocks[src_block_index][src_row_index]  <span class="comment">// 成功访问</span></span><br></pre></td></tr></table></figure>
+<p>这种设计形式除了高效查表外，还可以减少内存碎片，并且支持增量扩展。总结一下，HashTable 的数据的存储形式为：</p>
+<p><img data-src="https://s41.ax1x.com/2026/01/17/pZySUl8.png" alt></p>
+<h1 id="接入-torch-层"><a href="#接入-torch-层" class="headerlink" title="接入 torch 层"></a>接入 torch 层</h1><p>那么 C++ 实现的 HashTable，是如何参与 torch 的前向计算和反向传播呢？补充一些额外知识，<code>torch.autograd.Function</code> 可以自定义一个自动求导的算子，它允许用户同时定义：</p>
+<ul>
+<li>正向计算（forward）</li>
+<li>在反向传播（backward）时，这个算子的求导公式</li>
+<li>如果 forward() 返回 N 个值，backward() 会接收 N 个梯度（按顺序对应）</li>
+</ul>
+<p>在集成自定义的 HashTable 时（非 torch 代码的 C++、cuda 算子），就需要使用这个类完成对自定义算子的自动求导。举个例子：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HashTableLookupHelpFunction</span>(torch.autograd.Function):</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">ctx, x, table</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">ctx, grad_output</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> grad_x, grad_table</span><br><span class="line"></span><br><span class="line">y = HashTableLookupHelpFunction.apply(x, table)</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，会自动调用 forward(ctx, x, table) 得到 y；在需要梯度时，记录运算图；之后反向传播时，会自动调用 backward(ctx, grad_output)。</p>
+<h2 id="前向计算"><a href="#前向计算" class="headerlink" title="前向计算"></a>前向计算</h2><p>回到 <code>recis/nn/modules/hashtable.py</code> 这个文件。在训练模式下，使用可以自动求导的 <code>HashTableLookupHelpFunction</code> 在前向阶段完成查表，得到内部索引 index 和对应的 Embedding。之后，考虑到输入的 batch 中会有重复的 ids，所以使用 <code>GradWorkerMeanFunction</code> 完成对 index 的 gather 聚合：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 示例数据</span><br><span class="line">Embedding = [</span><br><span class="line">    [0.1, 0.2],  # 唯一 ID 0 的 Embedding</span><br><span class="line">    [0.3, 0.4],  # 唯一 ID 1 的 Embedding</span><br><span class="line">    [0.5, 0.6],  # 唯一 ID 2 的 Embedding</span><br><span class="line">]  # Shape: [3, 2]</span><br><span class="line"></span><br><span class="line">index = [0, 1, 2, 1, 0]  # 5 个原始位置到唯一 ID 的映射</span><br><span class="line"></span><br><span class="line"># gather 操作：根据 index 从 Embedding 中选择</span><br><span class="line">output = torch.ops.recis.gather(index, Embedding)</span><br><span class="line"># output = [</span><br><span class="line">#     [0.1, 0.2],  # index[0] = 0 → Embedding[0]</span><br><span class="line">#     [0.3, 0.4],  # index[1] = 1 → Embedding[1]</span><br><span class="line">#     [0.5, 0.6],  # index[2] = 2 → Embedding[2]</span><br><span class="line">#     [0.3, 0.4],  # index[3] = 1 → Embedding[1]</span><br><span class="line">#     [0.1, 0.2],  # index[4] = 0 → Embedding[0]</span><br><span class="line"># ]  # Shape: [5, 2]</span><br></pre></td></tr></table></figure>
+<h2 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h2><p>反向传播的顺序和前向计算完全相反，首先是 <code>GradWorkerMeanFunction</code> 的反向传播：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reduce_grad, <span class="literal">None</span>, <span class="literal">None</span> = GradWorkerMeanFunction.backward(ctx, grad_from_upstream)</span><br></pre></td></tr></table></figure>
+<p>根据当前 worker 收到的上游梯度 grad_from_upstream 除以 worker 数量，得到平均梯度。最后使用 index_add_ 函数累加相同索引的梯度，并传递给 <code>HashTableLookupHelpFunction</code>：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># grad_output_index = None  (因为 index 没有参与后续计算)</span></span><br><span class="line"><span class="comment"># grad_output_emb = reduce_grad  (因为 Embedding 参与了后续计算)</span></span><br><span class="line">HashTableLookupHelpFunction.backward(ctx, <span class="literal">None</span>, reduce_grad)</span><br></pre></td></tr></table></figure>
+<p>在 <code>HashTableLookupHelpFunction</code> 的 backward 方法中，会调用 accept_grad 函数存储 index 以及对应的梯度。目前梯度只是被存了起来，像所有其他 torch 模型一样，在调用 optimizer.step 后，才会更新这些梯度。</p>
+<p>至此，已经实现了一个类 <code>Embedding</code> 设计，并且可以在 <code>torch</code> 端调用并参与 AI 的前向计算与反向传播。在后续的内容中，将一睹 HashTable 上层的设计，看看特征处理、数据通信的实现，如何基于 HashTable 搭建出一个完整的稀疏模型。</p>
+<h1 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h1><p>在 <code>GradWorkerMeanFunction</code> 的反向传播函数中求了梯度的均值，说明这个梯度可能已经过 all_reduce 或其他聚合处理。而这就涉及了多卡通信，暂时还没读到这部分源码，未来某天在写。由于内容过多，一些比较有意思的实现细节只是一带而过，这些有时间在慢慢看看。</p>
+<ul>
+<li>侵入式智能指针</li>
+<li>ska::flat_hash_map 底层实现</li>
+<li>torch.autograd.Function 自动求导实现原理</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2026/01/14/sra-background/" rel="bookmark">阿里 RecIS：搜广推训练的背景与难点</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2026/01/11/sra-huge-data/" rel="bookmark">搜推广的工程化——有限内存下的单机大数据处理</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>感谢上学期间打赏我的朋友们。赛博乞讨：我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SAR/" rel="tag"># SAR</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/01/14/sra-background/" rel="prev" title="阿里 RecIS：搜广推训练的背景与难点">
+      <i class="fa fa-chevron-left"></i> 阿里 RecIS：搜广推训练的背景与难点
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A8%E5%90%8D%E7%9A%84%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">表名的唯一性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">底层设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IDMap-%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.1.</span> <span class="nav-text">IDMap 设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#id-allocator"><span class="nav-number">2.1.1.</span> <span class="nav-text">id_allocator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%95%88%E6%9F%A5%E8%A1%A8"><span class="nav-number">2.1.2.</span> <span class="nav-text">高效查表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slot-%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.2.</span> <span class="nav-text">Slot 设计</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A5%E5%85%A5-torch-%E5%B1%82"><span class="nav-number">3.</span> <span class="nav-text">接入 torch 层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E8%AE%A1%E7%AE%97"><span class="nav-number">3.1.</span> <span class="nav-text">前向计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-number">3.2.</span> <span class="nav-text">反向传播</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C%E5%BE%85%E7%BB%AD"><span class="nav-number">4.</span> <span class="nav-text">未完待续</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">233</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">15:34</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '388c9594f74c1949c019b23bf2adefba',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
