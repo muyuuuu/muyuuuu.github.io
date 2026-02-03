@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/apple-touch-icon-next.png">
+  <link rel="mask-icon" href="/images/apple-touch-icon-next.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"muyuuuu.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"default"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":10,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前文介绍的 hashtable 负责数据的存储和检索，排布单卡中的底层数据。而特征处理、多卡通信、Embedding 后处理等功能可以使用 torch 的高层 API 来完成。RecIS 将这些 API 汇总到一起设计了 DynamicEmbedding、EmbeddingEngine 和 FeatureEngine。本文将探索他们的架构与实现，最终可以用 EmbeddingEngine 构建一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里搜广推大规模训练实践：Embedding 引擎设计">
+<meta property="og:url" content="https://muyuuuu.github.io/2026/02/04/recis-embedding-engine/index.html">
+<meta property="og:site_name" content="Just for Life.">
+<meta property="og:description" content="前文介绍的 hashtable 负责数据的存储和检索，排布单卡中的底层数据。而特征处理、多卡通信、Embedding 后处理等功能可以使用 torch 的高层 API 来完成。RecIS 将这些 API 汇总到一起设计了 DynamicEmbedding、EmbeddingEngine 和 FeatureEngine。本文将探索他们的架构与实现，最终可以用 EmbeddingEngine 构建一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s41.ax1x.com/2026/02/04/pZ5gM01.png">
+<meta property="article:published_time" content="2026-02-03T17:11:33.000Z">
+<meta property="article:modified_time" content="2026-02-03T17:30:24.894Z">
+<meta property="article:author" content="兰铃">
+<meta property="article:tag" content="SAR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s41.ax1x.com/2026/02/04/pZ5gM01.png">
+
+<link rel="canonical" href="https://muyuuuu.github.io/2026/02/04/recis-embedding-engine/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>阿里搜广推大规模训练实践：Embedding 引擎设计 | Just for Life.</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Just for Life." type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Just for Life.</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">明月更几时</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>本站主页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>时光轴</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于兰铃</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签云</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-image fa-fw"></i>远夏拾忆</a>
+
+  </li>
+        <li class="menu-item menu-item-share">
+
+    <a href="/share/" rel="section"><i class="fa fa-share fa-fw"></i>好物分享</a>
+
+  </li>
+        <li class="menu-item menu-item-message">
+
+    <a href="/message/" rel="section"><i class="fa fa-list fa-fw"></i>留言板</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends/" rel="section"><i class="fa fa-link fa-fw"></i>友情链接</a>
+
+  </li>
+        <li class="menu-item menu-item-reward">
+
+    <a href="/reward/" rel="section"><i class="fa fa-history fa-fw"></i>博客收益</a>
+
+  </li>
+        <li class="menu-item menu-item-hot">
+
+    <a href="/hot/" rel="section"><i class="fa fa-fire fa-fw"></i>热门文章</a>
+
+  </li>
+        <li class="menu-item menu-item-record">
+
+    <a href="/record/" rel="section"><i class="fa fa-sticky-note fa-fw"></i>记录</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>本地搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://muyuuuu.github.io/2026/02/04/recis-embedding-engine/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="兰铃">
+      <meta itemprop="description" content="爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Just for Life.">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿里搜广推大规模训练实践：Embedding 引擎设计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-02-04 01:11:33 / 修改时间：01:30:24" itemprop="dateCreated datePublished" datetime="2026-02-04T01:11:33+08:00">2026-02-04</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前文介绍的 hashtable 负责数据的存储和检索，排布单卡中的底层数据。而特征处理、多卡通信、Embedding 后处理等功能可以使用 torch 的高层 API 来完成。RecIS 将这些 API 汇总到一起设计了 DynamicEmbedding、EmbeddingEngine 和 FeatureEngine。本文将探索他们的架构与实现，最终可以用 EmbeddingEngine 构建一个完整的稀疏模型：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Model</span>(<span class="params">nn.Module</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.sparse_model = EmbeddingEngine(...)</span><br><span class="line">        <span class="comment"># dense 模型，一般以全连接为主</span></span><br><span class="line">        <span class="comment"># 也可以使用 transformer</span></span><br><span class="line">        self.dense_model = transformer.DenseModel(...)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.sparse_model(x)</span><br><span class="line">        x = self.dense_model(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h1 id="DynamicEmbedding——多卡通信与-Embedding-聚合"><a href="#DynamicEmbedding——多卡通信与-Embedding-聚合" class="headerlink" title="DynamicEmbedding——多卡通信与 Embedding 聚合"></a>DynamicEmbedding——多卡通信与 Embedding 聚合</h1><p>DynamicEmbedding 位于 recis/nn/modules/embedding.py，一个 DynamicEmbedding 维护一个 HashTable。在前向计算时调用 HashTable 的接口返回 id 的查表结果，在反向计算时将上游的梯度传给 HashTable，HashTable 会存储传过来的梯度。DynamicEmbedding 的构造函数比较简单可以略过，最重要的是 forward 阶段的 3 个方法：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, ids</span>):</span><br><span class="line">    <span class="comment"># 交换 IDs</span></span><br><span class="line">    ids = self.exchange_ids(ids)</span><br><span class="line">    <span class="comment"># 查找 Embeddings</span></span><br><span class="line">    emb = self.lookup_exchange_emb(ids)</span><br><span class="line">    <span class="comment"># 交换与聚合 Embeddings</span></span><br><span class="line">    emb = self.emb_reduce(emb)</span><br><span class="line">    <span class="keyword">return</span> emb</span><br></pre></td></tr></table></figure>
+<h2 id="交换-ids"><a href="#交换-ids" class="headerlink" title="交换 ids"></a>交换 ids</h2><ul>
+<li>exchange_ids：在模型的 forward 阶段，会输入五花八门的 id。在<a href="https://muyuuuu.github.io/2026/01/17/recis-hashtable/">前文 HashTable</a>的设计中，我们知道在分布式环境下不同取值的 id 会被分配到不同的卡上。当输入的 id 可能不在本卡上时，需要将 id 发送到对应的其他卡上。假设 id=1 发送到 1 号卡，id=2 发送到 2 号卡。DynamicEmbedding 通过 torch 提供的多卡通信 API <code>dist.all_to_all_single</code> 实现了 id 分发的功能。</li>
+</ul>
+<h2 id="查找与交换-Embeddings"><a href="#查找与交换-Embeddings" class="headerlink" title="查找与交换 Embeddings"></a>查找与交换 Embeddings</h2><ul>
+<li>lookup_exchange_emb：经过 exchange_ids 后，根据当前卡的 id 从 HashTable 查表中获取对应的 Embedding。之后需要将查好的 Embedding 交换回原始 worker，以匹配原始输入顺序。举个例子：</li>
+</ul>
+<p>假如每个 worker 都有自己的原始输入：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Worker 0 原始输入: [1, 2, 3]  <span class="comment"># 原始 IDs</span></span><br><span class="line">Worker 1 原始输入: [4, 5, 6]  <span class="comment"># 原始 IDs</span></span><br><span class="line">Worker 2 原始输入: [7, 8, 9]  <span class="comment"># 原始 IDs</span></span><br></pre></td></tr></table></figure>
+<p>需要根据 partition 规则分配到不同卡上：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ID % 3 = 0 → Worker 0</span></span><br><span class="line"><span class="comment"># ID % 3 = 1 → Worker 1</span></span><br><span class="line"><span class="comment"># ID % 3 = 2 → Worker 2</span></span><br></pre></td></tr></table></figure>
+<p>调用 exchange_ids 函数完成 id 交换后，每个 worker 收到需要查找的 id：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Worker 0 收到: [1, 4, 7]</span><br><span class="line">Worker 1 收到: [2, 5, 8]</span><br><span class="line">Worker 2 收到: [3, 6, 9]</span><br></pre></td></tr></table></figure>
+<p>根据交换后的 id 查找 Embedding：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Worker 0 查找 [1, 4, 7] → 得到 emb[1], emb[4], emb[7]</span><br><span class="line">Worker 1 查找 [2, 5, 8] → 得到 emb[2], emb[5], emb[8]</span><br><span class="line">Worker 2 查找 [3, 6, 9] → 得到 emb[3], emb[6], emb[9]</span><br></pre></td></tr></table></figure>
+<p>由于 Worker 0 这个 batchh 输入的 id 是 [1, 2, 3]，所以 Worker 0 需要 emb[1], emb[2], emb[3]。但 Worker 0 现在有 emb[1], emb[4], emb[7]，和预期不符。所以需要将 embeddings 交换回原始 worker，lookup_exchange_emb 函数最终完成 embedding 的交换功能。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Worker 0 收到: emb[1], emb[2], emb[3]</span><br><span class="line">Worker 1 收到: emb[4], emb[5], emb[6]</span><br><span class="line">Worker 2 收到: emb[7], emb[8], emb[9]</span><br></pre></td></tr></table></figure>
+<h2 id="聚合-Embeddings"><a href="#聚合-Embeddings" class="headerlink" title="聚合 Embeddings"></a>聚合 Embeddings</h2><p>emb_reduce 方法会调用 ragged_embedding_segment_reduce 函数对查找到的 embedding 进行聚合：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">emb = ragged_embedding_segment_reduce(</span><br><span class="line">    emb,</span><br><span class="line">    weight,</span><br><span class="line">    emb_exchange_result.reverse_index,</span><br><span class="line">    emb_exchange_result.offsets,</span><br><span class="line">    combiner,</span><br><span class="line">    combiner_kwargs,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>为什么要聚合呢？在一些场景下输入的样本可能含有多个 id，如用户的兴趣标签、浏览的类别等：</p>
+<ul>
+<li>用户 1: 喜欢 [科技, 体育, 娱乐] 3 个类别</li>
+<li>用户 2: 喜欢 [美食, 旅游] 2 个类别</li>
+<li>用户 3: 喜欢 [音乐, 电影, 游戏, 阅读] 4 个类别</li>
+</ul>
+<p>对应到代码中就是：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">input_ids = torch.tensor([</span><br><span class="line">    [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],       <span class="comment"># 样本 0: 3 个 IDs</span></span><br><span class="line">    [<span class="number">4</span>, <span class="number">5</span>],          <span class="comment"># 样本 1: 2 个 IDs</span></span><br><span class="line">    [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>],    <span class="comment"># 样本 2: 4 个 IDs</span></span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p>而 embedding 的输出为：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">embeddings = [</span><br><span class="line">    emb[<span class="number">1</span>],  <span class="comment"># 位置 0</span></span><br><span class="line">    emb[<span class="number">2</span>],  <span class="comment"># 位置 1</span></span><br><span class="line">    emb[<span class="number">3</span>],  <span class="comment"># 位置 2</span></span><br><span class="line">    emb[<span class="number">4</span>],  <span class="comment"># 位置 3</span></span><br><span class="line">    emb[<span class="number">5</span>],  <span class="comment"># 位置 4</span></span><br><span class="line">    emb[<span class="number">6</span>],  <span class="comment"># 位置 5</span></span><br><span class="line">    emb[<span class="number">7</span>],  <span class="comment"># 位置 7</span></span><br><span class="line">    emb[<span class="number">8</span>],  <span class="comment"># 位置 8</span></span><br><span class="line">    emb[<span class="number">9</span>],  <span class="comment"># 位置 9</span></span><br><span class="line">]  <span class="comment"># shape: [9, embedding_dim]</span></span><br></pre></td></tr></table></figure>
+<p>所以需要对 embedding 按照输入的 id 分组进行聚合，聚合方式支持 <code>sum</code>, <code>mean</code> 和 <code>tile</code>，默认是 <code>sum</code>。当聚合方式 combiner 为 sum 时，会对同一个样本内的 embedding 进行求和：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">result = [</span><br><span class="line">    emb[<span class="number">1</span>] + emb[<span class="number">2</span>] + emb[<span class="number">3</span>],           <span class="comment"># 样本 0: 聚合 2 个 embeddings</span></span><br><span class="line">    emb[<span class="number">4</span>] + emb[<span class="number">5</span>],                    <span class="comment"># 样本 1: 聚合 2 个 embeddings</span></span><br><span class="line">    emb[<span class="number">6</span>] + emb[<span class="number">7</span>] + emb[<span class="number">8</span>] + emb[<span class="number">9</span>],  <span class="comment"># 样本 2: 聚合 2 个 embeddings</span></span><br><span class="line">]  <span class="comment"># shape: [3, embedding_dim]</span></span><br></pre></td></tr></table></figure>
+<p>在具体的聚合计算中，使用 <code>segment_reduce_forward</code> 函数完成前向计算，使用 <code>segment_reduce_backward</code> 函数完成反向计算。值得注意的是，这两个算子函数都是 cuda 实现的。不过本系列文章重点看 RecIS 的架构实现，所以不在介绍算子的实现逻辑。<del>一方面是我 cuda 写的不行，另一方面是算子优化有很多细节，如果只是要了解架构没必要看实现细节。</del></p>
+<h3 id="变长序列"><a href="#变长序列" class="headerlink" title="变长序列"></a>变长序列</h3><p>在实际场景中，用户可能在不同的时间点有不同的行为，且不同时间点会有不同的权重：</p>
+<ul>
+<li>用户 1: 在时间点 [t1, t2, t3] 有行为</li>
+<li>用户 2: 在时间点 [t4, t5] 有行为</li>
+<li>用户 3: 在时间点 [t6, t7, t8, t9] 有行为</li>
+</ul>
+<p>可以使用 RecIS 提供的 RaggedTensor 管理这类变长序列以及权重：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">values = torch.tensor([t1, t2, t3, t4, t5, t6, t7, t8, t9])</span><br><span class="line">offsets = torch.tensor([<span class="number">0</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">9</span>])</span><br><span class="line">weights = torch.tensor([<span class="number">0.9</span>, <span class="number">0.8</span>, <span class="number">0.7</span>, <span class="number">0.9</span>, <span class="number">0.8</span>, <span class="number">0.9</span>, <span class="number">0.8</span>, <span class="number">0.7</span>, <span class="number">0.6</span>])</span><br><span class="line">ragged_with_weight = RaggedTensor(values, offsets, weight=weights)</span><br></pre></td></tr></table></figure>
+<p>在聚合计算时，可以通过 RaggedTensor 提供的接口得到 offsets、weights 等参数。</p>
+<h1 id="EmbeddingEngine"><a href="#EmbeddingEngine" class="headerlink" title="EmbeddingEngine"></a>EmbeddingEngine</h1><h2 id="EmbeddingEngine-初始化"><a href="#EmbeddingEngine-初始化" class="headerlink" title="EmbeddingEngine 初始化"></a>EmbeddingEngine 初始化</h2><p>用户使用 EmbeddingOption 创建 Embedding 表的配置字段，来描述 embedding 的数据类型、维度、表名、聚合方式等信息：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmbeddingOption</span>:</span><br><span class="line">    embedding_dim: <span class="built_in">int</span> = <span class="number">16</span></span><br><span class="line">    block_size: <span class="built_in">int</span> = <span class="number">10240</span></span><br><span class="line">    dtype: torch.dtype = torch.float32</span><br><span class="line">    device: torch.device = torch.device(<span class="string">&quot;cpu&quot;</span>)</span><br><span class="line">    trainable: <span class="built_in">bool</span> = <span class="literal">True</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>EmbeddingEngine 是 DynamicEmbedding 的上游，代码位于 recis/nn/modules/embedding_engine.py。可以负责解析用户传入的多个 EmbeddingOption 并创建 DynamicEmbedding。由于实际业务中会有非常多的特征，用户可以使用 RecIS 提供的 FGParser 解析 json 文件生成多个 EmbeddingOption，这部分代码位于 recis/fg/feature_generator.py，由于代码都是 json 解析相关，就不在细说。假设这里三个 EmbeddingOption：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">emb_options = &#123;</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>: EmbeddingOption(</span><br><span class="line">        embedding_dim=<span class="number">128</span>,</span><br><span class="line">        shared_name=<span class="string">&quot;user_embedding&quot;</span>,</span><br><span class="line">        combiner=<span class="string">&quot;sum&quot;</span>,</span><br><span class="line">        trainable=<span class="literal">True</span>,</span><br><span class="line">    ),</span><br><span class="line">    <span class="string">&quot;item_id&quot;</span>: EmbeddingOption(</span><br><span class="line">        embedding_dim=<span class="number">128</span>,</span><br><span class="line">        shared_name=<span class="string">&quot;item_embedding&quot;</span>,</span><br><span class="line">        combiner=<span class="string">&quot;sum&quot;</span>,</span><br><span class="line">        trainable=<span class="literal">True</span>,</span><br><span class="line">    ),</span><br><span class="line">    <span class="string">&quot;category&quot;</span>: EmbeddingOption(</span><br><span class="line">        embedding_dim=<span class="number">64</span>,</span><br><span class="line">        shared_name=<span class="string">&quot;category_embedding&quot;</span>,</span><br><span class="line">        combiner=<span class="string">&quot;mean&quot;</span>,</span><br><span class="line">        trainable=<span class="literal">True</span>,</span><br><span class="line">    ),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用户创建了 3 个 EmbeddingOption，user_id、item_id 和 category。EmbeddingEngine 会根据 EmbeddingOption 中的属性类型、维度、设备、初始化方式等 coalesced_info 信息创建 fea_group。如上表中 item_embedding 和 user_embedding 的 coalesced_info 信息一致，所以他俩会放到<strong>同一个 fea_group 中</strong>，而 category_embedding 在其他 <code>fea_group</code> 中：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">coalesced_info</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Get coalesced configuration information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        str: JSON string containing coalesced configuration.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    info = &#123;</span><br><span class="line">        <span class="string">&quot;dim&quot;</span>: self.embedding_dim,</span><br><span class="line">        <span class="string">&quot;dtype&quot;</span>: <span class="built_in">str</span>(self.dtype),</span><br><span class="line">        <span class="string">&quot;device&quot;</span>: <span class="built_in">str</span>(self.device.<span class="built_in">type</span>),</span><br><span class="line">        <span class="string">&quot;initializer&quot;</span>: <span class="built_in">str</span>(self.initializer),</span><br><span class="line">        <span class="string">&quot;grad_reduce_by&quot;</span>: self.grad_reduce_by,</span><br><span class="line">        <span class="string">&quot;filter_hook&quot;</span>: <span class="built_in">str</span>(self.filter_hook),</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> json.dumps(info)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> fea_name, emb_opt <span class="keyword">in</span> emb_options.items():</span><br><span class="line">    ht_name = <span class="string">f&quot;CoalescedHashtable_<span class="subst">&#123;hashlib.sha256(emb_opt.coalesced_info().encode()).hexdigest()&#125;</span>&quot;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> ht_name <span class="keyword">not</span> <span class="keyword">in</span> self._fea_group:</span><br><span class="line">        self._fea_group[ht_name] = HashTableCoalescedGroup(ht_name)</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>这样做的优势是把多个逻辑表合并为一个物理表，可以节省通信开销与降低内存分配（后面会介绍）。所以 EmbeddingEngine 只需要为每一个 <code>fea_group</code> 生成一个 DynamicEmbedding 即可，由于 DynamicEmbedding 管理一个存储在内存中的 HasthTable，所以 item_embedding 和 user_embedding 这两个逻辑表共用同一个物理表。可以有效降低内存分配次数和减少内存碎片。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ht_name, fea_group <span class="keyword">in</span> self._fea_group.items():</span><br><span class="line">    self._ht[ht_name] = DynamicEmbedding(fea_group.embedding_info())</span><br></pre></td></tr></table></figure>
+<h2 id="EmbeddingEngine-前向计算"><a href="#EmbeddingEngine-前向计算" class="headerlink" title="EmbeddingEngine 前向计算"></a>EmbeddingEngine 前向计算</h2><p>在 EmbeddingEngine 的 forward 阶段会依次执行：</p>
+<ol>
+<li>group_features()          # 特征分组</li>
+<li>group_exchange_ids()      # ID 交换</li>
+<li>group_exchange_embs()     # Embedding 交换</li>
+<li>group_reduce()            # Embedding 聚合</li>
+<li>split_group_embs()        # 结果拆分回原始特征</li>
+<li>format_direct_out()       # 格式化透传特征</li>
+</ol>
+<p>接下来详细看一下这六个方法。</p>
+<h3 id="特征重组"><a href="#特征重组" class="headerlink" title="特征重组"></a>特征重组</h3><p>假设我们输入的特征是：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input_features = &#123;</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>: torch.tensor([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>]]),</span><br><span class="line">    <span class="string">&quot;item_id&quot;</span>: torch.tensor([[<span class="number">10</span>, <span class="number">20</span>], [<span class="number">30</span>, <span class="number">40</span>]]),</span><br><span class="line">    <span class="string">&quot;category&quot;</span>: torch.tensor([[<span class="number">5</span>], [<span class="number">6</span>]]),</span><br><span class="line">    <span class="string">&quot;raw_feature&quot;</span>: torch.randn(<span class="number">2</span>, <span class="number">10</span>),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于 <code>raw_feature</code> 这个特征不在前面声明的 emb_options 中，所以会被直接透传给下一个网络层，也就是不会对 raw_feature 执行任何查表操作。对于其他特征，会调用 group_features 函数，根据 emb_options 的 runtime_info 信息完成特征分组。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">runtime_info</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Get runtime configuration information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        str: JSON string containing runtime configuration.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    info = &#123;</span><br><span class="line">        <span class="string">&quot;combiner&quot;</span>: self.combiner,</span><br><span class="line">        <span class="string">&quot;use_weight&quot;</span>: self.use_weight,</span><br><span class="line">        <span class="string">&quot;trainable&quot;</span>: self.trainable,</span><br><span class="line">        <span class="string">&quot;admit_hook&quot;</span>: <span class="built_in">str</span>(self.admit_hook),</span><br><span class="line">        <span class="string">&quot;fp16_enabled&quot;</span>: self.fp16_enabled,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> json.dumps(info)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> fea_name, fea_tensor <span class="keyword">in</span> input_dict.items():</span><br><span class="line">    <span class="keyword">if</span> fea_name <span class="keyword">not</span> <span class="keyword">in</span> self._fea_to_ht:</span><br><span class="line">        direct_out[fea_name] = fea_tensor <span class="comment"># 透传</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ht_name = self._fea_to_ht[fea_name]</span><br><span class="line">        runtime_info = self._fea_to_group[fea_name].runtime_info(fea_name)</span><br><span class="line">        <span class="keyword">if</span> runtime_info <span class="keyword">not</span> <span class="keyword">in</span> group_features[ht_name]:</span><br><span class="line">            group_features[ht_name][runtime_info] = RuntimeGroupFeature(</span><br><span class="line">                ...</span><br><span class="line">            )</span><br><span class="line">        group_features[ht_name][runtime_info].add_fea(</span><br><span class="line">            ...</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+<p>最终得到 group_features 结构如下所示：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;ht1&quot;</span>: &#123;  <span class="comment"># ht_name</span></span><br><span class="line">        <span class="string">&quot;runtime_info...&quot;</span>: RuntimeGroupFeature(  <span class="comment"># runtime_info</span></span><br><span class="line">            <span class="comment"># 包含: user_id, item_id (相同 combiner)</span></span><br><span class="line">        )</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;ht2&quot;</span>: &#123;  <span class="comment"># ht_name</span></span><br><span class="line">        <span class="string">&quot;runtime_info...&quot;</span>: RuntimeGroupFeature(  <span class="comment"># runtime_info</span></span><br><span class="line">            <span class="comment"># 包含: category</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># direct_out:</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;raw_feature&quot;</span>: torch.randn(<span class="number">2</span>, <span class="number">10</span>)  <span class="comment"># 原样返回</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>runtime_info 分组内的特征具有相同的 combiner、user_weight、fp16_enabled、数据精度等信息，所以在运行期间可以对这批数据执行统一的聚合函数，也就是前文提到的 DynamicEmbedding 的 emb_reduce 函数，尽可能减少数据 IO。</p>
+<h3 id="特征-id-编码与交换"><a href="#特征-id-编码与交换" class="headerlink" title="特征 id 编码与交换"></a>特征 id 编码与交换</h3><p>对 id 进行编码，并调用 DynamicEmbedding 的 exchange_ids 函数交换 id：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">group_exchange_ids = defaultdict(<span class="built_in">dict</span>)</span><br><span class="line"><span class="keyword">for</span> ht_name, group_fea <span class="keyword">in</span> group_features.items():</span><br><span class="line">    ht = self._ht[ht_name]</span><br><span class="line">    <span class="keyword">for</span> run_name, run_fea <span class="keyword">in</span> group_fea.items():</span><br><span class="line">        <span class="comment"># id 编码</span></span><br><span class="line">        run_fea.coalesce()</span><br><span class="line">        <span class="comment"># id 交换</span></span><br><span class="line">        group_exchange_ids[ht_name][run_name] = ht.exchange_ids()</span><br></pre></td></tr></table></figure>
+<p>run_fea.coalesce() 会对特征内的 id 进行编码，ht.exchange_ids() 会交换编码后的 id。交换 id 的原因在前面讲过了，这里详细解释为什么要对 id 进行编码。id 编码的过程可以简化为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mask = (<span class="number">1</span> &lt;&lt; <span class="number">52</span>) - <span class="number">1</span>        <span class="comment">// 保留低 52 位</span></span><br><span class="line">offset = <span class="number">64</span> - <span class="number">12</span> = <span class="number">52</span>       <span class="comment">// 高 12 位用于编码 child_index</span></span><br><span class="line">encoded_id = (original_id &amp; mask) + (child_index &lt;&lt; offset)</span><br></pre></td></tr></table></figure>
+<p>当 <code>user_id</code> 和 <code>item_id</code> 都有取值为 100 的 id 时，由于他们的 child_index 不同，会被分别编码为 100 和 4503599627370596。所以不同特征的相同原始 ID 在 hashtable 中不会冲突，且编码后的 id 也会更均匀的分布到各个节点。在保存模型时，会保存解码后的 id 到 ckpt 中。在加载模型时，将加载的 id 编码并插入到 hashtable 中。解码也比较简单：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">encoded_id, offset</span>):</span><br><span class="line">    original_id = encoded_id &amp; mask</span><br><span class="line">    child_index = (encoded_id - original_id) &gt;&gt; offset</span><br><span class="line">    <span class="keyword">return</span> original_id, child_index</span><br></pre></td></tr></table></figure>
+<h3 id="emb-交换"><a href="#emb-交换" class="headerlink" title="emb 交换"></a>emb 交换</h3><p>根据编码且交换好的 id ，调用 DynamicEmbedding 的 lookup_exchange_emb 函数查表。查表过程在 DynamicEmbedding 中介绍过，这里不再重复。</p>
+<h3 id="emb-聚合"><a href="#emb-聚合" class="headerlink" title="emb 聚合"></a>emb 聚合</h3><p>根据查到的 emb，调用 DynamicEmbedding 的 emb_reduce 函数聚合，由于同一个特征分组内的数据类型、聚合方式都一样，所以会按特征组进行聚合。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ht_name, exchange_emb <span class="keyword">in</span> group_exchange_embs.items():</span><br><span class="line">    group_fea = group_features[ht_name]</span><br><span class="line">    ht = self._ht[ht_name]</span><br><span class="line">    <span class="keyword">for</span> run_name <span class="keyword">in</span> exchange_emb.keys():</span><br><span class="line">        group_embs[ht_name][run_name] = ht.emb_reduce()</span><br></pre></td></tr></table></figure>
+<p>emb_reduce 过程在 DynamicEmbedding 中介绍过，这里不再重复。</p>
+<h3 id="emb-拆分"><a href="#emb-拆分" class="headerlink" title="emb 拆分"></a>emb 拆分</h3><p>split_group_embs 将聚合后的 embeddings 拆分回各个独立特征的 embeddings。对于以下输入特征：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#</span></span><br><span class="line">features = &#123;</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>: torch.tensor([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>]]),      <span class="comment"># shape: [2, 2]</span></span><br><span class="line">    <span class="string">&quot;item_id&quot;</span>: torch.tensor([[<span class="number">10</span>], [<span class="number">30</span>]]),          <span class="comment"># shape: [2, 1]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>聚合后的特征维度是 [4, 128]，user_id 和 item_id 都是 2 个样本，所以拆分后的输出为：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>: torch.tensor([...]),    <span class="comment"># shape: [2, 64]</span></span><br><span class="line">    <span class="string">&quot;item_id&quot;</span>: torch.tensor([...]),    <span class="comment"># shape: [2, 64]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h1><p>在前文我们说过，对特征进行分组处理可以减少通信开销。在不分组的情况下假如有以下输入特征：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">features = &#123;</span><br><span class="line">    <span class="string">&quot;user_id&quot;</span>: torch.tensor([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>]]),      <span class="comment"># batch_size=2, 每个样本2个IDs</span></span><br><span class="line">    <span class="string">&quot;item_id&quot;</span>: torch.tensor([[<span class="number">10</span>, <span class="number">20</span>], [<span class="number">30</span>, <span class="number">40</span>]]),  <span class="comment"># batch_size=2, 每个样本2个IDs</span></span><br><span class="line">    <span class="string">&quot;category&quot;</span>: torch.tensor([[<span class="number">5</span>], [<span class="number">6</span>]]),            <span class="comment"># batch_size=2, 每个样本1个ID</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时每个特征单独进行通信，Worker 0 需要执行 6 次 all_to_all_single 通信：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> user_id.exchange_ids()     → all_to_all_single</span><br><span class="line"><span class="number">2.</span> user_id.lookup_exchange_emb() → all_to_all_single</span><br><span class="line"><span class="number">3.</span> item_id.exchange_ids()     → all_to_all_single</span><br><span class="line"><span class="number">4.</span> item_id.lookup_exchange_emb() → all_to_all_single</span><br><span class="line"><span class="number">5.</span> category.exchange_ids()     → all_to_all_single</span><br><span class="line"><span class="number">6.</span> category.lookup_exchange_emb() → all_to_all_single</span><br></pre></td></tr></table></figure>
+<p>而分组后会将有相同的运行时特性放到同一组，即 user_id 和 item_id 会被分到同一组，进行合并处理：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> shared_embedding.exchange_ids(coalesced_ids)     → all_to_all_single <span class="comment">#1</span></span><br><span class="line"><span class="number">2.</span> shared_embedding.lookup_exchange_emb()             → all_to_all_single <span class="comment">#2</span></span><br><span class="line"><span class="number">3.</span> category_embedding.exchange_ids()                 → all_to_all_single <span class="comment">#3</span></span><br><span class="line"><span class="number">4.</span> category_embedding.lookup_exchange_emb()           → all_to_all_single <span class="comment">#4</span></span><br></pre></td></tr></table></figure>
+<p>由于多个特征合并后只需一次 all_to_all_single 通信，此时只需要 4 次 all_to_all_single 通信，可以大幅减少通信的等待时间和开销等。最终，EmbeddingEngine 的架构图如下：</p>
+<p><img data-src="https://s41.ax1x.com/2026/02/04/pZ5gM01.png" alt></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">本文相关</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2026/01/17/recis-hashtable/" rel="bookmark">阿里搜广推大规模训练实践：分布式高性能哈希表</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2026/01/14/sra-background/" rel="bookmark">阿里搜广推大规模训练实践：背景与挑战</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="/2026/01/11/sra-huge-data/" rel="bookmark">搜推广的工程化——有限内存下的单机大数据处理</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div>感谢上学期间打赏我的朋友们。赛博乞讨：我，秦始皇，打钱。</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="兰铃 o(*≧▽≦)ツ">
+        <p>o(*≧▽≦)ツ</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="兰铃 ♪(^∇^*)">
+        <p>♪(^∇^*)</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎订阅我的文章</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SAR/" rel="tag"># SAR</a>
+          </div>
+
+        
+  <div class="post-widgets">
+    <div class="wp_rating">
+      <div id="wpac-rating"></div>
+    </div>
+  </div>
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/01/17/recis-hashtable/" rel="prev" title="阿里搜广推大规模训练实践：分布式高性能哈希表">
+      <i class="fa fa-chevron-left"></i> 阿里搜广推大规模训练实践：分布式高性能哈希表
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DynamicEmbedding%E2%80%94%E2%80%94%E5%A4%9A%E5%8D%A1%E9%80%9A%E4%BF%A1%E4%B8%8E-Embedding-%E8%81%9A%E5%90%88"><span class="nav-number">1.</span> <span class="nav-text">DynamicEmbedding——多卡通信与 Embedding 聚合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2-ids"><span class="nav-number">1.1.</span> <span class="nav-text">交换 ids</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E4%B8%8E%E4%BA%A4%E6%8D%A2-Embeddings"><span class="nav-number">1.2.</span> <span class="nav-text">查找与交换 Embeddings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%9A%E5%90%88-Embeddings"><span class="nav-number">1.3.</span> <span class="nav-text">聚合 Embeddings</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%95%BF%E5%BA%8F%E5%88%97"><span class="nav-number">1.3.1.</span> <span class="nav-text">变长序列</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EmbeddingEngine"><span class="nav-number">2.</span> <span class="nav-text">EmbeddingEngine</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#EmbeddingEngine-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">EmbeddingEngine 初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EmbeddingEngine-%E5%89%8D%E5%90%91%E8%AE%A1%E7%AE%97"><span class="nav-number">2.2.</span> <span class="nav-text">EmbeddingEngine 前向计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E9%87%8D%E7%BB%84"><span class="nav-number">2.2.1.</span> <span class="nav-text">特征重组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81-id-%E7%BC%96%E7%A0%81%E4%B8%8E%E4%BA%A4%E6%8D%A2"><span class="nav-number">2.2.2.</span> <span class="nav-text">特征 id 编码与交换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#emb-%E4%BA%A4%E6%8D%A2"><span class="nav-number">2.2.3.</span> <span class="nav-text">emb 交换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#emb-%E8%81%9A%E5%90%88"><span class="nav-number">2.2.4.</span> <span class="nav-text">emb 聚合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#emb-%E6%8B%86%E5%88%86"><span class="nav-number">2.2.5.</span> <span class="nav-text">emb 拆分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">性能分析</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="兰铃"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">兰铃</p>
+  <div class="site-description" itemprop="description">爱生活-------爱读书-------爱摄影   爱运动-------爱睡觉-------爱旅行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">234</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">相册</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muyuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;muyuuuu" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">兰铃</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">15:43</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div><div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("09/28/2018 23:13:14");//修改为自己的blog建站时间
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已在此等候你"+daysold+"天"+hrsold+"小时"+minsold+"分"+seconds+"秒";
+}
+function setzero(i){
+    if (i<10)
+    {i="0" + i};
+    return i;
+}
+show_date_time();
+</script>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+      <span class="site-uv" title="总访客量">
+        我的第 <span id="busuanzi_value_site_uv"></span> 位朋友
+      </span>
+    <span class="post-meta-divider">|</span>
+      <span class="site-pv" title="总访问量">
+        经过 <span id="busuanzi_value_site_pv"></span> 次回眸与你相遇
+      </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+  <script data-pjax>
+  if (CONFIG.page.isPost) {
+    wpac_init = window.wpac_init || [];
+    wpac_init.push({
+      widget: 'Rating',
+      id    : 24077,
+      el    : 'wpac-rating',
+      color : 'fc6423'
+    });
+    (function() {
+      if ('WIDGETPACK_LOADED' in window) return;
+      WIDGETPACK_LOADED = true;
+      var mc = document.createElement('script');
+      mc.type = 'text/javascript';
+      mc.async = true;
+      mc.src = '//embed.widgetpack.com/widget.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(mc, s.nextSibling);
+    })();
+  }
+  </script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '639ddab88527bca5fe75',
+      clientSecret: '0c08625a06e8796096a190cad5c07b4909d1e960',
+      repo        : 'blabla',
+      owner       : 'muyuuuu',
+      admin       : ['muyuuuu'],
+      id          : '368d9886ac260d5a9c6e6a014ddb54b8',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
